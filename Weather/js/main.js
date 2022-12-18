@@ -11,7 +11,8 @@ const myData = {
 	actives: [false, false, false, false, false],
 	msgErr: "",
 	myOffcanvas: null,
-	myModal: null,
+	myModalGPS: null,
+	myModalInfo: null,
 	weatherArea: WEATHER_AREA,
 	weatherIcon: WEATHER_ICON,
 	forecastKanji: ["日", "月", "火", "水", "木", "金", "土"],
@@ -43,8 +44,10 @@ const app = Vue.createApp({
 		const elemOff = document.getElementById("myOffcanvas");// Offcanvas
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
-		const elemModal = document.getElementById("myModal");
-		this.myModal = new bootstrap.Modal(elemModal);
+		const elemModalGPS = document.getElementById("myModalGPS");
+		this.myModalGPS = new bootstrap.Modal(elemModalGPS);
+		const elemModalInfo = document.getElementById("myModalInfo");
+		this.myModalInfo = new bootstrap.Modal(elemModalInfo);
 
 		this.loadPref();// Load
 		this.startPref(this.forecastPref);// Pref
@@ -142,9 +145,14 @@ const app = Vue.createApp({
 					showToast("Error", "0 min ago.", err);
 				});
 		},
-		showModal(spot){
-			console.log("showModal:", spot.month, spot.date, spot.day);
-			this.myModal.show();
+		showModalGPS(){
+			console.log("showModalGPS");
+			this.myModalGPS.show();
+		},
+		showModalInfo(spot){
+			console.log("showModalInfo:", spot.month, spot.date, spot.day);
+			console.log(this.myModalInfo);
+			this.myModalInfo.show();
 		}
 	}
 });

@@ -124,11 +124,11 @@
 					<div class="col mb-3" v-for="spot of area.spots">
 						<div class="card text-center">
 							<div class="card-body">
-								<h6 class="card-title">{{ spot.date }}日({{ spot.day }})</h6>
+								<strong class="card-title">{{ spot.date }}日({{ spot.day }})</strong>
 								<p class="card-text"><img v-bind:src="spot.src"></p>
 								<!-- <small>{{ spot.weather }}</small> -->
 								<button type="button" class="btn btn-sm btn-secondary"
-									v-on:click="showModal(spot)">詳細</button> 
+									v-on:click="showModalInfo(spot)">詳細</button> 
 							</div>
 						</div>
 					</div>
@@ -174,8 +174,8 @@
 
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
-			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				data-bs-toggle="modal" data-bs-target="#myModal" v-if="mode!=0">
+			<a href="#" class="btn btn-primary rounded-circle shadow m-3" 
+				v-on:click="showModalGPS()" v-if="mode!=0">
 				<i class="bi-pin-map" role="img"></i>
 			</a>
 			<div id="im-4f81aa889c884cba9e700bf623e987f7"></div>
@@ -218,9 +218,9 @@
 		</div>
 		<!-- Offcanvas(End) -->
 
-		<!-- Modal(Start) -->
+		<!-- ModalGPS(Start) -->
 		<div class="container mt-5 text-center">
-			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
+			<div class="modal fade" id="myModalGPS" role="dialog" data-bs-backdrop="static"
 				aria-labelledby="modalFormLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
@@ -243,7 +243,32 @@
 				</div>
 			</div>
 		</div>
-		<!-- Modal(End) -->
+		<!-- ModalGPS(End) -->
+
+		<!-- ModalInfo(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModalInfo" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalFormLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalFormLabel">***</h5>
+							<button type="button" class="btn-close" 
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div id="im-ae692bc176e8412cb8e450f20808fb18"></div>
+							<div class="m-2">***</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" 
+								data-bs-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ModalInfo(End) -->
 
 		<!-- Toast(Start) -->
 		<div class="toast-container position-absolute top-50 start-50 translate-middle mt-2">
