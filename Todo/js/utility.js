@@ -1,8 +1,39 @@
 console.log("utility.js!!");
 
+//==========
 // ServiceWorker
 navigator.serviceWorker.register("./pwa_sw.js");
 
+//==========
+// Toast
+function showToast(title, sub, msg, autohide=true, delay=400){
+	// Timeout
+	setTimeout(()=>{
+		// Clone
+		const base = document.querySelector(".toast");
+		const clone = base.cloneNode(true);
+		clone.querySelector("strong").innerText = title;
+		clone.querySelector("small").innerText = sub;
+		clone.querySelector(".toast-body").innerText = msg;
+		// Event
+		clone.addEventListener("shown.bs.toast", ()=>{
+			//console.log("shown");
+		});
+		clone.addEventListener("hidden.bs.toast", ()=>{
+			//console.log("hidden");
+			clone.remove();// Remove
+		});
+		clone.classList.remove("d-none");
+		// Append
+		const container = document.querySelector(".toast-container");
+		container.appendChild(clone);
+		// Toast
+		const toast = new bootstrap.Toast(clone, {autohide: autohide});
+		toast.show();
+	}, delay);
+}
+
+//==========
 // Axios
 function loadAxios(url, onSuccess, onError){
 	const option = {responseType: "blob"};
@@ -13,32 +44,4 @@ function loadAxios(url, onSuccess, onError){
 	}).catch(err=>{
 		onError(err);
 	});
-}
-
-// Toast
-function showToast(strong, small, body){
-	// Clean
-	//const elems = [].slice.call(document.querySelectorAll(".toast"));
-	//for(let i=1; i<elems.length; i++) elems[i].remove();
-	// Clone
-	const base = document.querySelector(".toast");
-	const clone = base.cloneNode(true);
-	clone.querySelector("strong").innerText = strong;
-	clone.querySelector("small").innerText = small;
-	clone.querySelector(".toast-body").innerText = body;
-	// Event
-	clone.addEventListener("shown.bs.toast", ()=>{
-		//console.log("shown");
-	});
-	clone.addEventListener("hidden.bs.toast", ()=>{
-		//console.log("hidden");
-		clone.remove();// Remove
-	});
-	clone.classList.remove("d-none");
-	// Append
-	const container = document.querySelector(".toast-container");
-	container.appendChild(clone);
-	// Toast
-	const toast = new bootstrap.Toast(clone, {autohide: true});
-	toast.show();
 }
