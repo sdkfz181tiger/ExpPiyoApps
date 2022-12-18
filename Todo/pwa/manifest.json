@@ -1,6 +1,6 @@
 {
-	"name":"ITぴよクイズ",
-	"short_name":"ITぴよクイズ",
+	"name":"ぴよTodo",
+	"short_name":"ぴよTodo",
 	"icons": [{
 		"src": "./icon152x152.png",
 		"sizes":"152x152",
