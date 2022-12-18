@@ -1,5 +1,8 @@
 console.log("utility.js!!");
 
+// ServiceWorker
+navigator.serviceWorker.register("./pwa_sw.js");
+
 // API
 const API_GEOREV  = "https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress";
 const API_WEATHER = "https://www.jma.go.jp/bosai/forecast/data/forecast/";

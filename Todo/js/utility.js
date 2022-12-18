@@ -1,5 +1,8 @@
 console.log("utility.js!!");
 
+// ServiceWorker
+navigator.serviceWorker.register("./pwa_sw.js");
+
 // Axios
 function loadAxios(url, onSuccess, onError){
 	const option = {responseType: "blob"};
