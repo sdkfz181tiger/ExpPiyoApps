@@ -106,13 +106,14 @@ const app = Vue.createApp({
 						for(let area of data.timeSeries[0].areas){
 							area.spots = [];// Spot
 							const date = new Date(data.reportDatetime);// Date
-							for(let i=0; i<area.weatherCodes.length; i++) area.spots.push({});
 							for(let i=0; i<area.weatherCodes.length; i++){
 								const icon = this.weatherIcon[area.weatherCodes[i]][0];
-								area.spots[i].month = date.getMonth() + 1;
-								area.spots[i].date = date.getDate();
-								area.spots[i].day = this.forecastKanji[date.getDay()];
-								area.spots[i].src = API_ICON + icon;// Icon
+								const spot = {};
+								spot.month = date.getMonth() + 1;
+								spot.date = date.getDate();
+								spot.day = this.forecastKanji[date.getDay()];
+								spot.src = API_ICON + icon;// Icon
+								area.spots.push(spot);
 								date.setDate(date.getDate() + 1);// Tomorrow
 							}
 						}
