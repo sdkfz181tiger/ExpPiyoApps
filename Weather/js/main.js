@@ -11,6 +11,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	msgErr: "",
 	myOffcanvas: null,
+	myModal: null,
 	weatherArea: WEATHER_AREA,
 	weatherIcon: WEATHER_ICON,
 	forecastKanji: ["日", "月", "火", "水", "木", "金", "土"],
@@ -36,12 +37,17 @@ const app = Vue.createApp({
 			this.msgErr = "No internet...";
 			this.changeMode(MODE_ERROR);// Error
 			showToast("Error", "0 min ago.", "インターネットに接続してください");
-		}else{
-			const elem = document.getElementById("myOffcanvas");// Offcanvas
-			this.myOffcanvas = new bootstrap.Offcanvas(elem);
-			this.loadPref();// Load
-			this.startPref(this.forecastPref);// Pref
+			return;
 		}
+		// Offcanvas
+		const elemOff = document.getElementById("myOffcanvas");// Offcanvas
+		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
+		// Modal
+		const elemModal = document.getElementById("myModal");
+		this.myModal = new bootstrap.Modal(elemModal);
+
+		this.loadPref();// Load
+		this.startPref(this.forecastPref);// Pref
 	},
 	methods:{
 		changeMode(mode){
@@ -101,18 +107,26 @@ const app = Vue.createApp({
 				.then(res=>convertText(res))
 				.then(res=>{
 					const json = JSON.parse(res);
+
+					console.log(json);
+
 					for(let data of json){// Icon
 						this.forecastOffice = data.publishingOffice;// Office
 						for(let area of data.timeSeries[0].areas){
 							area.spots = [];// Spot
 							const date = new Date(data.reportDatetime);// Date
 							for(let i=0; i<area.weatherCodes.length; i++){
-								const icon = this.weatherIcon[area.weatherCodes[i]][0];
 								const spot = {};
+								if(area.weathers != undefined){
+									spot.weather = area.weathers[i];// Weather
+								}
+								if(area.winds != undefined){
+									spot.wind = area.winds[i];// Wind
+								}
 								spot.month = date.getMonth() + 1;
 								spot.date = date.getDate();
 								spot.day = this.forecastKanji[date.getDay()];
-								spot.src = API_ICON + icon;// Icon
+								spot.src = API_ICON + this.weatherIcon[area.weatherCodes[i]][0];// Icon
 								area.spots.push(spot);
 								date.setDate(date.getDate() + 1);// Tomorrow
 							}
@@ -127,6 +141,10 @@ const app = Vue.createApp({
 					this.clearPref();// Clear
 					showToast("Error", "0 min ago.", err);
 				});
+		},
+		showModal(spot){
+			console.log("showModal:", spot.month, spot.date, spot.day);
+			this.myModal.show();
 		}
 	}
 });
