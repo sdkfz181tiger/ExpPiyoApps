@@ -36,6 +36,16 @@ footer a i{
 	font-size: 2.4rem;
 }
 
+.toast-container{
+	position: fixed !important; 
+	pointer-events: none;
+	top: 0px; right: 0px;
+}
+
+.toast:not(.showing):not(.show){
+	display: none !important;
+}
+
 #todos .d-flex{
 	background-color: lightsalmon;
 }
