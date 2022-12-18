@@ -1,0 +1,384 @@
+/* CSS */
+
+html, body, #app{
+	width: 100%; height: 100%;
+	margin: 0px; padding: 0px;
+}
+
+body{
+	font-feature-settings: "palt";
+	font-family: "M PLUS 1p"; line-height: 1.5;
+	font-size: 1.0em; font-weight: normal;
+	text-align: center; background: moccasin; 
+	background-image: url("../images/background.png");
+}
+
+button{
+	min-width: 50%; height: auto;
+	margin: 4px; padding: 12px 8px;
+	appearance: none;
+	font-size: 1.2em; font-weight: bold;
+	border: 0; border-radius: 8px;
+	background: darkorange; color: white;
+	white-space: pre-line; word-wrap:break-word;
+}
+
+button:hover{
+	background: orange;
+}
+
+#app{
+	width: 100%; height: calc(100% - 60px);
+	margin: 0px; padding: 0px;
+	display: flex; justify-content: center; align-items: center;
+}
+
+#l-container-center{
+	width: 95%; height: auto;
+	margin: 0px; padding: 0px;
+}
+
+#l-container-fill{
+	width: 95%; height: 100%;
+	margin: 0px; padding: 0px;
+}
+
+#l-title{
+	width: auto; height: auto;
+	margin: 0px; padding: 0px;
+	font-size: 3.0em; font-weight: normal;
+	border: 0; border-radius: 24px;
+	background: orange; color: white;
+}
+
+#l-modes{
+	width: auto; height: auto;
+	margin: 10px auto 10px auto;
+}
+
+#l-status{
+	width: 100%; height: auto;
+	margin: 10px auto 0px auto;
+	display: flex;
+}
+
+#l-status #l-left{
+	width: 50%; height: auto;
+	margin: 0px; padding: 0px 5px;
+	text-align: left; display:flex;
+}
+
+#l-status #l-right{
+	width: 50%; height: auto;
+	margin: 0px; padding: 0px 5px;
+	text-align: right;
+}
+
+#l-status #l-all{
+	min-width: 60px; min-height: auto;
+	margin: 4px; padding: 5px 10px;
+	background: darkorange;
+}
+
+#l-status #l-all:hover{
+	background: orange;
+}
+
+#l-status #l-good{
+	min-width: 60px; min-height: auto;
+	margin: 4px; padding: 5px 10px;
+	background: royalblue;
+}
+
+#l-status #l-good:hover{
+	background: cornflowerblue;
+}
+
+#l-status #l-bad{
+	min-width: 60px; min-height: auto;
+	margin: 4px; padding: 5px 10px;
+	background: firebrick;
+}
+
+#l-status #l-bad:hover{
+	background: tomato;
+}
+
+#l-quiz{
+	width: auto; height: calc(100% - 400px);
+	margin: 10px auto 20px auto; padding: 10px;
+	font-size: 1.2em; font-weight: normal; text-align: left;
+	border: 0; border-radius: 14px;
+	background: lightyellow; color: black;
+	position: relative; overflow-y: hidden;
+}
+
+#l-quiz p{
+	margin: 0px; padding: 10px;
+	position: absolute; top: 50%;
+	transform: translate(0px, -50%);
+}
+
+#l-popup-ok{
+	width: auto; height: auto;
+	position: absolute; top: 55%; left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	display: none;
+}
+
+#l-popup-ok img{
+	width: 120px; height: auto;
+}
+
+#l-popup-ng{
+	width: auto; height: auto;
+	position: absolute; top: 55%; left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	display: none;
+}
+
+#l-popup-ng img{
+	width: 120px; height: auto;
+}
+
+#l-btns{
+	width: auto; height: auto;
+	display: flex;　justify-content: center;
+}
+
+#l-btns div{
+	width: 50%; height: auto;
+}
+
+#l-btns div div{
+	width: auto; height: auto;
+}
+
+#l-btns button{
+	min-width: 95%; min-height: 120px;
+	margin: 4px; padding: 5px;
+}
+
+#l-piyo-logo{
+	width: auto; height: auto;
+	margin: 40px auto 10px auto;
+}
+
+#l-piyo-logo img{
+	width: 40%; height: auto;
+}
+
+#l-piyo-area{
+	width: 100%; height: auto;
+	margin: 10px auto 10px auto;
+	display: flex; position: relative;
+}
+
+#l-piyo-area #l-left{
+	width: 25%; min-height: 80px;
+	margin: 5px; padding: 0px;
+	display: flex; flex-wrap: wrap;
+}
+
+#l-piyo-area #l-left #l-label{
+	width: 100%; height: auto;
+	margin: 5px 0px; padding: 5px 0px 0px 0px;
+	border: 0; border-radius: 14px;
+	background: lightyellow;
+}
+
+#l-piyo-area #l-left #l-hearts{
+	width: 33%; height: auto;
+	margin: 0px; padding: 0px;
+}
+
+#l-piyo-area #l-left #l-hearts img{
+	width: 90%; height: auto;
+	margin: 0px; padding: 0px;
+}
+
+#l-piyo-area #l-right{
+	width: 50%; height: 70px;
+	margin: 5px 10px; padding: 5px 10px;
+	border: 0; border-radius: 14px;
+	background: white; text-align: left;
+	overflow-y: hidden;
+}
+
+#l-piyo-area #l-float{
+	width: 20%; height: auto;
+	margin: 0px; padding: 0px;
+	position: absolute; right: 0px; bottom: 0px;
+}
+
+#l-piyo-area #l-float img{
+	width: 100%; height: auto;
+	margin: 0px; padding: 0px;
+}
+
+#l-piyo-result{
+	width: auto; height: auto;
+	margin: 10px auto 10px auto;
+}
+
+#l-piyo-result img{
+	width: 100px; height: auto;
+}
+
+#l-piyo-msg{
+	width: auto; height: auto;
+	margin: 5px auto 20px auto;
+}
+
+#l-next{
+	width: auto; height: 60px;
+	margin: 10px auto 10px auto;
+}
+
+#l-score{
+	width: auto; height: auto;
+	margin: 10px auto 10px auto; padding: 10px;
+	font-size: 3.0em; font-weight: normal;
+	border: 0; border-radius: 14px;
+	background: lightyellow; color: black;
+}
+
+/* Results */
+
+#l-results{
+	width: 100%; height: calc(100% - 330px);
+	margin: 10px auto 0px auto; padding: 0px;
+	border: 0; border-radius: 8px;
+	overflow-y: scroll;
+	background: ivory;
+}
+
+#l-results table{
+	width: 100%; height: auto;
+	margin: 0px; padding: 0px;
+	table-layout: fixed;
+	background: ivory;
+}
+
+#l-results table tr:nth-child(even) {
+	background: lemonchiffon;
+}
+
+#l-results table td{
+	width: auto; height: auto;
+	margin: 0px; padding: 5px;
+	text-align: center; text-overflow: ellipsis;
+	overflow: hidden; white-space: nowrap;
+}
+
+#l-results table th{
+	width: auto; height: auto;
+}
+
+#l-results table #l-mid{
+	width: 65%; height: auto;
+}
+
+#l-results table #l-small{
+	width: 20%; height: auto;
+}
+
+#l-results table #l-text{
+	text-align: left;
+}
+
+#l-results table img{
+	width: 30px; height: auto;
+}
+
+/* Chart */
+
+#l-chart{
+	width: 90%; height: auto;
+	margin: 10px auto 0px auto; padding: 0px 5%;
+	border: 0; border-radius: 8px;
+	background: ivory;
+}
+
+/* Details */
+
+#l-details{
+	width: 100%; height: calc(100% - 320px);
+	margin: 10px auto 0px auto; padding: 0px;
+	border: 0; border-radius: 8px;
+	overflow-y: scroll;
+	background: ivory;
+}
+
+#l-details table{
+	width: 100%; height: auto;
+	margin: 0px; padding: 0px;
+	table-layout: fixed;
+	background: ivory;
+}
+
+#l-details table tr:nth-child(even) {
+	background: lemonchiffon;
+}
+
+#l-details table td{
+	width: auto; height: auto;
+	margin: 0px; padding: 5px;
+	text-align: center; text-overflow: ellipsis;
+	overflow: hidden; white-space: nowrap;
+}
+
+#l-details table th{
+	width: auto; height: auto;
+}
+
+#l-details table #l-mid{
+	width: 65%; height: auto;
+}
+
+#l-details table #l-small{
+	width: 20%; height: auto;
+}
+
+#l-details table #l-text{
+	text-align: left;
+}
+
+#l-details table img{
+	width: 30px; height: auto;
+}
+
+#l-banner{
+	width: 100%; height: 60px;
+	margin: 0px; padding: 0px;
+	position: fixed; bottom: 0px;
+	/*background: orange;*/
+}
+
+.red{
+	background: crimson;
+}
+
+.red:hover{
+	background: darkred;
+}
+
+.blue{
+	background: steelblue;
+}
+
+.blue:hover{
+	background: lightseagreen;
+}
+
+.gray{
+	background: silver;
+}
+
+.gray:hover{
+	background: silver;
+}
