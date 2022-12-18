@@ -90,8 +90,6 @@ const app = Vue.createApp({
 					console.log(err);
 					this.clearPref();// Clear
 					showToast("Error", "0 min ago.", err);
-					showToast("Error", "0 min ago.", err.code);
-					showToast("Error", "0 min ago.", err.message);
 				});
 		},
 		startForecast(pref, file){

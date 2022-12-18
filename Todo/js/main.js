@@ -35,6 +35,9 @@ const app = Vue.createApp({
 	},
 	created(){
 		console.log("created!!");
+	},
+	mounted(){
+		console.log("mounted!!");
 
 		// Axios
 		loadAxios("./js/data.json", (json)=>{

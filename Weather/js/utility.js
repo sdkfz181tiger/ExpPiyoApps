@@ -7,30 +7,45 @@ navigator.serviceWorker.register("./pwa_sw.js");
 //==========
 // Toast
 function showToast(title, sub, msg, autohide=true, delay=400){
-	// Timeout
+	// Object
+	if(typeof(msg) == "object"){
+		const props = Object.getOwnPropertyNames(msg);
+		console.log(props);
+		for(let prop of props){
+			setTimeout(()=>{
+				popToast(title, sub, msg[prop], autohide);
+			}, delay);
+			delay *= 2;
+		}
+		return;
+	}
 	setTimeout(()=>{
-		// Clone
-		const base = document.querySelector(".toast");
-		const clone = base.cloneNode(true);
-		clone.querySelector("strong").innerText = title;
-		clone.querySelector("small").innerText = sub;
-		clone.querySelector(".toast-body").innerText = msg;
-		// Event
-		clone.addEventListener("shown.bs.toast", ()=>{
-			//console.log("shown");
-		});
-		clone.addEventListener("hidden.bs.toast", ()=>{
-			//console.log("hidden");
-			clone.remove();// Remove
-		});
-		clone.classList.remove("d-none");
-		// Append
-		const container = document.querySelector(".toast-container");
-		container.appendChild(clone);
-		// Toast
-		const toast = new bootstrap.Toast(clone, {autohide: autohide});
-		toast.show();
+		popToast(title, sub, msg, autohide);
 	}, delay);
+}
+
+function popToast(title, sub, msg, autohide=true){
+	// Clone
+	const base = document.querySelector(".toast");
+	const clone = base.cloneNode(true);
+	clone.querySelector("strong").innerText = title;
+	clone.querySelector("small").innerText = sub;
+	clone.querySelector(".toast-body").innerText = msg;
+	// Event
+	clone.addEventListener("shown.bs.toast", ()=>{
+		//console.log("shown");
+	});
+	clone.addEventListener("hidden.bs.toast", ()=>{
+		//console.log("hidden");
+		clone.remove();// Remove
+	});
+	clone.classList.remove("d-none");
+	// Append
+	const container = document.querySelector(".toast-container");
+	container.appendChild(clone);
+	// Toast
+	const toast = new bootstrap.Toast(clone, {autohide: autohide});
+	toast.show();
 }
 
 //==========
