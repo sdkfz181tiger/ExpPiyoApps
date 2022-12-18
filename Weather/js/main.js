@@ -11,8 +11,6 @@ const myData = {
 	actives: [false, false, false, false, false],
 	msgErr: "",
 	myOffcanvas: null,
-	myModalGPS: null,
-	myModalInfo: null,
 	weatherArea: WEATHER_AREA,
 	weatherIcon: WEATHER_ICON,
 	forecastKanji: ["日", "月", "火", "水", "木", "金", "土"],
@@ -47,9 +45,9 @@ const app = Vue.createApp({
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
 		const elemModalGPS = document.getElementById("myModalGPS");
-		this.myModalGPS = new bootstrap.Modal(elemModalGPS);
+		const modalGPS = new bootstrap.Modal(elemModalGPS);
 		const elemModalInfo = document.getElementById("myModalInfo");
-		this.myModalInfo = new bootstrap.Modal(elemModalInfo);
+		const modalInfo = new bootstrap.Modal(elemModalInfo);
 
 		this.loadPref();// Load
 		this.startPref(this.forecastPref);// Pref
@@ -146,12 +144,19 @@ const app = Vue.createApp({
 		},
 		showModalGPS(){
 			console.log("showModalGPS");
-			this.myModalGPS.show();
+			const elem = document.getElementById("myModalGPS");
+			elem.querySelector("#modalLabel").innerText = "GPSを利用します";
+			elem.querySelector("#modalBody").innerText = "位置情報から天気予報を取得します";
+			const modal = bootstrap.Modal.getInstance(elem);
+			modal.show();
 		},
 		showModalInfo(spot){
-			console.log("showModalInfo:", spot.month, spot.date, spot.day);
-			console.log(this.myModalInfo);
-			this.myModalInfo.show();
+			console.log("showModalInfo");
+			const elem = document.getElementById("myModalInfo");
+			elem.querySelector("#modalLabel").innerText = spot.month + "月" + spot.date + "日(" + spot.day + ")";
+			elem.querySelector("#modalBody").innerText = spot.weather;
+			const modal = bootstrap.Modal.getInstance(elem);
+			modal.show();
 		}
 	}
 });
