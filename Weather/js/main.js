@@ -31,6 +31,53 @@ const app = Vue.createApp({
 	},
 	mounted(){
 		console.log("mounted!!");
+
+
+		/* Set up getCurrentPosition options with a timeout */
+    const navigatorLocationOptions = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    /* Determine browser permissions status */
+    navigator.permissions.query({name:'geolocation'})
+      .then((result) => {
+        /* result.state will be 'granted', 'denied', or 'error' */
+        if (result.state === 'granted') {
+          navigator.geolocation.getCurrentPosition(pos => {
+             console.log('Retrieved user location', pos);
+             /* Got the location! Write your successful code here. */
+             showToast("Info", "0 min ago.", "Got the location! Write your successful code here.");        
+
+          }, (error) => {
+            /* System/OS location services disabled */
+            console.log('System/OS services disabled', navigator);
+             showToast("Info", "0 min ago.", "System/OS services disabled.");
+            noLocationFound();
+          }, navigatorLocationOptions);
+
+        } else {
+          /* Browser location services disabled or error */
+          console.log('Browser location services disabled', navigator);
+             showToast("Info", "0 min ago.", "Browser location services disabled.");
+          noLocationFound();
+        }
+      }, (error) => {
+        /* Browser doesn't support querying for permissions */
+        console.log('Browser permissions services unavailable', navigator);
+        showToast("Info", "0 min ago.", "Browser doesn't support querying for permissions.");
+        noLocationFound()
+      }
+    );
+    
+    /* Handle no location found */
+    function noLocationFound() {
+      /* Write code here to handle: user location is unavailable */
+    }
+
+
+
 		// Online
 		if(!navigator.onLine){
 			this.msgErr = "No internet...";
