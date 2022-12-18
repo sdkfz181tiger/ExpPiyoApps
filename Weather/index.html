@@ -125,8 +125,7 @@
 						<div class="card text-center">
 							<div class="card-body">
 								<strong class="card-title">{{ spot.date }}日({{ spot.day }})</strong>
-								<p class="card-text"><img v-bind:src="spot.src"></p>
-								<!-- <small>{{ spot.weather }}</small> -->
+								<div class="card-text"><img v-bind:src="spot.src"></div>
 								<button type="button" class="btn btn-sm btn-secondary"
 									v-on:click="showModalInfo(spot)">詳細</button> 
 							</div>
