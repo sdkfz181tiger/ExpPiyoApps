@@ -24,6 +24,7 @@ const MODE_SETTINGS = 4;
 const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
+	myOffcanvas: null,
 	todos: [],
 	inputTodo: null
 }
@@ -50,6 +51,13 @@ const app = Vue.createApp({
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");
 		});
+
+		// Offcanvas
+		const elemOff = document.getElementById("myOffcanvas");// Offcanvas
+		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
+		// Modal
+		const elem = document.getElementById("myModal");
+		const modal = new bootstrap.Modal(elem);
 	},
 	methods:{
 		changeMode(mode){
@@ -70,6 +78,12 @@ const app = Vue.createApp({
 		},
 		deleteTodo(id){
 			console.log("deleteTodo:", id);
+		},
+		showModal(){
+			console.log("showModal");
+			const elem = document.getElementById("myModal");
+			elem.querySelector("#modalLabel").innerText = "TODO";
+			bootstrap.Modal.getInstance(elem).show();
 		}
 	}
 });

@@ -149,7 +149,7 @@
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
 			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				data-bs-toggle="modal" data-bs-target="#myModal" v-if="mode!=0">
+				v-if="mode!=0" v-on:click="showModal()">
 				<i class="bi-plus-lg" role="img"></i>
 			</a>
 			<div id="im-44312d36535c4279801e55f8fd54c60f"></div>
@@ -174,11 +174,11 @@
 		<!-- Modal(Start) -->
 		<div class="container mt-5 text-center">
 			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
-				aria-labelledby="modalFormLabel" aria-hidden="true">
+				aria-labelledby="modalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="modalFormLabel">Todo</h5>
+							<h5 class="modal-title" id="modalLabel">***</h5>
 							<button type="button" class="btn-close" 
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>

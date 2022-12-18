@@ -147,16 +147,14 @@ const app = Vue.createApp({
 			const elem = document.getElementById("myModalGPS");
 			elem.querySelector("#modalLabel").innerText = "GPSを利用します";
 			elem.querySelector("#modalBody").innerText = "位置情報から天気予報を取得します";
-			const modal = bootstrap.Modal.getInstance(elem);
-			modal.show();
+			bootstrap.Modal.getInstance(elem).show();
 		},
 		showModalInfo(spot){
 			console.log("showModalInfo");
 			const elem = document.getElementById("myModalInfo");
 			elem.querySelector("#modalLabel").innerText = spot.month + "月" + spot.date + "日(" + spot.day + ")";
 			elem.querySelector("#modalBody").innerText = spot.weather;
-			const modal = bootstrap.Modal.getInstance(elem);
-			modal.show();
+			bootstrap.Modal.getInstance(elem).show();
 		}
 	}
 });
