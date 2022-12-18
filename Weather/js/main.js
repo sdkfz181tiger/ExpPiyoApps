@@ -33,6 +33,7 @@ const app = Vue.createApp({
 	},
 	mounted(){
 		console.log("mounted!!");
+
 		// Online
 		if(!navigator.onLine){
 			this.msgErr = "No internet...";
@@ -40,6 +41,7 @@ const app = Vue.createApp({
 			showToast("Error", "0 min ago.", "インターネットに接続してください");
 			return;
 		}
+
 		// Offcanvas
 		const elemOff = document.getElementById("myOffcanvas");// Offcanvas
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
@@ -110,9 +112,6 @@ const app = Vue.createApp({
 				.then(res=>convertText(res))
 				.then(res=>{
 					const json = JSON.parse(res);
-
-					console.log(json);
-
 					for(let data of json){// Icon
 						this.forecastOffice = data.publishingOffice;// Office
 						for(let area of data.timeSeries[0].areas){
