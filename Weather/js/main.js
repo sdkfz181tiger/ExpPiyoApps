@@ -113,6 +113,7 @@ const app = Vue.createApp({
 					for(let data of json){// Icon
 						this.forecastOffice = data.publishingOffice;// Office
 						for(let area of data.timeSeries[0].areas){
+							console.log(area);
 							area.spots = [];// Spot
 							const date = new Date(data.reportDatetime);// Date
 							for(let i=0; i<area.weatherCodes.length; i++){
@@ -123,9 +124,12 @@ const app = Vue.createApp({
 								if(area.winds != undefined){
 									spot.wind = area.winds[i];// Wind
 								}
+								if(area.pops != undefined){
+									spot.pop = area.pops[i];// Pop
+								}
 								spot.month = date.getMonth() + 1;
 								spot.date = date.getDate();
-								spot.day = this.forecastKanji[date.getDay()];
+								spot.day = this.forecastKanji[(date.getDay()+1)%7];
 								spot.src = API_ICON + this.weatherIcon[area.weatherCodes[i]][0];// Icon
 								area.spots.push(spot);
 								date.setDate(date.getDate() + 1);// Tomorrow

@@ -140,6 +140,8 @@
 							<tbody>
 								<td v-for="spot of area.spots">
 									<img v-bind:src="spot.src">
+									<small v-if="spot.pop">{{ spot.pop }}%</small>
+									<small v-else="spot.pop">--%</small>
 								</td>
 							</tbody>
 						</table>
