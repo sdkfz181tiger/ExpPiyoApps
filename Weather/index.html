@@ -121,11 +121,11 @@
 				</div>
 				<div class="row mt-3 mb-3" v-for="area of forecastToday.timeSeries[0].areas">
 					<h5>{{ area.area.name }}</h5>
-					<div class="col mb-3" v-for="spot of area.spots">
-						<div class="card text-center">
+					<div class="col d-flex justify-content-center">
+						<div class="card text-center m-1" v-for="spot of area.spots">
 							<div class="card-body">
 								<strong class="card-title">{{ spot.date }}日({{ spot.day }})</strong>
-								<div class="card-text"><img v-bind:src="spot.src"></div>
+								<div class="card-text m-1"><img v-bind:src="spot.src"></div>
 								<button type="button" class="btn btn-sm btn-secondary"
 									v-on:click="showModalInfo(spot)">詳細</button> 
 							</div>
