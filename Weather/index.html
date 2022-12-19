@@ -129,19 +129,21 @@
 					</div>
 				</div>
 				<div class="row mt-3 mb-3" v-for="area of forecastWeek.timeSeries[0].areas">
-					<h5>{{ area.area.name }}</h5>
-					<table class="table">
-						<thead>
-							<td v-for="spot of area.spots">
-								{{ spot.day }}
-							</td>
-						</thead>
-						<tbody>
-							<td v-for="spot of area.spots">
-								<img v-bind:src="spot.src">
-							</td>
-						</tbody>
-					</table>
+					<div class="col text-center">
+						<h5>{{ area.area.name }}</h5>
+						<table class="table">
+							<thead>
+								<td v-for="spot of area.spots">
+									{{ spot.day }}
+								</td>
+							</thead>
+							<tbody>
+								<td v-for="spot of area.spots">
+									<img v-bind:src="spot.src">
+								</td>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 			<!-- Forecast(End) -->
