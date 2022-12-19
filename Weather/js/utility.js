@@ -12,19 +12,16 @@ function showToast(title, sub, msg, autohide=true, delay=400){
 		const props = Object.getOwnPropertyNames(msg);
 		console.log(props);
 		for(let prop of props){
-			setTimeout(()=>{
-				popToast(title, sub, msg[prop], autohide);
-			}, delay);
+			setTimeout(()=>popToast(title, sub, msg[prop], autohide), delay);
 			delay *= 2;
 		}
 		return;
 	}
-	setTimeout(()=>{
-		popToast(title, sub, msg, autohide);
-	}, delay);
+	setTimeout(()=>popToast(title, sub, msg, autohide), delay);
 }
 
 function popToast(title, sub, msg, autohide=true){
+	if(100 < msg.length) return;
 	// Clone
 	const base = document.querySelector(".toast");
 	const clone = base.cloneNode(true);
