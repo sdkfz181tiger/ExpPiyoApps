@@ -21,6 +21,7 @@ function showToast(title, sub, msg, autohide=true, delay=400){
 }
 
 function popToast(title, sub, msg, autohide=true){
+	if(typeof(msg) == "object") return;
 	if(100 < msg.length) return;
 	// Clone
 	const base = document.querySelector(".toast");

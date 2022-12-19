@@ -8,7 +8,6 @@ function showToast(title, sub, msg, autohide=true, delay=400){
 	// Object
 	if(typeof(msg) == "object"){
 		const props = Object.getOwnPropertyNames(msg);
-		console.log(props);
 		for(let prop of props){
 			setTimeout(()=>popToast(title, sub, msg[prop], autohide), delay);
 			delay *= 2;
@@ -19,6 +18,7 @@ function showToast(title, sub, msg, autohide=true, delay=400){
 }
 
 function popToast(title, sub, msg, autohide=true){
+	if(typeof(msg) == "object") return;
 	if(100 < msg.length) return;
 	// Clone
 	const base = document.querySelector(".toast");
