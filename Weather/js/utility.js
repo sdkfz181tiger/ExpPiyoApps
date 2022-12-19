@@ -10,10 +10,9 @@ function showToast(title, sub, msg, autohide=true, delay=400){
 	// Object
 	if(typeof(msg) == "object"){
 		const props = Object.getOwnPropertyNames(msg);
-		console.log(props);
 		for(let prop of props){
 			setTimeout(()=>popToast(title, sub, msg[prop], autohide), delay);
-			delay *= 2;
+			delay += delay;
 		}
 		return;
 	}

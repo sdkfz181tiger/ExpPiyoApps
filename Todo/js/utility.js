@@ -4,13 +4,15 @@ console.log("utility.js!!");
 // ServiceWorker
 navigator.serviceWorker.register("./pwa_sw.js");
 
+//==========
+// Toast
 function showToast(title, sub, msg, autohide=true, delay=400){
 	// Object
 	if(typeof(msg) == "object"){
 		const props = Object.getOwnPropertyNames(msg);
 		for(let prop of props){
 			setTimeout(()=>popToast(title, sub, msg[prop], autohide), delay);
-			delay *= 2;
+			delay += delay;
 		}
 		return;
 	}
