@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8"/>
 	<meta name="theme-color" content="dodgerblue"/>
-	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="viewport" content="width=device-width">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -129,7 +129,7 @@
 					</div>
 				</div>
 				<div class="row mt-3 mb-3" v-for="area of forecastWeek.timeSeries[0].areas">
-					<div class="col text-center">
+					<div class="col">
 						<h5>{{ area.area.name }}</h5>
 						<table class="table">
 							<thead>
