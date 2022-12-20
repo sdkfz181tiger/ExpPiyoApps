@@ -131,7 +131,7 @@ const app = Vue.createApp({
 								for(let d=0; d<3; d++){
 									areas[name].months.push(date.getMonth() + 1);
 									areas[name].dates.push(date.getDate());
-									areas[name].days.push(this.forecastKanji[(date.getDay()+1)%7]);
+									areas[name].days.push(this.forecastKanji[(date.getDay())%7]);
 									date.setDate(date.getDate() + 1);// Tomorrow
 								}
 								// WeatherCodes
@@ -165,8 +165,6 @@ const app = Vue.createApp({
 							for(let a=0; a<timeSeries.areas.length; a++){
 								const area = timeSeries.areas[a];
 								const name = area.area.name;
-								console.log(name);
-								console.log(area);
 								if(areas[name] == undefined) areas[name] = {};
 								areas[name].name = name;
 								// Month, Date, Day
@@ -195,7 +193,6 @@ const app = Vue.createApp({
 								}
 							}
 						}
-						console.log(areas);
 						this.areasWeekly = areas;// Weekly
 					}
 
