@@ -80,3 +80,88 @@ function convertText(res){
 	//console.log("convertText");
 	return res.data.text();
 }
+
+//==========
+// JSON
+
+function getDailyData(data, kanjis, icons){
+	// Daily
+	const areas = {};// Areas
+	for(let i=0; i<2; i++){
+		const timeSeries = data.timeSeries[i];
+		for(let a=0; a<timeSeries.areas.length; a++){
+			const area = timeSeries.areas[a];
+			const name = area.area.name;
+			if(areas[name] == undefined) areas[name] = {};
+			areas[name].name = name;
+			// Month, Date, Day
+			const date = new Date(data.reportDatetime);// Today
+			areas[name].months = [];
+			areas[name].dates = [];
+			areas[name].days = [];
+			for(let d=0; d<3; d++){
+				areas[name].months.push(date.getMonth() + 1);
+				areas[name].dates.push(date.getDate());
+				areas[name].days.push(kanjis[(date.getDay())%7]);
+				date.setDate(date.getDate() + 1);// Tomorrow
+			}
+			// WeatherCodes
+			if(area.weatherCodes){
+				areas[name].weatherCodes = area.weatherCodes;
+				areas[name].srcs = [];
+				for(let code of area.weatherCodes){
+					const src = API_ICON + icons[code][0];// Icon
+					areas[name].srcs.push(src);
+				}
+			}
+			// Weathers
+			if(area.weathers){
+				areas[name].weathers = area.weathers;
+			}
+			// Pops
+			if(area.pops){
+				areas[name].pops = area.pops;
+			}
+		}
+	}
+	return areas;
+}
+
+function getWeeklyData(data, kanjis, icons){
+	// Weekly
+	const areas = {};// Areas
+	for(let i=0; i<1; i++){
+		const timeSeries = weeklyData.timeSeries[i];
+		for(let a=0; a<timeSeries.areas.length; a++){
+			const area = timeSeries.areas[a];
+			const name = area.area.name;
+			if(areas[name] == undefined) areas[name] = {};
+			areas[name].name = name;
+			// Month, Date, Day
+			const date = new Date(weeklyData.reportDatetime);// Today
+			areas[name].months = [];
+			areas[name].dates = [];
+			areas[name].days = [];
+			for(let d=0; d<7; d++){
+				areas[name].months.push(date.getMonth() + 1);
+				areas[name].dates.push(date.getDate());
+				areas[name].days.push(kanjis[(date.getDay()+1)%7]);
+				date.setDate(date.getDate() + 1);// Tomorrow
+			}
+			// WeatherCodes
+			if(area.weatherCodes){
+				areas[name].weatherCodes = area.weatherCodes;
+				areas[name].srcs = [];
+				for(let code of area.weatherCodes){
+					const src = API_ICON + icons[code][0];// Icon
+					areas[name].srcs.push(src);
+				}
+			}
+			// Pops
+			if(area.pops){
+				areas[name].pops = area.pops;
+			}
+		}
+	}
+	return areas;
+}
