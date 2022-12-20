@@ -110,15 +110,15 @@
 						<h3>今日の天気</h3>
 					</div>
 				</div>
-				<div class="row mt-3 mb-3" v-for="area of forecastToday.timeSeries[0].areas">
-					<h5>{{ area.area.name }}</h5>
+				<div class="row mt-3 mb-3" v-for="area of areasDaily">
+					<h5>{{ area.name }}</h5>
 					<div class="col d-flex justify-content-center">
-						<div class="card text-center m-1" v-for="spot of area.spots">
+						<div class="card text-center m-1" v-for="(code, i) of area.weatherCodes">
 							<div class="card-body">
-								<strong class="card-title">{{ spot.date }}日({{ spot.day }})</strong>
-								<div class="card-text m-1"><img v-bind:src="spot.src"></div>
+								<strong class="card-title">{{ area.dates[i] }}日({{ area.days[i] }})</strong>
+								<div class="card-text m-1"><img v-bind:src="area.srcs[i]"></div>
 								<button type="button" class="btn btn-sm btn-secondary"
-									v-on:click="showModalInfo(spot)">詳細</button> 
+									v-on:click="showModalInfo(area, i)">詳細</button>
 							</div>
 						</div>
 					</div>
@@ -128,20 +128,20 @@
 						<h3>週間の天気</h3>
 					</div>
 				</div>
-				<div class="row mt-3 mb-3" v-for="area of forecastWeek.timeSeries[0].areas">
+				<div class="row mt-3 mb-3" v-for="area of areasWeekly">
 					<div class="col">
-						<h5>{{ area.area.name }}</h5>
+						<h5>{{ area.name }}</h5>
 						<table class="table">
 							<thead>
-								<td v-for="spot of area.spots">
-									{{ spot.day }}
+								<td v-for="(code, i) of area.weatherCodes">
+									{{ area.days[i] }}
 								</td>
 							</thead>
 							<tbody>
-								<td v-for="spot of area.spots">
-									<img v-bind:src="spot.src">
-									<small v-if="spot.pop != ''">{{ spot.pop }}%</small>
-									<small v-else="spot.pop">--%</small>
+								<td v-for="(src, i) of area.srcs">
+									<img v-bind:src="src">
+									<small v-if="area.pops[i] != ''">{{ area.pops[i] }}%</small>
+									<small v-else>--%</small>
 								</td>
 							</tbody>
 						</table>

@@ -17,8 +17,8 @@ const myData = {
 	forecastPref: "東京都",// Default
 	forecastOffice: null,
 	forecastZones: null,
-	forecastToday: null,
-	forecastWeek: null
+	areasDaily: null,
+	areasWeekly: null
 }
 
 // Vue.js
@@ -110,34 +110,95 @@ const app = Vue.createApp({
 				.then(res=>convertText(res))
 				.then(res=>{
 					const json = JSON.parse(res);
-					for(let data of json){// Icon
-						this.forecastOffice = data.publishingOffice;// Office
-						for(let area of data.timeSeries[0].areas){
-							console.log(area);
-							area.spots = [];// Spot
-							const date = new Date(data.reportDatetime);// Date
-							for(let i=0; i<area.weatherCodes.length; i++){
-								const spot = {};
-								if(area.weathers != undefined){
-									spot.weather = area.weathers[i];// Weather
+					this.forecastOffice = json[0].publishingOffice;// Office
+
+					{
+						// Daily
+						const dailyData = json[0];
+						const areas = {};// Areas
+						for(let i=0; i<2; i++){
+							const timeSeries = dailyData.timeSeries[i];
+							for(let a=0; a<timeSeries.areas.length; a++){
+								const area = timeSeries.areas[a];
+								const name = area.area.name;
+								if(areas[name] == undefined) areas[name] = {};
+								areas[name].name = name;
+								// Month, Date, Day
+								const date = new Date(dailyData.reportDatetime);// Today
+								areas[name].months = [];
+								areas[name].dates = [];
+								areas[name].days = [];
+								for(let d=0; d<3; d++){
+									areas[name].months.push(date.getMonth() + 1);
+									areas[name].dates.push(date.getDate());
+									areas[name].days.push(this.forecastKanji[(date.getDay()+1)%7]);
+									date.setDate(date.getDate() + 1);// Tomorrow
 								}
-								if(area.winds != undefined){
-									spot.wind = area.winds[i];// Wind
+								// WeatherCodes
+								if(area.weatherCodes){
+									areas[name].weatherCodes = area.weatherCodes;
+									areas[name].srcs = [];
+									for(let code of area.weatherCodes){
+										const src = API_ICON + this.weatherIcon[code][0];// Icon
+										areas[name].srcs.push(src);
+									}
 								}
-								if(area.pops != undefined){
-									spot.pop = area.pops[i];// Pop
+								// Weathers
+								if(area.weathers){
+									areas[name].weathers = area.weathers;
 								}
-								spot.month = date.getMonth() + 1;
-								spot.date = date.getDate();
-								spot.day = this.forecastKanji[(date.getDay()+1)%7];
-								spot.src = API_ICON + this.weatherIcon[area.weatherCodes[i]][0];// Icon
-								area.spots.push(spot);
-								date.setDate(date.getDate() + 1);// Tomorrow
+								// Pops
+								if(area.pops){
+									areas[name].pops = area.pops;
+								}
 							}
 						}
+						this.areasDaily = areas;// Daily
 					}
-					this.forecastToday = json[0];
-					this.forecastWeek = json[1];
+
+					{
+						// Weekly
+						const weeklyData = json[1];
+						const areas = {};// Areas
+						for(let i=0; i<1; i++){
+							const timeSeries = weeklyData.timeSeries[i];
+							for(let a=0; a<timeSeries.areas.length; a++){
+								const area = timeSeries.areas[a];
+								const name = area.area.name;
+								console.log(name);
+								console.log(area);
+								if(areas[name] == undefined) areas[name] = {};
+								areas[name].name = name;
+								// Month, Date, Day
+								const date = new Date(weeklyData.reportDatetime);// Today
+								areas[name].months = [];
+								areas[name].dates = [];
+								areas[name].days = [];
+								for(let d=0; d<7; d++){
+									areas[name].months.push(date.getMonth() + 1);
+									areas[name].dates.push(date.getDate());
+									areas[name].days.push(this.forecastKanji[(date.getDay()+1)%7]);
+									date.setDate(date.getDate() + 1);// Tomorrow
+								}
+								// WeatherCodes
+								if(area.weatherCodes){
+									areas[name].weatherCodes = area.weatherCodes;
+									areas[name].srcs = [];
+									for(let code of area.weatherCodes){
+										const src = API_ICON + this.weatherIcon[code][0];// Icon
+										areas[name].srcs.push(src);
+									}
+								}
+								// Pops
+								if(area.pops){
+									areas[name].pops = area.pops;
+								}
+							}
+						}
+						console.log(areas);
+						this.areasWeekly = areas;// Weekly
+					}
+
 					this.changeMode(MODE_FORECAST);
 					showToast("Success", "0 min ago.", this.forecastPref + "の天気を取得しました");
 				}).catch(err=>{
@@ -153,11 +214,12 @@ const app = Vue.createApp({
 			elem.querySelector("#modalBody").innerText = "位置情報から天気予報を取得します";
 			bootstrap.Modal.getInstance(elem).show();
 		},
-		showModalInfo(spot){
+		showModalInfo(area, i){
 			console.log("showModalInfo");
 			const elem = document.getElementById("myModalInfo");
-			elem.querySelector("#modalLabel").innerText = spot.month + "月" + spot.date + "日(" + spot.day + ")";
-			elem.querySelector("#modalBody").innerText = spot.weather;
+			const label = area.name + "_" + area.months[i] + "月" + area.dates[i] + "日(" + area.days[i] + ")";
+			elem.querySelector("#modalLabel").innerText = label;
+			elem.querySelector("#modalBody").innerText = area.weathers[i];
 			bootstrap.Modal.getInstance(elem).show();
 		}
 	}
