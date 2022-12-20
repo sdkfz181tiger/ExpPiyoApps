@@ -131,14 +131,14 @@ function getWeeklyData(data, kanjis, icons){
 	// Weekly
 	const areas = {};// Areas
 	for(let i=0; i<1; i++){
-		const timeSeries = weeklyData.timeSeries[i];
+		const timeSeries = data.timeSeries[i];
 		for(let a=0; a<timeSeries.areas.length; a++){
 			const area = timeSeries.areas[a];
 			const name = area.area.name;
 			if(areas[name] == undefined) areas[name] = {};
 			areas[name].name = name;
 			// Month, Date, Day
-			const date = new Date(weeklyData.reportDatetime);// Today
+			const date = new Date(data.reportDatetime);// Today
 			areas[name].months = [];
 			areas[name].dates = [];
 			areas[name].days = [];

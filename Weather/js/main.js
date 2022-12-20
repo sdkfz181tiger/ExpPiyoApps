@@ -112,7 +112,7 @@ const app = Vue.createApp({
 					const json = JSON.parse(res);
 					this.forecastOffice = json[0].publishingOffice;// Office
 					this.areasDaily = getDailyData(json[0], this.forecastKanji, this.weatherIcon);
-					this.areasWeekly = getDailyData(json[1], this.forecastKanji, this.weatherIcon);
+					this.areasWeekly = getWeeklyData(json[1], this.forecastKanji, this.weatherIcon);
 					this.changeMode(MODE_FORECAST);
 					showToast("Success", "0 min ago.", this.forecastPref + "の天気を取得しました");
 				}).catch(err=>{
