@@ -40,7 +40,7 @@
 					</div>
 				</div>
 			</nav>
-			<nav class="nav nav-pills nav-justified bg-light">
+			<!-- <nav class="nav nav-pills nav-justified bg-light">
 				<a class="nav-link" href="#"
 					v-on:click="changeMode(1)" v-bind:class="{active:actives[1]}">
 					<i class="bi-house-fill" role="img"></i>
@@ -57,8 +57,26 @@
 					v-on:click="changeMode(4)" v-bind:class="{active:actives[4]}">
 					<i class="bi-gear-fill" role="img"></i>
 				</a>
-			</nav>
+			</nav> -->
 			<!-- Navigation(End) -->
+
+			<div class="d-flex flex-nowrap overflow-auto p-2" id="tags">
+				<div class="p-2 bd-highlight">Hello01</div>
+				<div class="p-2 bd-highlight">Hello02</div>
+				<div class="p-2 bd-highlight">Hello03</div>
+				<div class="p-2 bd-highlight">Hello04</div>
+				<div class="p-2 bd-highlight">Hello05</div>
+				<div class="p-2 bd-highlight">Hello01</div>
+				<div class="p-2 bd-highlight">Hello02</div>
+				<div class="p-2 bd-highlight">Hello03</div>
+				<div class="p-2 bd-highlight">Hello04</div>
+				<div class="p-2 bd-highlight">Hello05</div>
+				<div class="p-2 bd-highlight">Hello01</div>
+				<div class="p-2 bd-highlight">Hello02</div>
+				<div class="p-2 bd-highlight">Hello03</div>
+				<div class="p-2 bd-highlight">Hello04</div>
+				<div class="p-2 bd-highlight">Hello05</div>
+			</div>
 
 		</header>
 		<!-- Header(End) -->
@@ -76,18 +94,18 @@
 
 			<!-- Home(Start) -->
 			<div class="container" v-if="mode==1">
-				<div id="todos" v-for="todo of todos">
+				<div id="todos" v-for="record of records">
 					<div class="d-flex mb-3">
 						<div class="form-check d-flex align-items-center">
 							<input class="form-check-input" type="checkbox" value=""
-								v-bind:id="todo.id" v-bind:checked="todo.checked">
-							<label class="form-check-label p-2" v-bind:for="todo.id">{{ todo.msg }}</label>
+								v-bind:id="record.id" v-bind:checked="record.checked">
+							<label class="form-check-label p-2" v-bind:for="record.id">{{ record.tag }}_{{ record.msg }}</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn" v-on:click="deleteTodo(todo.id)">
+							<button type="button" class="btn" v-on:click="deleteTodo(record.id)">
 								<i class="bi-file-text" role="img"></i>
 							</button>
-							<button type="button" class="btn" v-on:click="deleteTodo(todo.id)">
+							<button type="button" class="btn" v-on:click="deleteTodo(record.id)">
 								<i class="bi-trash" role="img"></i>
 							</button>
 						</div>

@@ -1,14 +1,17 @@
 console.log("main.js!!");
 
-// Todo
-class Todo{
+// Record
+class Record{
 	constructor(obj){
 		this._id = obj.id;
+		this._tag = obj.tag;
 		this._msg = obj.msg;
 		this._checked = obj.checked;
 	}
 	get id(){return this._id;}
 	set id(id){this._id = id;}
+	get tag(){return this._tag;}
+	set tag(t){this._tag = t;}
 	get msg(){return this._msg;}
 	set msg(m){this._msg = m;}
 	get checked(){return this._checked;}
@@ -25,7 +28,7 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	todos: [],
+	records: [],
 	inputTodo: null
 }
 
@@ -43,7 +46,7 @@ const app = Vue.createApp({
 		// Axios
 		loadAxios("./js/data.json", (json)=>{
 			for(let obj of json.data){
-				this.todos.push(new Todo(obj));
+				this.records.push(new Record(obj));
 			}
 			setTimeout(()=>{
 				this.changeMode(MODE_HOME);

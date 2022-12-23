@@ -1,17 +1,16 @@
 {
-	"data":[
-		{"id": "hoge10", "msg": "Study 10 mins.", "checked": true},
-		{"id": "hoge11", "msg": "Study 11 mins.", "checked": true},
-		{"id": "hoge12", "msg": "Study 12 mins.", "checked": false},
-		{"id": "hoge13", "msg": "Study 13 mins.", "checked": false},
-		{"id": "hoge14", "msg": "Study 14 mins.", "checked": true},
-		{"id": "hoge15", "msg": "Study 15 mins.", "checked": false},
-		{"id": "hoge16", "msg": "Study 16 mins.", "checked": false},
-		{"id": "hoge17", "msg": "Study 17 mins.", "checked": true},
-		{"id": "hoge18", "msg": "Study 18 mins.", "checked": false},
-		{"id": "hoge19", "msg": "Study 19 mins.", "checked": false},
-		{"id": "hoge20", "msg": "Study 20 mins.", "checked": false},
-		{"id": "hoge21", "msg": "Study 21 mins.", "checked": false},
-		{"id": "hoge22", "msg": "Study 22 mins.", "checked": false}
+	"data": [
+		{"id": "xyz10", "tag": "my_tag10", "msg": "Study 10 mins.", "checked": true},
+		{"id": "xyz11", "tag": "my_tag10", "msg": "Study 11 mins.", "checked": true},
+		{"id": "xyz12", "tag": "my_tag10", "msg": "Study 12 mins.", "checked": false},
+		{"id": "xyz13", "tag": "my_tag10", "msg": "Study 13 mins.", "checked": false},
+		{"id": "xyz20", "tag": "my_tag20", "msg": "Study 20 mins.", "checked": true},
+		{"id": "xyz21", "tag": "my_tag20", "msg": "Study 21 mins.", "checked": true},
+		{"id": "xyz22", "tag": "my_tag20", "msg": "Study 22 mins.", "checked": false},
+		{"id": "xyz23", "tag": "my_tag20", "msg": "Study 23 mins.", "checked": false},
+		{"id": "xyz30", "tag": "my_tag30", "msg": "Study 30 mins.", "checked": true},
+		{"id": "xyz31", "tag": "my_tag30", "msg": "Study 31 mins.", "checked": true},
+		{"id": "xyz32", "tag": "my_tag30", "msg": "Study 32 mins.", "checked": false},
+		{"id": "xyz33", "tag": "my_tag30", "msg": "Study 33 mins.", "checked": false}
 	]
 }

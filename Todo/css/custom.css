@@ -71,3 +71,13 @@ footer a i{
 .toast-container{
 	pointer-events: none;
 }
+
+#tags{
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+#tags::-webkit-scrollbar{
+	display: none;
+}
+
