@@ -28,7 +28,8 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	records: [],
+	tags: new Set(),
+	records: new Array(),
 	inputTodo: null
 }
 
@@ -45,7 +46,9 @@ const app = Vue.createApp({
 
 		// Axios
 		loadAxios("./js/data.json", (json)=>{
+			// Records
 			for(let obj of json.data){
+				this.tags.add(obj.tag);
 				this.records.push(new Record(obj));
 			}
 			setTimeout(()=>{
