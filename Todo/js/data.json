@@ -1,24 +1,29 @@
 {
-	"data": [
-		{"id": "xyz10", "tag": "my_tag10", "msg": "Study 10 mins.", "checked": true},
-		{"id": "xyz11", "tag": "my_tag10", "msg": "Study 11 mins.", "checked": true},
-		{"id": "xyz12", "tag": "my_tag10", "msg": "Study 12 mins.", "checked": false},
-		{"id": "xyz13", "tag": "my_tag10", "msg": "Study 13 mins.", "checked": false},
-		{"id": "xyz20", "tag": "my_tag20", "msg": "Study 20 mins.", "checked": true},
-		{"id": "xyz21", "tag": "my_tag20", "msg": "Study 21 mins.", "checked": true},
-		{"id": "xyz22", "tag": "my_tag20", "msg": "Study 22 mins.", "checked": false},
-		{"id": "xyz23", "tag": "my_tag20", "msg": "Study 23 mins.", "checked": false},
-		{"id": "xyz30", "tag": "my_tag30", "msg": "Study 30 mins.", "checked": true},
-		{"id": "xyz31", "tag": "my_tag30", "msg": "Study 31 mins.", "checked": true},
-		{"id": "xyz32", "tag": "my_tag30", "msg": "Study 32 mins.", "checked": false},
-		{"id": "xyz33", "tag": "my_tag30", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz34", "tag": "my_tag100", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz35", "tag": "my_tag110", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz36", "tag": "my_tag120", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz37", "tag": "my_tag130", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz38", "tag": "my_tag140", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz39", "tag": "my_tag150", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz40", "tag": "my_tag160", "msg": "Study 33 mins.", "checked": false},
-		{"id": "xyz41", "tag": "my_tag170", "msg": "Study 33 mins.", "checked": false}
-	]
+	"data": {
+		"tags": [
+			"my_tag10", 
+			"my_tag20",
+			"my_tag30",
+			"my_tag40",
+			"my_tag50",
+			"my_tag60",
+			"my_tag70",
+			"my_tag80",
+			"my_tag90"
+		],
+		"records": [
+			{"id": "xyz10", "tag": "my_tag10", "msg": "Study 10 mins.", "checked": true},
+			{"id": "xyz11", "tag": "my_tag10", "msg": "Study 11 mins.", "checked": true},
+			{"id": "xyz12", "tag": "my_tag10", "msg": "Study 12 mins.", "checked": false},
+			{"id": "xyz13", "tag": "my_tag10", "msg": "Study 13 mins.", "checked": false},
+			{"id": "xyz20", "tag": "my_tag20", "msg": "Study 20 mins.", "checked": true},
+			{"id": "xyz21", "tag": "my_tag20", "msg": "Study 21 mins.", "checked": true},
+			{"id": "xyz22", "tag": "my_tag20", "msg": "Study 22 mins.", "checked": false},
+			{"id": "xyz23", "tag": "my_tag20", "msg": "Study 23 mins.", "checked": false},
+			{"id": "xyz30", "tag": "my_tag30", "msg": "Study 30 mins.", "checked": true},
+			{"id": "xyz31", "tag": "my_tag30", "msg": "Study 31 mins.", "checked": true},
+			{"id": "xyz32", "tag": "my_tag30", "msg": "Study 32 mins.", "checked": false},
+			{"id": "xyz33", "tag": "my_tag30", "msg": "Study 33 mins.", "checked": false}
+		]
+	}
 }

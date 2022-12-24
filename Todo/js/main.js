@@ -28,8 +28,10 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	tags: new Set(),
-	records: new Array(),
+	selectedTag: null,
+	tags: [],
+	records: [],
+	todos: [],
 	inputTodo: null
 }
 
@@ -46,14 +48,16 @@ const app = Vue.createApp({
 
 		// Axios
 		loadAxios("./js/data.json", (json)=>{
+			// Data
+			const data = json.data;
+			// Tags
+			for(let tag of data.tags) this.tags.push(tag);
 			// Records
-			for(let obj of json.data){
-				this.tags.add(obj.tag);
-				this.records.push(new Record(obj));
-			}
-			setTimeout(()=>{
-				this.changeMode(MODE_HOME);
-			}, 200);
+			for(let record of data.records) this.records.push(new Record(record));
+			// Todos
+			this.selectedTag = this.tags[0];// Selected
+			this.todos = this.records.filter(record=>record.tag==this.selectedTag);
+			setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");
 		});
@@ -72,6 +76,11 @@ const app = Vue.createApp({
 			for(let i=0; i<this.actives.length; i++){
 				this.actives[i] = this.mode == i;
 			}
+		},
+		changeTag(tag){
+			console.log("changeTag:", tag);
+			this.selectedTag = tag;// Selected
+			this.todos = this.records.filter(record=>record.tag==this.selectedTag);
 		},
 		createTodo(){
 			console.log("createTodo");

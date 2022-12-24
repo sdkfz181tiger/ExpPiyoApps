@@ -13,7 +13,7 @@ header .active{
 }
 
 main{
-	margin: 130px 0px 80px 0px !important;
+	margin: 120px 0px 80px 0px !important;
 }
 
 footer{
@@ -34,6 +34,10 @@ footer a i{
 	position: absolute;
 	left: calc(50% - 1.2rem); top: 15%;
 	font-size: 2.4rem;
+}
+
+.navbar-brand{
+	margin-right: 0px !important; 
 }
 
 .toast-container{
@@ -79,5 +83,9 @@ footer a i{
 
 #tags::-webkit-scrollbar{
 	display: none;
+}
+
+#tags .btn{
+	border-radius: 5px 5px 0px 0px !important;
 }
 

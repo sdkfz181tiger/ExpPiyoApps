@@ -36,6 +36,10 @@ footer a i{
 	font-size: 2.4rem;
 }
 
+.navbar-brand{
+	margin-right: 0px !important; 
+}
+
 .toast-container{
 	position: fixed !important; 
 	pointer-events: none;
