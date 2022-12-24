@@ -64,7 +64,7 @@
 			<div class="d-flex flex-nowrap overflow-auto 
 				bg-primary text-white" id="tags">
 				<button type="button" 
-					v-bind:class="['btn', activeTag==tag?'btn-light':'btn-primary']"
+					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
 					v-for="tag of tags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
 			</div>
 			<!-- Tags(End) -->
@@ -87,11 +87,13 @@
 			<div class="container" v-if="mode==1">
 				<div id="todos" v-for="todo of todos">
 					<div class="d-flex mb-2 p-1">
-						<div class="form-check d-flex align-items-center">
-							<input class="form-check-input" type="checkbox" value=""
+						<div class="d-flex align-items-center">
+							<input class="form-check-input m-1 p-2" type="checkbox" value=""
 								v-bind:id="todo.id" v-bind:checked="todo.checked"
 								v-on:click="toggleTodo(todo.id)">
-							<label class="form-check-label p-2" v-bind:for="todo.id">
+						</div>
+						<div class="flex-grow-1">
+							<label class="form-check-label text-nowrap w-100 p-2" v-bind:for="todo.id">
 								{{ todo.msg }}
 							</label>
 						</div>
@@ -171,7 +173,11 @@
 				<div class="offcanvas-body">
 					<div id="todos" v-for="tag of tags">
 						<div class="d-flex mb-2 p-1">
-							<label class="form-check-label p-2">{{ tag.name }}</label>
+							<div class="flex-grow-1">
+								<label class="form-check-label text-nowrap w-100 p-2">
+									{{ tag.name }}
+								</label>
+							</div>
 							<div class="ms-auto d-flex align-items-center">
 								<button type="button" class="btn" v-on:click="showModalEditTag(tag)">
 									<i class="bi-file-earmark-text p-2" role="img"></i>
