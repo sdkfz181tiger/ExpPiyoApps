@@ -89,15 +89,13 @@
 					<div class="d-flex mb-3">
 						<div class="form-check d-flex align-items-center">
 							<input class="form-check-input" type="checkbox" value=""
-								v-bind:id="todo.id" v-bind:checked="todo.checked">
+								v-bind:id="todo.id" v-bind:checked="todo.checked"
+								v-on:click="toggleTodo(todo.id)">
 							<label class="form-check-label p-2" v-bind:for="todo.id">
 								{{ todo.tag }}_{{ todo.msg }}
 							</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn" v-on:click="deleteTodo(todo.id)">
-								<i class="bi-file-text" role="img"></i>
-							</button>
 							<button type="button" class="btn" v-on:click="deleteTodo(todo.id)">
 								<i class="bi-trash" role="img"></i>
 							</button>
@@ -188,7 +186,7 @@
 						<div class="modal-body">
 							<div class="mb-3">
 								<input type="text" class="form-control" id="formInputTodo" 
-									placeholder="Todo" v-model="inputTodo">
+									placeholder="Todo" v-model="msgTodo">
 							</div>
 							<div class="overflow-hidden" id="im-9c3796c11b864fc49b94b07227fe758c"></div>
 						</div>

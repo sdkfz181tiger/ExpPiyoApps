@@ -9,7 +9,7 @@ class Record{
 		this._checked = obj.checked;
 	}
 	get id(){return this._id;}
-	set id(id){this._id = id;}
+	set id(i){this._id = i;}
 	get tag(){return this._tag;}
 	set tag(t){this._tag = t;}
 	get msg(){return this._msg;}
@@ -32,7 +32,7 @@ const myData = {
 	tags: [],
 	records: [],
 	todos: [],
-	inputTodo: null
+	msgTodo: "テストです!!"
 }
 
 // Vue.js
@@ -84,15 +84,37 @@ const app = Vue.createApp({
 		},
 		createTodo(){
 			console.log("createTodo");
-			console.log("inputTodo:", this.inputTodo);
 			// Error
-			if(this.inputTodo == null || this.inputTodo.length <= 0){
+			if(this.msgTodo == null || this.msgTodo.length <= 0){
 				showToast("Error", "1 min ago", "テキストを入力してください");
 				return;
 			}
+			// Record
+			const record = new Record({
+				tag: this.selectedTag,
+				msg: this.msgTodo,
+				checked: false
+			});
+			this.records.push(record);
+			this.changeTag(this.selectedTag);// Reflesh
+		},
+		toggleTodo(id){
+			console.log("toggleTodo:", id);
+			for(let i=this.records.length-1; 0<=i; i--){
+				const record = this.records[i];
+				if(record.id != id) continue;
+				record.checked = !record.checked;
+			}
+			this.changeTag(this.selectedTag);// Reflesh
 		},
 		deleteTodo(id){
 			console.log("deleteTodo:", id);
+			for(let i=this.records.length-1; 0<=i; i--){
+				const record = this.records[i];
+				if(record.id != id) continue;
+				this.records.splice(i, 1);
+			}
+			this.changeTag(this.selectedTag);// Reflesh
 		},
 		showModal(){
 			console.log("showModal");
