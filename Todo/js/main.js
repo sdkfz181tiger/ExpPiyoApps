@@ -3,19 +3,11 @@ console.log("main.js!!");
 // Todo
 class Todo{
 	constructor(obj){
-		this._id = obj.id;
-		this._tag = obj.tag;
-		this._msg = obj.msg;
-		this._checked = obj.checked;
+		this.id = obj.id;
+		this.tag = obj.tag;
+		this.msg = obj.msg;
+		this.checked = obj.checked;
 	}
-	get id(){return this._id;}
-	set id(i){this._id = i;}
-	get tag(){return this._tag;}
-	set tag(t){this._tag = t;}
-	get msg(){return this._msg;}
-	set msg(m){this._msg = m;}
-	get checked(){return this._checked;}
-	set checked(c){this._checked = c;}
 }
 
 const MODE_LOADING  = 0;
