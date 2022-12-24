@@ -96,8 +96,8 @@
 							</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn" v-on:click="deleteTodo(todo.id)">
-								<i class="bi-trash" role="img"></i>
+							<button type="button" class="btn" v-on:click="showEditModal(todo)">
+								<i class="bi-file-earmark-text" role="img"></i>
 							</button>
 						</div>
 					</div>
@@ -150,7 +150,7 @@
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
 			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				v-if="mode!=0" v-on:click="showModal()">
+				v-if="mode!=0" v-on:click="showCreateModal()">
 				<i class="bi-plus-lg" role="img"></i>
 			</a>
 			<div id="im-44312d36535c4279801e55f8fd54c60f"></div>

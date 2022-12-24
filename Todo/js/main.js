@@ -32,7 +32,7 @@ const myData = {
 	tags: [],
 	records: [],
 	todos: [],
-	msgTodo: "テストです!!"
+	msgTodo: ""
 }
 
 // Vue.js
@@ -91,6 +91,7 @@ const app = Vue.createApp({
 			}
 			// Record
 			const record = new Record({
+				id: Date.now(),
 				tag: this.selectedTag,
 				msg: this.msgTodo,
 				checked: false
@@ -107,6 +108,9 @@ const app = Vue.createApp({
 			}
 			this.changeTag(this.selectedTag);// Reflesh
 		},
+		editTodo(id){
+			console.log("editTodo:", id);
+		},
 		deleteTodo(id){
 			console.log("deleteTodo:", id);
 			for(let i=this.records.length-1; 0<=i; i--){
@@ -116,10 +120,18 @@ const app = Vue.createApp({
 			}
 			this.changeTag(this.selectedTag);// Reflesh
 		},
-		showModal(){
-			console.log("showModal");
+		showCreateModal(){
+			console.log("showCreateModal");
+			this.msgTodo = "";
 			const elem = document.getElementById("myModal");
-			elem.querySelector("#modalLabel").innerText = "TODO";
+			elem.querySelector("#modalLabel").innerText = "Create";
+			bootstrap.Modal.getInstance(elem).show();
+		},
+		showEditModal(todo){
+			console.log("showEditModal:", todo.id);
+			this.msgTodo = todo.msg;
+			const elem = document.getElementById("myModal");
+			elem.querySelector("#modalLabel").innerText = "Edit";
 			bootstrap.Modal.getInstance(elem).show();
 		}
 	}
