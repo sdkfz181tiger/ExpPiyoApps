@@ -86,7 +86,7 @@
 			<!-- Home(Start) -->
 			<div class="container" v-if="mode==1">
 				<div id="todos" v-for="todo of todos">
-					<div class="d-flex mb-3">
+					<div class="d-flex mb-2 p-1">
 						<div class="form-check d-flex align-items-center">
 							<input class="form-check-input" type="checkbox" value=""
 								v-bind:id="todo.id" v-bind:checked="todo.checked"
@@ -97,7 +97,7 @@
 						</div>
 						<div class="ms-auto d-flex align-items-center">
 							<button type="button" class="btn" v-on:click="showEditModal(todo)">
-								<i class="bi-file-earmark-text" role="img"></i>
+								<i class="bi-file-earmark-text p-2" role="img"></i>
 							</button>
 						</div>
 					</div>
@@ -166,7 +166,16 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					<div>Hello!!</div>
+					<div id="todos" v-for="tag of tags">
+						<div class="d-flex mb-2 p-1">
+							<label class="form-check-label p-2">{{ tag }}</label>
+							<div class="ms-auto d-flex align-items-center">
+								<button type="button" class="btn" v-on:click="showEditModal(todo)">
+									<i class="bi-trash p-2" role="img"></i>
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
