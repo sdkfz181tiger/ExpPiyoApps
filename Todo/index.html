@@ -92,7 +92,7 @@
 								v-bind:id="todo.id" v-bind:checked="todo.checked"
 								v-on:click="toggleTodo(todo.id)">
 							<label class="form-check-label p-2" v-bind:for="todo.id">
-								{{ todo.tag }}_{{ todo.msg }}
+								{{ todo.msg }}
 							</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
@@ -161,7 +161,7 @@
 		<div class="container mt-5">
 			<div class="offcanvas offcanvas-start" id="myOffcanvas">
 				<div class="offcanvas-header">
-					<h5>Offcanvas</h5>
+					<h5>Tags</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
@@ -180,21 +180,31 @@
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title" id="modalLabel">***</h5>
-							<button type="button" class="btn-close" 
+							<button type="button" class="btn-close"
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
 							<div class="mb-3">
 								<input type="text" class="form-control" id="formInputTodo" 
-									placeholder="Todo" v-model="msgTodo">
+									placeholder="Todo" v-model="todoMsg">
 							</div>
 							<div class="overflow-hidden" id="im-9c3796c11b864fc49b94b07227fe758c"></div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" 
-								data-bs-dismiss="modal">Cancel</button>
-							<button type="button" class="btn btn-primary" 
-								data-bs-dismiss="modal" v-on:click="createTodo()">Submit</button>
+							<div class="container-fluid" v-if="todoId==null">
+								<button type="button" class="btn btn-primary float-end"
+									data-bs-dismiss="modal" v-on:click="createTodo()">Create</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+							<div class="container-fluid" v-else>
+								<button type="button" class="btn btn-danger float-start"
+									data-bs-dismiss="modal" v-on:click="deleteTodo(todoId)">Delete</button>
+								<button type="button" class="btn btn-info float-end"
+									data-bs-dismiss="modal" v-on:click="updateTodo(todoId)">Update</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
 						</div>
 					</div>
 				</div>

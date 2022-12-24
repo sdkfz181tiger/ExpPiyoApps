@@ -32,7 +32,8 @@ const myData = {
 	tags: [],
 	records: [],
 	todos: [],
-	msgTodo: ""
+	todoId: null,
+	todoMsg: null,
 }
 
 // Vue.js
@@ -85,7 +86,7 @@ const app = Vue.createApp({
 		createTodo(){
 			console.log("createTodo");
 			// Error
-			if(this.msgTodo == null || this.msgTodo.length <= 0){
+			if(this.todoMsg == null || this.todoMsg.length <= 0){
 				showToast("Error", "1 min ago", "テキストを入力してください");
 				return;
 			}
@@ -93,10 +94,10 @@ const app = Vue.createApp({
 			const record = new Record({
 				id: Date.now(),
 				tag: this.selectedTag,
-				msg: this.msgTodo,
+				msg: this.todoMsg,
 				checked: false
 			});
-			this.records.push(record);
+			this.records.push(record);// Create
 			this.changeTag(this.selectedTag);// Reflesh
 		},
 		toggleTodo(id){
@@ -104,32 +105,40 @@ const app = Vue.createApp({
 			for(let i=this.records.length-1; 0<=i; i--){
 				const record = this.records[i];
 				if(record.id != id) continue;
-				record.checked = !record.checked;
+				record.checked = !record.checked;// Toggle
 			}
 			this.changeTag(this.selectedTag);// Reflesh
 		},
-		editTodo(id){
-			console.log("editTodo:", id);
+		updateTodo(id){
+			console.log("updateTodo:", id);
+			for(let i=this.records.length-1; 0<=i; i--){
+				const record = this.records[i];
+				if(record.id != id) continue;
+				record.msg = this.todoMsg;// Update
+			}
+			this.changeTag(this.selectedTag);// Reflesh
 		},
 		deleteTodo(id){
 			console.log("deleteTodo:", id);
 			for(let i=this.records.length-1; 0<=i; i--){
 				const record = this.records[i];
 				if(record.id != id) continue;
-				this.records.splice(i, 1);
+				this.records.splice(i, 1);// Delete
 			}
 			this.changeTag(this.selectedTag);// Reflesh
 		},
 		showCreateModal(){
 			console.log("showCreateModal");
-			this.msgTodo = "";
+			this.todoId = null;
+			this.todoMsg = null;
 			const elem = document.getElementById("myModal");
 			elem.querySelector("#modalLabel").innerText = "Create";
 			bootstrap.Modal.getInstance(elem).show();
 		},
 		showEditModal(todo){
 			console.log("showEditModal:", todo.id);
-			this.msgTodo = todo.msg;
+			this.todoId = todo.id;
+			this.todoMsg = todo.msg;
 			const elem = document.getElementById("myModal");
 			elem.querySelector("#modalLabel").innerText = "Edit";
 			bootstrap.Modal.getInstance(elem).show();
