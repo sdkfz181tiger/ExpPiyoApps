@@ -1,23 +1,24 @@
 {
 	"data": {
 		"tags": [
-			"Shopping", 
-			"Studying",
-			"Cycling"
+			{"id": "t_01", "name":"Studying"},
+			{"id": "t_02", "name":"Shopping"},
+			{"id": "t_03", "name":"Cycling"},
+			{"id": "t_04", "name":"Running"}
 		],
-		"records": [
-			{"id": "abc01", "tag": "Shopping", "msg": "Do something 10", "checked": true},
-			{"id": "abc02", "tag": "Shopping", "msg": "Do something 11", "checked": true},
-			{"id": "abc03", "tag": "Shopping", "msg": "Do something 12", "checked": false},
-			{"id": "abc04", "tag": "Studying", "msg": "Do something 13", "checked": false},
-			{"id": "abc05", "tag": "Studying", "msg": "Do something 14", "checked": true},
-			{"id": "abc06", "tag": "Studying", "msg": "Do something 15", "checked": true},
-			{"id": "abc07", "tag": "Studying", "msg": "Do something 16", "checked": false},
-			{"id": "abc08", "tag": "Studying", "msg": "Do something 17", "checked": false},
-			{"id": "abc09", "tag": "Studying", "msg": "Do something 18", "checked": true},
-			{"id": "abc10", "tag": "Studying", "msg": "Do something 19", "checked": true},
-			{"id": "abc11", "tag": "Cycling", "msg": "Do something 20", "checked": false},
-			{"id": "abc12", "tag": "Cycling", "msg": "Do something 21", "checked": false}
+		"todos": [
+			{"id": "r_01", "tag": "t_01", "msg": "Do something 10", "checked": true},
+			{"id": "r_02", "tag": "t_01", "msg": "Do something 11", "checked": true},
+			{"id": "r_03", "tag": "t_01", "msg": "Do something 12", "checked": false},
+			{"id": "r_04", "tag": "t_01", "msg": "Do something 13", "checked": false},
+			{"id": "r_05", "tag": "t_01", "msg": "Do something 14", "checked": true},
+			{"id": "r_06", "tag": "t_02", "msg": "Do something 15", "checked": true},
+			{"id": "r_07", "tag": "t_02", "msg": "Do something 16", "checked": false},
+			{"id": "r_08", "tag": "t_02", "msg": "Do something 17", "checked": false},
+			{"id": "r_09", "tag": "t_03", "msg": "Do something 18", "checked": true},
+			{"id": "r_10", "tag": "t_03", "msg": "Do something 19", "checked": true},
+			{"id": "r_11", "tag": "t_04", "msg": "Do something 20", "checked": false},
+			{"id": "r_12", "tag": "t_04", "msg": "Do something 21", "checked": false}
 		]
 	}
 }

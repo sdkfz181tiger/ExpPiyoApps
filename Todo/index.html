@@ -64,8 +64,8 @@
 			<div class="d-flex flex-nowrap overflow-auto 
 				bg-primary text-white" id="tags">
 				<button type="button" 
-					v-bind:class="['btn', selectedTag==tag?'btn-light':'btn-primary']"
-					v-for="tag of tags" v-on:click="changeTag(tag)">{{ tag }}</button>
+					v-bind:class="['btn', activeTag==tag?'btn-light':'btn-primary']"
+					v-for="tag of tags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
 			</div>
 			<!-- Tags(End) -->
 
@@ -96,7 +96,7 @@
 							</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn" v-on:click="showEditModal(todo)">
+							<button type="button" class="btn" v-on:click="showModalEditTodo(todo)">
 								<i class="bi-file-earmark-text p-2" role="img"></i>
 							</button>
 						</div>
@@ -150,7 +150,7 @@
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
 			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				v-if="mode!=0" v-on:click="showCreateModal()">
+				v-if="mode!=0" v-on:click="showModalCreateTodo()">
 				<i class="bi-plus-lg" role="img"></i>
 			</a>
 			<div id="im-44312d36535c4279801e55f8fd54c60f"></div>
@@ -161,17 +161,19 @@
 		<div class="container mt-5">
 			<div class="offcanvas offcanvas-start" id="myOffcanvas">
 				<div class="offcanvas-header">
-					<h5>Tags</h5>
+					<a class="btn btn-primary" href="#" v-on:click="showModalCreateTag()">
+						<i class="bi-folder-fill" role="img"></i>
+					</a>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
 					<div id="todos" v-for="tag of tags">
 						<div class="d-flex mb-2 p-1">
-							<label class="form-check-label p-2">{{ tag }}</label>
+							<label class="form-check-label p-2">{{ tag.name }}</label>
 							<div class="ms-auto d-flex align-items-center">
-								<button type="button" class="btn" v-on:click="showEditModal(todo)">
-									<i class="bi-trash p-2" role="img"></i>
+								<button type="button" class="btn" v-on:click="showModalEditTag(tag)">
+									<i class="bi-file-earmark-text p-2" role="img"></i>
 								</button>
 							</div>
 						</div>
@@ -181,9 +183,48 @@
 		</div>
 		<!-- Offcanvas(End) -->
 
-		<!-- Modal(Start) -->
+		<!-- ModalTag(Start) -->
 		<div class="container mt-5 text-center">
-			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
+			<div class="modal fade" id="myModalTag" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">***</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<input type="text" class="form-control" id="formInputTag" 
+									placeholder="Tag" v-model="tagName">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid" v-if="tagId==null">
+								<button type="button" class="btn btn-primary float-end"
+									data-bs-dismiss="modal" v-on:click="createTag()">Create</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+							<div class="container-fluid" v-else>
+								<button type="button" class="btn btn-danger float-start"
+									data-bs-dismiss="modal" v-on:click="deleteTag(tagId)">Delete</button>
+								<button type="button" class="btn btn-info float-end"
+									data-bs-dismiss="modal" v-on:click="updateTag(tagId)">Update</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ModalTag(End) -->
+
+		<!-- ModalTodo(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModalTodo" role="dialog" data-bs-backdrop="static"
 				aria-labelledby="modalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
@@ -197,7 +238,6 @@
 								<input type="text" class="form-control" id="formInputTodo" 
 									placeholder="Todo" v-model="todoMsg">
 							</div>
-							<div class="overflow-hidden" id="im-9c3796c11b864fc49b94b07227fe758c"></div>
 						</div>
 						<div class="modal-footer">
 							<div class="container-fluid" v-if="todoId==null">
@@ -219,7 +259,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- Modal(End) -->
+		<!-- ModalTodo(End) -->
 
 		<!-- Toast(Start) -->
 		<div class="toast-container position-absolute top-50 start-50 translate-middle mt-2">
@@ -242,10 +282,6 @@
 		(window.adsbyimobile=window.adsbyimobile||[]).push({
 			pid:26719, mid:550231, asid:1792594, type:"banner", display:"inline",
 			elementid:"im-44312d36535c4279801e55f8fd54c60f"});
-		// Rectangle_336x280
-		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:26719, mid:550231, asid:1807741, type:"banner", display:"inline",
-			elementid:"im-9c3796c11b864fc49b94b07227fe758c"});
 	</script>
 	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
 
