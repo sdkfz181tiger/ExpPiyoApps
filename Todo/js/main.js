@@ -90,6 +90,11 @@ const app = Vue.createApp({
 		},
 		updateTag(id){
 			console.log("updateTag:", id);
+			// Error
+			if(this.tagName == null || this.tagName.length <= 0){
+				showToast("Error", "1 min ago", "タグ名を入力してください");
+				return;
+			}
 			for(let i=this.data.tags.length-1; 0<=i; i--){
 				const tag = this.data.tags[i];
 				if(tag.id != id) continue;
@@ -137,6 +142,7 @@ const app = Vue.createApp({
 			this.todos = [];// Todos
 			for(let obj of this.data.todos) this.todos.push(new Todo(obj));
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);
+			this.myOffcanvas.hide();// Offcanvas
 		},
 		createTodo(){
 			console.log("createTodo");
@@ -157,6 +163,11 @@ const app = Vue.createApp({
 		},
 		updateTodo(id){
 			console.log("updateTodo:", id);
+			// Error
+			if(this.todoMsg == null || this.todoMsg.length <= 0){
+				showToast("Error", "1 min ago", "テキストを入力してください");
+				return;
+			}
 			for(let i=this.data.todos.length-1; 0<=i; i--){
 				const todo = this.data.todos[i];
 				if(todo.id != id) continue;

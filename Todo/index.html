@@ -161,9 +161,10 @@
 		<div class="container mt-5">
 			<div class="offcanvas offcanvas-start" id="myOffcanvas">
 				<div class="offcanvas-header">
-					<a class="btn btn-primary" href="#" v-on:click="showModalCreateTag()">
+					<a class="btn btn-secondary btn-sm" href="#" v-on:click="showModalCreateTag()">
 						<i class="bi-folder-fill" role="img"></i>
 					</a>
+					<h5>Tag</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
@@ -195,7 +196,7 @@
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
-							<div class="mb-3">
+							<div class="container-fluid">
 								<input type="text" class="form-control" id="formInputTag" 
 									placeholder="Tag" v-model="tagName">
 							</div>
@@ -209,7 +210,9 @@
 							</div>
 							<div class="container-fluid" v-else>
 								<button type="button" class="btn btn-danger float-start"
-									data-bs-dismiss="modal" v-on:click="deleteTag(tagId)">Delete</button>
+									data-bs-dismiss="modal" v-on:click="deleteTag(tagId)">
+									<i class="bi-trash" role="img"></i>
+								</button>
 								<button type="button" class="btn btn-info float-end"
 									data-bs-dismiss="modal" v-on:click="updateTag(tagId)">Update</button>
 								<button type="button" class="btn btn-secondary me-2 float-end" 
@@ -234,7 +237,7 @@
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
-							<div class="mb-3">
+							<div class="container-fluid">
 								<input type="text" class="form-control" id="formInputTodo" 
 									placeholder="Todo" v-model="todoMsg">
 							</div>
@@ -248,7 +251,9 @@
 							</div>
 							<div class="container-fluid" v-else>
 								<button type="button" class="btn btn-danger float-start"
-									data-bs-dismiss="modal" v-on:click="deleteTodo(todoId)">Delete</button>
+									data-bs-dismiss="modal" v-on:click="deleteTodo(todoId)">
+									<i class="bi-trash" role="img"></i>
+								</button>
 								<button type="button" class="btn btn-info float-end"
 									data-bs-dismiss="modal" v-on:click="updateTodo(todoId)">Update</button>
 								<button type="button" class="btn btn-secondary me-2 float-end" 
