@@ -6,15 +6,12 @@
 	"data": {
 		"tags": [
 			{"id": "t_01", "name":"Studying"},
-			{"id": "t_02", "name":"Shopping"},
-			{"id": "t_03", "name":"あいうえおかきくけこさしすせそあいうえおかきくけこさしすせそ"},
-			{"id": "t_04", "name":"ShoppingB"},
-			{"id": "t_05", "name":"ShoppingC"},
-			{"id": "t_06", "name":"ShoppingD"},
-			{"id": "t_07", "name":"ShoppingE"}
+			{"id": "t_02", "name":"Cycling"},
+			{"id": "t_03", "name":"Cooking"},
+			{"id": "t_04", "name":"Picnic"}
 		],
 		"todos": [
-			{"id": "r_01", "tag": "t_01", "msg": "あいうえおかきくけこさしすせそあいうえおかきくけこさしすせそ", "checked": true},
+			{"id": "r_01", "tag": "t_01", "msg": "Do something 10", "checked": true},
 			{"id": "r_02", "tag": "t_01", "msg": "Do something 11", "checked": true},
 			{"id": "r_03", "tag": "t_01", "msg": "Do something 12", "checked": false},
 			{"id": "r_04", "tag": "t_01", "msg": "Do something 13", "checked": false},
