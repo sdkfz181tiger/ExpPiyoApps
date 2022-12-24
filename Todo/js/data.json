@@ -1,4 +1,8 @@
 {
+	"_data": {
+		"tags": [],
+		"todos": []
+	},
 	"data": {
 		"tags": [
 			{"id": "t_01", "name":"Studying"},

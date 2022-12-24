@@ -109,10 +109,19 @@ const app = Vue.createApp({
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		changeTag(tag){
+			// Clean
+			const ids = [];
+			for(let tag of this.data.tags) ids.push(tag.id);
+			for(let i=this.data.todos.length-1; 0<=i; i--){
+				const todo = this.data.todos[i];
+				if(ids.includes(todo.tag)) continue;
+				this.data.todos.splice(i, 1);
+			}
+			if(tag==null || tag == undefined) return;
 			console.log("changeTag:", tag.id, tag.name);
 			this.tags = [];// Tags
 			for(let obj of this.data.tags) this.tags.push(obj);
-			this.todos = [];// Tags
+			this.todos = [];// Todos
 			for(let obj of this.data.todos) this.todos.push(new Todo(obj));
 			this.activeTag = tag;// Selected
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);
