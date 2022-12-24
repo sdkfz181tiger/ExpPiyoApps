@@ -15,10 +15,10 @@
 			{"id": "r_02", "tag": "t_01", "msg": "Do something 11", "checked": true},
 			{"id": "r_03", "tag": "t_01", "msg": "Do something 12", "checked": false},
 			{"id": "r_04", "tag": "t_01", "msg": "Do something 13", "checked": false},
-			{"id": "r_05", "tag": "t_01", "msg": "Do something 14", "checked": true},
-			{"id": "r_06", "tag": "t_02", "msg": "Do something 15", "checked": true},
-			{"id": "r_07", "tag": "t_02", "msg": "Do something 16", "checked": false},
-			{"id": "r_08", "tag": "t_02", "msg": "Do something 17", "checked": false}
+			{"id": "r_05", "tag": "t_02", "msg": "Do something 14", "checked": true},
+			{"id": "r_06", "tag": "t_03", "msg": "Do something 15", "checked": true},
+			{"id": "r_07", "tag": "t_03", "msg": "Do something 16", "checked": false},
+			{"id": "r_08", "tag": "t_04", "msg": "Do something 17", "checked": false}
 		]
 	}
 }
