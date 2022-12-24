@@ -144,11 +144,15 @@ const app = Vue.createApp({
 			if(!this.data.tags.includes(this.activeTag)){
 				this.activeTag = this.data.tags[0];
 			}
-			this.tags = [];// Tags
+			// Tags
+			this.tags = [];
 			for(let obj of this.data.tags) this.tags.push(obj);
-			this.todos = [];// Todos
+			this.tags.reverse();
+			// Todos
+			this.todos = [];
 			for(let obj of this.data.todos) this.todos.push(new Todo(obj));
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);
+			this.todos.reverse();
 			this.myOffcanvas.hide();// Offcanvas
 			this.saveStorage();// Save
 		},
