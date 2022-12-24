@@ -93,12 +93,13 @@
 								v-on:click="toggleTodo(todo.id)">
 						</div>
 						<div class="flex-grow-1 text-truncate">
-							<label class="form-check-label w-100 pt-2 pb-2" v-bind:for="todo.id">
+							<label class="form-check-label w-100 py-3" v-bind:for="todo.id">
 								{{ todo.msg }}
 							</label>
 						</div>
 						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn" v-on:click="showModalEditTodo(todo)">
+							<button type="button" class="btn p-2" 
+								v-on:click="showModalEditTodo(todo)">
 								<i class="bi-file-earmark-text" role="img"></i>
 							</button>
 						</div>
@@ -174,12 +175,13 @@
 					<div id="todos" v-for="tag of tags">
 						<div class="d-flex mb-2">
 							<div class="flex-grow-1 text-truncate">
-								<label class="form-check-label w-100 pt-2 pb-2">
+								<label class="form-check-label w-100 p-2">
 									{{ tag.name }}
 								</label>
 							</div>
 							<div class="ms-auto d-flex align-items-center">
-								<button type="button" class="btn" v-on:click="showModalEditTag(tag)">
+								<button type="button" class="btn px-2" 
+									v-on:click="showModalEditTag(tag)">
 									<i class="bi-file-earmark-text" role="img"></i>
 								</button>
 							</div>
