@@ -40,6 +40,11 @@ footer a i{
 	margin-right: 0px !important; 
 }
 
+.navbar-toggler:focus{
+	outline: none !important;
+	box-shadow: none !important;
+}
+
 .toast-container{
 	position: fixed !important; 
 	pointer-events: none;

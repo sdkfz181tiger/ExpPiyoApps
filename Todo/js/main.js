@@ -45,24 +45,16 @@ const app = Vue.createApp({
 	},
 	mounted(){
 		console.log("mounted!!");
-
-		// Axios
-		loadAxios("./js/data.json", (json)=>{
-			this.data = json.data;// Data
-			this.changeTag(this.data.tags[0]);
-			setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
-		}, (err)=>{
-			showToast("Error", "0 min ago", "通信エラーです");
-		});
-
 		// Offcanvas
-		const elemOff = document.getElementById("myOffcanvas");// Offcanvas
+		const elemOff = document.getElementById("myOffcanvas");
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
 		const elemModalTag = document.getElementById("myModalTag");
 		const modalTag = new bootstrap.Modal(elemModalTag);
 		const elemModalTodo = document.getElementById("myModalTodo");
 		const modalTodo = new bootstrap.Modal(elemModalTodo);
+		// LocalStorage
+		this.loadStorage();
 	},
 	methods:{
 		changeMode(mode){
@@ -71,6 +63,30 @@ const app = Vue.createApp({
 			for(let i=0; i<this.actives.length; i++){
 				this.actives[i] = this.mode == i;
 			}
+		},
+		loadStorage(){
+			console.log("loadStorage");
+			// LocalStorage
+			const json = localStorage.getItem("data");
+			if(json != null){
+				this.data = JSON.parse(json);
+				this.changeTag(this.data.tags[0]);
+				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
+				return;
+			}
+			// Axios
+			loadAxios("./js/data.json", (json)=>{
+				this.data = json.data;// Data
+				this.changeTag(this.data.tags[0]);
+				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
+			}, (err)=>{
+				showToast("Error", "0 min ago", "通信エラーです");
+			});
+		},
+		saveStorage(){
+			console.log("saveStorage");
+			const json = JSON.stringify(this.data);
+			localStorage.setItem("data", json);
 		},
 		createTag(){
 			console.log("createTag");
@@ -115,7 +131,6 @@ const app = Vue.createApp({
 		},
 		changeTag(tag){
 			console.log("changeTag:", tag.id, tag.name);
-
 			// Clean
 			const ids = [];
 			for(let tag of this.data.tags) ids.push(tag.id);
@@ -143,6 +158,7 @@ const app = Vue.createApp({
 			for(let obj of this.data.todos) this.todos.push(new Todo(obj));
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);
 			this.myOffcanvas.hide();// Offcanvas
+			this.saveStorage();// Save
 		},
 		createTodo(){
 			console.log("createTodo");
