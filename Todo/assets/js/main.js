@@ -67,7 +67,7 @@ const app = Vue.createApp({
 				return;
 			}
 			// Axios
-			loadAxios("./js/data.json", (json)=>{
+			loadAxios("./assets/js/data.json", (json)=>{
 				this.data = json.data;// Data
 				this.changeTag(this.data.tags[0]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
