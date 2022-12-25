@@ -47,13 +47,14 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		createTag(){
-			console.log("createTag");
+		create(){
+			console.log("create");
 			// Error
-			if(this.tagName == null || this.tagName.length <= 0){
-				showToast("Error", "1 min ago", "タグ名を入力してください");
+			if(this.modalText == null || this.modalText.length <= 0){
+				showToast("Error", "1 min ago", "テキストを入力してください");
 				return;
 			}
+			showToast("Create", "1 min ago", this.modalText);
 		},
 		showModal(){
 			console.log("showModal");
