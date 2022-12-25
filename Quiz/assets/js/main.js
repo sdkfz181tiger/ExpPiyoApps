@@ -5,6 +5,7 @@ const MODE_HOME     = 1;
 const MODE_GOOGLE   = 2;
 const MODE_APPLE    = 3;
 const MODE_SETTINGS = 4;
+const KEY_STORAGE   = "quiz";
 
 const myData = {
 	mode: MODE_LOADING,

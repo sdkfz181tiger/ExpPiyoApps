@@ -15,6 +15,7 @@ const MODE_HOME     = 1;
 const MODE_GOOGLE   = 2;
 const MODE_APPLE    = 3;
 const MODE_SETTINGS = 4;
+const KEY_STORAGE   = "todo";
 
 const myData = {
 	mode: MODE_LOADING,
@@ -59,7 +60,7 @@ const app = Vue.createApp({
 		loadStorage(){
 			console.log("loadStorage");
 			// LocalStorage
-			const json = localStorage.getItem("data");
+			const json = localStorage.getItem(KEY_STORAGE);
 			if(json != null){
 				this.data = JSON.parse(json);
 				this.changeTag(this.data.tags[0]);
@@ -78,7 +79,7 @@ const app = Vue.createApp({
 		saveStorage(){
 			console.log("saveStorage");
 			const json = JSON.stringify(this.data);
-			localStorage.setItem("data", json);
+			localStorage.setItem(KEY_STORAGE, json);
 		},
 		createTag(){
 			console.log("createTag");

@@ -5,6 +5,7 @@ const MODE_ERROR    = 1;
 const MODE_ZONE     = 2;
 const MODE_FORECAST = 3;
 const MODE_SETTINGS = 4;
+const KEY_STORAGE   = "weather";
 
 const myData = {
 	mode: MODE_LOADING,
@@ -61,16 +62,16 @@ const app = Vue.createApp({
 			}
 		},
 		loadPref(){
-			if(!localStorage.getItem("pref")) return;
-			this.forecastPref = localStorage.getItem("pref");
+			if(!localStorage.getItem(KEY_STORAGE)) return;
+			this.forecastPref = localStorage.getItem(KEY_STORAGE);
 		},
 		savePref(pref){
 			this.forecastPref = pref;
-			localStorage.setItem("pref", pref);
+			localStorage.setItem(KEY_STORAGE, pref);
 		},
 		clearPref(){
 			this.forecastPref = null;
-			localStorage.removeItem("pref");
+			localStorage.removeItem(KEY_STORAGE);
 		},
 		startPref(pref){
 			console.log("startPref:", pref);
