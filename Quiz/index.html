@@ -40,7 +40,7 @@
 					</div>
 				</div>
 			</nav>
-			<!-- <nav class="nav nav-pills nav-justified bg-light">
+			<nav class="nav nav-pills nav-justified bg-light">
 				<a class="nav-link" href="#"
 					v-on:click="changeMode(1)" v-bind:class="{active:actives[1]}">
 					<i class="bi-house-fill" role="img"></i>
@@ -57,17 +57,8 @@
 					v-on:click="changeMode(4)" v-bind:class="{active:actives[4]}">
 					<i class="bi-gear-fill" role="img"></i>
 				</a>
-			</nav> -->
+			</nav>
 			<!-- Navigation(End) -->
-
-			<!-- Tags(Start) -->
-			<div class="d-flex flex-nowrap overflow-auto 
-				bg-primary text-white" id="tags">
-				<button type="button" 
-					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
-					v-for="tag of tags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
-			</div>
-			<!-- Tags(End) -->
 
 		</header>
 		<!-- Header(End) -->
@@ -84,25 +75,13 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container" v-if="mode==1">
-				<div id="todos" v-for="todo of todos">
-					<div class="d-flex mb-2">
-						<div class="d-flex align-items-center">
-							<input class="form-check-input m-1 p-2" type="checkbox" value=""
-								v-bind:id="todo.id" v-bind:checked="todo.checked"
-								v-on:click="toggleTodo(todo.id)">
-						</div>
-						<div class="flex-grow-1 text-truncate">
-							<label class="form-check-label w-100 py-3" v-bind:for="todo.id">
-								{{ todo.msg }}
-							</label>
-						</div>
-						<div class="ms-auto d-flex align-items-center">
-							<button type="button" class="btn p-2" 
-								v-on:click="showModalEditTodo(todo)">
-								<i class="bi-file-earmark-text" role="img"></i>
-							</button>
-						</div>
+			<div class="container mt-3 text-center" v-if="mode==1">
+				<div class="row py-lg-5">
+					<div class="col-lg-6 col-md-8 mx-auto">
+						<h1 class="fw-light">Home</h1>
+						<p class="lead text-muted">
+							Hello World!!
+						</p>
 					</div>
 				</div>
 			</div>
@@ -153,7 +132,7 @@
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
 			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				v-if="mode!=0" v-on:click="showModalCreateTodo()">
+				v-if="mode!=0" v-on:click="showModal()">
 				<i class="bi-plus-lg" role="img"></i>
 			</a>
 			<!-- <div id="im-xxx"></div> -->
@@ -165,7 +144,7 @@
 			<div class="offcanvas offcanvas-start" id="myOffcanvas">
 				<div class="offcanvas-header">
 					<a class="btn btn-primary" href="#"
-						v-on:click="showModalCreateTag()">
+						v-on:click="showModal()">
 						<i class="bi-file-earmark-plus-fill" role="img"></i>
 					</a>
 					<h5>Tag</h5>
@@ -173,29 +152,15 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					<div id="todos" v-for="tag of tags">
-						<div class="d-flex mb-2">
-							<div class="flex-grow-1 text-truncate">
-								<label class="form-check-label w-100 p-3">
-									{{ tag.name }}
-								</label>
-							</div>
-							<div class="ms-auto d-flex align-items-center">
-								<button type="button" class="btn px-2" 
-									v-on:click="showModalEditTag(tag)">
-									<i class="bi-file-earmark-text" role="img"></i>
-								</button>
-							</div>
-						</div>
-					</div>
+					Hello Offcanvas!!
 				</div>
 			</div>
 		</div>
 		<!-- Offcanvas(End) -->
 
-		<!-- ModalTag(Start) -->
+		<!-- Modal(Start) -->
 		<div class="container mt-5 text-center">
-			<div class="modal fade" id="myModalTag" role="dialog" data-bs-backdrop="static"
+			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
 				aria-labelledby="modalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
@@ -207,73 +172,22 @@
 						<div class="modal-body">
 							<div class="container-fluid">
 								<input type="text" class="form-control" id="formInputTag" 
-									placeholder="Tag" v-model="tagName">
+									placeholder="Tag" v-model="modalText">
 							</div>
 						</div>
 						<div class="modal-footer">
-							<div class="container-fluid" v-if="tagId==null">
+							<div class="container-fluid">
 								<button type="button" class="btn btn-primary float-end"
 									data-bs-dismiss="modal" v-on:click="createTag()">Create</button>
 								<button type="button" class="btn btn-secondary me-2 float-end" 
 									data-bs-dismiss="modal">Cancel</button>
 							</div>
-							<div class="container-fluid" v-else>
-								<button type="button" class="btn btn-danger float-start"
-									data-bs-dismiss="modal" v-on:click="deleteTag(tagId)">
-									<i class="bi-trash" role="img"></i>
-								</button>
-								<button type="button" class="btn btn-info float-end"
-									data-bs-dismiss="modal" v-on:click="updateTag(tagId)">Update</button>
-								<button type="button" class="btn btn-secondary me-2 float-end" 
-									data-bs-dismiss="modal">Cancel</button>
-							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- ModalTag(End) -->
-
-		<!-- ModalTodo(Start) -->
-		<div class="container mt-5 text-center">
-			<div class="modal fade" id="myModalTodo" role="dialog" data-bs-backdrop="static"
-				aria-labelledby="modalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="modalLabel">***</h5>
-							<button type="button" class="btn-close"
-								data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<div class="container-fluid">
-								<input type="text" class="form-control" id="formInputTodo" 
-									placeholder="Todo" v-model="todoMsg">
-							</div>
-						</div>
-						<div class="modal-footer">
-							<div class="container-fluid" v-if="todoId==null">
-								<button type="button" class="btn btn-primary float-end"
-									data-bs-dismiss="modal" v-on:click="createTodo()">Create</button>
-								<button type="button" class="btn btn-secondary me-2 float-end" 
-									data-bs-dismiss="modal">Cancel</button>
-							</div>
-							<div class="container-fluid" v-else>
-								<button type="button" class="btn btn-danger float-start"
-									data-bs-dismiss="modal" v-on:click="deleteTodo(todoId)">
-									<i class="bi-trash" role="img"></i>
-								</button>
-								<button type="button" class="btn btn-info float-end"
-									data-bs-dismiss="modal" v-on:click="updateTodo(todoId)">Update</button>
-								<button type="button" class="btn btn-secondary me-2 float-end" 
-									data-bs-dismiss="modal">Cancel</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- ModalTodo(End) -->
+		<!-- Modal(End) -->
 
 		<!-- Toast(Start) -->
 		<div class="toast-container position-absolute top-50 start-50 translate-middle mt-2">

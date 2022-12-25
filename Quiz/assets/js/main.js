@@ -9,7 +9,8 @@ const MODE_SETTINGS = 4;
 const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
-	myOffcanvas: null
+	myOffcanvas: null,
+	modalText: ""
 }
 
 // Vue.js
@@ -30,9 +31,9 @@ const app = Vue.createApp({
 		const modal = new bootstrap.Modal(elem);
 
 		// Axios
-		loadAxios("./js/data.json", (json)=>{
+		loadAxios("./assets/js/data.json", (json)=>{
 			this.data = json.data;// Data
-			this.changeTag(this.data.tags[0]);
+			console.log(this.data);
 			setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");

@@ -1,13 +1,11 @@
 {
 	"data": {
-		"tags": [
-			{"id": "t_01", "name":"MyTodo1"},
-			{"id": "t_02", "name":"MyTodo2"}
-		],
-		"todos": [
-			{"id": "r_01", "tag": "t_01", "msg": "Do something 1", "checked": true},
-			{"id": "r_02", "tag": "t_01", "msg": "Do something 2", "checked": false},
-			{"id": "r_03", "tag": "t_02", "msg": "Do something 3", "checked": false}
+		"nations": [
+			{"name":"Japan",     "src": "flg_01.png"},
+			{"name":"S Korea",   "src": "flg_02.png"},
+			{"name":"N Korea",   "src": "flg_03.png"},
+			{"name":"China",     "src": "flg_04.png"},
+			{"name":"Austraria", "src": "flg_04.png"}
 		]
 	}
 }
