@@ -1,6 +1,6 @@
 {
 	"data": {
-		"nations": [
+		"flags": [
 			{"src": "ntf_101.svg", "name":"アゼルバイジャン"},
 			{"src": "ntf_102.svg", "name":"アラブ首長国連邦"},
 			{"src": "ntf_103.svg", "name":"アルメニア"},

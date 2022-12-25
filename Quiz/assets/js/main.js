@@ -7,11 +7,14 @@ const MODE_APPLE    = 3;
 const MODE_SETTINGS = 4;
 const KEY_STORAGE   = "quiz";
 
+const PATH_FLAGS    = "./assets/images/flags/";
+
 const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	modalText: ""
+	modalText: "",
+	flags: []
 }
 
 // Vue.js
@@ -34,7 +37,8 @@ const app = Vue.createApp({
 		// Axios
 		loadAxios("./assets/js/data.json", (json)=>{
 			this.data = json.data;// Data
-			console.log(this.data);
+			this.flags = this.data.flags;// Flags
+			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.src;});
 			setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");

@@ -77,10 +77,6 @@ footer a i{
 	background-color: lime;
 }
 
-.toast-container{
-	pointer-events: none;
-}
-
 #tags{
 	scrollbar-width: none;
 	-ms-overflow-style: none;

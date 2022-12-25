@@ -55,42 +55,7 @@ footer a i{
 	display: none !important;
 }
 
-#todos .d-flex{
-	background-color: lightsalmon;
+main img{
+	width: 60px; height: auto;
+	margin: 5px; padding: 0px;
 }
-
-#todos .d-flex input{
-/*	background-color: lightcoral;*/
-}
-
-#todos .d-flex label{
-	font-size: 1.2rem;
-	background-color: lightseagreen;
-}
-
-#todos .d-flex button{
-	margin: 0px; padding: 0px;
-}
-
-#todos .d-flex i{
-	font-size: 1.5rem;
-	background-color: lime;
-}
-
-.toast-container{
-	pointer-events: none;
-}
-
-#tags{
-	scrollbar-width: none;
-	-ms-overflow-style: none;
-}
-
-#tags::-webkit-scrollbar{
-	display: none;
-}
-
-#tags .btn{
-	border-radius: 5px 5px 0px 0px !important;
-}
-
