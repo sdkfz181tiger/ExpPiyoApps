@@ -1,0 +1,96 @@
+/* CSS */
+
+html, body{
+	margin: 0px; padding: 0px;
+}
+
+header i{
+	font-size: 1.2rem;
+}
+
+header .active{
+	border-radius: 0px 0px 10px 10px !important;
+}
+
+main{
+	margin: 120px 0px 80px 0px !important;
+}
+
+footer{
+	pointer-events: none;
+}
+
+footer div{
+	pointer-events: auto;
+}
+
+footer a{
+	width: 4.2rem; height: 4.2rem;
+	position: relative;
+	pointer-events: auto;
+}
+
+footer a i{
+	position: absolute;
+	left: calc(50% - 1.2rem); top: 6%;
+	font-size: 2.4rem;
+}
+
+.navbar-brand{
+	margin-right: 0px !important; 
+}
+
+.navbar-toggler:focus{
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.toast-container{
+	position: fixed !important; 
+	pointer-events: none;
+	top: 0px; right: 0px;
+}
+
+.toast:not(.showing):not(.show){
+	display: none !important;
+}
+
+#todos .d-flex{
+	background-color: lightsalmon;
+}
+
+#todos .d-flex input{
+/*	background-color: lightcoral;*/
+}
+
+#todos .d-flex label{
+	font-size: 1.2rem;
+	background-color: lightseagreen;
+}
+
+#todos .d-flex button{
+	margin: 0px; padding: 0px;
+}
+
+#todos .d-flex i{
+	font-size: 1.5rem;
+	background-color: lime;
+}
+
+.toast-container{
+	pointer-events: none;
+}
+
+#tags{
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+#tags::-webkit-scrollbar{
+	display: none;
+}
+
+#tags .btn{
+	border-radius: 5px 5px 0px 0px !important;
+}
+
