@@ -56,7 +56,8 @@ footer a i{
 }
 
 #todos .d-flex{
-	background-color: lightsalmon;
+	border-radius: 8px;
+	background-color: whitesmoke;
 }
 
 #todos .d-flex input{
@@ -65,16 +66,12 @@ footer a i{
 
 #todos .d-flex label{
 	font-size: 1.2rem;
-	background-color: lightseagreen;
-}
-
-#todos .d-flex button{
-	margin: 0px; padding: 0px;
+/*	background-color: lightcyan;*/
 }
 
 #todos .d-flex i{
 	font-size: 1.5rem;
-	background-color: lime;
+/*	background-color: lime;*/
 }
 
 #tags{
