@@ -1,20 +1,20 @@
 {
 	"data": {
 		"tags": [
-			{"id": "t_01", "name":"お買い物リスト"},
-			{"id": "t_02", "name":"宿題リスト"},
-			{"id": "t_03", "name":"旅行の準備"}
+			{"id": "t_01", "name":"お買い物"},
+			{"id": "t_02", "name":"宿題残り"},
+			{"id": "t_03", "name":"旅行準備"}
 		],
 		"todos": [
 			{"id": "r_01", "tag": "t_01", "msg": "じゃがいも", "checked": false},
 			{"id": "r_02", "tag": "t_01", "msg": "にんじん", "checked": false},
 			{"id": "r_03", "tag": "t_01", "msg": "ジャワカレー", "checked": false},
 			{"id": "r_04", "tag": "t_01", "msg": "ぶた肉", "checked": false},
-			{"id": "r_05", "tag": "t_02", "msg": "数学テキスト予習3p", "checked": true},
-			{"id": "r_06", "tag": "t_02", "msg": "物理ドリル復習2p", "checked": false},
+			{"id": "r_05", "tag": "t_02", "msg": "数学テキスト予習", "checked": true},
+			{"id": "r_06", "tag": "t_02", "msg": "物理ドリル復習", "checked": false},
 			{"id": "r_07", "tag": "t_02", "msg": "歴史レポート作成", "checked": false},
-			{"id": "r_08", "tag": "t_03", "msg": "旅行先の決定", "checked": true},
-			{"id": "r_09", "tag": "t_03", "msg": "着替えの準備", "checked": false}
+			{"id": "r_08", "tag": "t_03", "msg": "旅行先の下調べ", "checked": true},
+			{"id": "r_09", "tag": "t_03", "msg": "着替え3日分", "checked": false}
 		]
 	}
 }
