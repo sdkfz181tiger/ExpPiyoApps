@@ -84,7 +84,7 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container" v-if="mode==1">
+			<div class="container" id="sortablelist" v-if="mode==1">
 				<div id="todos" v-for="todo of todos">
 					<div class="d-flex align-items-center mb-2">
 						<div>
@@ -304,6 +304,7 @@
 	<script src="./assets/libs/vue/vue.global.js"></script>
 	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
 	<script src="./assets/libs/axios/axios.min.js"></script>
+	<script src="//SortableJS.github.io/Sortable/Sortable.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
 </body>

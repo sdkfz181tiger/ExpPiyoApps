@@ -48,6 +48,12 @@ const app = Vue.createApp({
 		const modalTodo = new bootstrap.Modal(elemModalTodo);
 		// LocalStorage
 		this.loadStorage();
+
+		// Sortable
+		setTimeout(()=>{
+			const elemSortable = document.getElementById("sortablelist");
+			Sortable.create(elemSortable, {});
+		}, 400);
 	},
 	methods:{
 		changeMode(mode){
