@@ -57,6 +57,7 @@ footer a i{
 
 #todos .d-flex{
 	border-radius: 8px;
+	border-bottom: 2px solid silver;
 	background-color: whitesmoke;
 }
 

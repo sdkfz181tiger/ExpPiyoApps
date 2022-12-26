@@ -86,8 +86,8 @@
 			<!-- Home(Start) -->
 			<div class="container" v-if="mode==1">
 				<div id="todos" v-for="todo of todos">
-					<div class="d-flex mb-2">
-						<div class="d-flex align-items-center">
+					<div class="d-flex align-items-center mb-2">
+						<div>
 							<input class="form-check-input mt-3 mb-3 ms-3 me-2 p-2" type="checkbox" value=""
 								v-bind:id="todo.id" v-bind:checked="todo.checked"
 								v-on:click="toggleTodo(todo.id)">
@@ -97,7 +97,7 @@
 								{{ todo.msg }}
 							</label>
 						</div>
-						<div class="ms-auto d-flex align-items-center">
+						<div>
 							<button type="button" class="btn p-2" 
 								v-on:click="showModalEditTodo(todo)">
 								<i class="bi-file-earmark-text" role="img"></i>
@@ -181,7 +181,7 @@
 									{{ tag.name }}
 								</label>
 							</div>
-							<div class="ms-auto d-flex align-items-center">
+							<div>
 								<button type="button" class="btn px-2" 
 									v-on:click="showModalEditTag(tag)">
 									<i class="bi-file-earmark-text" role="img"></i>
