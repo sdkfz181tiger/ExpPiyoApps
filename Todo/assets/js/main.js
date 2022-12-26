@@ -52,7 +52,9 @@ const app = Vue.createApp({
 		// Sortable
 		setTimeout(()=>{
 			const elemSortable = document.getElementById("sortablelist");
-			Sortable.create(elemSortable, {});
+			Sortable.create(elemSortable, {
+				handle: ".handle",
+				animation: 150});
 		}, 400);
 	},
 	methods:{
