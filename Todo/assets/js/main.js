@@ -63,14 +63,14 @@ const app = Vue.createApp({
 			const json = localStorage.getItem(KEY_STORAGE);
 			if(json != null){
 				this.data = JSON.parse(json);
-				this.changeTag(this.data.tags[0]);
+				this.changeTag(this.data.tags[this.data.tags.length-1]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
 				return;
 			}
 			// Axios
 			loadAxios("./assets/js/data.json", (json)=>{
 				this.data = json.data;// Data
-				this.changeTag(this.data.tags[0]);
+				this.changeTag(this.data.tags[this.data.tags.length-1]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
 			}, (err)=>{
 				showToast("Error", "0 min ago", "通信エラーです");
