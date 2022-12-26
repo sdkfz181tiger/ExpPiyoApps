@@ -1,6 +1,6 @@
 {
-	"name":"ITぴよクイズ",
-	"short_name":"ITぴよクイズ",
+	"name":"ぴよクイズ",
+	"short_name":"ぴよクイズ",
 	"icons": [{
 		"src": "./icon152x152.png",
 		"sizes":"152x152",
@@ -19,7 +19,7 @@
 	}],
 	"start_url": "../",
 	"display": "standalone",
-	"background_color": "khaki",
-	"theme_color": "orange",
+	"background_color": "lightskyblue",
+	"theme_color": "dodgerblue",
 	"orientation": "portrait"
 }
