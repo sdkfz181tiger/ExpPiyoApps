@@ -14,7 +14,8 @@
 			{"id": "r_06", "tag": "t_02", "msg": "物理ドリル復習", "checked": false},
 			{"id": "r_07", "tag": "t_02", "msg": "歴史レポート作成", "checked": false},
 			{"id": "r_08", "tag": "t_03", "msg": "旅行先の下調べ", "checked": true},
-			{"id": "r_09", "tag": "t_03", "msg": "着替え3日分", "checked": false}
+			{"id": "r_09", "tag": "t_03", "msg": "着替え3日分", "checked": false},
+			{"id": "r_09", "tag": "t_03", "msg": "宿泊先を予約", "checked": false}
 		]
 	}
 }
