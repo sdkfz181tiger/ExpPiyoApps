@@ -84,23 +84,22 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container" id="sortablelist" v-if="mode==1">
-				<div id="todos" v-for="todo of todos">
+			<div class="container" id="mySortable" v-if="mode==1">
+				<div class="todos" v-for="todo of todos">
 					<div class="d-flex align-items-center mb-2">
-						<div>
+						<div v-on:click="toggleTodo(todo.id)">
 							<input class="form-check-input mt-3 mb-3 ms-3 me-2 p-2" type="checkbox" value=""
-								v-bind:id="todo.id" v-bind:checked="todo.checked"
-								v-on:click="toggleTodo(todo.id)">
+								v-bind:id="todo.id" v-bind:checked="todo.checked">
 						</div>
-						<div class="flex-grow-1 text-truncate">
+						<div class="flex-grow-1 text-truncate" 
+							v-on:click="showModalEditTodo(todo)">
 							<label class="form-check-label w-100 py-3">
 								{{ todo.msg }}
 							</label>
 						</div>
 						<div>
-							<button type="button" class="handle btn pt-2 px-3" 
-								v-on:click="showModalEditTodo(todo)">
-								<i class="bi-file-earmark-text" role="img"></i>
+							<button type="button" class="myHandle btn pe-3">
+								<i class="bi-list" role="img"></i>
 							</button>
 						</div>
 					</div>
@@ -173,7 +172,7 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					<div id="todos" v-for="tag of tags">
+					<div class="todos" v-for="tag of tags">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
 								<label class="form-check-label w-100 p-3"
@@ -182,7 +181,7 @@
 								</label>
 							</div>
 							<div>
-								<button type="button" class="btn pt-2 px-3" 
+								<button type="button" class="btn px-3" 
 									v-on:click="showModalEditTag(tag)">
 									<i class="bi-file-earmark-text" role="img"></i>
 								</button>

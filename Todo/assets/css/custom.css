@@ -56,23 +56,23 @@ footer a i{
 	display: none !important;
 }
 
-#todos .d-flex{
+.todos .d-flex{
 	border-radius: 8px;
 	border: 1px solid silver;;
 	border-bottom: 2px solid gray;
 	background-color: whitesmoke;
 }
 
-#todos .d-flex input{
+.todos .d-flex input{
 /*	background-color: lightcoral;*/
 }
 
-#todos .d-flex label{
+.todos .d-flex label{
 	font-size: 1.2rem;
 /*	background-color: lightcyan;*/
 }
 
-#todos .d-flex i{
+.todos .d-flex i{
 	font-size: 1.5rem;
 /*	background-color: lime;*/
 }
