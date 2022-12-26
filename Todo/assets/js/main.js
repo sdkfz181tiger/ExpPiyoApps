@@ -50,10 +50,10 @@ const app = Vue.createApp({
 		this.loadStorage();
 		// Sortable
 		setTimeout(()=>{
-			Sortable.create(document.getElementById("myStblTodos"), 
-				{handle: ".myStblHandleTodos", animation: 150});
-			Sortable.create(document.getElementById("myStblTags"), 
-				{handle: ".myStblHandleTags", animation: 150});
+			Sortable.create(document.getElementById("myStblTodos"),
+				{handle: ".myStblHandleTodos", animation: 150, onSort: this.onSortTodo});
+			Sortable.create(document.getElementById("myStblTags"),
+				{handle: ".myStblHandleTags", animation: 150, onSort: this.onSortTag});
 		}, 200);
 	},
 	methods:{
@@ -247,6 +247,20 @@ const app = Vue.createApp({
 			const elem = document.getElementById("myModalTodo");
 			elem.querySelector("#modalLabel").innerText = "EditTodo";
 			bootstrap.Modal.getInstance(elem).show();
+		},
+		onSortTodo(e){
+			console.log("onSortTodo:", e);
+			const items = e.target.querySelectorAll("input");
+			for(let i=0; i<items.length; i++){
+				console.log(items[i].getAttribute("id"));
+			}
+		},
+		onSortTag(e){
+			console.log("onSortTag:", e);
+			const items = e.target.querySelectorAll("label");
+			for(let i=0; i<items.length; i++){
+				console.log(items[i].getAttribute("id"));
+			}
 		}
 	}
 });
