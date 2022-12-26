@@ -48,12 +48,13 @@ const app = Vue.createApp({
 		const modalTodo = new bootstrap.Modal(elemModalTodo);
 		// LocalStorage
 		this.loadStorage();
-
 		// Sortable
 		setTimeout(()=>{
-			const elemSortable = document.getElementById("mySortable");
-			Sortable.create(elemSortable, {handle: ".myHandle", animation: 150});
-		}, 400);
+			Sortable.create(document.getElementById("myStblTodos"), 
+				{handle: ".myStblHandleTodos", animation: 150});
+			Sortable.create(document.getElementById("myStblTags"), 
+				{handle: ".myStblHandleTags", animation: 150});
+		}, 200);
 	},
 	methods:{
 		changeMode(mode){
@@ -70,14 +71,14 @@ const app = Vue.createApp({
 			if(json != null){
 				this.data = JSON.parse(json);
 				this.changeTag(this.data.tags[this.data.tags.length-1]);
-				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
+				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 				return;
 			}
 			// Axios
 			loadAxios("./assets/js/data.json", (json)=>{
 				this.data = json.data;// Data
 				this.changeTag(this.data.tags[this.data.tags.length-1]);
-				setTimeout(()=>{this.changeMode(MODE_HOME);}, 200);
+				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 			}, (err)=>{
 				showToast("Error", "0 min ago", "通信エラーです");
 			});

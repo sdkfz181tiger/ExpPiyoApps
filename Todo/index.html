@@ -84,7 +84,7 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container" id="mySortable" v-if="mode==1">
+			<div class="container" id="myStblTodos" v-if="mode==1">
 				<div class="todos" v-for="todo of todos">
 					<div class="d-flex align-items-center mb-2">
 						<div v-on:click="toggleTodo(todo.id)">
@@ -98,7 +98,7 @@
 							</label>
 						</div>
 						<div>
-							<button type="button" class="myHandle btn pe-3">
+							<button type="button" class="myStblHandleTodos btn pe-3">
 								<i class="bi-list" role="img"></i>
 							</button>
 						</div>
@@ -167,11 +167,11 @@
 						v-on:click="showModalCreateTag()">
 						<i class="bi-file-earmark-plus-fill" role="img"></i>
 					</a>
-					<h5>Tag</h5>
+					<h5>Tags</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
-				<div class="offcanvas-body">
+				<div class="offcanvas-body" id="myStblTags">
 					<div class="todos" v-for="tag of tags">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
@@ -181,9 +181,8 @@
 								</label>
 							</div>
 							<div>
-								<button type="button" class="btn px-3" 
-									v-on:click="showModalEditTag(tag)">
-									<i class="bi-file-earmark-text" role="img"></i>
+								<button type="button" class="myStblHandleTags btn px-3">
+									<i class="bi-list" role="img"></i>
 								</button>
 							</div>
 						</div>
