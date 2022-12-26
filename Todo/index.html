@@ -98,7 +98,7 @@
 							</label>
 						</div>
 						<div>
-							<button type="button" class="btn p-2" 
+							<button type="button" class="btn pt-2 px-3" 
 								v-on:click="showModalEditTodo(todo)">
 								<i class="bi-file-earmark-text" role="img"></i>
 							</button>
@@ -174,7 +174,7 @@
 				</div>
 				<div class="offcanvas-body">
 					<div id="todos" v-for="tag of tags">
-						<div class="d-flex mb-2">
+						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
 								<label class="form-check-label w-100 p-3"
 									v-on:click="showModalEditTag(tag)">
@@ -182,7 +182,7 @@
 								</label>
 							</div>
 							<div>
-								<button type="button" class="btn px-2" 
+								<button type="button" class="btn pt-2 px-3" 
 									v-on:click="showModalEditTag(tag)">
 									<i class="bi-file-earmark-text" role="img"></i>
 								</button>
