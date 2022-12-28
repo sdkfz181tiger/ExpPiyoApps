@@ -77,16 +77,15 @@ footer a i{
 /*	background-color: lime;*/
 }
 
-#tags{
+#myTags{
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
 
-#tags::-webkit-scrollbar{
+#myTags::-webkit-scrollbar{
 	display: none;
 }
 
-#tags .btn{
+#myTags .btn{
 	border-radius: 5px 5px 0px 0px !important;
 }
-

@@ -30,6 +30,8 @@ const app = Vue.createApp({
 		console.log("mounted!!");
 		// Offcanvas
 		const elemOff = document.getElementById("myOffcanvas");
+		elemOff.addEventListener("show.bs.offcanvas", this.onOffcavasShow);
+		elemOff.addEventListener("hide.bs.offcanvas", this.onOffcavasHide);
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
 		const elemModalTag = document.getElementById("myModalTag");
@@ -77,10 +79,24 @@ const app = Vue.createApp({
 			// Reset(Views)
 			const list = elem.getElementsByClassName("children");
 			const children = Array.prototype.slice.call(list);
-			children.sort((a, b)=>a.getAttribute("sortable") - b.getAttribute("sortable"));
-			for(let i=children.length-1; 0<=i; i--){
-				elem.prepend(children[i]);
+			children.sort((a, b)=>a.getAttribute("order") - b.getAttribute("order"));
+			for(let i=children.length-1; 0<=i; i--) elem.prepend(children[i]);
+		},
+		resetTags(){
+			const elem = document.getElementById("myTags");
+			if(elem == null){
+				setTimeout(()=>{
+					this.resetSortable();
+				}, 200);
+				return;
 			}
+			console.log("resetTags");
+			// Reset(Views)
+			const list = elem.getElementsByClassName("btn");
+			const children = Array.prototype.slice.call(list);
+			children.sort((a, b)=>a.getAttribute("order") - b.getAttribute("order"));
+			for(let i=children.length-1; 0<=i; i--) elem.prepend(children[i]);
+
 		},
 		loadStorage(){
 			console.log("loadStorage");
@@ -167,6 +183,8 @@ const app = Vue.createApp({
 			// Tags
 			this.tags = [];
 			for(let obj of this.data.tags) this.tags.push(obj);
+			this.tags.sort((a, b)=>a.index - b.index);// Sort
+			this.resetSortable("myStblTags")// Reset
 
 			// Todos
 			this.todos = [];
@@ -174,8 +192,7 @@ const app = Vue.createApp({
 				if(obj.tag != this.activeTag.id) continue;
 				this.todos.push(obj);
 			}
-			this.todos.sort((a, b)=>a.index - b.index);
-
+			this.todos.sort((a, b)=>a.index - b.index);// Sort
 			this.resetSortable("myStblTodos");// Reset
 
 			this.saveStorage();// Save
@@ -264,6 +281,12 @@ const app = Vue.createApp({
 			const elem = document.getElementById("myModalTodo");
 			elem.querySelector("#modalLabel").innerText = "EditTodo";
 			bootstrap.Modal.getInstance(elem).show();
+		},
+		onOffcavasShow(){
+			// Do nothing
+		},
+		onOffcavasHide(){
+			this.resetTags();// Reset
 		},
 		onSortTodo(e){
 			console.log("onSortTodo:", e);

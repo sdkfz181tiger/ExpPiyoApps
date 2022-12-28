@@ -60,11 +60,11 @@
 			<!-- Navigation(End) -->
 
 			<!-- Tags(Start) -->
-			<div class="d-flex flex-nowrap overflow-auto 
-				bg-primary text-white" id="tags">
+			<div class="d-flex flex-nowrap overflow-auto bg-primary text-white" id="myTags">
 				<button type="button" 
 					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
-					v-for="tag of tags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
+					v-for="tag of tags" v-bind:order="tag.index"
+					v-on:click="changeTag(tag)">{{ tag.name }}</button>
 			</div>
 			<!-- Tags(End) -->
 
@@ -84,7 +84,7 @@
 
 			<!-- Home(Start) -->
 			<div class="container" id="myStblTodos" v-if="mode==1">
-				<div class="children" v-for="(todo, index) of todos" v-bind:sortable="index">
+				<div class="children" v-for="(todo, index) of todos" v-bind:order="index">
 					<div class="d-flex align-items-center mb-2">
 						<div v-on:click="toggleTodo(todo.id)">
 							<input class="form-check-input mt-3 mb-3 ms-3 me-2 p-2" type="checkbox" value=""
