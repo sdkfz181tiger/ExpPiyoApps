@@ -84,7 +84,7 @@
 
 			<!-- Home(Start) -->
 			<div class="container" id="myStblTodos" v-if="mode==1">
-				<div class="todos" v-for="todo of todos">
+				<div class="children" v-for="(todo, index) of todos" v-bind:sortable="index">
 					<div class="d-flex align-items-center mb-2">
 						<div v-on:click="toggleTodo(todo.id)">
 							<input class="form-check-input mt-3 mb-3 ms-3 me-2 p-2" type="checkbox" value=""
@@ -93,7 +93,7 @@
 						<div class="flex-grow-1 text-truncate" 
 							v-on:click="showModalEditTodo(todo)">
 							<label class="form-check-label w-100 py-3">
-								{{ todo.msg }}
+								{{ todo.index }}:{{ todo.msg }}
 							</label>
 						</div>
 						<div>
@@ -171,12 +171,12 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body" id="myStblTags">
-					<div class="todos" v-for="tag of tags">
+					<div class="children" v-for="tag of tags">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
 								<label class="form-check-label w-100 p-3" v-bind:id="tag.id"
 									v-on:click="showModalEditTag(tag)">
-									{{ tag.name }}
+									{{ tag.index }}:{{ tag.name }}
 								</label>
 							</div>
 							<div>

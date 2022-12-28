@@ -1,15 +1,5 @@
 console.log("main.js!!");
 
-// Todo
-class Todo{
-	constructor(obj){
-		this.id = obj.id;
-		this.tag = obj.tag;
-		this.msg = obj.msg;
-		this.checked = obj.checked;
-	}
-}
-
 const MODE_LOADING  = 0;
 const MODE_HOME     = 1;
 const MODE_GOOGLE   = 2;
@@ -46,15 +36,13 @@ const app = Vue.createApp({
 		const modalTag = new bootstrap.Modal(elemModalTag);
 		const elemModalTodo = document.getElementById("myModalTodo");
 		const modalTodo = new bootstrap.Modal(elemModalTodo);
+		// Sortable
+		this.mountSortable("myStblTodos", ".myStblHandleTodos", 
+			this.onSortTodo, this.onEndTodo);
+		this.mountSortable("myStblTags", ".myStblHandleTags", 
+			this.onSortTag, this.onEndTag);
 		// LocalStorage
 		this.loadStorage();
-		// Sortable
-		setTimeout(()=>{
-			Sortable.create(document.getElementById("myStblTodos"),
-				{handle: ".myStblHandleTodos", animation: 150, onSort: this.onSortTodo});
-			Sortable.create(document.getElementById("myStblTags"),
-				{handle: ".myStblHandleTags", animation: 150, onSort: this.onSortTag});
-		}, 200);
 	},
 	methods:{
 		changeMode(mode){
@@ -64,20 +52,50 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
+		mountSortable(id, handle, onSort, onEnd){
+			console.log("mountSortable");
+			const elem = document.getElementById(id);
+			if(elem == null){
+				setTimeout(()=>{
+					this.mountSortable(id, handle, onSort, onEnd);
+				}, 200);
+				return;
+			}
+			console.log("mountSortable:", id);
+			Sortable.create(document.getElementById(id),
+				{handle: handle, animation: 150, onSort: onSort, onEnd: onEnd});
+		},
+		resetSortable(id){
+			const elem = document.getElementById(id);
+			if(elem == null){
+				setTimeout(()=>{
+					this.resetSortable(id);
+				}, 200);
+				return;
+			}
+			console.log("resetSortable:", id);
+			// Reset(Views)
+			const list = elem.getElementsByClassName("children");
+			const children = Array.prototype.slice.call(list);
+			children.sort((a, b)=>a.getAttribute("sortable") - b.getAttribute("sortable"));
+			for(let i=children.length-1; 0<=i; i--){
+				elem.prepend(children[i]);
+			}
+		},
 		loadStorage(){
 			console.log("loadStorage");
 			// LocalStorage
 			const json = localStorage.getItem(KEY_STORAGE);
 			if(json != null){
 				this.data = JSON.parse(json);
-				this.changeTag(this.data.tags[this.data.tags.length-1]);
+				this.changeTag(this.data.tags[0]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 				return;
 			}
 			// Axios
 			loadAxios("./assets/js/data.json", (json)=>{
 				this.data = json.data;// Data
-				this.changeTag(this.data.tags[this.data.tags.length-1]);
+				this.changeTag(this.data.tags[0]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 			}, (err)=>{
 				showToast("Error", "0 min ago", "通信エラーです");
@@ -130,38 +148,36 @@ const app = Vue.createApp({
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		changeTag(tag){
+
+			if(tag==null && tag==undefined) return;
+			this.activeTag = tag;
 			console.log("changeTag:", tag.id, tag.name);
-			// Clean
-			const ids = [];
-			for(let tag of this.data.tags) ids.push(tag.id);
-			for(let i=this.data.todos.length-1; 0<=i; i--){
-				const todo = this.data.todos[i];
-				if(ids.includes(todo.tag)) continue;
-				this.data.todos.splice(i, 1);
-			}
-			// Active
-			if(tag!=null && tag!=undefined){
-				this.activeTag = tag;
-			}
+			
 			if(this.data.tags.length <= 0){
 				this.data.tags.push({
 					id: "t_" + Date.now(),
+					index: 1,
 					name: "MyTodo"
 				});
 			}
 			if(!this.data.tags.includes(this.activeTag)){
 				this.activeTag = this.data.tags[0];
 			}
+
 			// Tags
 			this.tags = [];
 			for(let obj of this.data.tags) this.tags.push(obj);
-			this.tags.reverse();
+
 			// Todos
 			this.todos = [];
-			for(let obj of this.data.todos) this.todos.push(new Todo(obj));
-			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);
-			this.todos.reverse();
-			this.myOffcanvas.hide();// Offcanvas
+			for(let obj of this.data.todos){
+				if(obj.tag != this.activeTag.id) continue;
+				this.todos.push(obj);
+			}
+			this.todos.sort((a, b)=>a.index - b.index);
+
+			this.resetSortable("myStblTodos");// Reset
+
 			this.saveStorage();// Save
 		},
 		createTodo(){
@@ -172,12 +188,13 @@ const app = Vue.createApp({
 				return;
 			}
 			// Todo
-			const todo = new Todo({
+			const todo = {
 				id: "r_" + Date.now(),
 				tag: this.activeTag.id,
+				index: this.data.todos.length,
 				msg: this.todoMsg,
 				checked: false
-			});
+			};
 			this.data.todos.push(todo);// Create
 			this.changeTag(this.activeTag);// Reflesh
 		},
@@ -252,15 +269,27 @@ const app = Vue.createApp({
 			console.log("onSortTodo:", e);
 			const items = e.target.querySelectorAll("input");
 			for(let i=0; i<items.length; i++){
-				console.log(items[i].getAttribute("id"));
+				const id = items[i].getAttribute("id");
+				const todo = this.todos.find(todo=>todo.id==id);
+				todo.index = i;// Index
 			}
+		},
+		onEndTodo(e){
+			console.log("onEndTodo:", e.oldIndex, "->", e.newIndex);
+			this.saveStorage();// Save
 		},
 		onSortTag(e){
 			console.log("onSortTag:", e);
 			const items = e.target.querySelectorAll("label");
 			for(let i=0; i<items.length; i++){
-				console.log(items[i].getAttribute("id"));
+				const id = items[i].getAttribute("id");
+				const tag = this.data.tags.find(tag=>tag.id==id);
+				tag.index = i;// Index
 			}
+		},
+		onEndTag(e){
+			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
+			this.saveStorage();// Save
 		}
 	}
 });
