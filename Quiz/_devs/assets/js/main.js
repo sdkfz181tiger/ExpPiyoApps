@@ -1,5 +1,6 @@
 console.log("main.js!!");
 
+const VERSION = "v0.0.1";
 const MODE_LOADING  = 0;
 const MODE_HOME     = 1;
 const MODE_GOOGLE   = 2;
@@ -10,6 +11,7 @@ const KEY_STORAGE   = "quiz";
 const PATH_FLAGS    = "./assets/images/flags/";
 
 const myData = {
+	version: VERSION,
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,

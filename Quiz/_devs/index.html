@@ -30,14 +30,15 @@
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
+					<div>
+						<i class="bi-github text-white m-1" role="img"></i>
+						<a class="navbar-brand">ぴよクイズ</a>
+						<small class="text-white ps-1">{{ version }}</small>
+					</div>
 					<button class="navbar-toggler" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-					<div>
-						<i class="bi-github text-white m-1" role="img"></i>
-						<a class="navbar-brand">ぴよクイズ</a>
-					</div>
 				</div>
 			</nav>
 			<nav class="nav nav-pills nav-justified bg-light">
@@ -142,7 +143,7 @@
 
 		<!-- Offcanvas(Start) -->
 		<div class="container mt-5">
-			<div class="offcanvas offcanvas-start" id="myOffcanvas">
+			<div class="offcanvas offcanvas-end" id="myOffcanvas">
 				<div class="offcanvas-header">
 					<a class="btn btn-primary" href="#"
 						v-on:click="showModal()">

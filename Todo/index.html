@@ -93,7 +93,7 @@
 						<div class="flex-grow-1 text-truncate" 
 							v-on:click="showModalEditTodo(todo)">
 							<label class="form-check-label w-100 py-3">
-								{{ todo.index }}:{{ todo.msg }}
+								{{ todo.msg }}
 							</label>
 						</div>
 						<div>
@@ -176,7 +176,7 @@
 							<div class="flex-grow-1 text-truncate">
 								<label class="form-check-label w-100 p-3" v-bind:id="tag.id"
 									v-on:click="showModalEditTag(tag)">
-									{{ tag.index }}:{{ tag.name }}
+									{{ tag.name }}
 								</label>
 							</div>
 							<div>

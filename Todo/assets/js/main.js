@@ -1,6 +1,6 @@
 console.log("main.js!!");
 
-const VERSION = "v1.0.0";
+const VERSION = "v0.1.0";
 const MODE_LOADING  = 0;
 const MODE_HOME     = 1;
 const MODE_GOOGLE   = 2;
