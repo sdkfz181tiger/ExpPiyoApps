@@ -155,7 +155,7 @@ const app = Vue.createApp({
 			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
-		changeTag(tag){
+		changeTag(tag, resortFlg=true){
 			console.log("changeTag:", tag);
 			// Change
 			if(tag==null && tag==undefined) return;
@@ -175,9 +175,11 @@ const app = Vue.createApp({
 			this.tags = this.data.tags.slice();// Copy
 
 			// Todos
-			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);// Filter
-			this.todos.sort((a, b)=>a.index - b.index);// Sort
-			this.resetSortable("myStblTodos");// Reset
+			if(resortFlg){
+				this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);// Filter
+				this.todos.sort((a, b)=>a.index - b.index);// Sort
+				this.resetSortable("myStblTodos");// Reset
+			}
 
 			this.saveStorage();// Save
 		},
@@ -231,7 +233,7 @@ const app = Vue.createApp({
 			this.data.todos.some((todo, i)=>{
 				if(todo.id == id) todo.checked = !todo.checked;
 			});
-			this.changeTag(this.activeTag);// Reflesh
+			this.changeTag(this.activeTag, false);// Reflesh
 		},
 		showModalCreateTag(){
 			console.log("showModalCreateTag");

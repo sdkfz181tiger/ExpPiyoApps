@@ -1,21 +1,21 @@
 {
 	"data": {
 		"tags": [
-			{"id": "t_01", "index": 0, "name":"ABC1"},
-			{"id": "t_02", "index": 1, "name":"AIU2"},
-			{"id": "t_03", "index": 2, "name":"Act3"}
+			{"id": "t_01", "index": 0, "name":"おつかい"},
+			{"id": "t_02", "index": 1, "name":"学校課題"},
+			{"id": "t_03", "index": 2, "name":"旅行準備"}
 		],
 		"todos": [
-			{"id": "r_01", "index": 0, "tag": "t_01", "msg": "A", "checked": true},
-			{"id": "r_02", "index": 1, "tag": "t_01", "msg": "B", "checked": false},
-			{"id": "r_03", "index": 2, "tag": "t_01", "msg": "C", "checked": false},
-			{"id": "r_04", "index": 0, "tag": "t_02", "msg": "あ", "checked": true},
-			{"id": "r_05", "index": 1, "tag": "t_02", "msg": "い", "checked": false},
-			{"id": "r_06", "index": 2, "tag": "t_02", "msg": "う", "checked": false},
-			{"id": "r_07", "index": 0, "tag": "t_03", "msg": "Hop!!", "checked": true},
-			{"id": "r_08", "index": 1, "tag": "t_03", "msg": "Step!!", "checked": false},
-			{"id": "r_09", "index": 2, "tag": "t_03", "msg": "Jump!!", "checked": false},
-			{"id": "r_10", "index": 2, "tag": "t_03", "msg": "Kick!!", "checked": false}
+			{"id": "r_01", "index": 0, "tag": "t_01", "msg": "洗剤", "checked": true},
+			{"id": "r_02", "index": 1, "tag": "t_01", "msg": "歯ブラシ", "checked": false},
+			{"id": "r_03", "index": 2, "tag": "t_01", "msg": "トイレットペーパー", "checked": false},
+			{"id": "r_04", "index": 0, "tag": "t_02", "msg": "数学課題提出", "checked": true},
+			{"id": "r_05", "index": 1, "tag": "t_02", "msg": "レポート課題", "checked": false},
+			{"id": "r_06", "index": 2, "tag": "t_02", "msg": "試験対策過去問", "checked": false},
+			{"id": "r_07", "index": 0, "tag": "t_03", "msg": "旅行先決定", "checked": true},
+			{"id": "r_08", "index": 1, "tag": "t_03", "msg": "宿泊先予約", "checked": false},
+			{"id": "r_09", "index": 2, "tag": "t_03", "msg": "3日分の着替え", "checked": false},
+			{"id": "r_10", "index": 2, "tag": "t_03", "msg": "旅行バッグ準備", "checked": false}
 		]
 	}
 }
