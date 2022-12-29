@@ -170,7 +170,7 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body" id="myStblTags">
-					<div class="children" v-for="tag of tags">
+					<div class="children" v-for="tag of tags" v-bind:id="tag.id">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
 								<label class="form-check-label w-100 p-3" v-bind:id="tag.id"

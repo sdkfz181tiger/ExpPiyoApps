@@ -30,8 +30,6 @@ const app = Vue.createApp({
 		console.log("mounted!!");
 		// Offcanvas
 		const elemOff = document.getElementById("myOffcanvas");
-		elemOff.addEventListener("show.bs.offcanvas", this.onOffcavasShow);
-		elemOff.addEventListener("hide.bs.offcanvas", this.onOffcavasHide);
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
 		const elemModalTag = document.getElementById("myModalTag");
@@ -39,10 +37,10 @@ const app = Vue.createApp({
 		const elemModalTodo = document.getElementById("myModalTodo");
 		const modalTodo = new bootstrap.Modal(elemModalTodo);
 		// Sortable
-		this.mountSortable("myStblTodos", ".myStblHandleTodos", 
-			this.onSortTodo, this.onEndTodo);
 		this.mountSortable("myStblTags", ".myStblHandleTags", 
 			this.onSortTag, this.onEndTag);
+		this.mountSortable("myStblTodos", ".myStblHandleTodos", 
+			this.onSortTodo, this.onEndTodo);
 		// LocalStorage
 		this.loadStorage();
 	},
@@ -141,28 +139,25 @@ const app = Vue.createApp({
 				showToast("Error", "1 min ago", "タグ名を入力してください");
 				return;
 			}
-			for(let i=this.data.tags.length-1; 0<=i; i--){
-				const tag = this.data.tags[i];
-				if(tag.id != id) continue;
-				tag.name = this.tagName;// Update
-				break;
-			}
+			// Update
+			this.data.tags.some((tag, i)=>{
+				if(tag.id == id) tag.name = this.tagName;
+			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		deleteTag(id){
 			console.log("deleteTag:", id);
-			for(let i=this.data.tags.length-1; 0<=i; i--){
-				const tag = this.data.tags[i];
-				if(tag.id != id) continue;
-				this.data.tags.splice(i, 1);// Delete
-				break;
-			}
+			// Delete
+			this.data.tags.some((tag, i)=>{
+				if(tag.id == id) this.data.tags.splice(i, 1);
+			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		changeTag(tag){
+			console.log("changeTag:", tag);
+			// Change
 			if(tag==null && tag==undefined) return;
 			this.activeTag = tag;
-			console.log("changeTag:", tag.id, tag.name);
 			
 			// Tags
 			if(this.data.tags.length <= 0){
@@ -214,32 +209,26 @@ const app = Vue.createApp({
 				showToast("Error", "1 min ago", "テキストを入力してください");
 				return;
 			}
-			for(let i=this.data.todos.length-1; 0<=i; i--){
-				const todo = this.data.todos[i];
-				if(todo.id != id) continue;
-				todo.msg = this.todoMsg;// Update
-				break;
-			}
+			// Update
+			this.data.todos.some((todo, i)=>{
+				if(todo.id == id) todo.msg = this.todoMsg;
+			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		deleteTodo(id){
 			console.log("deleteTodo:", id);
-			for(let i=this.data.todos.length-1; 0<=i; i--){
-				const todo = this.data.todos[i];
-				if(todo.id != id) continue;
-				this.data.todos.splice(i, 1);// Delete
-				break;
-			}
+			// Delete
+			this.data.todos.some((todo, i)=>{
+				if(todo.id == id) this.data.todos.splice(i, 1);
+			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		toggleTodo(id){
 			console.log("toggleTodo:", id);
-			for(let i=this.data.todos.length-1; 0<=i; i--){
-				const todo = this.data.todos[i];
-				if(todo.id != id) continue;
-				todo.checked = !todo.checked;// Toggle
-				break;
-			}
+			// Toggle
+			this.data.todos.some((todo, i)=>{
+				if(todo.id == id) todo.checked = !todo.checked;
+			});
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		showModalCreateTag(){
@@ -274,27 +263,8 @@ const app = Vue.createApp({
 			elem.querySelector("#modalLabel").innerText = "EditTodo";
 			bootstrap.Modal.getInstance(elem).show();
 		},
-		onOffcavasShow(){
-			// Do nothing
-		},
-		onOffcavasHide(){
-			// Do nothing
-		},
-		onSortTodo(e){
-			console.log("onSortTodo:", e);
-			const items = e.target.querySelectorAll("input");
-			for(let i=0; i<items.length; i++){
-				const id = items[i].getAttribute("id");
-				const todo = this.todos.find(todo=>todo.id==id);
-				todo.index = i;// Index
-			}
-		},
-		onEndTodo(e){
-			console.log("onEndTodo:", e.oldIndex, "->", e.newIndex);
-			this.saveStorage();// Save
-		},
 		onSortTag(e){
-			console.log("onSortTag:", e);
+			console.log("onSortTag");
 			const items = e.target.querySelectorAll("label");
 			for(let i=0; i<items.length; i++){
 				const id = items[i].getAttribute("id");
@@ -305,9 +275,23 @@ const app = Vue.createApp({
 		onEndTag(e){
 			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
 			this.saveStorage();// Save
+			const id = e.item.getAttribute("id");
+			const tag = this.tags.find(tag=>tag.id==id);
+			if(tag) this.changeTag(tag);// Change
 
-			const item = e.item;
-			console.log("e:", item);
+		},
+		onSortTodo(e){
+			console.log("onSortTodo");
+			const items = e.target.querySelectorAll("input");
+			for(let i=0; i<items.length; i++){
+				const id = items[i].getAttribute("id");
+				const todo = this.todos.find(todo=>todo.id==id);
+				todo.index = i;// Index
+			}
+		},
+		onEndTodo(e){
+			console.log("onEndTodo:", e.oldIndex, "->", e.newIndex);
+			this.saveStorage();// Save
 		}
 	},
 	computed:{
