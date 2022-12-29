@@ -63,7 +63,7 @@
 			<div class="d-flex flex-nowrap overflow-auto bg-primary text-white" id="myTags">
 				<button type="button" 
 					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
-					v-for="tag of tags" v-bind:order="tag.index"
+					v-for="tag of getSortedTags" v-bind:order="tag.index"
 					v-on:click="changeTag(tag)">{{ tag.name }}</button>
 			</div>
 			<!-- Tags(End) -->
@@ -160,7 +160,7 @@
 
 		<!-- Offcanvas(Start) -->
 		<div class="container mt-5">
-			<div class="offcanvas offcanvas-start" id="myOffcanvas">
+			<div class="offcanvas offcanvas-end" id="myOffcanvas">
 				<div class="offcanvas-header">
 					<a class="btn btn-primary" href="#"
 						v-on:click="showModalCreateTag()">

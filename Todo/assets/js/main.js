@@ -104,6 +104,7 @@ const app = Vue.createApp({
 			const json = localStorage.getItem(KEY_STORAGE);
 			if(json != null){
 				this.data = JSON.parse(json);
+				this.sortAllData();// Sort
 				this.changeTag(this.data.tags[0]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 				return;
@@ -111,6 +112,7 @@ const app = Vue.createApp({
 			// Axios
 			loadAxios("./assets/js/data.json", (json)=>{
 				this.data = json.data;// Data
+				this.sortAllData();// Sort
 				this.changeTag(this.data.tags[0]);
 				setTimeout(()=>{this.changeMode(MODE_HOME);}, 100);
 			}, (err)=>{
@@ -121,6 +123,10 @@ const app = Vue.createApp({
 			console.log("saveStorage");
 			const json = JSON.stringify(this.data);
 			localStorage.setItem(KEY_STORAGE, json);
+		},
+		sortAllData(){
+			this.data.tags.sort((a, b)=>a.index - b.index);
+			this.data.todos.sort((a, b)=>a.index - b.index);
 		},
 		createTag(){
 			console.log("createTag");
@@ -286,7 +292,8 @@ const app = Vue.createApp({
 			// Do nothing
 		},
 		onOffcavasHide(){
-			this.resetTags();// Reset
+			// Do nothing
+			//this.resetTags();// Reset
 		},
 		onSortTodo(e){
 			console.log("onSortTodo:", e);
@@ -306,13 +313,18 @@ const app = Vue.createApp({
 			const items = e.target.querySelectorAll("label");
 			for(let i=0; i<items.length; i++){
 				const id = items[i].getAttribute("id");
-				const tag = this.data.tags.find(tag=>tag.id==id);
+				const tag = this.tags.find(tag=>tag.id==id);
 				tag.index = i;// Index
 			}
 		},
 		onEndTag(e){
 			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
 			this.saveStorage();// Save
+		}
+	},
+	computed:{
+		getSortedTags(){
+			return this.tags.slice().sort((a, b)=>a.index - b.index);// Sort
 		}
 	}
 });

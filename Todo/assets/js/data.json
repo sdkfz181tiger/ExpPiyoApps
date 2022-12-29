@@ -1,9 +1,9 @@
 {
 	"data": {
 		"tags": [
-			{"id": "t_01", "index": 0, "name":"リスト1"},
-			{"id": "t_02", "index": 1, "name":"リスト2"},
-			{"id": "t_03", "index": 2, "name":"リスト3"}
+			{"id": "t_01", "index": 0, "name":"ABC1"},
+			{"id": "t_02", "index": 1, "name":"アクション2"},
+			{"id": "t_03", "index": 2, "name":"あいう3"}
 		],
 		"todos": [
 			{"id": "r_01", "tag": "t_01", "index": 0, "msg": "A", "checked": true},
