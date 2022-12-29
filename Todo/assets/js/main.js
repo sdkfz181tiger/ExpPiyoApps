@@ -175,7 +175,7 @@ const app = Vue.createApp({
 			if(!this.data.tags.includes(this.activeTag)){
 				this.activeTag = this.data.tags[0];
 			}
-			this.tags = this.data.tags.slice();
+			this.tags = this.data.tags.slice();// Copy
 
 			// Todos
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);// Filter
