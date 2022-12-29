@@ -82,22 +82,6 @@ const app = Vue.createApp({
 			children.sort((a, b)=>a.getAttribute("order") - b.getAttribute("order"));
 			for(let i=children.length-1; 0<=i; i--) elem.prepend(children[i]);
 		},
-		resetTags(){
-			const elem = document.getElementById("myTags");
-			if(elem == null){
-				setTimeout(()=>{
-					this.resetSortable();
-				}, 200);
-				return;
-			}
-			console.log("resetTags");
-			// Reset(Views)
-			const list = elem.getElementsByClassName("btn");
-			const children = Array.prototype.slice.call(list);
-			children.sort((a, b)=>a.getAttribute("order") - b.getAttribute("order"));
-			for(let i=children.length-1; 0<=i; i--) elem.prepend(children[i]);
-
-		},
 		loadStorage(){
 			console.log("loadStorage");
 			// LocalStorage
@@ -125,6 +109,7 @@ const app = Vue.createApp({
 			localStorage.setItem(KEY_STORAGE, json);
 		},
 		sortAllData(){
+			console.log("sortAllData");
 			this.data.tags.sort((a, b)=>a.index - b.index);
 			this.data.todos.sort((a, b)=>a.index - b.index);
 		},
@@ -138,6 +123,7 @@ const app = Vue.createApp({
 			// Tag
 			const tag = {
 				id: "t_" + Date.now(),
+				index: this.tags.length,
 				name: this.tagName
 			}
 			this.data.tags.push(tag);// Create
@@ -170,34 +156,26 @@ const app = Vue.createApp({
 			this.changeTag(this.activeTag);// Reflesh
 		},
 		changeTag(tag){
-
 			if(tag==null && tag==undefined) return;
 			this.activeTag = tag;
 			console.log("changeTag:", tag.id, tag.name);
 			
+			// Tags
 			if(this.data.tags.length <= 0){
 				this.data.tags.push({
 					id: "t_" + Date.now(),
-					index: 1,
+					index: 0,
 					name: "MyTodo"
 				});
 			}
 			if(!this.data.tags.includes(this.activeTag)){
 				this.activeTag = this.data.tags[0];
 			}
-
-			// Tags
-			this.tags = [];
-			for(let obj of this.data.tags) this.tags.push(obj);
-			this.tags.sort((a, b)=>a.index - b.index);// Sort
-			this.resetSortable("myStblTags")// Reset
+			this.tags = this.data.tags.slice();
+			//this.tags.sort((a, b)=>a.index - b.index);// Sort
 
 			// Todos
-			this.todos = [];
-			for(let obj of this.data.todos){
-				if(obj.tag != this.activeTag.id) continue;
-				this.todos.push(obj);
-			}
+			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);// Filter
 			this.todos.sort((a, b)=>a.index - b.index);// Sort
 			this.resetSortable("myStblTodos");// Reset
 
@@ -213,8 +191,8 @@ const app = Vue.createApp({
 			// Todo
 			const todo = {
 				id: "r_" + Date.now(),
+				index: this.todos.length,
 				tag: this.activeTag.id,
-				index: this.data.todos.length,
 				msg: this.todoMsg,
 				checked: false
 			};
@@ -293,7 +271,6 @@ const app = Vue.createApp({
 		},
 		onOffcavasHide(){
 			// Do nothing
-			//this.resetTags();// Reset
 		},
 		onSortTodo(e){
 			console.log("onSortTodo:", e);

@@ -2,20 +2,19 @@
 	"data": {
 		"tags": [
 			{"id": "t_01", "index": 0, "name":"ABC1"},
-			{"id": "t_02", "index": 1, "name":"アクション2"},
-			{"id": "t_03", "index": 2, "name":"あいう3"}
+			{"id": "t_02", "index": 1, "name":"AIU2"},
+			{"id": "t_03", "index": 2, "name":"Act3"}
 		],
 		"todos": [
-			{"id": "r_01", "tag": "t_01", "index": 0, "msg": "A", "checked": true},
-			{"id": "r_02", "tag": "t_01", "index": 1, "msg": "B", "checked": false},
-			{"id": "r_03", "tag": "t_01", "index": 2, "msg": "C", "checked": false},
-			{"id": "r_04", "tag": "t_01", "index": 3, "msg": "D", "checked": false},
-			{"id": "r_05", "tag": "t_02", "index": 0, "msg": "ホップ", "checked": true},
-			{"id": "r_06", "tag": "t_02", "index": 1, "msg": "ステップ", "checked": false},
-			{"id": "r_07", "tag": "t_02", "index": 2, "msg": "ジャンプ", "checked": false},
-			{"id": "r_08", "tag": "t_03", "index": 0, "msg": "あ", "checked": true},
-			{"id": "r_09", "tag": "t_03", "index": 1, "msg": "い", "checked": false},
-			{"id": "r_10", "tag": "t_03", "index": 2, "msg": "う", "checked": false}
+			{"id": "r_01", "index": 0, "tag": "t_01", "msg": "A", "checked": true},
+			{"id": "r_02", "index": 1, "tag": "t_01", "msg": "B", "checked": false},
+			{"id": "r_03", "index": 2, "tag": "t_01", "msg": "C", "checked": false},
+			{"id": "r_04", "index": 0, "tag": "t_02", "msg": "あ", "checked": true},
+			{"id": "r_05", "index": 1, "tag": "t_02", "msg": "い", "checked": false},
+			{"id": "r_06", "index": 2, "tag": "t_02", "msg": "う", "checked": false},
+			{"id": "r_07", "index": 0, "tag": "t_03", "msg": "Hop!!", "checked": true},
+			{"id": "r_08", "index": 1, "tag": "t_03", "msg": "Step!!", "checked": false},
+			{"id": "r_09", "index": 2, "tag": "t_03", "msg": "Jump!!", "checked": false}
 		]
 	}
 }
