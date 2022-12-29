@@ -14,7 +14,8 @@
 			{"id": "r_06", "index": 2, "tag": "t_02", "msg": "う", "checked": false},
 			{"id": "r_07", "index": 0, "tag": "t_03", "msg": "Hop!!", "checked": true},
 			{"id": "r_08", "index": 1, "tag": "t_03", "msg": "Step!!", "checked": false},
-			{"id": "r_09", "index": 2, "tag": "t_03", "msg": "Jump!!", "checked": false}
+			{"id": "r_09", "index": 2, "tag": "t_03", "msg": "Jump!!", "checked": false},
+			{"id": "r_10", "index": 2, "tag": "t_03", "msg": "Kick!!", "checked": false}
 		]
 	}
 }

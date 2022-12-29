@@ -120,15 +120,19 @@ const app = Vue.createApp({
 				showToast("Error", "1 min ago", "タグ名を入力してください");
 				return;
 			}
-			// Tag
+			// Tags
+			let next = 0;
+			if(0 < this.tags.length){
+				const max = this.tags.reduce((a, b)=>a.index<b.index?b:a);
+				next = max.index + 1;
+			}
 			const tag = {
 				id: "t_" + Date.now(),
-				index: this.tags.length,
+				index: next,
 				name: this.tagName
 			}
 			this.data.tags.push(tag);// Create
-			this.activeTag = tag;// Active
-			this.changeTag(this.activeTag);// Reflesh
+			this.changeTag(tag);// Reflesh
 		},
 		updateTag(id){
 			console.log("updateTag:", id);
@@ -187,10 +191,15 @@ const app = Vue.createApp({
 				showToast("Error", "1 min ago", "テキストを入力してください");
 				return;
 			}
-			// Todo
+			// Todos
+			let next = 0;
+			if(0 < this.todos.length){
+				const max = this.todos.reduce((a, b)=>a.index<b.index?b:a);
+				next = max.index + 1;
+			}
 			const todo = {
 				id: "r_" + Date.now(),
-				index: this.todos.length,
+				index: next,
 				tag: this.activeTag.id,
 				msg: this.todoMsg,
 				checked: false
@@ -296,6 +305,9 @@ const app = Vue.createApp({
 		onEndTag(e){
 			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
 			this.saveStorage();// Save
+
+			const item = e.item;
+			console.log("e:", item);
 		}
 	},
 	computed:{

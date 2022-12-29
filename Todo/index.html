@@ -29,14 +29,14 @@
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
-					<button class="navbar-toggler" type="button"
-						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
-						<span class="navbar-toggler-icon"></span>
-					</button>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
 						<a class="navbar-brand">ぴよTodo</a>
 					</div>
+					<button class="navbar-toggler" type="button"
+						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 				</div>
 			</nav>
 			<!-- <nav class="nav nav-pills nav-justified bg-light">
@@ -63,8 +63,7 @@
 			<div class="d-flex flex-nowrap overflow-auto bg-primary text-white" id="myTags">
 				<button type="button" 
 					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
-					v-for="tag of getSortedTags" v-bind:order="tag.index"
-					v-on:click="changeTag(tag)">{{ tag.name }}</button>
+					v-for="tag of getSortedTags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
 			</div>
 			<!-- Tags(End) -->
 
@@ -289,13 +288,13 @@
 
 	</div>
 
-	<script>
+	<!-- <script>
 		// Banner_468x60
-		/*(window.adsbyimobile=window.adsbyimobile||[]).push({
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
 			pid:26719, mid:550231, asid:1792594, type:"banner", display:"inline",
-			elementid:"im-xxx"});*/
+			elementid:"im-xxx"});
 	</script>
-	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script> -->
 
 	<!-- JavaScript -->
 	<script src="./assets/libs/vue/vue.global.js"></script>
