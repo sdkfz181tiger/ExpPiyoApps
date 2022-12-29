@@ -79,7 +79,7 @@ const app = Vue.createApp({
 			// Reset(Views)
 			const list = elem.getElementsByClassName("children");
 			const children = Array.prototype.slice.call(list);
-			children.sort((a, b)=>a.getAttribute("order") - b.getAttribute("order"));
+			children.sort((a, b)=>a.getAttribute("order")-b.getAttribute("order"));
 			for(let i=children.length-1; 0<=i; i--) elem.prepend(children[i]);
 		},
 		loadStorage(){
@@ -110,8 +110,8 @@ const app = Vue.createApp({
 		},
 		sortAllData(){
 			console.log("sortAllData");
-			this.data.tags.sort((a, b)=>a.index - b.index);
-			this.data.todos.sort((a, b)=>a.index - b.index);
+			this.data.tags.sort((a, b)=>a.index-b.index);
+			this.data.todos.sort((a, b)=>a.index-b.index);
 		},
 		createTag(){
 			console.log("createTag");
@@ -172,7 +172,6 @@ const app = Vue.createApp({
 				this.activeTag = this.data.tags[0];
 			}
 			this.tags = this.data.tags.slice();
-			//this.tags.sort((a, b)=>a.index - b.index);// Sort
 
 			// Todos
 			this.todos = this.data.todos.filter(todo=>todo.tag==this.activeTag.id);// Filter
@@ -301,7 +300,7 @@ const app = Vue.createApp({
 	},
 	computed:{
 		getSortedTags(){
-			return this.tags.slice().sort((a, b)=>a.index - b.index);// Sort
+			return this.tags.slice().sort((a, b)=>a.index-b.index);// Sort
 		}
 	}
 });
