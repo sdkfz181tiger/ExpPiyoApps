@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="theme-color" content="orange"/>
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- PWA for iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="orange">
+	<meta name="apple-mobile-web-app-title" content="ITぴよクイズ">
+	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
+	<!-- PWA for Android -->
+	<link rel="manifest" href="./pwa/manifest.json">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="./pwa/favicon.ico">
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="//fonts.googleapis.com/css?family=M+PLUS+1p">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/xxjapp/xdialog@3/xdialog.min.css">
+	<link rel="stylesheet" href="./css/custom.css">
+	<!-- Title -->
+	<title>ITぴよクイズ</title>
+</head>
+<body>
+	<div id="app">
+		<div id="l-container-center" v-if="mode==0">
+			<!-- ローディング画面 -->
+			<div>Loading...</div>
+		</div>
+		<div id="l-container-center" v-if="mode==1">
+			<!-- タイトル画面(ここから) -->
+			<div id="l-title">ITぴよクイズ</div>
+			<div id="l-piyo-logo">
+				<img v-bind:src="piyoImg">
+			</div>
+			<div id="l-piyo-msg">
+				{{ piyoMsg }}
+			</div>
+			<div id="l-modes">
+				<button v-on:click="clickStart">クイズ開始</button>
+			</div>
+			<div id="l-modes">
+				<button v-on:click="clickDetail">成績を確認</button>
+			</div>
+			<cmp-pwd></cmp-pwd>
+			<!-- タイトル画面(ここまで) -->
+		</div>
+		<div id="l-container-fill" v-if="mode==2">
+			<!-- クイズ画面(ここから) -->
+			<div id="l-status">
+				<div id="l-left">
+					問題: {{ quizIndex+1 }}
+				</div>
+				<div id="l-right">
+					{{ quiz.genre }}_{{quiz.exam}}
+				</div>
+			</div>
+			<div id="l-quiz">
+				<p>{{ quiz.text }}</p>
+				<div id="l-popup-ok">
+					<img src="./images/mark_ok.png">
+				</div>
+				<div id="l-popup-ng">
+					<img src="./images/mark_ng.png">
+				</div>
+			</div>
+			<div id="l-btns">
+				<div v-for="btn of quiz.btns">
+					<div v-if="answerFlg">
+						<div v-if="quiz.answer==btn">
+							<button class="blue" v-html="btn"></button>
+						</div>
+						<div v-else>
+							<button class="gray" v-html="btn"></button>
+						</div>
+					</div>
+					<div v-else>
+						<button v-on:click="clickAnswer(btn)" v-html="btn"></button>
+					</div>
+				</div>
+			</div>
+			<div id="l-piyo-area">
+				<div id="l-left">
+					<div id="l-label">ライフ</div>
+					<div id="l-hearts" v-for="i in lifeMax">
+						<img v-if="i <= lifeNum" src="./images/heart_on.png">
+						<img v-else src="./images/heart_off.png">
+					</div>
+				</div>
+				<div id="l-right" v-if="!answerFlg">
+					{{ piyoMsg }}<br/>頑張ってね!!
+				</div>
+				<div id="l-right" v-else>
+					{{ piyoMsg }}<br/>{{ quiz.comment }}
+				</div>
+				<div id="l-float">
+					<img v-bind:src="piyoImg">
+				</div>
+			</div>
+			<div id="l-next" v-if="answerFlg">
+				<div v-if="quizIndex < quizes.length-1 && 0 < lifeNum">
+					<button v-on:click="clickNext">次の問題へ</button>
+				</div>
+				<div v-else>
+					<button v-on:click="clickResult">結果画面へ</button>
+				</div>
+			</div>
+			<div v-else id="l-next"></div>
+			<!-- クイズ画面(ここまで) -->
+		</div>
+		<div id="l-container-fill" v-if="mode==3">
+			<!-- 結果画面(ここから) -->
+			<div id="l-status">
+				あたり:{{ getCntOK() }}問, はずれ:{{ getCntNG() }}問
+			</div>
+			<div id="l-score">
+				{{ getCntOK() }}問正解!!
+			</div>
+			<div id="l-piyo-result">
+				<img v-bind:src="piyoImg">
+			</div>
+			<div id="l-results">
+				<table>
+					<tr>
+						<th>解答</th><th id="l-mid">単語</th><th id="l-small">確認</th>
+					</tr>
+					<tr v-for="result of getResults()">
+						<td><img v-bind:src="result.mark"/></td>
+						<td id="l-text">{{ replaceBR(result.answer) }}</td>
+						<td><button v-on:click="clickCheck(result.answer, result.text)">確認</button></td>
+					</tr>
+				</table>
+			</div>
+			<div id="l-modes">
+				<button v-on:click="clickRetry">タイトルに戻る</button>
+			</div>
+			<!-- 結果画面(ここまで) -->
+		</div>
+		<div id="l-container-fill" v-if="mode==4">
+			<!-- 成績画面(ここから) -->
+			<div id="l-status">
+				<div id="l-left">
+					<button id="l-all"  v-on:click="clickDetailAll">全て</button>
+					<button id="l-good" v-on:click="clickDetailFilter(true)">得意</button>
+					<button id="l-bad"  v-on:click="clickDetailFilter(false)">苦手</button>
+				</div>
+			</div>
+			<div id="l-chart">
+				<canvas id="my-chart" height="150"></canvas>
+			</div>
+			<div id="l-details">
+				<table>
+					<tr>
+						<th>判定</th><th id="l-mid">単語</th><th id="l-small">確認</th>
+					</tr>
+					<tr v-for="detail of details">
+						<td v-if="detail.ng<=detail.ok"><img src="./images/i_good.png"></td>
+						<td v-else><img src="./images/i_bad.png"></td>
+						<td id="l-text">{{ replaceBR(detail.answer) }}</td>
+						<td><button v-on:click="clickCheck(detail.answer, detail.text)">確認</button></td>
+					</tr>
+				</table>
+			</div>
+			<div id="l-modes">
+				<button v-on:click="clickRetry">タイトルに戻る</button>
+			</div>
+			<!-- 成績画面(ここまで) -->
+		</div>
+	</div>
+	<!-- i-mobile -->
+	<div id="l-banner">
+		<div id="im-44312d36535c4279801e55f8fd54c60f"></div>
+	</div>
+	<script>
+		// Banner
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
+			pid:26719, mid:550231, asid:1792594, 
+			type:"banner", display:"inline",
+			elementid:"im-44312d36535c4279801e55f8fd54c60f"});
+	</script>
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104"></script>
+</div>
+	<!-- Templates -->
+	<script type="text/x-template" id="tmp-pwd">
+		クイズ監修:<a v-bind:href="pwdURL" target="_blank">{{ pwdTitle }}</a>
+	</script>
+	<!-- JavaScript -->
+	<script src="//cdn.jsdelivr.net/npm/gsap@3.10.4/dist/gsap.min.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/howler@2.2.3/dist/howler.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+	<script src="//cdn.jsdelivr.net/gh/xxjapp/xdialog@3/xdialog.min.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/chart.js@3.6.2/dist/chart.min.js"></script>
+	<script src="//unpkg.com/vue@next"></script>
+	<script src="./js/utility.js"></script>
+	<script src="./js/main.js"></script>
+</body>
+</html>
