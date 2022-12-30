@@ -47,30 +47,44 @@ function popToast(title, sub, msg, autohide=true){
 
 //==========
 // GeoLocation, Weather
-const API_GEOREV  = "https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress";
+const API_REV     = "https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress";
+const API_AREA    = "https://www.jma.go.jp/bosai/common/const/area.json";
 const API_WEATHER = "https://www.jma.go.jp/bosai/forecast/data/forecast/";
 const API_ICON    = "https://www.jma.go.jp/bosai/forecast/img/";
 
-function loadGeoLoc(){
-	//console.log("loadGeoLoc!!");
+function loadGeo(){
+	//console.log("loadGeo!!");
 	return new Promise((resolve, reject)=>{
 		navigator.geolocation.getCurrentPosition(resolve, reject);
 	});
 }
 
-function loadGeoRev(coords){
-	//console.log("loadGeoRev:", coords.latitude, coords.longitude);
-	const lat = coords.latitude;
-	const lon = coords.longitude;
-	// const lat = 26.594319927628522;// Test: Okinawa
-	// const lon = 127.98102920031258;
-	const url = API_GEOREV + "?lat=" + lat + "&lon=" + lon;
+function loadRev(res){
+	console.log("loadRev:", res.coords.latitude, res.coords.longitude);
+	//const coords = res.coords;
+	//const lat = coords.latitude;
+	//const lon = coords.longitude;
+	//const lat = 26.594319927628522;// Okinawa
+	//const lon = 127.98102920031258;
+	const lat = 37.33989970140487;// Koyocho
+	const lon = 140.34377371293675
+	// const lat = 35.367450839400526;// Ogaki
+	// const lon = 136.63153313528196;
+
+	const url = API_REV + "?lat=" + lat + "&lon=" + lon;
+	const option = {responseType: "blob"};
+	return axios.get(url, option);
+}
+
+function loadPref(){
+	console.log("loadPref");
+	const url = API_AREA;
 	const option = {responseType: "blob"};
 	return axios.get(url, option);
 }
 
 function loadForecast(file){
-	//console.log("loadForecast:", file);
+	console.log("loadForecast:", file);
 	const url = API_WEATHER + file;
 	const option = {responseType: "blob"};
 	return axios.get(url, option);

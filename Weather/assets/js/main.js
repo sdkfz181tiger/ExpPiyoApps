@@ -3,9 +3,8 @@ console.log("main.js!!");
 const VERSION = "v1.0.0";
 const MODE_LOADING  = 0;
 const MODE_ERROR    = 1;
-const MODE_ZONE     = 2;
-const MODE_FORECAST = 3;
-const MODE_SETTINGS = 4;
+const MODE_FORECAST = 2;
+const MODE_SETTINGS = 3;
 const KEY_STORAGE   = "weather";
 
 const myData = {
@@ -17,9 +16,8 @@ const myData = {
 	weatherArea: WEATHER_AREA,
 	weatherIcon: WEATHER_ICON,
 	forecastKanji: ["日", "月", "火", "水", "木", "金", "土"],
-	forecastPref: "東京都",// Default
+	forecastFile: "130000.json",// Default
 	forecastOffice: null,
-	forecastZones: null,
 	areasDaily: null,
 	areasWeekly: null
 }
@@ -52,8 +50,8 @@ const app = Vue.createApp({
 		const elemModalInfo = document.getElementById("myModalInfo");
 		const modalInfo = new bootstrap.Modal(elemModalInfo);
 
-		this.loadPref();// Load
-		this.startPref(this.forecastPref);// Pref
+		this.loadFile();// Load
+		this.startForecast(this.forecastFile);// Forecast
 	},
 	methods:{
 		changeMode(mode){
@@ -63,64 +61,63 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		loadPref(){
+		loadFile(){
 			if(!localStorage.getItem(KEY_STORAGE)) return;
-			this.forecastPref = localStorage.getItem(KEY_STORAGE);
+			this.forecastFile = localStorage.getItem(KEY_STORAGE);
 		},
-		savePref(pref){
-			this.forecastPref = pref;
-			localStorage.setItem(KEY_STORAGE, pref);
+		saveFile(file){
+			this.forecastFile = file;
+			localStorage.setItem(KEY_STORAGE, file);
 		},
-		clearPref(){
-			this.forecastPref = null;
+		clearFile(){
+			this.forecastFile = null;
 			localStorage.removeItem(KEY_STORAGE);
 		},
-		startPref(pref){
-			console.log("startPref:", pref);
-			if(pref in this.weatherArea){// Hokkaido, Okinawa
-				this.forecastZones = this.weatherArea[pref];// Zones
-				this.changeMode(MODE_ZONE);
-			}else{// Others...
-				for(let key in this.weatherArea){
-					if(!(pref in this.weatherArea[key])) continue;
-					this.startForecast(pref, this.weatherArea[key][pref]);// Forecast
-				}
-			}
-		},
-		startGeoLoc(){
-			console.log("startGeoLoc");
+		startGeo(){
+			console.log("startGeo");
 			// GeoLocation
-			loadGeoLoc()
-				.then(res=>loadGeoRev(res.coords))
-				.then(res=>convertText(res))
+			loadGeo().then(res=>loadRev(res)).then(res=>convertText(res))
 				.then(res=>{
-					const muni = JSON.parse(res).results.muniCd;
-					const pref = GSI.MUNI_ARRAY[muni].split(",")[1];
-					this.forecastPref = pref;// Update
-					this.startPref(pref);
+					const results = JSON.parse(res).results;
+					this.startPref(results.muniCd, results.lv01Nm);
 				}).catch(err=>{
 					console.log(err);
 					this.clearPref();// Clear
 					showToast("Error", "0 min ago.", err);
 				});
 		},
-		startForecast(pref, file){
-			console.log("startForecast:", pref, file);
-			this.savePref(pref);// Save
+		startPref(muniCd, lv01Nm){
+			console.log("startPref:", muniCd, lv01Nm);
+			// Pref
+			loadPref().then(res=>convertText(res))
+				.then(res=>{
+					const area = JSON.parse(res);
+					const class20s = area.class20s[muniCd + "00"];
+					const class15s = area.class15s[class20s.parent];
+					const class10s = area.class10s[class15s.parent];
+					this.startForecast(class10s.parent + ".json");
+				}).catch(err=>{
+					console.log(err);
+					this.clearFile();// Clear
+					showToast("Error", "0 min ago.", err);
+				});
+		},
+		startForecast(file){
+			console.log("startForecast:", file);
+			this.saveFile(file);// Save
 			this.myOffcanvas.hide();// Hide
 			// Forecast
-			loadForecast(file)
-				.then(res=>convertText(res))
+			loadForecast(file).then(res=>convertText(res))
 				.then(res=>{
 					const json = JSON.parse(res);
 					this.forecastOffice = json[0].publishingOffice;// Office
 					this.areasDaily = getDailyData(json[0], this.forecastKanji, this.weatherIcon);
 					this.areasWeekly = getWeeklyData(json[1], this.forecastKanji, this.weatherIcon);
 					this.changeMode(MODE_FORECAST);
-					showToast("Success", "0 min ago.", this.forecastPref + "の天気を取得しました");
+					showToast("Success", "0 min ago.", this.forecastOffice + "の天気を取得しました");
 				}).catch(err=>{
 					console.log(err);
-					this.clearPref();// Clear
+					this.clearFile();// Clear
 					showToast("Error", "0 min ago.", err);
 				});
 		},

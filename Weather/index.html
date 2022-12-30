@@ -89,26 +89,11 @@
 			</div>
 			<!-- Error(End) -->
 
-			<!-- Zone(Start) -->
-			<div class="container mt-3 text-center" v-if="mode==2">
-				<div class="row">
-					<div class="col">
-						<div class="list-group">
-							<a href="#" class="list-group-item list-group-item-action" aria-current="true"
-								v-for="(item, key) in forecastZones" v-on:click="startForecast(key, item)">
-								{{ key }}
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Zone(End) -->
-
 			<!-- Forecast(Start) -->
-			<div class="container mt-3 text-center" v-if="mode==3">
+			<div class="container mt-3 text-center" v-if="mode==2">
 				<div class="row mt-3">
 					<div class="col">
-						<h3>{{ forecastPref }}の天気</h3>
+						<h3>{{ forecastOffice }}</h3>
 					</div>
 				</div>
 				<div class="row mt-3 mb-3" v-for="area of areasDaily">
@@ -152,7 +137,7 @@
 			<!-- Forecast(End) -->
 
 			<!-- Settings(Start) -->
-			<div class="container mt-3 text-center" v-if="mode==4">
+			<div class="container mt-3 text-center" v-if="mode==3">
 				<div class="row">
 					<div class="col">
 						<h1 class="fw-light">Settings</h1>
@@ -200,7 +185,7 @@
 								aria-labelledby="headingOne" data-bs-parent="#accordionZones">
 								<div class="accordion-body">
 									<button type="button" class="btn btn-sm btn-light m-1"
-										v-for="(item, key) of items" v-on:click="startForecast(key, item)">
+										v-for="(item, key) of items" v-on:click="startForecast(item)">
 										{{ key }}
 									</button>
 								</div>
@@ -232,7 +217,7 @@
 							<button type="button" class="btn btn-secondary" 
 								data-bs-dismiss="modal">Cancel</button>
 							<button type="button" class="btn btn-primary" 
-								data-bs-dismiss="modal" v-on:click="startGeoLoc()">Submit</button>
+								data-bs-dismiss="modal" v-on:click="startGeo()">Submit</button>
 						</div>
 					</div>
 				</div>
