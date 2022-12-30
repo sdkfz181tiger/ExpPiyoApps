@@ -61,16 +61,15 @@ function loadGeo(){
 
 function loadRev(res){
 	console.log("loadRev:", res.coords.latitude, res.coords.longitude);
-	//const coords = res.coords;
-	//const lat = coords.latitude;
-	//const lon = coords.longitude;
-	//const lat = 26.594319927628522;// Okinawa
-	//const lon = 127.98102920031258;
-	const lat = 37.33989970140487;// Koyocho
-	const lon = 140.34377371293675
+	const coords = res.coords;
+	const lat = coords.latitude;
+	const lon = coords.longitude;
+	// const lat = 26.594319927628522;// Okinawa
+	// const lon = 127.98102920031258;
 	// const lat = 35.367450839400526;// Ogaki
 	// const lon = 136.63153313528196;
-
+	// const lat = 37.33989970140487;// Koyocho
+	// const lon = 140.34377371293675
 	const url = API_REV + "?lat=" + lat + "&lon=" + lon;
 	const option = {responseType: "blob"};
 	return axios.get(url, option);
