@@ -1,12 +1,13 @@
 console.log("main.js!!");
 
-const VERSION = "v0.0.1";
+const VERSION       = "v0.0.1";
+const KEY_STORAGE   = "quiz";
+
 const MODE_LOADING  = 0;
 const MODE_TITLE    = 1;
 const MODE_GAME     = 2;
 const MODE_RESULT   = 3;
 const MODE_SETTINGS = 4;
-const KEY_STORAGE   = "quiz";
 
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
@@ -21,12 +22,12 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	level: LEVEL_EASY,// Default
-	index: 0,
 	flags: [],
 	quizes: [],
 	choises: [],
-	quiz: null
+	level: LEVEL_EASY,// Default
+	index: 0,
+	answer: null
 }
 
 // Vue.js
@@ -48,8 +49,7 @@ const app = Vue.createApp({
 
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
-			this.data = json.data;// Data
-			this.flags = this.data.flags;// Flags
+			this.flags = json.data.flags;// Flags
 			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.src;});
 			preloadImages(this.flags);// Preload
 			setTimeout(()=>{this.changeMode(MODE_TITLE);}, 200);
@@ -76,8 +76,6 @@ const app = Vue.createApp({
 		},
 		showModal(){
 			console.log("showModal");
-			this.tagId = null;
-			this.tagName = null;
 			const elem = document.getElementById("myModal");
 			elem.querySelector("#modalLabel").innerText = "Modal";
 			bootstrap.Modal.getInstance(elem).show();
@@ -91,13 +89,13 @@ const app = Vue.createApp({
 		},
 		shuffleChoises(){
 			console.log("shuffleChoises");
-			this.choises = this.quizes.filter(flag=>flag.name!=this.quiz.name);
+			this.choises = this.quizes.filter(flag=>flag.name!=this.answer.name);
 			for(let i=this.choises.length-1; 0<i; i--){
 				const rdm = Math.floor(Math.random() * i);
 				[this.choises[i], this.choises[rdm]] = [this.choises[rdm], this.choises[i]];
 			}
 			this.choises.splice(3);
-			this.choises.push(this.quiz);
+			this.choises.push(this.answer);
 			for(let i=0; i<this.choises.length; i++){
 				const rdm = Math.floor(Math.random() * this.choises.length);
 				if(rdm == i) continue;
@@ -110,7 +108,7 @@ const app = Vue.createApp({
 			this.level = level;
 			this.index = 0;
 			this.quizes = this.flags.filter(flag=>flag.level==this.level);
-			this.quiz = this.quizes[this.index];
+			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
 		},
@@ -118,7 +116,7 @@ const app = Vue.createApp({
 			console.log("clickChoise:", name);
 			this.disableChoises();// Disable
 			// Judge
-			if(this.quiz.name == name){
+			if(this.answer.name == name){
 				this.doAnimate("myFlag", "animate__bounce");
 				myHowl.play("./assets/sounds/se_ok.mp3");
 			}else{
@@ -132,7 +130,7 @@ const app = Vue.createApp({
 					this.changeMode(MODE_RESULT);
 					return;
 				}
-				this.quiz = this.quizes[this.index];// Next
+				this.answer = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
 				this.doAnimate("myFlag", "animate__bounceIn");
 				myHowl.play("./assets/sounds/se_ng.mp3");

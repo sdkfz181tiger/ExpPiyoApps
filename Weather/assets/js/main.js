@@ -1,10 +1,11 @@
 console.log("main.js!!");
 
-const VERSION = "v1.0.0";
+const VERSION       = "v1.0.0";
+const KEY_STORAGE   = "weather";
+
 const MODE_LOADING  = 0;
 const MODE_ERROR    = 1;
 const MODE_FORECAST = 2;
-const KEY_STORAGE   = "weather";
 
 const myData = {
 	version: VERSION,

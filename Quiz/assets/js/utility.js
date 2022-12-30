@@ -66,7 +66,7 @@ function preloadImages(flags){
 		const img = new Image();
 		img.src = flag.src;
 		img.addEventListener("load", (e)=>{
-			console.log("load:", e);
+			//console.log("load:", e);
 		});
 	}
 }

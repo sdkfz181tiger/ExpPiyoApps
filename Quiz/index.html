@@ -104,8 +104,8 @@
 					<div class="col-lg-6 col-md-8 mx-auto">
 						<h1 class="fw-light" id="testTarget">Game</h1>
 						<p>
-							<img id="myFlag" v-bind:src="quiz.src">
-							<div>{{ quiz.name }}</div>
+							<img id="myFlag" v-bind:src="answer.src">
+							<div>{{ answer.name }}</div>
 						</p>
 						<p id="myChoise">
 							<button class="btn btn-primary m-2"
@@ -167,7 +167,7 @@
 						v-on:click="showModal()">
 						<i class="bi-file-earmark-plus-fill" role="img"></i>
 					</a>
-					<h5>Tag</h5>
+					<h5>Offcanvas</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
@@ -192,7 +192,7 @@
 						<div class="modal-body">
 							<div class="container-fluid">
 								<input type="text" class="form-control" id="formInputTag" 
-									placeholder="Tag" v-model="modalText">
+									placeholder="Text" v-model="modalText">
 							</div>
 						</div>
 						<div class="modal-footer">
