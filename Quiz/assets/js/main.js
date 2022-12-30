@@ -132,6 +132,8 @@ const app = Vue.createApp({
 				}
 				this.quiz = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
+				this.doAnimate("myFlag", "animate__bounceIn");
+				playSound("./assets/sounds/se_ng.mp3");
 			}, 1200);
 		},
 		clickRetry(){
