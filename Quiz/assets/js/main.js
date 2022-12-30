@@ -114,23 +114,50 @@ const app = Vue.createApp({
 		},
 		clickChoise(name){
 			console.log("clickChoise:", name);
+			this.disableChoises();// Disable
 			// Judge
 			if(this.quiz.name == name){
+				this.doAnimate("myFlag", "animate__bounce");
 				playSound("./assets/sounds/se_ok.mp3");
 			}else{
+				this.doAnimate("myFlag", "animate__headShake");
 				playSound("./assets/sounds/se_ng.mp3");
 			}
 			// Next
-			if(this.quizes.length-1 < ++this.index){
-				this.changeMode(MODE_RESULT);
-				return;
-			}
-			this.quiz = this.quizes[this.index];// Next
-			this.shuffleChoises();// Choises
+			setTimeout(()=>{
+				this.enableChoises();// Enable
+				if(this.quizes.length-1 < ++this.index){
+					this.changeMode(MODE_RESULT);
+					return;
+				}
+				this.quiz = this.quizes[this.index];// Next
+				this.shuffleChoises();// Choises
+			}, 1200);
 		},
 		clickRetry(){
 			console.log("clickRetry");
 			this.changeMode(MODE_TITLE);
+		},
+		doAnimate(id, anim){
+			console.log("doAnimate:", id, anim);
+			const elem = document.getElementById(id);
+			elem.setAttribute("class", "animate__animated " + anim);
+			elem.addEventListener("animationend", ()=>{
+				elem.removeEventListener("animationend", this);
+				elem.removeAttribute("class");
+			});
+		},
+		disableChoises(){
+			const choises = document.getElementById("myChoise");
+			for(let i=0; i<choises.children.length; i++){
+				choises.children[i].setAttribute("disabled", "");
+			}
+		},
+		enableChoises(){
+			const choises = document.getElementById("myChoise");
+			for(let i=0; i<choises.children.length; i++){
+				choises.children[i].removeAttribute("disabled", "");
+			}
 		}
 	}
 });
