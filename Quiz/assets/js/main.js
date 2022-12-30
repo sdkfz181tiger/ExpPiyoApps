@@ -27,7 +27,8 @@ const myData = {
 	choises: [],
 	level: LEVEL_EASY,// Default
 	index: 0,
-	answer: null
+	counter: 0,
+	answer: null,
 }
 
 // Vue.js
@@ -107,6 +108,7 @@ const app = Vue.createApp({
 			this.shuffleFlags();// Shuffle
 			this.level = level;
 			this.index = 0;
+			this.counter = 0;
 			this.quizes = this.flags.filter(flag=>flag.level==this.level);
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
@@ -117,6 +119,7 @@ const app = Vue.createApp({
 			this.disableChoises();// Disable
 			// Judge
 			if(this.answer.name == name){
+				this.counter++;// Counter
 				this.doAnimate("myFlag", "animate__bounce");
 				myHowl.play("./assets/sounds/se_ok.mp3");
 			}else{

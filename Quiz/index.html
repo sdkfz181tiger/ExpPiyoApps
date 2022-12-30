@@ -78,8 +78,8 @@
 
 			<!-- Title(Start) -->
 			<div class="container text-center" v-if="mode==1">
-				<div class="row py-lg-5">
-					<div class="col-lg-6 col-md-8 mx-auto">
+				<div class="row">
+					<div class="col">
 						<h1 class="fw-light">Title</h1>
 						<p>
 							<button class="btn btn-primary"
@@ -100,9 +100,9 @@
 
 			<!-- Game(Start) -->
 			<div class="container text-center" v-if="mode==2">
-				<div class="row py-lg-5">
-					<div class="col-lg-6 col-md-8 mx-auto">
-						<h1 class="fw-light" id="testTarget">Game</h1>
+				<div class="row">
+					<div class="col">
+						<h1 class="fw-light">{{ counter }}/{{ quizes.length }}</h1>
 						<p>
 							<img id="myFlag" v-bind:src="answer.src">
 							<div>{{ answer.name }}</div>
@@ -121,8 +121,8 @@
 
 			<!-- Result(Start) -->
 			<div class="container text-center" v-if="mode==3">
-				<div class="row py-lg-5">
-					<div class="col-lg-6 col-md-8 mx-auto">
+				<div class="row">
+					<div class="col">
 						<h1 class="fw-light">Result</h1>
 						<p>
 							<button class="btn btn-primary" 
@@ -135,8 +135,8 @@
 
 			<!-- Settings(Start) -->
 			<div class="container text-center" v-if="mode==4">
-				<div class="row py-lg-5">
-					<div class="col-lg-6 col-md-8 mx-auto">
+				<div class="row">
+					<div class="col">
 						<h1 class="fw-light">Settings</h1>
 						<p class="lead text-muted">
 							Settings!!
