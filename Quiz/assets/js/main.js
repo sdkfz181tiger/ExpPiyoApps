@@ -13,6 +13,7 @@ const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
 
 const PATH_FLAGS    = "./assets/images/flags/";
+const myHowl        = new MyHowler();
 
 const myData = {
 	version: VERSION,
@@ -50,6 +51,7 @@ const app = Vue.createApp({
 			this.data = json.data;// Data
 			this.flags = this.data.flags;// Flags
 			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.src;});
+			preloadImages(this.flags);// Preload
 			setTimeout(()=>{this.changeMode(MODE_TITLE);}, 200);
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");
@@ -118,10 +120,10 @@ const app = Vue.createApp({
 			// Judge
 			if(this.quiz.name == name){
 				this.doAnimate("myFlag", "animate__bounce");
-				playSound("./assets/sounds/se_ok.mp3");
+				myHowl.play("./assets/sounds/se_ok.mp3");
 			}else{
 				this.doAnimate("myFlag", "animate__headShake");
-				playSound("./assets/sounds/se_ng.mp3");
+				myHowl.play("./assets/sounds/se_ng.mp3");
 			}
 			// Next
 			setTimeout(()=>{
@@ -133,7 +135,7 @@ const app = Vue.createApp({
 				this.quiz = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
 				this.doAnimate("myFlag", "animate__bounceIn");
-				playSound("./assets/sounds/se_ng.mp3");
+				myHowl.play("./assets/sounds/se_ng.mp3");
 			}, 1200);
 		},
 		clickRetry(){
