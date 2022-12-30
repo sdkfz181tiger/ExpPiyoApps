@@ -75,45 +75,56 @@
 			</div>
 			<!-- Loading(End) -->
 
-			<!-- Home(Start) -->
+			<!-- Title(Start) -->
 			<div class="container mt-3 text-center" v-if="mode==1">
 				<div class="row py-lg-5">
 					<div class="col-lg-6 col-md-8 mx-auto">
-						<h1 class="fw-light">Home</h1>
-						<div v-for="flag of flags">
-							<img v-bind:src="flag.src" v-bind:alt="flag.name">
-							{{ flag.name }}
-						</div>
+						<h1 class="fw-light">Title</h1>
+						<p>
+							<button v-on:click="clickGameEasy">Easy</button>
+						</p>
+						<p>
+							<button v-on:click="clickGameNormal">Normal</button>
+						</p>
+						<p>
+							<button v-on:click="clickGameHard">Hard</button>
+						</p>
 					</div>
 				</div>
 			</div>
-			<!-- Home(End) -->
+			<!-- Title(End) -->
 
-			<!-- Google(Start) -->
+			<!-- Game(Start) -->
 			<div class="container mt-3 text-center" v-if="mode==2">
 				<div class="row py-lg-5">
 					<div class="col-lg-6 col-md-8 mx-auto">
-						<h1 class="fw-light">Google</h1>
-						<p class="lead text-muted">
-							Good morning!!
+						<h1 class="fw-light">Game</h1>
+						<p>
+							<img v-bind:src="quiz.src">
+						</p>
+						<p>
+							{{ quiz.name }}
+						</p>
+						<p>
+							<button v-on:click="clickNext">Next</button>
 						</p>
 					</div>
 				</div>
 			</div>
-			<!-- Google(End) -->
+			<!-- Game(End) -->
 
-			<!-- Apple(Start) -->
+			<!-- Result(Start) -->
 			<div class="container mt-3 text-center" v-if="mode==3">
 				<div class="row py-lg-5">
 					<div class="col-lg-6 col-md-8 mx-auto">
-						<h1 class="fw-light">Apple</h1>
-						<p class="lead text-muted">
-							Good morning!!
+						<h1 class="fw-light">Result</h1>
+						<p>
+							<button v-on:click="clickRetry">Retry</button>
 						</p>
 					</div>
 				</div>
 			</div>
-			<!-- Apple(End) -->
+			<!-- Result(End) -->
 
 			<!-- Settings(Start) -->
 			<div class="container mt-3 text-center" v-if="mode==4">
@@ -121,7 +132,7 @@
 					<div class="col-lg-6 col-md-8 mx-auto">
 						<h1 class="fw-light">Settings</h1>
 						<p class="lead text-muted">
-							Good morning!!
+							Settings!!
 						</p>
 					</div>
 				</div>
@@ -207,13 +218,13 @@
 
 	</div>
 
-	<script>
+	<!-- <script>
 		// Banner_468x60
-		/*(window.adsbyimobile=window.adsbyimobile||[]).push({
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
 			pid:26719, mid:550231, asid:1792594, type:"banner", display:"inline",
-			elementid:"im-xxx"});*/
+			elementid:"im-xxx"});
 	</script>
-	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script> -->
 
 	<!-- JavaScript -->
 	<script src="./assets/libs/vue/vue.global.js"></script>

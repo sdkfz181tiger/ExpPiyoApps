@@ -94,7 +94,7 @@ const app = Vue.createApp({
 				return;
 			}
 			// Axios
-			loadAxios("./assets/js/data.json", (json)=>{
+			loadAxios("./assets/js/data.json", json=>{
 				this.data = json.data;// Data
 				this.sortAllData();// Sort
 				this.changeTag(this.data.tags[0]);
