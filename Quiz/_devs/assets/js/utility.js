@@ -57,3 +57,18 @@ function loadAxios(url, onSuccess, onError){
 		onError(err);
 	});
 }
+
+//==========
+// Howler
+const sounds = {}
+function playSound(src){
+	if(src in sounds){
+		sounds[src].play();
+		return;
+	}
+	const sound = new Howl({
+		src: src, loop: false,
+	});
+	sounds[src] = sound;
+	sound.play();
+}

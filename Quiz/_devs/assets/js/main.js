@@ -112,8 +112,15 @@ const app = Vue.createApp({
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
 		},
-		clickChoise(){
-			console.log("clickChoise");
+		clickChoise(name){
+			console.log("clickChoise:", name);
+			// Judge
+			if(this.quiz.name == name){
+				playSound("./assets/sounds/se_ok.mp3");
+			}else{
+				playSound("./assets/sounds/se_ng.mp3");
+			}
+			// Next
 			if(this.quizes.length-1 < ++this.index){
 				this.changeMode(MODE_RESULT);
 				return;
