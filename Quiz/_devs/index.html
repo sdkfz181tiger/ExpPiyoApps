@@ -81,13 +81,13 @@
 					<div class="col-lg-6 col-md-8 mx-auto">
 						<h1 class="fw-light">Title</h1>
 						<p>
-							<button v-on:click="clickGameEasy">Easy</button>
+							<button v-on:click="clickGameLevel(1)">Easy</button>
 						</p>
 						<p>
-							<button v-on:click="clickGameNormal">Normal</button>
+							<button v-on:click="clickGameLevel(2)">Normal</button>
 						</p>
 						<p>
-							<button v-on:click="clickGameHard">Hard</button>
+							<button v-on:click="clickGameLevel(3)">Hard</button>
 						</p>
 					</div>
 				</div>
@@ -101,12 +101,10 @@
 						<h1 class="fw-light">Game</h1>
 						<p>
 							<img v-bind:src="quiz.src">
+							<div>{{ quiz.name }}</div>
 						</p>
-						<p>
-							{{ quiz.name }}
-						</p>
-						<p>
-							<button v-on:click="clickNext">Next</button>
+						<p v-for="choise of choises">
+							<button v-on:click="clickChoise">{{ choise.name }}</button>
 						</p>
 					</div>
 				</div>

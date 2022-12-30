@@ -24,6 +24,7 @@ const myData = {
 	index: 0,
 	flags: [],
 	quizes: [],
+	choises: [],
 	quiz: null
 }
 
@@ -86,40 +87,39 @@ const app = Vue.createApp({
 				[this.flags[i], this.flags[rdm]] = [this.flags[rdm], this.flags[i]];
 			}
 		},
-		clickGameEasy(){
-			console.log("clickGameEasy");
+		shuffleChoises(){
+			console.log("shuffleChoises");
+			this.choises = this.quizes.filter(flag=>flag.name!=this.quiz.name);
+			for(let i=this.choises.length-1; 0<i; i--){
+				const rdm = Math.floor(Math.random() * i);
+				[this.choises[i], this.choises[rdm]] = [this.choises[rdm], this.choises[i]];
+			}
+			this.choises.splice(3);
+			this.choises.push(this.quiz);
+			for(let i=0; i<this.choises.length; i++){
+				const rdm = Math.floor(Math.random() * this.choises.length);
+				if(rdm == i) continue;
+				[this.choises[i], this.choises[rdm]] = [this.choises[rdm], this.choises[i]];
+			}
+		},
+		clickGameLevel(level){
+			console.log("clickGameLevel:", level);
 			this.shuffleFlags();// Shuffle
-			this.level = LEVEL_EASY;
+			this.level = level;
 			this.index = 0;
 			this.quizes = this.flags.filter(flag=>flag.level==this.level);
 			this.quiz = this.quizes[this.index];
+			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
 		},
-		clickGameNormal(){
-			console.log("clickGameNormal");
-			this.shuffleFlags();// Shuffle
-			this.level = LEVEL_NORMAL;
-			this.index = 0;
-			this.quizes = this.flags.filter(flag=>flag.level==this.level);
-			this.quiz = this.quizes[this.index];
-			this.changeMode(MODE_GAME);
-		},
-		clickGameHard(){
-			console.log("clickGameHard");
-			this.shuffleFlags();// Shuffle
-			this.level = LEVEL_HARD;
-			this.index = 0;
-			this.quizes = this.flags.filter(flag=>flag.level==this.level);
-			this.quiz = this.quizes[this.index];
-			this.changeMode(MODE_GAME);
-		},
-		clickNext(){
-			console.log("clickNext");
+		clickChoise(){
+			console.log("clickChoise");
 			if(this.quizes.length-1 < ++this.index){
 				this.changeMode(MODE_RESULT);
 				return;
 			}
 			this.quiz = this.quizes[this.index];// Next
+			this.shuffleChoises();// Choises
 		},
 		clickRetry(){
 			console.log("clickRetry");
