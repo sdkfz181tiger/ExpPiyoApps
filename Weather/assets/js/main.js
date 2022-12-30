@@ -4,7 +4,6 @@ const VERSION = "v1.0.0";
 const MODE_LOADING  = 0;
 const MODE_ERROR    = 1;
 const MODE_FORECAST = 2;
-const MODE_SETTINGS = 3;
 const KEY_STORAGE   = "weather";
 
 const myData = {

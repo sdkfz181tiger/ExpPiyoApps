@@ -64,6 +64,8 @@ function loadRev(res){
 	const coords = res.coords;
 	const lat = coords.latitude;
 	const lon = coords.longitude;
+	// const lat = "43.768034980021596";// Hokkaido
+	// const lon = "142.39049553222543";
 	// const lat = 26.594319927628522;// Okinawa
 	// const lon = 127.98102920031258;
 	// const lat = 35.367450839400526;// Ogaki
