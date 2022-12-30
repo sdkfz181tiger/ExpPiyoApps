@@ -78,17 +78,17 @@ const app = Vue.createApp({
 			loadGeo().then(res=>loadRev(res)).then(res=>convertText(res))
 				.then(res=>{
 					const results = JSON.parse(res).results;
-					this.startPref(results.muniCd, results.lv01Nm);
+					this.startArea(results.muniCd, results.lv01Nm);
 				}).catch(err=>{
 					console.log(err);
-					this.clearPref();// Clear
+					this.clearFile();// Clear
 					showToast("Error", "0 min ago.", err);
 				});
 		},
-		startPref(muniCd, lv01Nm){
-			console.log("startPref:", muniCd, lv01Nm);
-			// Pref
-			loadPref().then(res=>convertText(res))
+		startArea(muniCd, lv01Nm){
+			console.log("startArea:", muniCd, lv01Nm);
+			// Area
+			loadArea().then(res=>convertText(res))
 				.then(res=>{
 					const area = JSON.parse(res);
 					const class20s = area.class20s[muniCd + "00"];

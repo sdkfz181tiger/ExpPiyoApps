@@ -77,8 +77,8 @@ function loadRev(res){
 	return axios.get(url, option);
 }
 
-function loadPref(){
-	console.log("loadPref");
+function loadArea(){
+	console.log("loadArea");
 	const url = API_AREA;
 	const option = {responseType: "blob"};
 	return axios.get(url, option);
