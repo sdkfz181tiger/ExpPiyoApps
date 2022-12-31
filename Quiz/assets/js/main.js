@@ -115,7 +115,7 @@ const app = Vue.createApp({
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
-			myHowl.playBGM("./assets/sounds/bgm_game.mp3", 0.8);
+			myHowl.playBGM("./assets/sounds/bgm_game.mp3", 0.5);
 		},
 		clickChoise(name){
 			console.log("clickChoise:", name);
@@ -149,7 +149,7 @@ const app = Vue.createApp({
 		clickRetry(){
 			console.log("clickRetry");
 			this.changeMode(MODE_TITLE);
-			myHowl.playSE("./assets/sounds/se_title.mp3");
+			myHowl.playBGM("./assets/sounds/bgm_title.mp3", 0.5);
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);

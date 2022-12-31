@@ -73,6 +73,17 @@ function preloadImages(flags){
 
 //==========
 // Howler
+
+window.addEventListener("blur", e=>{
+	console.log("blur");
+	if(myHowl) myHowl.pauseBGM();
+});
+
+window.addEventListener("focus", e=>{
+	console.log("focus");
+	if(myHowl) myHowl.resumeBGM();
+});
+
 class MyHowler{
 
 	constructor(){
@@ -108,8 +119,26 @@ class MyHowler{
 		this._bgm[src].play();
 	}
 
-	stopBGM(){
+	pauseBGM(){
+		console.log("pauseBGM");
 		for(let key in this._bgm){
+			if(!this._bgm[key].playing()) continue;
+			this._bgm[key].pause();
+		}
+	}
+
+	resumeBGM(){
+		console.log("resumeBGM");
+		for(let key in this._bgm){
+			if(this._bgm[key].seek() <= 0) continue;
+			this._bgm[key].play();
+		}
+	}
+
+	stopBGM(){
+		console.log("stopBGM");
+		for(let key in this._bgm){
+			if(this._bgm[key].seek() <= 0) continue;
 			this._bgm[key].stop();
 		}
 	}
