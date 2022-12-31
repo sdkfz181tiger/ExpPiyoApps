@@ -12,6 +12,7 @@ const MODE_SETTINGS = 4;
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
+const QUIZ_TOTAL    = 10;
 
 const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
@@ -24,11 +25,11 @@ const myData = {
 	modalText: "",
 	flags: [],
 	quizes: [],
+	results: [],
 	choises: [],
-	level: LEVEL_EASY,// Default
 	index: 0,
-	counter: 0,
 	answer: null,
+	waiting: false
 }
 
 // Vue.js
@@ -106,29 +107,31 @@ const app = Vue.createApp({
 		clickGameLevel(level){
 			console.log("clickGameLevel:", level);
 			this.shuffleFlags();// Shuffle
-			this.level = level;
 			this.index = 0;
-			this.counter = 0;
-			this.quizes = this.flags.filter(flag=>flag.level==this.level);
+			this.quizes = this.flags.filter(flag=>flag.level==level);
+			this.quizes = this.quizes.splice(0, QUIZ_TOTAL);
+			this.results = Array(QUIZ_TOTAL).fill("-");
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
 		},
 		clickChoise(name){
 			console.log("clickChoise:", name);
-			this.disableChoises();// Disable
+			if(this.waiting) return;
+			this.waiting = true;
 			// Judge
 			if(this.answer.name == name){
-				this.counter++;// Counter
+				this.results[this.index] = "o";
 				this.doAnimate("myFlag", "animate__bounce");
 				myHowl.play("./assets/sounds/se_ok.mp3");
 			}else{
+				this.results[this.index] = "x";
 				this.doAnimate("myFlag", "animate__headShake");
 				myHowl.play("./assets/sounds/se_ng.mp3");
 			}
 			// Next
 			setTimeout(()=>{
-				this.enableChoises();// Enable
+				this.waiting = false;
 				if(this.quizes.length-1 < ++this.index){
 					this.changeMode(MODE_RESULT);
 					return;
@@ -151,18 +154,11 @@ const app = Vue.createApp({
 				elem.removeEventListener("animationend", this);
 				elem.removeAttribute("class");
 			});
-		},
-		disableChoises(){
-			const choises = document.getElementById("myChoise");
-			for(let i=0; i<choises.children.length; i++){
-				choises.children[i].setAttribute("disabled", "");
-			}
-		},
-		enableChoises(){
-			const choises = document.getElementById("myChoise");
-			for(let i=0; i<choises.children.length; i++){
-				choises.children[i].removeAttribute("disabled", "");
-			}
+		}
+	},
+	computed:{
+		getResults(){
+			return this.results.join(",");
 		}
 	}
 });

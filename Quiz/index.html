@@ -100,20 +100,28 @@
 
 			<!-- Game(Start) -->
 			<div class="container text-center" v-if="mode==2">
+
 				<div class="row">
+					<div class="d-flex align-items-center">
+						<div class="p-2">
+							{{ index + 1 }}/{{ quizes.length }}
+						</div>
+						<div class="flex-grow-1 p-2"></div>
+						<div class="p-2">
+							{{ getResults }}
+						</div>
+					</div>
+				</div>
+				
+				<div class="row m-4">
 					<div class="col">
-						<h1 class="fw-light">{{ counter }}/{{ quizes.length }}</h1>
-						<p>
-							<img id="myFlag" v-bind:src="answer.src">
-							<div>{{ answer.name }}</div>
-						</p>
-						<p id="myChoise">
-							<button class="btn btn-primary m-2"
-								v-for="choise of choises"
-								v-on:click="clickChoise(choise.name)">
-								{{ choise.name }}
-							</button>
-						</p>
+						<img id="myFlag" v-bind:src="answer.src">
+					</div>
+				</div>
+				<div class="children mb-2" id="myChoise" 
+					v-for="choise of choises" v-on:click="clickChoise(choise.name)">
+					<div class="d-flex text-center m-3">
+						{{ choise.name }}
 					</div>
 				</div>
 			</div>

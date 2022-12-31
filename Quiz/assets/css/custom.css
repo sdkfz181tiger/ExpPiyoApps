@@ -60,3 +60,10 @@ main img{
 	width: auto; height: 8rem;
 	margin: 5px; padding: 0px;
 }
+
+.children{
+	border-radius: 8px;
+	border: 1px solid silver;;
+	border-bottom: 2px solid gray;
+	background-color: whitesmoke;
+}
