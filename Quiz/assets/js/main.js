@@ -53,7 +53,9 @@ const app = Vue.createApp({
 			this.flags = json.data;// Flags
 			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.code + ".svg";});
 			preloadImages(this.flags);// Preload
-			setTimeout(()=>{this.changeMode(MODE_TITLE);}, 200);
+			setTimeout(()=>{
+				this.changeMode(MODE_TITLE);
+			}, 200);
 		}, (err)=>{
 			showToast("Error", "0 min ago", "通信エラーです");
 		});
@@ -145,6 +147,7 @@ const app = Vue.createApp({
 		clickRetry(){
 			console.log("clickRetry");
 			this.changeMode(MODE_TITLE);
+			myHowl.play("./assets/sounds/se_title.mp3");
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);
