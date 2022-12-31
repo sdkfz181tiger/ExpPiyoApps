@@ -76,18 +76,41 @@ function preloadImages(flags){
 class MyHowler{
 
 	constructor(){
-		this._pool = {};
+		this._se = {};
+		this._bgm = {};
 	}
 
-	play(src, loop=false){
-		if(src in this._pool){
-			this._pool[src].play();
+	playSE(src, volume=1.0, loop=false){
+		if(src in this._se){
+			this._se[src].play();
 			return;
 		}
 		const sound = new Howl({
-			src: src, loop: loop,
+			src: src, 
+			volume: volume, 
+			loop: loop
 		});
-		this._pool[src] = sound;
-		this._pool[src].play();
+		this._se[src] = sound;
+		this._se[src].play();
+	}
+
+	playBGM(src, volume=1.0, loop=true){
+		if(src in this._bgm){
+			this._bgm[src].play();
+			return;
+		}
+		const sound = new Howl({
+			src: src, 
+			volume: volume, 
+			loop: loop
+		});
+		this._bgm[src] = sound;
+		this._bgm[src].play();
+	}
+
+	stopBGM(){
+		for(let key in this._bgm){
+			this._bgm[key].stop();
+		}
 	}
 }

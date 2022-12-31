@@ -115,6 +115,7 @@ const app = Vue.createApp({
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
+			myHowl.playBGM("./assets/sounds/bgm_game.mp3", 0.8);
 		},
 		clickChoise(name){
 			console.log("clickChoise:", name);
@@ -124,30 +125,31 @@ const app = Vue.createApp({
 			if(this.answer.name == name){
 				this.results[this.index] = "o";
 				this.doAnimate("quiz-flag", "animate__bounce");
-				myHowl.play("./assets/sounds/se_ok.mp3");
+				myHowl.playSE("./assets/sounds/se_ok.mp3");
 			}else{
 				this.results[this.index] = "x";
 				this.doAnimate("quiz-flag", "animate__headShake");
-				myHowl.play("./assets/sounds/se_ng.mp3");
+				myHowl.playSE("./assets/sounds/se_ng.mp3");
 			}
 			// Next
 			setTimeout(()=>{
 				this.waiting = false;
 				if(this.quizes.length-1 < ++this.index){
 					this.changeMode(MODE_RESULT);
-					myHowl.play("./assets/sounds/se_result.mp3");
+					myHowl.playSE("./assets/sounds/se_result.mp3");
+					myHowl.stopBGM();
 					return;
 				}
 				this.answer = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
 				this.doAnimate("quiz-flag", "animate__bounceIn");
-				myHowl.play("./assets/sounds/se_next.mp3");
+				myHowl.playSE("./assets/sounds/se_next.mp3");
 			}, 1200);
 		},
 		clickRetry(){
 			console.log("clickRetry");
 			this.changeMode(MODE_TITLE);
-			myHowl.play("./assets/sounds/se_title.mp3");
+			myHowl.playSE("./assets/sounds/se_title.mp3");
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);
