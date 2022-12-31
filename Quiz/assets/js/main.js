@@ -165,7 +165,12 @@ const app = Vue.createApp({
 			return this.results.join(",");
 		},
 		getFlgline(){
-			return this.flags.splice(0, 5);
+			const icons = [];
+			for(let i=0; i<5; i++){
+				const rdm = Math.floor(Math.random()*this.flags.length);
+				icons.push(this.flags[rdm]);
+			}
+			return icons;
 		}
 	}
 });

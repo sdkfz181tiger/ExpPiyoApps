@@ -57,9 +57,14 @@ footer a i{
 }
 
 .line-flags{
-	width: 4rem; height: auto;
-	margin: 5px; padding: 0px;
-	border-radius: 1rem;
+/*	background-color: gray;*/
+}
+
+.line-flags img{
+	width: 4rem; height: 4rem;
+	margin: 0.4rem; padding: 0px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
 #quiz-flag{

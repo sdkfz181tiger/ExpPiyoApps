@@ -80,16 +80,24 @@
 			<div class="container text-center" v-if="mode==1">
 				<div class="row pt-4">
 					<div class="col">
-						<p class="line-flags">
+						<div class="d-flex d-flex justify-content-center line-flags">
 							<img v-for="flag of getFlgline" v-bind:src="flag.src">
-						</p>
-						<h1>国旗クイズ</h1>
-						<p class="line-flags">
-							<img v-for="flag of getFlgline" v-bind:src="flag.src">
-						</p>
+						</div>
 					</div>
 				</div>
 				<div class="row pt-4">
+					<div class="col">
+						<h1>国旗クイズ</h1>
+					</div>
+				</div>
+				<div class="row pt-2">
+					<div class="col">
+						<div class="d-flex d-flex justify-content-center line-flags">
+							<img v-for="flag of getFlgline" v-bind:src="flag.src">
+						</div>
+					</div>
+				</div>
+				<div class="row pt-5">
 					<div class="col">
 						<p>
 							<button class="btn btn-primary"
