@@ -56,7 +56,13 @@ footer a i{
 	display: none !important;
 }
 
-main img{
+.line-flags{
+	width: 4rem; height: auto;
+	margin: 5px; padding: 0px;
+	border-radius: 1rem;
+}
+
+#quiz-flag{
 	width: auto; height: 8rem;
 	margin: 5px; padding: 0px;
 }

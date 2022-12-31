@@ -48,7 +48,6 @@ const app = Vue.createApp({
 		// Modal
 		const elem = document.getElementById("myModal");
 		const modal = new bootstrap.Modal(elem);
-
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
 			this.flags = json.data;// Flags
@@ -122,11 +121,11 @@ const app = Vue.createApp({
 			// Judge
 			if(this.answer.name == name){
 				this.results[this.index] = "o";
-				this.doAnimate("myFlag", "animate__bounce");
+				this.doAnimate("quiz-flag", "animate__bounce");
 				myHowl.play("./assets/sounds/se_ok.mp3");
 			}else{
 				this.results[this.index] = "x";
-				this.doAnimate("myFlag", "animate__headShake");
+				this.doAnimate("quiz-flag", "animate__headShake");
 				myHowl.play("./assets/sounds/se_ng.mp3");
 			}
 			// Next
@@ -134,12 +133,13 @@ const app = Vue.createApp({
 				this.waiting = false;
 				if(this.quizes.length-1 < ++this.index){
 					this.changeMode(MODE_RESULT);
+					myHowl.play("./assets/sounds/se_result.mp3");
 					return;
 				}
 				this.answer = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
-				this.doAnimate("myFlag", "animate__bounceIn");
-				myHowl.play("./assets/sounds/se_ng.mp3");
+				this.doAnimate("quiz-flag", "animate__bounceIn");
+				myHowl.play("./assets/sounds/se_next.mp3");
 			}, 1200);
 		},
 		clickRetry(){
@@ -159,6 +159,9 @@ const app = Vue.createApp({
 	computed:{
 		getResults(){
 			return this.results.join(",");
+		},
+		getFlgline(){
+			return this.flags.splice(0, 5);
 		}
 	}
 });
