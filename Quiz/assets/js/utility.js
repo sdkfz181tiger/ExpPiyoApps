@@ -105,7 +105,8 @@ class MyHowler{
 		this._se[src].play();
 	}
 
-	playBGM(src, volume=1.0, loop=true){
+	playBGM(src, volume=1.0, loop=false){
+		this.stopBGM();// Stop
 		if(src in this._bgm){
 			this._bgm[src].play();
 			return;
