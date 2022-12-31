@@ -51,8 +51,8 @@ const app = Vue.createApp({
 
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
-			this.flags = json.data.flags;// Flags
-			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.src;});
+			this.flags = json.data;// Flags
+			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.code + ".svg";});
 			preloadImages(this.flags);// Preload
 			setTimeout(()=>{this.changeMode(MODE_TITLE);}, 200);
 		}, (err)=>{
