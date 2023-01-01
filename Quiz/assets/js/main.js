@@ -50,7 +50,7 @@ const app = Vue.createApp({
 		const modal = new bootstrap.Modal(elem);
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
-			this.flags = json.data;// Flags
+			this.flags = json.data.filter(flag=>flag.capital!="");// Flags
 			this.flags.map(flg=>{flg.src = PATH_FLAGS + flg.code + ".svg";});
 			preloadImages(this.flags);// Preload
 			setTimeout(()=>{
