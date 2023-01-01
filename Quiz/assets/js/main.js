@@ -166,10 +166,17 @@ const app = Vue.createApp({
 		}
 	},
 	computed:{
-		getResults(){
+		getResultCount(){
+			let counter = 0;
+			for(let result of this.results){
+				if(result == "o") counter++;
+			}
+			return counter;
+		},
+		getResultLine(){
 			return this.results.join(",");
 		},
-		getFlgline(){
+		getFlgLine(){
 			const icons = [];
 			for(let i=0; i<5; i++){
 				const rdm = Math.floor(Math.random()*this.flags.length);
