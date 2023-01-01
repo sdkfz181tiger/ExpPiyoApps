@@ -135,7 +135,7 @@
 						<p id="quiz-hint">ヒント:首都は{{ answer.capital }}</p>
 					</div>
 				</div>
-				<div class="children mb-2" id="myChoise" 
+				<div class="quiz-choises mb-2" id="myChoise" 
 					v-for="choise of choises" v-on:click="clickChoise(choise.name)">
 					<div class="text-center m-2">
 						{{ choise.name }}
@@ -146,30 +146,52 @@
 
 			<!-- Result(Start) -->
 			<div class="container text-center" v-if="mode==3">
-				<div class="row">
+				<div class="row pt-4">
 					<div class="col">
 						<h1 class="fw-light">Result</h1>
-						<p>
-							<button class="btn btn-primary" 
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="d-flex justify-content-center">
+						<h2 class="p-2">
+							{{ index + 1 }}/{{ quizes.length }}
+						</h2>
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="d-flex justify-content-center">
+						<table id="quiz-result">
+							<thead>
+								<tr>
+									<td></td>
+									<td>No.</td>
+									<td>Flag</td>
+									<td>Name</td>
+									<td>Capital</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(quiz, i) of quizes">
+									<td>o/x</td>
+									<td>{{ i }}</td>
+									<td><img v-bind:src="quiz.src"></td>
+									<td>{{ quiz.name }}</td>
+									<td>{{ quiz.capital }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="d-flex justify-content-center">
+						<button class="btn btn-primary m-2" 
+								v-on:click="clickTitle">Title</button>
+						<button class="btn btn-primary m-2" 
 								v-on:click="clickRetry">Retry</button>
-						</p>
 					</div>
 				</div>
 			</div>
 			<!-- Result(End) -->
-
-			<!-- Settings(Start) -->
-			<div class="container text-center" v-if="mode==4">
-				<div class="row">
-					<div class="col">
-						<h1 class="fw-light">Settings</h1>
-						<p class="lead text-muted">
-							Settings!!
-						</p>
-					</div>
-				</div>
-			</div>
-			<!-- Settings(End) -->
 
 		</main>
 		<!-- Main(End) -->

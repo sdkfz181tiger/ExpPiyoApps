@@ -7,12 +7,11 @@ const MODE_LOADING  = 0;
 const MODE_TITLE    = 1;
 const MODE_GAME     = 2;
 const MODE_RESULT   = 3;
-const MODE_SETTINGS = 4;
 
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
-const QUIZ_TOTAL    = 10;
+const QUIZ_TOTAL    = 3;
 
 const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
@@ -27,6 +26,7 @@ const myData = {
 	quizes: [],
 	results: [],
 	choises: [],
+	level: 0,
 	index: 0,
 	answer: null,
 	waiting: false
@@ -108,6 +108,7 @@ const app = Vue.createApp({
 		clickGameLevel(level){
 			console.log("clickGameLevel:", level);
 			this.shuffleFlags();// Shuffle
+			this.level = level;
 			this.index = 0;
 			this.quizes = this.flags.filter(flag=>flag.level==level);
 			this.quizes = this.quizes.splice(0, QUIZ_TOTAL);
@@ -145,10 +146,14 @@ const app = Vue.createApp({
 				myHowl.playSE("./assets/sounds/se_next.mp3");
 			}, 1200);
 		},
-		clickRetry(){
-			console.log("clickRetry");
+		clickTitle(){
+			console.log("clickTitle");
 			this.changeMode(MODE_TITLE);
 			myHowl.playBGM("./assets/sounds/bgm_title.mp3", 0.4);
+		},
+		clickRetry(){
+			console.log("clickRetry");
+			this.clickGameLevel(this.level);// Rtery
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);
