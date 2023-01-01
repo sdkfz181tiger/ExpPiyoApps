@@ -176,6 +176,7 @@ function getWeeklyData(data, kanjis, icons){
 			}
 			// Pops
 			if(area.pops){
+				area.pops = area.pops.splice(2);// Splice
 				areas[name].pops = area.pops;
 			}
 		}
