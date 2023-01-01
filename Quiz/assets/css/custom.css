@@ -73,9 +73,14 @@ footer a i{
 	object-fit: cover;
 }
 
+#logo{
+	font-size: 3.0rem;
+}
+
 #quiz-flag{
-	width: auto; height: 8rem;
-	margin: 5px; padding: 0px;
+	width: auto; height: 10rem;
+	margin: 0px; padding: 0px;
+	border-radius: 1rem;
 }
 
 .children{
