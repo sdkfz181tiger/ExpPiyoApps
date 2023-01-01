@@ -154,6 +154,7 @@ function getWeeklyData(data, kanjis, icons){
 			areas[name].name = name;
 			// Month, Date, Day
 			const date = new Date(data.reportDatetime);// Today
+			date.setDate(date.getDate() + 2);// Offset
 			areas[name].months = [];
 			areas[name].dates = [];
 			areas[name].days = [];
