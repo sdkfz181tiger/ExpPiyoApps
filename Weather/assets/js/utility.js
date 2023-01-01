@@ -165,6 +165,7 @@ function getWeeklyData(data, kanjis, icons){
 			}
 			// WeatherCodes
 			if(area.weatherCodes){
+				area.weatherCodes = area.weatherCodes.splice(2);// Splice
 				areas[name].weatherCodes = area.weatherCodes;
 				areas[name].srcs = [];
 				for(let code of area.weatherCodes){
