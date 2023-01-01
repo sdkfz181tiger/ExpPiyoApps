@@ -73,8 +73,14 @@ footer a i{
 	object-fit: cover;
 }
 
-#logo{
+#logo-1{
+	font-size: 4.0rem;
+	line-height: 0.8;
+}
+
+#logo-2{
 	font-size: 3.0rem;
+	line-height: 0.8;
 }
 
 #quiz-flag{
