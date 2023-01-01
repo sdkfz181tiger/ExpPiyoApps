@@ -11,7 +11,7 @@ const MODE_RESULT   = 3;
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
-const QUIZ_TOTAL    = 3;
+const QUIZ_TOTAL    = 4;
 
 const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
