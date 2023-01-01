@@ -7,11 +7,8 @@
 
 html, body{
 	margin: 0px; padding: 0px;
+	font-family: "Nicokaku-v2"; font-size: 1.0rem;
 	user-select:none;
-}
-
-header{
-	font-family: "Nicokaku-v2"; font-size: 1.2rem;
 }
 
 header i{
