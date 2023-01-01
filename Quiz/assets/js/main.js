@@ -178,7 +178,7 @@ const app = Vue.createApp({
 		},
 		getFlgLine(){
 			const icons = [];
-			for(let i=0; i<5; i++){
+			for(let i=0; i<7; i++){
 				const rdm = Math.floor(Math.random()*this.flags.length);
 				icons.push(this.flags[rdm]);
 			}
