@@ -1,6 +1,6 @@
 console.log("main.js!!");
 
-const VERSION       = "v0.0.1";
+const VERSION       = "v1.0.0";
 const KEY_STORAGE   = "quiz";
 
 const MODE_LOADING  = 0;
