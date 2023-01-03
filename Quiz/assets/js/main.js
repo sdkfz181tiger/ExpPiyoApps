@@ -122,7 +122,7 @@ const app = Vue.createApp({
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
-			myHowl.playBGM("./assets/sounds/bgm_game.mp3", 0.4, true);
+			myHowl.playBGM("./assets/sounds/bgm_game.mp3", 0.8, true);
 		},
 		clickChoise(name){
 			console.log("clickChoise:", name);
@@ -145,7 +145,7 @@ const app = Vue.createApp({
 				this.waiting = false;
 				if(this.quizes.length-1 < ++this.index){
 					this.changeMode(MODE_RESULT);
-					myHowl.playBGM("./assets/sounds/bgm_result.mp3", 0.4);
+					myHowl.playBGM("./assets/sounds/bgm_result.mp3", 0.8);
 					return;
 				}
 				this.answer = this.quizes[this.index];// Next
@@ -157,7 +157,7 @@ const app = Vue.createApp({
 		clickTitle(){
 			console.log("clickTitle");
 			this.changeMode(MODE_TITLE);
-			myHowl.playBGM("./assets/sounds/bgm_title.mp3", 0.4);
+			myHowl.playBGM("./assets/sounds/bgm_title.mp3", 0.8);
 		},
 		clickRetry(){
 			console.log("clickRetry");
