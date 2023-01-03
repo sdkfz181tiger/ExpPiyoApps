@@ -236,6 +236,36 @@ const app = Vue.createApp({
 			});
 			this.changeTag(this.activeTag, false);// Reflesh
 		},
+		onSortTag(e){
+			console.log("onSortTag");
+			const items = e.target.querySelectorAll("label");
+			for(let i=0; i<items.length; i++){
+				const id = items[i].getAttribute("id");
+				const tag = this.tags.find(tag=>tag.id==id);
+				tag.index = i;// Index
+			}
+		},
+		onEndTag(e){
+			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
+			this.saveStorage();// Save
+			const id = e.item.getAttribute("id");
+			const tag = this.tags.find(tag=>tag.id==id);
+			if(tag) this.changeTag(tag);// Change
+
+		},
+		onSortTodo(e){
+			console.log("onSortTodo");
+			const items = e.target.querySelectorAll("input");
+			for(let i=0; i<items.length; i++){
+				const id = items[i].getAttribute("id");
+				const todo = this.todos.find(todo=>todo.id==id);
+				todo.index = i;// Index
+			}
+		},
+		onEndTodo(e){
+			console.log("onEndTodo:", e.oldIndex, "->", e.newIndex);
+			this.saveStorage();// Save
+		},
 		showModalCreateTag(){
 			console.log("showModalCreateTag");
 			this.tagId = null;
@@ -267,36 +297,6 @@ const app = Vue.createApp({
 			const elem = document.getElementById("myModalTodo");
 			elem.querySelector("#modalLabel").innerText = "EditTodo";
 			bootstrap.Modal.getInstance(elem).show();
-		},
-		onSortTag(e){
-			console.log("onSortTag");
-			const items = e.target.querySelectorAll("label");
-			for(let i=0; i<items.length; i++){
-				const id = items[i].getAttribute("id");
-				const tag = this.tags.find(tag=>tag.id==id);
-				tag.index = i;// Index
-			}
-		},
-		onEndTag(e){
-			console.log("onEndTag:", e.oldIndex, "->", e.newIndex);
-			this.saveStorage();// Save
-			const id = e.item.getAttribute("id");
-			const tag = this.tags.find(tag=>tag.id==id);
-			if(tag) this.changeTag(tag);// Change
-
-		},
-		onSortTodo(e){
-			console.log("onSortTodo");
-			const items = e.target.querySelectorAll("input");
-			for(let i=0; i<items.length; i++){
-				const id = items[i].getAttribute("id");
-				const todo = this.todos.find(todo=>todo.id==id);
-				todo.index = i;// Index
-			}
-		},
-		onEndTodo(e){
-			console.log("onEndTodo:", e.oldIndex, "->", e.newIndex);
-			this.saveStorage();// Save
 		}
 	},
 	computed:{

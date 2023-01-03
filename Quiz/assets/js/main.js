@@ -83,12 +83,6 @@ const app = Vue.createApp({
 			}
 			showToast("Create", "1 min ago", this.modalText);
 		},
-		showModal(){
-			console.log("showModal");
-			const elem = document.getElementById("myModal");
-			elem.querySelector("#modalLabel").innerText = "ゲームをやめる";
-			bootstrap.Modal.getInstance(elem).show();
-		},
 		shuffleFlags(){
 			console.log("shuffleFlags");
 			for(let i=this.flags.length-1; 0<i; i--){
@@ -162,6 +156,12 @@ const app = Vue.createApp({
 		clickRetry(){
 			console.log("clickRetry");
 			this.clickGameLevel(this.level);// Rtery
+		},
+		showModal(){
+			console.log("showModal");
+			const elem = document.getElementById("myModal");
+			elem.querySelector("#modalLabel").innerText = "ゲームをやめる";
+			bootstrap.Modal.getInstance(elem).show();
 		},
 		switchSound(){
 			console.log("switchSound");

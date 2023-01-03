@@ -62,7 +62,7 @@ function loadAxios(url, onSuccess, onError){
 // Notification
 
 function sendNotification(title, body, timeout=12000){
-
+	console.log("sendNotification:", title);
 	if(!Push.Permission.has()){
 		Push.Permission.request(()=>{
 			console.log("onGranted!!");

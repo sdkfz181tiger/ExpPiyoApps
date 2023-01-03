@@ -58,6 +58,9 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
+		clickTest(){
+			console.log("clickTest");
+		},
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
@@ -76,15 +79,6 @@ const app = Vue.createApp({
 				elem.removeEventListener("animationend", this);
 				elem.removeAttribute("class");
 			});
-		},
-		clickTest(){
-			console.log("clickTest");
-
-			setInterval(()=>{
-				this.notiText = "ゆっくり魔理沙だぜ:" + this.notiCounter;
-				sendNotification("おばんです!!", this.notiText);
-				this.notiCounter++;
-			}, 5000);
 		}
 	},
 	computed:{
