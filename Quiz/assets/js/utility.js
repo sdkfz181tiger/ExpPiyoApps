@@ -89,9 +89,13 @@ class MyHowler{
 	constructor(){
 		this._se = {};
 		this._bgm = {};
+		this._soundFlg = JSON.parse(localStorage.getItem("sound"));
+		if(this._soundFlg == null) this._soundFlg = true;
 	}
 
 	playSE(src, volume=1.0, loop=false){
+		//this.stopSE();// Stop all SE
+		if(!this.isActive()) return;
 		if(src in this._se){
 			this._se[src].play();
 			return;
@@ -105,8 +109,17 @@ class MyHowler{
 		this._se[src].play();
 	}
 
+	stopSE(){
+		console.log("stopSE");
+		for(let key in this._se){
+			if(this._se[key].seek() <= 0) continue;
+			this._se[key].stop();
+		}
+	}
+
 	playBGM(src, volume=1.0, loop=false){
-		this.stopBGM();// Stop
+		this.stopBGM();// Stop all BGM
+		if(!this.isActive()) return;
 		if(src in this._bgm){
 			this._bgm[src].play();
 			return;
@@ -118,6 +131,14 @@ class MyHowler{
 		});
 		this._bgm[src] = sound;
 		this._bgm[src].play();
+	}
+
+	stopBGM(){
+		console.log("stopBGM");
+		for(let key in this._bgm){
+			if(this._bgm[key].seek() <= 0) continue;
+			this._bgm[key].stop();
+		}
 	}
 
 	pauseBGM(){
@@ -136,11 +157,18 @@ class MyHowler{
 		}
 	}
 
-	stopBGM(){
-		console.log("stopBGM");
-		for(let key in this._bgm){
-			if(this._bgm[key].seek() <= 0) continue;
-			this._bgm[key].stop();
+	isActive(){
+		return this._soundFlg;
+	}
+
+	toggleActive(){
+		this._soundFlg = !this._soundFlg;
+		if(!this._soundFlg){
+			this.stopSE();
+			this.pauseBGM();
+		}else{
+			this.resumeBGM();
 		}
+		localStorage.setItem("sound", this._soundFlg);
 	}
 }

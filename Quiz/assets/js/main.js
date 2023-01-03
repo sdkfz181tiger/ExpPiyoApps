@@ -46,8 +46,15 @@ const app = Vue.createApp({
 		const elemOff = document.getElementById("myOffcanvas");
 		this.myOffcanvas = new bootstrap.Offcanvas(elemOff);
 		// Modal
-		const elem = document.getElementById("myModal");
-		const modal = new bootstrap.Modal(elem);
+		const elemModal = document.getElementById("myModal");
+		const modal = new bootstrap.Modal(elemModal);
+		// Sound
+		const elemSound = document.getElementById("switchSound");
+		if(myHowl.isActive()){
+			console.log("Active!!");
+			elemSound.setAttribute("checked", "checked");
+		}
+		console.log(elemSound);
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
 			this.flags = json.data.filter(flag=>flag.capital!="");// Flags
@@ -154,6 +161,10 @@ const app = Vue.createApp({
 		clickRetry(){
 			console.log("clickRetry");
 			this.clickGameLevel(this.level);// Rtery
+		},
+		switchSound(){
+			console.log("switchSound");
+			if(myHowl) myHowl.toggleActive();
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);

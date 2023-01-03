@@ -215,12 +215,20 @@
 						v-on:click="showModal()">
 						<i class="bi-file-earmark-plus-fill" role="img"></i>
 					</a>
-					<h5>Offcanvas</h5>
+					<h5>Settings</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					Hello Offcanvas!!
+					<p>
+						<div class="form-check form-switch form-switch-md">
+							<input type="checkbox" class="form-check-input mx-2" 
+								id="switchSound" v-on:click="switchSound">
+							<label class="form-check-label align-middle" for="switchSound">
+								サウンドOn/Off
+							</label>
+						</div>
+					</p>
 				</div>
 			</div>
 		</div>
@@ -273,13 +281,13 @@
 
 	</div>
 
-	<!-- <script>
+	<script>
 		// Banner_468x60
 		(window.adsbyimobile=window.adsbyimobile||[]).push({
 			pid:26719, mid:550231, asid:1792594, type:"banner", display:"inline",
 			elementid:"im-xxx"});
 	</script>
-	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script> -->
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
 
 	<!-- JavaScript -->
 	<script src="./assets/libs/vue/vue.global.js"></script>
