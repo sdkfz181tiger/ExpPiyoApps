@@ -97,7 +97,7 @@ footer a i{
 }
 
 #game-flag{
-	width: auto; height: 12rem;
+	max-width: 20rem; height: 12rem;
 	margin: 0px; padding: 0px;
 	border-radius: 1rem;
 	object-fit: cover;
