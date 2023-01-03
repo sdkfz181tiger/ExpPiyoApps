@@ -77,43 +77,7 @@ const app = Vue.createApp({
 		},
 		clickTest(){
 			console.log("clickTest");
-
-			// 1. Permissionの確認
-			if(!Push.Permission.has()){
-				// 2. Permissionのリクエスト
-				Push.Permission.request(()=>{
-					console.log("onGranted!!");
-					const status = Push.Permission.get();// Status
-					console.log(status);
-				}, ()=>{
-					console.log("onDenied!!");
-					const status = Push.Permission.get();// Status
-					console.log(status);
-				});
-			}else{
-				// 3. Notificationの実行
-				Push.create("こんにちは!!", {
-					body: "ゆっくり霊夢です!!",
-					icon: "./assets/images/logo.png",
-					tag: "myTag",
-					timeout: 12000,
-					vibrate: [100, 100, 100],
-					onClick: function(e){
-						console.log("onClick", e);
-					},
-					onShow: function(e){
-						console.log("onShow", e);
-					},
-					onClose: function(e){
-						console.log("onClose", e);
-					},
-					onError: function(e){
-						console.log("onError", e);
-					}
-				});
-			}
-
-
+			sendNotification("こんばんわ!!", "ゆっくり魔理沙だぜ!!");
 		}
 	},
 	computed:{

@@ -59,6 +59,50 @@ function loadAxios(url, onSuccess, onError){
 }
 
 //==========
+// Notification
+
+function sendNotification(title, body, timeout=12000){
+
+	if(!Push.Permission.has()){
+		Push.Permission.request(()=>{
+			console.log("onGranted!!");
+			const status = Push.Permission.get();// Status
+			console.log(status);
+			createNotification(title, body, timeout);
+		}, ()=>{
+			console.log("onDenied!!");
+			const status = Push.Permission.get();// Status
+			console.log(status);
+		});
+		return;
+	}
+	createNotification(title, body, timeout);
+}
+
+function createNotification(title, body, timeout=12000){
+
+	Push.create(title, {
+		body: body,
+		icon: "./assets/images/logo.png",
+		tag: "myTag",
+		timeout: timeout,
+		vibrate: [100, 100, 100],
+		onClick: function(e){
+			console.log("onClick", e);
+		},
+		onShow: function(e){
+			console.log("onShow", e);
+		},
+		onClose: function(e){
+			console.log("onClose", e);
+		},
+		onError: function(e){
+			console.log("onError", e);
+		}
+	});
+}
+
+//==========
 // Howler
 
 window.addEventListener("blur", e=>{
