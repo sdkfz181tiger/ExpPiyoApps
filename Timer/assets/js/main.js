@@ -14,8 +14,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	notiCounter: 0,
-	notiText: ""
+	timerMillis: 0,
 }
 
 // Vue.js
