@@ -81,7 +81,7 @@
 				<div class="row pt-4">
 					<div class="col">
 						<div class="d-flex d-flex justify-content-center line-flags">
-							<img v-for="flag of getFlgLine" v-bind:src="flag.src">
+							<img v-for="flag of getFlgLineTop" v-bind:src="flag.src">
 						</div>
 					</div>
 				</div>
@@ -94,22 +94,22 @@
 				<div class="row pt-2">
 					<div class="col">
 						<div class="d-flex d-flex justify-content-center line-flags">
-							<img v-for="flag of getFlgLine" v-bind:src="flag.src">
+							<img v-for="flag of getFlgLineBottom" v-bind:src="flag.src">
 						</div>
 					</div>
 				</div>
 				<div class="row pt-5">
 					<div class="col">
 						<p>
-							<button class="btn btn-primary"
+							<button class="btn btn-primary btn-lg px-5 py-2"
 								v-on:click="clickGameLevel(1)">レベル1</button>
 						</p>
 						<p>
-							<button class="btn btn-primary"
+							<button class="btn btn-primary btn-lg px-5 py-2"
 								v-on:click="clickGameLevel(2)">レベル2</button>
 						</p>
 						<p>
-							<button class="btn btn-primary"
+							<button class="btn btn-primary btn-lg px-5 py-2"
 								v-on:click="clickGameLevel(3)">レベル3</button>
 						</p>
 					</div>
@@ -125,8 +125,10 @@
 							{{ getResultCount }}/{{ quizes.length }}
 						</div>
 						<div class="flex-grow-1 p-2"></div>
-						<div class="p-2">
-							{{ getResultLine }}
+						<div class="line-results pe-1" v-for="result of results">
+								<img src="./assets/images/mark_bkg.png" v-if="result == 0">
+								<img src="./assets/images/mark_ok.png" v-if="result == 1">
+								<img src="./assets/images/mark_ng.png" v-if="result == 2">
 						</div>
 					</div>
 				</div>
@@ -161,10 +163,14 @@
 				</div>
 				<div class="row pt-4">
 					<div class="d-flex justify-content-center">
-						<button class="btn btn-primary m-2" 
-								v-on:click="clickTitle">Title</button>
-						<button class="btn btn-primary m-2" 
-								v-on:click="clickRetry">Retry</button>
+						<div class="btn-group btn-group-lg w-100">
+							<button class="btn btn-secondary py-2" v-on:click="clickTitle">
+								<i class="bi-house-fill" role="img"></i>Title
+							</button>
+							<button class="btn btn-primary py-2" v-on:click="clickRetry">
+								<i class="bi-caret-left-fill" role="img"></i>Retry
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="row pt-4">
@@ -181,11 +187,14 @@
 							</thead>
 							<tbody>
 								<tr v-for="(quiz, i) of quizes">
-									<td>o/x</td>
-									<td>{{ i }}</td>
-									<td><img v-bind:src="quiz.src"></td>
-									<td>{{ quiz.name }}</td>
-									<td>{{ quiz.capital }}</td>
+									<td class="p-1">
+										<img src="./assets/images/mark_ok.png" v-if="quiz.result==true">
+										<img src="./assets/images/mark_ng.png" v-else>
+									</td>
+									<td class="p-1">{{ i }}</td>
+									<td class="p-1"><img v-bind:src="quiz.src"></td>
+									<td class="p-2">{{ quiz.name }}</td>
+									<td class="p-2">{{ quiz.capital }}</td>
 								</tr>
 							</tbody>
 						</table>
@@ -211,24 +220,22 @@
 		<div class="container mt-5">
 			<div class="offcanvas offcanvas-end" id="myOffcanvas">
 				<div class="offcanvas-header">
-					<a class="btn btn-primary" href="#"
+					<!-- <a class="btn btn-primary" href="#"
 						v-on:click="showModal()">
 						<i class="bi-file-earmark-plus-fill" role="img"></i>
-					</a>
+					</a> -->
 					<h5>Settings</h5>
 					<button type="button" class="btn-close text-reset" 
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					<p>
-						<div class="form-check form-switch form-switch-md">
-							<input type="checkbox" class="form-check-input mx-2" 
-								id="switchSound" v-on:click="switchSound">
-							<label class="form-check-label align-middle" for="switchSound">
-								サウンドOn/Off
-							</label>
-						</div>
-					</p>
+					<div class="form-check form-switch form-switch-lg d-flex align-items-center">
+						<input type="checkbox" class="form-check-input mx-2" 
+							id="switchSound" v-on:click="switchSound">
+						<label class="form-check-label" for="switchSound">
+							サウンドOn/Off
+						</label>
+					</div>
 				</div>
 			</div>
 		</div>

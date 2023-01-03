@@ -11,7 +11,7 @@ const MODE_RESULT   = 3;
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
-const QUIZ_TOTAL    = 4;
+const QUIZ_TOTAL    = 10;
 
 const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
@@ -54,7 +54,6 @@ const app = Vue.createApp({
 			console.log("Active!!");
 			elemSound.setAttribute("checked", "checked");
 		}
-		console.log(elemSound);
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
 			this.flags = json.data.filter(flag=>flag.capital!="");// Flags
@@ -119,7 +118,7 @@ const app = Vue.createApp({
 			this.index = 0;
 			this.quizes = this.flags.filter(flag=>flag.level==level);
 			this.quizes = this.quizes.splice(0, QUIZ_TOTAL);
-			this.results = Array(QUIZ_TOTAL).fill("-");
+			this.results = Array(QUIZ_TOTAL).fill(0);
 			this.answer = this.quizes[this.index];
 			this.shuffleChoises();// Choises
 			this.changeMode(MODE_GAME);
@@ -131,11 +130,13 @@ const app = Vue.createApp({
 			this.waiting = true;
 			// Judge
 			if(this.answer.name == name){
-				this.results[this.index] = "o";
+				this.quizes[this.index].result = true;
+				this.results[this.index] = 1;
 				this.doAnimate("quiz-flag", "animate__bounce");
 				myHowl.playSE("./assets/sounds/se_ok.mp3");
 			}else{
-				this.results[this.index] = "x";
+				this.quizes[this.index].result = false;
+				this.results[this.index] = 2;
 				this.doAnimate("quiz-flag", "animate__headShake");
 				myHowl.playSE("./assets/sounds/se_ng.mp3");
 			}
@@ -180,14 +181,22 @@ const app = Vue.createApp({
 		getResultCount(){
 			let counter = 0;
 			for(let result of this.results){
-				if(result == "o") counter++;
+				if(result == 1) counter++;
 			}
 			return counter;
 		},
 		getResultLine(){
-			return this.results.join(",");
+			return this.results;
 		},
-		getFlgLine(){
+		getFlgLineTop(){
+			const icons = [];
+			for(let i=0; i<6; i++){
+				const rdm = Math.floor(Math.random()*this.flags.length);
+				icons.push(this.flags[rdm]);
+			}
+			return icons;
+		},
+		getFlgLineBottom(){
 			const icons = [];
 			for(let i=0; i<6; i++){
 				const rdm = Math.floor(Math.random()*this.flags.length);

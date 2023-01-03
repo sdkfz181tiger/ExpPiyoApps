@@ -73,6 +73,15 @@ footer a i{
 	object-fit: cover;
 }
 
+.line-results{
+/*	background-color: gray;*/
+}
+
+.line-results img{
+	width: 2.0rem; height: 2.0rem;
+	margin: 0px; padding: 0px;
+}
+
 #logo-1{
 	font-size: 4.0rem;
 	line-height: 0.8;
@@ -98,7 +107,11 @@ footer a i{
 }
 
 #quiz-result{
-	background-color: silver;
+/*	background-color: silver;*/
+}
+
+#quiz-result tr{
+	border-bottom: 2px solid silver;
 }
 
 #quiz-result img{
