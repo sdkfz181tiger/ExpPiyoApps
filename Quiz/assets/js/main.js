@@ -86,7 +86,7 @@ const app = Vue.createApp({
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
-			elem.querySelector("#modalLabel").innerText = "Modal";
+			elem.querySelector("#modalLabel").innerText = "タイトルに戻る";
 			bootstrap.Modal.getInstance(elem).show();
 		},
 		shuffleFlags(){

@@ -164,10 +164,10 @@
 				<div class="row py-4">
 					<div class="d-flex justify-content-center">
 						<div class="btn-group btn-group-lg w-100">
-							<button class="btn btn-secondary py-2" v-on:click="clickTitle">
+							<button class="btn btn-secondary py-2" v-on:click="clickTitle()">
 								<i class="bi-house-fill" role="img"></i>Title
 							</button>
-							<button class="btn btn-primary py-2" v-on:click="clickRetry">
+							<button class="btn btn-primary py-2" v-on:click="clickRetry()">
 								<i class="bi-caret-left-fill" role="img"></i>Retry
 							</button>
 						</div>
@@ -207,10 +207,10 @@
 		<!-- Main(End) -->
 
 		<!-- Footer(Start) -->
-		<footer class="fixed-bottom text-end">
+		<footer class="fixed-bottom text-end" v-if="mode==2">
 			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
 				v-if="mode!=0" v-on:click="showModal()">
-				<i class="bi-plus-lg" role="img"></i>
+				<i class="bi-house-fill" role="img"></i>
 			</a>
 			<!-- <div id="im-xxx"></div> -->
 		</footer>
@@ -231,7 +231,7 @@
 				<div class="offcanvas-body">
 					<div class="form-check form-switch form-switch-lg d-flex align-items-center">
 						<input type="checkbox" class="form-check-input mx-2" 
-							id="switchSound" v-on:click="switchSound">
+							id="switchSound" v-on:click="switchSound()">
 						<label class="form-check-label" for="switchSound">
 							サウンドOn/Off
 						</label>
@@ -254,14 +254,13 @@
 						</div>
 						<div class="modal-body">
 							<div class="container-fluid">
-								<input type="text" class="form-control" id="formInputTag" 
-									placeholder="Text" v-model="modalText">
+								タイトルに戻ります
 							</div>
 						</div>
 						<div class="modal-footer">
 							<div class="container-fluid">
 								<button type="button" class="btn btn-primary float-end"
-									data-bs-dismiss="modal" v-on:click="create()">Create</button>
+									data-bs-dismiss="modal" v-on:click="clickTitle()">Submit</button>
 								<button type="button" class="btn btn-secondary me-2 float-end" 
 									data-bs-dismiss="modal">Cancel</button>
 							</div>
