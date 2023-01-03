@@ -77,7 +77,12 @@ const app = Vue.createApp({
 		},
 		clickTest(){
 			console.log("clickTest");
-			sendNotification("こんばんわ!!", "ゆっくり魔理沙だぜ!!");
+
+			let counter = 0;
+			setInterval(()=>{
+				sendNotification("こんばんわ:" + counter, "ゆっくり魔理沙だぜ!!");
+				counter++;
+			}, 5000);
 		}
 	},
 	computed:{
