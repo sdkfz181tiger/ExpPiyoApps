@@ -97,10 +97,10 @@ footer a i{
 }
 
 #game-flag{
-	width: 20rem; height: 12rem;
+	width: auto; height: 12rem;
 	margin: 0px; padding: 0px;
 	border-radius: 1rem;
-	object-fit: none;
+	object-fit: cover;
 	background-color: whitesmoke;
 }
 
