@@ -65,7 +65,7 @@ footer a i{
 /* Title */
 
 .title-flags{
-/*	background-color: gray;*/
+/*	background-color: silver;*/
 }
 
 .title-flags img{
@@ -88,7 +88,7 @@ footer a i{
 /* Game */
 
 #game-flags{
-/*	background-color: gray;*/
+/*	background-color: silver;*/
 }
 
 #game-flags img{
@@ -97,9 +97,11 @@ footer a i{
 }
 
 #game-flag{
-	width: 16rem; height: 12rem;
+	width: 20rem; height: 12rem;
 	margin: 0px; padding: 0px;
 	border-radius: 1rem;
+	object-fit: none;
+	background-color: whitesmoke;
 }
 
 #game-score{
@@ -143,6 +145,10 @@ footer a i{
 
 .form-check-input{
 	clear: left;
+}
+
+.form-check-label{
+	font-size: 1.4rem;
 }
 
 .form-switch.form-switch-sm{
