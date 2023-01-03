@@ -111,6 +111,7 @@ class MyHowler{
 
 	stopSE(){
 		console.log("stopSE");
+		//if(!this.isActive()) return;
 		for(let key in this._se){
 			if(this._se[key].seek() <= 0) continue;
 			this._se[key].stop();
@@ -135,6 +136,7 @@ class MyHowler{
 
 	stopBGM(){
 		console.log("stopBGM");
+		//if(!this.isActive()) return;
 		for(let key in this._bgm){
 			if(this._bgm[key].seek() <= 0) continue;
 			this._bgm[key].stop();
@@ -143,6 +145,7 @@ class MyHowler{
 
 	pauseBGM(){
 		console.log("pauseBGM");
+		//if(!this.isActive()) return;
 		for(let key in this._bgm){
 			if(!this._bgm[key].playing()) continue;
 			this._bgm[key].pause();
@@ -151,6 +154,7 @@ class MyHowler{
 
 	resumeBGM(){
 		console.log("resumeBGM");
+		if(!this.isActive()) return;
 		for(let key in this._bgm){
 			if(this._bgm[key].seek() <= 0) continue;
 			this._bgm[key].play();
