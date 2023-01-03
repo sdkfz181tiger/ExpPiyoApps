@@ -11,7 +11,7 @@ const MODE_RESULT   = 3;
 const LEVEL_EASY    = 1;
 const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
-const QUIZ_TOTAL    = 10;
+const QUIZ_TOTAL    = 3;
 
 const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
@@ -132,12 +132,12 @@ const app = Vue.createApp({
 			if(this.answer.name == name){
 				this.quizes[this.index].result = true;
 				this.results[this.index] = 1;
-				this.doAnimate("quiz-flag", "animate__bounce");
+				this.doAnimate("game-flag", "animate__bounce");
 				myHowl.playSE("./assets/sounds/se_ok.mp3");
 			}else{
 				this.quizes[this.index].result = false;
 				this.results[this.index] = 2;
-				this.doAnimate("quiz-flag", "animate__headShake");
+				this.doAnimate("game-flag", "animate__headShake");
 				myHowl.playSE("./assets/sounds/se_ng.mp3");
 			}
 			// Next
@@ -150,7 +150,7 @@ const app = Vue.createApp({
 				}
 				this.answer = this.quizes[this.index];// Next
 				this.shuffleChoises();// Choises
-				this.doAnimate("quiz-flag", "animate__bounceIn");
+				this.doAnimate("game-flag", "animate__bounceIn");
 				myHowl.playSE("./assets/sounds/se_next.mp3");
 			}, 1200);
 		},

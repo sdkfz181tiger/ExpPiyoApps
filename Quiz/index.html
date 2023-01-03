@@ -80,20 +80,20 @@
 			<div class="container text-center" v-if="mode==1">
 				<div class="row pt-4">
 					<div class="col">
-						<div class="d-flex d-flex justify-content-center line-flags">
+						<div class="d-flex d-flex justify-content-center title-flags">
 							<img v-for="flag of getFlgLineTop" v-bind:src="flag.src">
 						</div>
 					</div>
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						<h1 id="logo-1">国旗</h1>
-						<h1 id="logo-2">クイズ</h1>
+						<h1 id="title-logo-1">国旗</h1>
+						<h1 id="title-logo-2">クイズ</h1>
 					</div>
 				</div>
 				<div class="row pt-2">
 					<div class="col">
-						<div class="d-flex d-flex justify-content-center line-flags">
+						<div class="d-flex d-flex justify-content-center title-flags">
 							<img v-for="flag of getFlgLineBottom" v-bind:src="flag.src">
 						</div>
 					</div>
@@ -121,11 +121,11 @@
 			<div class="container text-center" v-if="mode==2">
 				<div class="row">
 					<div class="d-flex align-items-center">
-						<div class="p-2">
+						<div class="p-2" id="game-score">
 							{{ getResultCount }}/{{ quizes.length }}
 						</div>
 						<div class="flex-grow-1 p-2"></div>
-						<div class="line-results pe-1" v-for="result of results">
+						<div class="pe-1" id="game-flags" v-for="result of results">
 								<img src="./assets/images/mark_bkg.png" v-if="result == 0">
 								<img src="./assets/images/mark_ok.png" v-if="result == 1">
 								<img src="./assets/images/mark_ng.png" v-if="result == 2">
@@ -134,11 +134,11 @@
 				</div>
 				<div class="row mt-4 mb-2">
 					<div class="col">
-						<img id="quiz-flag" v-bind:src="answer.src">
-						<p id="quiz-hint">ヒント:首都は{{ answer.capital }}</p>
+						<img id="game-flag" v-bind:src="answer.src">
+						<p id="game-hint">ヒント:首都は{{ answer.capital }}</p>
 					</div>
 				</div>
-				<div class="quiz-choises mb-2" id="myChoise" 
+				<div class="game-choises mb-2" id="myChoise" 
 					v-for="choise of choises" v-on:click="clickChoise(choise.name)">
 					<div class="text-center m-2">
 						{{ choise.name }}
@@ -156,12 +156,12 @@
 				</div>
 				<div class="row pt-4">
 					<div class="d-flex justify-content-center">
-						<h2 class="p-2">
+						<h2 class="p-2" id="result-score">
 							{{ getResultCount }}/{{ quizes.length }}
 						</h2>
 					</div>
 				</div>
-				<div class="row pt-4">
+				<div class="row py-4">
 					<div class="d-flex justify-content-center">
 						<div class="btn-group btn-group-lg w-100">
 							<button class="btn btn-secondary py-2" v-on:click="clickTitle">
@@ -175,7 +175,7 @@
 				</div>
 				<div class="row pt-4">
 					<div class="d-flex justify-content-center">
-						<table id="quiz-result">
+						<table id="result-table">
 							<thead>
 								<tr>
 									<td></td>

@@ -62,43 +62,55 @@ footer a i{
 	display: none !important;
 }
 
-.line-flags{
+/* Title */
+
+.title-flags{
 /*	background-color: gray;*/
 }
 
-.line-flags img{
+.title-flags img{
 	width: 3.0rem; height: 3.0rem;
 	margin: 0.4rem; padding: 0px;
 	border-radius: 50%;
 	object-fit: cover;
 }
 
-.line-results{
-/*	background-color: gray;*/
-}
-
-.line-results img{
-	width: 2.0rem; height: 2.0rem;
-	margin: 0px; padding: 0px;
-}
-
-#logo-1{
+#title-logo-1{
 	font-size: 4.0rem;
 	line-height: 0.8;
 }
 
-#logo-2{
+#title-logo-2{
 	font-size: 3.0rem;
 	line-height: 0.8;
 }
 
-#quiz-flag{
+/* Game */
+
+#game-flags{
+/*	background-color: gray;*/
+}
+
+#game-flags img{
+	width: 2.0rem; height: 2.0rem;
+	margin: 0px; padding: 0px;
+}
+
+#game-flag{
 	width: 16rem; height: 12rem;
 	margin: 0px; padding: 0px;
 	border-radius: 1rem;
 }
 
-.quiz-choises{
+#game-score{
+	font-size: 2.0rem;
+}
+
+#game-hint{
+	font-size: 1.2rem;
+}
+
+.game-choises{
 	border-radius: 8px;
 	border: 1px solid silver;;
 	border-bottom: 2px solid gray;
@@ -106,15 +118,21 @@ footer a i{
 	font-size: 1.5rem;
 }
 
-#quiz-result{
+/* Result */
+
+#result-score{
+	font-size: 3.0rem;
+}
+
+#result-table{
 /*	background-color: silver;*/
 }
 
-#quiz-result tr{
+#result-table tr{
 	border-bottom: 2px solid silver;
 }
 
-#quiz-result img{
+#result-table img{
 	width: 2.4rem; height: 2.4rem;
 	margin: 0.4rem; padding: 0px;
 	border-radius: 50%;
