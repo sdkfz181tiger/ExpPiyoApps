@@ -13,8 +13,8 @@ const LEVEL_NORMAL  = 2;
 const LEVEL_HARD    = 3;
 const QUIZ_TOTAL    = 5;
 
-const PATH_FLAGS    = "./assets/images/flags/";
 const myHowl        = new MyHowler();
+const PATH_FLAGS    = "./assets/images/flags/";
 
 const myData = {
 	version: VERSION,
