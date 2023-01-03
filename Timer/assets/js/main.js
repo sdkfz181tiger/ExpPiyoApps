@@ -13,7 +13,8 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	modalText: ""
+	modalText: "",
+	notificationText: ""
 }
 
 // Vue.js
@@ -79,8 +80,9 @@ const app = Vue.createApp({
 			console.log("clickTest");
 
 			let counter = 0;
+			this.notificationText = "ゆっくり魔理沙だぜ:" + counter;
 			setInterval(()=>{
-				sendNotification("こんばんわ:" + counter, "ゆっくり魔理沙だぜ!!");
+				sendNotification("おばんです!!", this.notificationText);
 				counter++;
 			}, 5000);
 		}
