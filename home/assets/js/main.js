@@ -27,10 +27,6 @@ const app = Vue.createApp({
 		changeMode(mode){
 			if(this.mode == mode) return;
 			this.mode = mode;
-		},
-		clickToGo(dir){
-			console.log("clickJump:", dir);
-			window.location.replace("./" + dir);
 		}
 	}
 });
