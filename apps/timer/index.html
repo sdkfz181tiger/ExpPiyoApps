@@ -85,7 +85,7 @@
 				</div>
 				<div class="row pt-2">
 					<div class="col" id="timer-display">
-						00:00:00
+						{{ getDisplay }}
 					</div>
 				</div>
 				<div class="row pt-1">
@@ -94,19 +94,19 @@
 							<tr>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickTest()">
+										v-on:click="clickHours(1)">
 										<i class="bi-caret-up-fill" role="img"></i>
 									</button>
 								</td>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickUpM()">
+										v-on:click="clickMinutes(1)">
 										<i class="bi-caret-up-fill" role="img"></i>
 									</button>
 								</td>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickUpS()">
+										v-on:click="clickSeconds(1)">
 										<i class="bi-caret-up-fill" role="img"></i>
 									</button>
 								</td>
@@ -114,19 +114,19 @@
 							<tr>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickDownH()">
+										v-on:click="clickHours(-1)">
 										<i class="bi-caret-down-fill" role="img"></i>
 									</button>
 								</td>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickDownM()">
+										v-on:click="clickMinutes(-1)">
 										<i class="bi-caret-down-fill" role="img"></i>
 									</button>
 								</td>
 								<td>
 									<button class="btn btn-primary btn-lg"
-										v-on:click="clickDownS()">
+										v-on:click="clickSeconds(-1)">
 										<i class="bi-caret-down-fill" role="img"></i>
 									</button>
 								</td>

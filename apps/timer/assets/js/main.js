@@ -16,6 +16,9 @@ const myData = {
 	modalText: "",
 	data: null,
 	timerMillis: 0,
+	numHours: 0,
+	numMinutes: 0,
+	numSeconds: 0
 }
 
 // Vue.js
@@ -58,8 +61,20 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		clickTest(){
-			console.log("clickTest");
+		clickHours(n){
+			console.log("clickHours");
+			this.numHours += n;
+			if(this.numHours < 0) this.numHours = 0;
+		},
+		clickMinutes(n){
+			console.log("clickMinutes");
+			this.numMinutes += n;
+			if(this.numMinutes < 0) this.numMinutes = 0;
+		},
+		clickSeconds(n){
+			console.log("clickSeconds");
+			this.numSeconds += n;
+			if(this.numSeconds < 0) this.numSeconds = 0;
 		},
 		showModal(){
 			console.log("showModal");
@@ -79,6 +94,14 @@ const app = Vue.createApp({
 				elem.removeEventListener("animationend", this);
 				elem.removeAttribute("class");
 			});
+		}
+	},
+	computed:{
+		getDisplay(){
+			const h = (this.numHours < 10)?  "0"+this.numHours:this.numHours;
+			const m = (this.numMinutes < 10)?"0"+this.numMinutes:this.numMinutes;
+			const s = (this.numSeconds < 10)?"0"+this.numSeconds:this.numSeconds;
+			return h + ":" + m + ":" + s;
 		}
 	}
 });
