@@ -1,12 +1,12 @@
 console.log("main.js!!");
 
-const VERSION       = "v0.0.1";
-const KEY_STORAGE   = "timer";
+const VERSION      = "v0.0.1";
+const KEY_STORAGE  = "timer";
 
-const MODE_LOADING  = 0;
-const MODE_MAIN     = 1;
+const MODE_LOADING = 0;
+const MODE_MAIN    = 1;
 
-const myHowl        = new MyHowler();
+const myHowl       = new MyHowler();
 
 const myData = {
 	version: VERSION,
@@ -14,6 +14,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
+	data: null,
 	timerMillis: 0,
 }
 
@@ -41,7 +42,7 @@ const app = Vue.createApp({
 		}
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
-			this.flags = json.data.filter(flag=>flag.capital!="");// Flags
+			this.data = json.data;
 			setTimeout(()=>{
 				this.changeMode(MODE_MAIN);
 			}, 200);
@@ -79,9 +80,6 @@ const app = Vue.createApp({
 				elem.removeAttribute("class");
 			});
 		}
-	},
-	computed:{
-
 	}
 });
 

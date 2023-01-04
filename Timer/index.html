@@ -33,7 +33,7 @@
 				<div class="container-fluid">
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
-						<a class="navbar-brand">ぴよタイマー</a>
+						<a class="navbar-brand" href="../index.html">ぴよタイマー</a>
 						<small class="text-white ps-1">{{ version }}</small>
 					</div>
 					<button class="navbar-toggler" type="button"
@@ -81,22 +81,58 @@
 				<div class="row pt-4">
 					<div class="col">
 						<h1 id="title-logo-1">ぴよ</h1>
-						<h1 id="title-logo-2">タイマー</h1>
+						<h1 id="title-logo-2">タイマ-</h1>
 					</div>
 				</div>
-				<div class="row pt-5">
-					<div class="col">
-						<p>
-							{{ timerMillis }}
-						</p>
+				<div class="row pt-2">
+					<div class="col" id="timer-display">
+						00:00:00
 					</div>
 				</div>
-				<div class="row pt-5">
-					<div class="col">
-						<p>
-							<button class="btn btn-primary btn-lg px-5 py-2"
-								v-on:click="clickTest()">Test</button>
-						</p>
+				<div class="row pt-1">
+					<div class="d-flex justify-content-center">
+						<table id="timer-controller">
+							<tr>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickUpH()">
+										<i class="bi-caret-up-fill" role="img"></i>
+									</button>
+								</td>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickUpM()">
+										<i class="bi-caret-up-fill" role="img"></i>
+									</button>
+								</td>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickUpS()">
+										<i class="bi-caret-up-fill" role="img"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickDownH()">
+										<i class="bi-caret-down-fill" role="img"></i>
+									</button>
+								</td>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickDownM()">
+										<i class="bi-caret-down-fill" role="img"></i>
+									</button>
+								</td>
+								<td>
+									<button class="btn btn-primary btn-lg"
+										v-on:click="clickDownS()">
+										<i class="bi-caret-down-fill" role="img"></i>
+									</button>
+								</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 			</div>

@@ -62,83 +62,15 @@ footer a i{
 	display: none !important;
 }
 
-/* Title */
+/* Timer */
 
-.title-flags{
-/*	background-color: silver;*/
+#timer-display{
+	font-size: 3rem;
+	background-color: silver;
 }
 
-.title-flags img{
-	width: 3.0rem; height: 3.0rem;
-	margin: 0.4rem; padding: 0px;
-	border-radius: 50%;
-	object-fit: cover;
-}
-
-#title-logo-1{
-	font-size: 4.0rem;
-	line-height: 0.8;
-}
-
-#title-logo-2{
-	font-size: 3.0rem;
-	line-height: 0.8;
-}
-
-/* Game */
-
-#game-flags{
-/*	background-color: silver;*/
-}
-
-#game-flags img{
-	width: 2.0rem; height: 2.0rem;
-	margin: 0px; padding: 0px;
-}
-
-#game-flag{
-	max-width: 20rem; height: 12rem;
-	margin: 0px; padding: 0px;
-	border-radius: 1rem;
-	object-fit: cover;
-	background-color: whitesmoke;
-}
-
-#game-score{
-	font-size: 2.0rem;
-}
-
-#game-hint{
-	font-size: 1.2rem;
-}
-
-.game-choises{
-	border-radius: 8px;
-	border: 1px solid silver;;
-	border-bottom: 2px solid gray;
-	background-color: whitesmoke;
-	font-size: 1.5rem;
-}
-
-/* Result */
-
-#result-score{
-	font-size: 3.0rem;
-}
-
-#result-table{
-/*	background-color: silver;*/
-}
-
-#result-table tr{
-	border-bottom: 2px solid silver;
-}
-
-#result-table img{
-	width: 2.4rem; height: 2.4rem;
-	margin: 0.4rem; padding: 0px;
-	border-radius: 50%;
-	object-fit: cover;
+#timer-controller{
+	background-color: silver;
 }
 
 /* Switch */
