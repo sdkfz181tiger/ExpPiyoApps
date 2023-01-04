@@ -64,6 +64,16 @@ footer a i{
 
 /* Timer */
 
+#timer-logo-1{
+	font-size: 4.0rem;
+	line-height: 0.8;
+}
+
+#timer-logo-2{
+	font-size: 3.0rem;
+	line-height: 0.8;
+}
+
 #timer-display{
 	font-size: 3rem;
 	background-color: silver;
