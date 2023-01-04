@@ -2,4 +2,4 @@ console.log("utility.js!!");
 
 //==========
 // ServiceWorker
-navigator.serviceWorker.register("./home/pwa_sw.js");
+navigator.serviceWorker.register("./pwa_sw.js");
