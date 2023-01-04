@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="theme-color" content="dodgerblue"/>
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- PWA for iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
+	<meta name="apple-mobile-web-app-title" content="ぴよTODO">
+	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
+	<!-- PWA for Android -->
+	<link rel="manifest" href="./pwa/manifest.json">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="./pwa/favicon.ico">
+	<title>ぴよTODO</title>
+	<!-- CSS -->
+	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="./assets/css/custom.css">
+</head>
+<body>
+	<div id="app">
+		
+		<!-- Header(Start) -->
+		<header class="fixed-top" v-if="mode!=0">
+
+			<!-- Navigation(Start) -->
+			<nav class="navbar navbar-dark bg-primary">
+				<div class="container-fluid">
+					<div>
+						<i class="bi-github text-white m-1" role="img"></i>
+						<a class="navbar-brand" href="../../index.html">ぴよTODO</a>
+						<small class="text-white ps-1">{{ version }}</small>
+					</div>
+					<button class="navbar-toggler" type="button"
+						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+				</div>
+			</nav>
+			<!-- <nav class="nav nav-pills nav-justified bg-light">
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(1)" v-bind:class="{active:actives[1]}">
+					<i class="bi-house-fill" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(2)" v-bind:class="{active:actives[2]}">
+					<i class="bi-google" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(3)" v-bind:class="{active:actives[3]}">
+					<i class="bi-apple" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(4)" v-bind:class="{active:actives[4]}">
+					<i class="bi-gear-fill" role="img"></i>
+				</a>
+			</nav> -->
+			<!-- Navigation(End) -->
+
+			<!-- Tags(Start) -->
+			<div class="d-flex flex-nowrap overflow-auto bg-primary text-white" id="myTags">
+				<button type="button" 
+					v-bind:class="['btn', 'text-nowrap', activeTag==tag?'btn-light':'btn-primary']"
+					v-for="tag of getSortedTags" v-on:click="changeTag(tag)">{{ tag.name }}</button>
+			</div>
+			<!-- Tags(End) -->
+
+		</header>
+		<!-- Header(End) -->
+
+		<!-- Main(Start) -->
+		<main>
+
+			<!-- Loading(Start) -->
+			<div class="position-absolute top-50 start-50 translate-middle" v-if="mode==0">
+				<div class="spinner-border text-primary" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</div>
+			<!-- Loading(End) -->
+
+			<!-- Home(Start) -->
+			<div class="container" id="myStblTodos" v-if="mode==1">
+				<div class="children" v-for="(todo, index) of todos" v-bind:order="index">
+					<div class="d-flex align-items-center mb-2">
+						<div v-on:click="toggleTodo(todo.id)">
+							<input class="form-check-input mt-3 mb-3 ms-3 me-2 p-2" type="checkbox" value=""
+								v-bind:id="todo.id" v-bind:checked="todo.checked">
+						</div>
+						<div class="flex-grow-1 text-truncate" 
+							v-on:click="showModalEditTodo(todo)">
+							<label class="form-check-label w-100 py-3">
+								{{ todo.msg }}
+							</label>
+						</div>
+						<div>
+							<button type="button" class="myStblHandleTodos btn pe-3">
+								<i class="bi-list" role="img"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Home(End) -->
+
+			<!-- Google(Start) -->
+			<div class="container text-center" v-if="mode==2">
+				<div class="row">
+					<div class="col">
+						<h1 class="fw-light">Google</h1>
+						<p class="lead text-muted">
+							Good morning!!
+						</p>
+					</div>
+				</div>
+			</div>
+			<!-- Google(End) -->
+
+			<!-- Apple(Start) -->
+			<div class="container text-center" v-if="mode==3">
+				<div class="row">
+					<div class="col">
+						<h1 class="fw-light">Apple</h1>
+						<p class="lead text-muted">
+							Good morning!!
+						</p>
+					</div>
+				</div>
+			</div>
+			<!-- Apple(End) -->
+
+			<!-- Settings(Start) -->
+			<div class="container text-center" v-if="mode==4">
+				<div class="row">
+					<div class="col">
+						<h1 class="fw-light">Settings</h1>
+						<p class="lead text-muted">
+							Good morning!!
+						</p>
+					</div>
+				</div>
+			</div>
+			<!-- Settings(End) -->
+
+		</main>
+		<!-- Main(End) -->
+
+		<!-- Footer(Start) -->
+		<footer class="fixed-bottom text-end">
+			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
+				v-if="mode!=0" v-on:click="showModalCreateTodo()">
+				<i class="bi-plus-lg" role="img"></i>
+			</a>
+			<!-- <div id="im-xxx"></div> -->
+		</footer>
+		<!-- Footer(End) -->
+
+		<!-- Offcanvas(Start) -->
+		<div class="container mt-5">
+			<div class="offcanvas offcanvas-end" id="myOffcanvas">
+				<div class="offcanvas-header">
+					<a class="btn btn-primary" href="#"
+						v-on:click="showModalCreateTag()">
+						<i class="bi-file-earmark-plus-fill" role="img"></i>
+					</a>
+					<h5>Tags</h5>
+					<button type="button" class="btn-close text-reset" 
+							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
+				</div>
+				<div class="offcanvas-body" id="myStblTags">
+					<div class="children" v-for="tag of tags" v-bind:id="tag.id">
+						<div class="d-flex align-items-center mb-2">
+							<div class="flex-grow-1 text-truncate">
+								<label class="form-check-label w-100 p-3" v-bind:id="tag.id"
+									v-on:click="showModalEditTag(tag)">
+									{{ tag.name }}
+								</label>
+							</div>
+							<div>
+								<button type="button" class="myStblHandleTags btn px-3">
+									<i class="bi-list" role="img"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Offcanvas(End) -->
+
+		<!-- ModalTag(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModalTag" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">***</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="container-fluid">
+								<input type="text" class="form-control" id="formInputTag" 
+									placeholder="Tag" v-model="tagName">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid" v-if="tagId==null">
+								<button type="button" class="btn btn-primary float-end"
+									data-bs-dismiss="modal" v-on:click="createTag()">Create</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+							<div class="container-fluid" v-else>
+								<button type="button" class="btn btn-danger float-start"
+									data-bs-dismiss="modal" v-on:click="deleteTag(tagId)">
+									<i class="bi-trash" role="img"></i>
+								</button>
+								<button type="button" class="btn btn-info float-end"
+									data-bs-dismiss="modal" v-on:click="updateTag(tagId)">Update</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ModalTag(End) -->
+
+		<!-- ModalTodo(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModalTodo" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">***</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="container-fluid">
+								<input type="text" class="form-control" id="formInputTodo" 
+									placeholder="Todo" v-model="todoMsg">
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid" v-if="todoId==null">
+								<button type="button" class="btn btn-primary float-end"
+									data-bs-dismiss="modal" v-on:click="createTodo()">Create</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+							<div class="container-fluid" v-else>
+								<button type="button" class="btn btn-danger float-start"
+									data-bs-dismiss="modal" v-on:click="deleteTodo(todoId)">
+									<i class="bi-trash" role="img"></i>
+								</button>
+								<button type="button" class="btn btn-info float-end"
+									data-bs-dismiss="modal" v-on:click="updateTodo(todoId)">Update</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ModalTodo(End) -->
+
+		<!-- Toast(Start) -->
+		<div class="toast-container position-absolute top-50 start-50 translate-middle mt-2">
+			<div class="toast d-none" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header">
+					<img src="./assets/images/logo.png" width="32" height="32" class="rounded me-2">
+					<strong class="me-auto">Toast</strong>
+					<small>** mins ago</small>
+					<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+				<div class="toast-body">***</div>
+			</div>
+		</div>
+		<!-- Toast(End) -->
+
+	</div>
+
+	<!-- <script>
+		// Banner_468x60
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
+			pid:26719, mid:550231, asid:xxx, type:"banner", display:"inline",
+			elementid:"im-xxx"});
+	</script>
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script> -->
+
+	<!-- JavaScript -->
+	<script src="./assets/libs/vue/vue.global.js"></script>
+	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
+	<script src="./assets/libs/sortable/Sortable.min.js"></script>
+	<script src="./assets/libs/axios/axios.min.js"></script>
+	<script src="./assets/js/utility.js"></script>
+	<script src="./assets/js/main.js"></script>
+</body>
+</html>
