@@ -1,7 +1,7 @@
 console.log("main.js!!");
 
-const VERSION      = "v1.0.0";
-const KEY_STORAGE  = "timer";
+const VERSION      = "v0.0.1";
+const KEY_STORAGE  = "15puzzle";
 
 const MODE_LOADING = 0;
 const MODE_MAIN    = 1;
