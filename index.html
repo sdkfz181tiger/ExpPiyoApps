@@ -30,12 +30,17 @@
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
-					<div></div>
+					<a class="btn btn-primary btn-sm me-4 invisible" href="./">
+						<i class="bi-caret-left-fill" role="img"></i>
+					</a>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
 						<a class="navbar-brand">ぴよApps</a>
 					</div>
-					<div></div>
+					<button class="navbar-toggler invisible" type="button"
+						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 				</div>
 			</nav>
 			<!-- Navigation(End) -->
@@ -56,7 +61,7 @@
 
 			<!-- Home(Start) -->
 			<div class="container text-center" v-if="mode==1">
-				<div class="row pt-4">
+				<div class="row pt-2">
 					<div class="col">
 						<h1 id="title-logo-1">ぴよ</h1>
 						<h1 id="title-logo-2">Apps</h1>
@@ -94,13 +99,13 @@
 							</tr>
 							<tr>
 								<td class="pb-3">
-									<a class="btn btn-primary btn-lg mx-2 disabled" href="./">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
 										<i class="bi-github" role="img"></i>
 									</a><br>
 									<small>電卓</small>
 								</td>
 								<td class="pb-3">
-									<a class="btn btn-primary btn-lg mx-2 disabled" href="./">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
 										<i class="bi-github" role="img"></i>
 									</a><br>
 									<small>ワリカン</small>
@@ -120,22 +125,48 @@
 									<small>15パズル</small>
 								</td>
 								<td class="pb-3">
-									<a class="btn btn-primary btn-lg mx-2 disabled" href="./">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
 										<i class="bi-github" role="img"></i>
 									</a><br>
 									<small>2048</small>
 								</td>
 								<td class="pb-3">
-									<a class="btn btn-primary btn-lg mx-2 disabled" href="./">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
 										<i class="bi-github" role="img"></i>
 									</a><br>
 									<small>Flappy</small>
 								</td>
 								<td class="pb-3">
-									<a class="btn btn-primary btn-lg mx-2 disabled" href="./">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
 										<i class="bi-github" role="img"></i>
 									</a><br>
-									<small>数独</small>
+									<small>T-Rex</small>
+								</td>
+							</tr>
+							<tr>
+								<td class="pb-3">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./apps/15puzzle">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>テトリス</small>
+								</td>
+								<td class="pb-3">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>リバーシ</small>
+								</td>
+								<td class="pb-3">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>マイン</small>
+								</td>
+								<td class="pb-3">
+									<a class="btn btn-secondary btn-lg mx-2 disabled" href="./">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>ソリティア</small>
 								</td>
 							</tr>
 						</table>
