@@ -20,7 +20,7 @@ header .active{
 }
 
 main{
-	margin: 80px 0px 80px 0px !important;
+	margin: 60px 0px 80px 0px !important;
 }
 
 footer{
@@ -62,26 +62,11 @@ footer a i{
 	display: none !important;
 }
 
-/* Timer */
+/* Game */
 
-#timer-logo-1{
-	font-size: 4.0rem;
-	line-height: 0.8;
-}
-
-#timer-logo-2{
-	font-size: 3.0rem;
-	line-height: 0.8;
-}
-
-#timer-hms{
-	font-size: 3rem;
-	line-height: 1.0;
-}
-
-#timer-millis{
-	font-size: 1rem;
-	line-height: 0.5;
+#game-canvas{
+	width: 320px; height: 320px;
+	background-color: silver;
 }
 
 /* Switch */
