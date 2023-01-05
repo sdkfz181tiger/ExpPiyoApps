@@ -64,6 +64,14 @@ function draw(){
 }
 
 function mousePressed(){
+	checkTiles();
+}
+
+function touchStarted(){
+	checkTiles();
+}
+
+function checkTiles(){
 	for(let tile of tiles){
 		if(tile.contains(mouseX, mouseY)){
 			let target = fMng.checkVH(tile.r, tile.c);
