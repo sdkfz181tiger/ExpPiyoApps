@@ -14,12 +14,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	data: null,
-	timerID: 0,
-	numMillis: 0,
-	numHours: 0,
-	numMinutes: 0,
-	numSeconds: 0
+	data: null
 }
 
 // Vue.js
