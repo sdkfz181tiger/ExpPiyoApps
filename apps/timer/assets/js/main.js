@@ -15,7 +15,8 @@ const myData = {
 	myOffcanvas: null,
 	modalText: "",
 	data: null,
-	timerMillis: 0,
+	timerID: 0,
+	numMillis: 0,
 	numHours: 0,
 	numMinutes: 0,
 	numSeconds: 0
@@ -63,18 +64,66 @@ const app = Vue.createApp({
 		},
 		clickHours(n){
 			console.log("clickHours");
+			if(0 < this.timerID) return;
 			this.numHours += n;
 			if(this.numHours < 0) this.numHours = 0;
+			if(99 < this.numHours) this.numHours = 99;
+			this.calcMillis();
 		},
 		clickMinutes(n){
 			console.log("clickMinutes");
+			if(0 < this.timerID) return;
 			this.numMinutes += n;
 			if(this.numMinutes < 0) this.numMinutes = 0;
+			if(59 < this.numMinutes) this.numMinutes = 59;
+			this.calcMillis();
 		},
 		clickSeconds(n){
 			console.log("clickSeconds");
+			if(0 < this.timerID) return;
 			this.numSeconds += n;
 			if(this.numSeconds < 0) this.numSeconds = 0;
+			if(59 < this.numSeconds) this.numSeconds = 59;
+			this.calcMillis();
+		},
+		clickStart(){
+			console.log("clickStart:", this.timerID);
+			if(0 < this.timerID) return;
+			this.timerID = setInterval(this.tickTimer, 31);
+			this.calcMillis();
+		},
+		clickStop(){
+			console.log("clickStop:", this.timerID);
+			if(0 < this.timerID){
+				clearInterval(this.timerID);
+				this.timerID = 0;
+				this.calcMillis();
+				return;
+			}
+			this.resetMillis();
+			this.calcMillis();
+		},
+		tickTimer(){
+			console.log("tickTimer");
+			this.numMillis -= 31;
+			if(1000 < this.numMillis) return;
+			this.resetMillis();
+			this.calcMillis();
+			this.clickStop();
+		},
+		resetMillis(){
+			console.log("resetMillis");
+			this.numMillis = 0;// Reset
+			this.numHours = 0;
+			this.numMinutes = 0;
+			this.numSeconds = 0;
+		},
+		calcMillis(){
+			console.log("calcMillis");
+			this.numMillis = 0;
+			this.numMillis += this.numHours * 60 * 60 * 1000;
+			this.numMillis += this.numMinutes * 60 * 1000;
+			this.numMillis += this.numSeconds * 1000;
 		},
 		showModal(){
 			console.log("showModal");
@@ -97,11 +146,28 @@ const app = Vue.createApp({
 		}
 	},
 	computed:{
-		getDisplay(){
-			const h = (this.numHours < 10)?  "0"+this.numHours:this.numHours;
-			const m = (this.numMinutes < 10)?"0"+this.numMinutes:this.numMinutes;
-			const s = (this.numSeconds < 10)?"0"+this.numSeconds:this.numSeconds;
+		getDisplayHMS(){
+			let h = Math.floor(this.numMillis / 1000 / 60 / 60);
+			this.numHours = h;
+			if(h < 10) h = "0" + h;
+			let m = Math.floor(this.numMillis / 1000 / 60) % 60;
+			this.numMinutes = m;
+			if(m < 10) m = "0" + m;
+			let s = Math.floor(this.numMillis / 1000) % 60;
+			this.numSeconds = s;
+			if(s < 10) s = "0" + s;
 			return h + ":" + m + ":" + s;
+		},
+		getDisplayMillis(){
+			let m = this.numMillis % 1000;
+			if(m <= 0){
+				m = "000";
+			}else if(m < 10){
+				m = "00" + m;
+			}else if(m < 100){
+				m = "0" + m;
+			}
+			return m;
 		}
 	}
 });

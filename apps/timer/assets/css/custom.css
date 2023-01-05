@@ -74,13 +74,14 @@ footer a i{
 	line-height: 0.8;
 }
 
-#timer-display{
+#timer-hms{
 	font-size: 3rem;
-	background-color: silver;
+	line-height: 1.0;
 }
 
-#timer-controller{
-	background-color: silver;
+#timer-millis{
+	font-size: 1rem;
+	line-height: 0.5;
 }
 
 /* Switch */

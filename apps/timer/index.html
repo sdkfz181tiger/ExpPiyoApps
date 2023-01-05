@@ -83,56 +83,73 @@
 						<h1 id="timer-logo-2">タイマ-</h1>
 					</div>
 				</div>
-				<div class="row pt-2">
-					<div class="col" id="timer-display">
-						{{ getDisplay }}
+				<div class="row pt-4">
+					<div class="col">
+						<div id="timer-hms">{{ getDisplayHMS }}</div>
+						<small id="timer-millis">{{ getDisplayMillis }}</small>
 					</div>
 				</div>
-				<div class="row pt-1">
+				<div class="row pt-4">
 					<div class="d-flex justify-content-center">
-						<table id="timer-controller">
+						<table>
 							<tr>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickHours(1)">
-										<i class="bi-caret-up-fill" role="img"></i>
+										<i class="bi-caret-up-fill m-3" role="img"></i>
 									</button>
 								</td>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickMinutes(1)">
-										<i class="bi-caret-up-fill" role="img"></i>
+										<i class="bi-caret-up-fill m-3" role="img"></i>
 									</button>
 								</td>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickSeconds(1)">
-										<i class="bi-caret-up-fill" role="img"></i>
+										<i class="bi-caret-up-fill m-3" role="img"></i>
 									</button>
 								</td>
 							</tr>
 							<tr>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickHours(-1)">
-										<i class="bi-caret-down-fill" role="img"></i>
+										<i class="bi-caret-down-fill m-3" role="img"></i>
 									</button>
 								</td>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickMinutes(-1)">
-										<i class="bi-caret-down-fill" role="img"></i>
+										<i class="bi-caret-down-fill m-3" role="img"></i>
 									</button>
 								</td>
 								<td>
-									<button class="btn btn-primary btn-lg"
+									<button class="btn btn-secondary btn-lg"
 										v-on:click="clickSeconds(-1)">
-										<i class="bi-caret-down-fill" role="img"></i>
+										<i class="bi-caret-down-fill m-3" role="img"></i>
 									</button>
 								</td>
 							</tr>
 						</table>
 					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="col-1"></div>
+					<div class="col-5 d-grid">
+						<button class="btn btn-primary btn-lg"
+							v-on:click="clickStart">
+							<i class="bi-play-fill" role="img"></i>Start
+						</button>
+					</div>
+					<div class="col-5 d-grid">
+						<button class="btn btn-primary btn-lg"
+							v-on:click="clickStop">
+							<i class="bi-pause-fill" role="img"></i>Stop
+						</button>
+					</div>
+					<div class="col-1"></div>
 				</div>
 			</div>
 			<!-- Timer(End) -->
@@ -142,10 +159,10 @@
 
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
-			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
+			<!-- <a class="btn btn-primary rounded-circle shadow m-3" href="#"
 				v-if="mode!=0" v-on:click="showModal()">
 				<i class="bi-clock-history" role="img"></i>
-			</a>
+			</a> -->
 			<!-- <div id="im-ba64155dfb134b0bb1bb1e405d3bb6a1"></div> -->
 		</footer>
 		<!-- Footer(End) -->
