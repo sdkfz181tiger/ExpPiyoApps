@@ -20,12 +20,12 @@ function setup(){
 	btnHome = new MyButton("caret-l-w.png", ()=>{
 		window.location.replace("../../");
 	});
-	flkManager = new FlickManager(48, e=>{
-		console.log("Flicked:", e);
-		if(e == "left") actionLeft();
-		if(e == "right") actionRight();
-		if(e == "up") actionUp();
-		if(e == "down") actionDown();
+	flkManager = new FlickManager(6, e=>{
+		//console.log("Flicked:", e);
+		if(e.dir == "left") actionLeft();
+		if(e.dir == "right") actionRight();
+		if(e.dir == "up") actionUp();
+		if(e.dir == "down") actionDown();
 	});
 	textFont(font);
 	colorMode(HSB);
@@ -48,8 +48,8 @@ function setup(){
 	}
 	tileCorner = tileSize * 0.1;
 
-	sX = width / 2 - tilePad * TILE_NUMS / 2;
-	sY = height / 2 - tilePad * TILE_NUMS / 2;
+	sX = width*0.5  - tilePad*TILE_NUMS*0.5;
+	sY = height*0.5 - tilePad*TILE_NUMS*0.5 + tilePad*0.5;
 	lockFlg = false;
 
 	// Reflesh
@@ -62,6 +62,10 @@ function draw(){
 	textSize(28); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
+	// Board
+	fill(33, 33, 33);
+	textSize(20); textAlign(CENTER, BASELINE);
+	text("SCR:"+my2048.getScore(), width*0.5, sY-tilePad*0.5);
 	fill(33, 33, 99);
 	square(sX, sY, tilePad*TILE_NUMS, tileCorner);
 	for(let r=0; r<TILE_NUMS; r++){
@@ -138,7 +142,7 @@ function actionDown(){
 
 function refleshBoard(){
 	lockFlg = false;
-	let tC = color(33, 66, 99, 100);
+	let tC = color(33, 66, 99);
 	let board = my2048.getBoard();
 	tiles = [];
 	for(let r=0; r<TILE_NUMS; r++){

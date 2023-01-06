@@ -64,46 +64,46 @@ class FlickManager{
 	touchMoved(){
 		//console.log("touchMoved");
 		if(!this._touchFlg) return;
+
 		const dist = (this._fX-mouseX)**2 + (this._fY-mouseY)**2;
-		if(dist < this._thre) return;
-		const rad = Math.atan2(mouseY-this._fY, mouseX-this._fX);
-		const deg = (Math.floor(rad * 180 / Math.PI)+360) % 360;
-		if(deg < 45){
-			this._onFlicked("right");
-		}else if(deg < 135){
-			this._onFlicked("down");
-		}else if(deg < 225){
-			this._onFlicked("left");
-		}else if(deg < 315){
-			this._onFlicked("up");
-		}else{
-			this._onFlicked("right");
+		if(this._thre < dist){
+			const rad = Math.atan2(mouseY-this._fY, mouseX-this._fX);
+			const deg = (Math.floor(rad*180/Math.PI)+360) % 360;
+			//console.log(deg, mouseY-this._fY, mouseX-this._fX);
+			if(deg < 45){
+				console.log(deg, dist, "right");
+				this._onFlicked({dir:"right", fX:this._fX, fY:this._fY});
+			}else if(deg < 135){
+				console.log(deg, dist, "down");
+				this._onFlicked({dir:"down", fX:this._fX, fY:this._fY});
+			}else if(deg < 225){
+				console.log(deg, dist, "left");
+				this._onFlicked({dir:"left", fX:this._fX, fY:this._fY});
+			}else if(deg < 315){
+				console.log(deg, dist, "up");
+				this._onFlicked({dir:"up", fX:this._fX, fY:this._fY});
+			}else{
+				console.log(deg, dist, "right");
+				this._onFlicked({dir:"right", fX:this._fX, fY:this._fY});
+			}
 		}
-		this._touchFlg = true;// Reset
+		//this._touchFlg = false;// Reset
+
 		this._fX = mouseX;
 		this._fY = mouseY;
 	}
 
 	touchEnded(){
 		//console.log("touchEnded");
-		if(!this._touchFlg) return;
 		this._touchFlg = false;
-		this._fX = 0;
-		this._fY = 0;
+		this._fX = mouseX;
+		this._fY = mouseY;
 	}
 }
 
-/*!
- * smz2048.js v1.0.0
- *
- * Copyright (c) 2020 ShimejiOzaki
- *
- * Released under the MIT license.
- * see http://ozateck.sakura.ne.jp
- *
- * The inherits function is:
- * ISC license | https://github.com/isaacs/inherits/blob/master/LICENSE
- */
+//==========
+// 2048
+
 class Smz2048{
 
 	constructor(){
