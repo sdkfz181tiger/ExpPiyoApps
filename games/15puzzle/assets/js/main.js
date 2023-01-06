@@ -1,6 +1,6 @@
 console.log("main.js!!");
 
-const TITLE   = "15Puzzle";
+const TITLE   = "15パズル";
 
 const T_COLOR = [
 	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
@@ -11,7 +11,7 @@ const F_COLOR = [
 	"#333", "#333", "#333", "#FFF", "#FFF", "#FFF", 
 	"#333", "#333", "#333", "#333", "#FFF", "#FFF"];
 
-let font, btnHome;
+let font, btnHome, btnAuto;
 let fMng, sX, sY, tiles;
 
 function preload(){
@@ -23,7 +23,12 @@ function setup(){
 	const W = window.innerWidth;
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
-	btnHome = new BtnHome(32);
+	btnHome = new MyButton("caret-l-w.png", ()=>{
+		window.location.replace("../../");
+	});
+	btnAuto = new MyButton("caret-r-w.png", ()=>{
+		setTimeout(autoMove, 300);
+	});
 	frameRate(32);
 	textFont(font);
 	noSmooth();
@@ -53,9 +58,9 @@ function setup(){
 			tiles.push(new Tile(board[r][c], r, c, pad, size, corner));
 		}
 	}
-	
-	// Auto
-	//setTimeout(autoMove, 300);
+
+	// Reposition
+	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), 48);
 }
 
 function draw(){
@@ -64,16 +69,19 @@ function draw(){
 	textSize(28); textAlign(RIGHT);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
+	btnAuto.drawBtn();
 	for(let tile of tiles) tile.draw();
 }
 
 function mousePressed(){
 	btnHome.checkBtn();
+	btnAuto.checkBtn();
 	checkTiles();
 }
 
 function touchStarted(){
 	btnHome.checkBtn();
+	btnAuto.checkBtn();
 	checkTiles();
 }
 
@@ -108,19 +116,24 @@ function swapTiles(fR, fC, tR, tC){
 }
 
 //==========
-// BtnHome
+// MyButton
 
-class BtnHome{
+class MyButton{
 
-	constructor(size){
+	constructor(file, onPressed=null){
+		this._img = loadImage("./assets/images/" + file);
+		this._onPressed = onPressed;
+		this.setPos(24, 24);// Default
+	}
+
+	setPos(x, y, size=32){
 		this._size = size;
-		this._x = this._size * 0.25;
-		this._y = this._x;
+		this._x = x - this._size*0.5;
+		this._y = y - this._size*0.5;
 		this._corner = this._size * 0.1;
 		this._sizeC = this._size * 0.6;
 		this._xC = this._x + this._size*0.5 - this._sizeC*0.5;
 		this._yC = this._y + this._size*0.5 - this._sizeC*0.5;
-		this._img = loadImage("./assets/images/caret-white.png");
 	}
 
 	checkBtn(){
@@ -128,8 +141,7 @@ class BtnHome{
 		if(mouseY < this._y) return;
 		if(this._x + this._size < mouseX) return;
 		if(this._y + this._size < mouseY) return;
-		console.log("checkBtn:", mouseX, mouseY);
-		window.location.replace("../../");
+		if(this._onPressed) this._onPressed();
 	}
 
 	drawBtn(){
