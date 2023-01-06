@@ -48,7 +48,7 @@ function setup(){
 	fMng = new FpzManager();
 
 	sX = width / 2 - pad * fMng.getGrids() / 2;
-	sY = height / 2 - pad * fMng.getGrids() / 2;
+	sY = height / 2 - pad * (fMng.getGrids()+0.5) / 2;
 
 	// Tiles
 	tiles = [];
@@ -60,7 +60,7 @@ function setup(){
 	}
 
 	// Reposition
-	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), 48);
+	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), size*0.7);
 }
 
 function draw(){
