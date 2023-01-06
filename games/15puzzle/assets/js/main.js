@@ -1,7 +1,6 @@
 console.log("main.js!!");
 
-const VERSION      = "v0.0.1";
-const KEY_STORAGE  = "15puzzle";
+const TITLE   = "15Puzzle";
 
 const T_COLOR = [
 	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
@@ -62,6 +61,8 @@ function setup(){
 function draw(){
 	background("whitesmoke");
 	noStroke(); fill(33, 33, 33);
+	textSize(28); textAlign(RIGHT);
+	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	for(let tile of tiles) tile.draw();
 }
