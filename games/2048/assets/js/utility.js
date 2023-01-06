@@ -40,6 +40,59 @@ class MyButton{
 	}
 }
 
+//==========
+// Flick
+
+class FlickManager{
+
+	constructor(thre, onFlicked){
+		this._thre = thre**2;
+		this._onFlicked = onFlicked;
+		this._touchFlg = false;
+		this._fX = 0;
+		this._fY = 0;
+	}
+
+	touchStarted(){
+		//console.log("touchStarted");
+		if(this._touchFlg) return;
+		this._touchFlg = true;
+		this._fX = mouseX;
+		this._fY = mouseY;
+	}
+
+	touchMoved(){
+		//console.log("touchMoved");
+		if(!this._touchFlg) return;
+		const dist = (this._fX-mouseX)**2 + (this._fY-mouseY)**2;
+		if(dist < this._thre) return;
+		const rad = Math.atan2(mouseY-this._fY, mouseX-this._fX);
+		const deg = (Math.floor(rad * 180 / Math.PI)+360) % 360;
+		if(deg < 45){
+			this._onFlicked("right");
+		}else if(deg < 135){
+			this._onFlicked("down");
+		}else if(deg < 225){
+			this._onFlicked("left");
+		}else if(deg < 315){
+			this._onFlicked("up");
+		}else{
+			this._onFlicked("right");
+		}
+		this._touchFlg = true;// Reset
+		this._fX = mouseX;
+		this._fY = mouseY;
+	}
+
+	touchEnded(){
+		//console.log("touchEnded");
+		if(!this._touchFlg) return;
+		this._touchFlg = false;
+		this._fX = 0;
+		this._fY = 0;
+	}
+}
+
 /*!
  * smz2048.js v1.0.0
  *

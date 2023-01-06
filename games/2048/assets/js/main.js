@@ -3,7 +3,7 @@ console.log("main.js!!");
 const TITLE = "2048";
 const TILE_NUMS = 4;
 
-let font, btnHome;
+let font, btnHome, flkManager;
 let my2048;
 let tilePad, tileSize, tileCorner;
 let sX, sY, tiles, lockFlg;
@@ -19,6 +19,13 @@ function setup(){
 	const canvas = createCanvas(W, H);
 	btnHome = new MyButton("caret-l-w.png", ()=>{
 		window.location.replace("../../");
+	});
+	flkManager = new FlickManager(48, e=>{
+		console.log("Flicked:", e);
+		if(e == "left") actionLeft();
+		if(e == "right") actionRight();
+		if(e == "up") actionUp();
+		if(e == "down") actionDown();
 	});
 	textFont(font);
 	colorMode(HSB);
@@ -66,10 +73,28 @@ function draw(){
 
 function mousePressed(){
 	btnHome.checkBtn();
+	if(flkManager) flkManager.touchStarted();
+}
+
+function mouseMoved(){
+	if(flkManager) flkManager.touchMoved();
+}
+
+function mouseEnded(){
+	if(flkManager) flkManager.touchEnded();
 }
 
 function touchStarted(){
 	btnHome.checkBtn();
+	if(flkManager) flkManager.touchStarted();
+}
+
+function touchMoved(){
+	if(flkManager) flkManager.touchMoved();
+}
+
+function touchEnded(){
+	if(flkManager) flkManager.touchEnded();
 }
 
 function keyPressed(){
@@ -147,6 +172,9 @@ function updateBoard(){
 		refleshBoard();
 	}, 250);
 }
+
+//==========
+// Tile
 
 class Tile{
 
