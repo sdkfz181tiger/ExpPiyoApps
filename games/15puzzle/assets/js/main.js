@@ -12,11 +12,11 @@ const F_COLOR = [
 	"#333", "#333", "#333", "#FFF", "#FFF", "#FFF", 
 	"#333", "#333", "#333", "#333", "#FFF", "#FFF"];
 
+let font, btnHome;
 let fMng, sX, sY, tiles;
-let marker;
 
 function preload(){
-	marker = loadImage("./assets/images/logo.png");
+	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
 }
 
 function setup(){
@@ -24,7 +24,9 @@ function setup(){
 	const W = window.innerWidth;
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
+	btnHome = new BtnHome(32);
 	frameRate(32);
+	textFont(font);
 	noSmooth();
 
 	let pad = 32;
@@ -58,16 +60,19 @@ function setup(){
 }
 
 function draw(){
-	background(0, 0, 0);
+	background("whitesmoke");
 	noStroke(); fill(33, 33, 33);
+	btnHome.drawBtn();
 	for(let tile of tiles) tile.draw();
 }
 
 function mousePressed(){
+	btnHome.checkBtn();
 	checkTiles();
 }
 
 function touchStarted(){
+	btnHome.checkBtn();
 	checkTiles();
 }
 
@@ -100,6 +105,41 @@ function swapTiles(fR, fC, tR, tC){
 	tiles[t] = tiles[f];
 	tiles[f] = tmp;
 }
+
+//==========
+// BtnHome
+
+class BtnHome{
+
+	constructor(size){
+		this._size = size;
+		this._x = this._size * 0.25;
+		this._y = this._x;
+		this._corner = this._size * 0.1;
+		this._sizeC = this._size * 0.6;
+		this._xC = this._x + this._size*0.5 - this._sizeC*0.5;
+		this._yC = this._y + this._size*0.5 - this._sizeC*0.5;
+		this._img = loadImage("./assets/images/caret-white.png");
+	}
+
+	checkBtn(){
+		if(mouseX < this._x) return;
+		if(mouseY < this._y) return;
+		if(this._x + this._size < mouseX) return;
+		if(this._y + this._size < mouseY) return;
+		console.log("checkBtn:", mouseX, mouseY);
+		window.location.replace("../../");
+	}
+
+	drawBtn(){
+		fill("dodgerblue");
+		square(this._x, this._y, this._size, this._corner);
+		image(this._img, this._xC, this._yC, this._sizeC, this._sizeC);
+	}
+}
+
+//==========
+// Tile
 
 class Tile{
 
@@ -157,8 +197,6 @@ class Tile{
 			// Font
 			fill(F_COLOR[i]); textSize(this._size*0.5); textAlign(CENTER);
 			text(this._num, this._x+this._size/2, this._y+this._size*0.7);
-		}else{
-			//image(marker, this._x, this._y, this._size, this._size);
 		}
 	}
 
