@@ -64,8 +64,8 @@ function draw(){
 	btnHome.drawBtn();
 	// Board
 	fill(33, 33, 33);
-	textSize(20); textAlign(CENTER, BASELINE);
-	text("SCR:"+my2048.getScore(), width*0.5, sY-tilePad*0.5);
+	textSize(28); textAlign(CENTER, BASELINE);
+	text("SCR:"+my2048.getScore(), width*0.5, sY-tilePad*0.4);
 	fill(33, 33, 99);
 	square(sX, sY, tilePad*TILE_NUMS, tileCorner);
 	for(let r=0; r<TILE_NUMS; r++){

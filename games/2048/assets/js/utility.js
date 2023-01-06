@@ -71,24 +71,22 @@ class FlickManager{
 			const deg = (Math.floor(rad*180/Math.PI)+360) % 360;
 			//console.log(deg, mouseY-this._fY, mouseX-this._fX);
 			if(deg < 45){
-				console.log(deg, dist, "right");
+				//console.log(deg, dist, "right");
 				this._onFlicked({dir:"right", fX:this._fX, fY:this._fY});
 			}else if(deg < 135){
-				console.log(deg, dist, "down");
+				//console.log(deg, dist, "down");
 				this._onFlicked({dir:"down", fX:this._fX, fY:this._fY});
 			}else if(deg < 225){
-				console.log(deg, dist, "left");
+				//console.log(deg, dist, "left");
 				this._onFlicked({dir:"left", fX:this._fX, fY:this._fY});
 			}else if(deg < 315){
-				console.log(deg, dist, "up");
+				//console.log(deg, dist, "up");
 				this._onFlicked({dir:"up", fX:this._fX, fY:this._fY});
 			}else{
-				console.log(deg, dist, "right");
+				//console.log(deg, dist, "right");
 				this._onFlicked({dir:"right", fX:this._fX, fY:this._fY});
 			}
 		}
-		//this._touchFlg = false;// Reset
-
 		this._fX = mouseX;
 		this._fY = mouseY;
 	}
