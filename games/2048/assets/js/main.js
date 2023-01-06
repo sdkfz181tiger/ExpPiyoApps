@@ -49,7 +49,7 @@ function setup(){
 	tileCorner = tileSize * 0.1;
 
 	sX = width*0.5  - tilePad*TILE_NUMS*0.5;
-	sY = height*0.5 - tilePad*TILE_NUMS*0.5 + tilePad*0.5;
+	sY = height*0.5 - tilePad*TILE_NUMS*0.5;
 	lockFlg = false;
 
 	// Reflesh
