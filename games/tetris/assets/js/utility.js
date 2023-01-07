@@ -34,7 +34,7 @@ class MyButton{
 	}
 
 	drawBtn(){
-		fill("dodgerblue");
+		fill("#0D6EFD");
 		square(this._x, this._y, this._size, this._corner);
 		image(this._img, this._xC, this._yC, this._sizeC, this._sizeC);
 	}
