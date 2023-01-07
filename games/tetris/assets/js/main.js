@@ -40,6 +40,10 @@ function draw(){
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 
+	// Frame
+	fill("#DDDDDD");
+	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize*COLS, rSize*ROWS);
+	
 	// Tetris
 	let data = tMng.check();
 	for(let r=0; r<ROWS; r++){
@@ -54,18 +58,12 @@ function draw(){
 			square(x, y, rSize);
 		}
 	}
-	// Frame
-	fill("#AAAAAA");
-	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize*COLS, rSize/-5);
-	rect(cX-rSize*COLS/2, cY+rSize*ROWS/2, rSize*COLS, rSize/5);
-	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize/-5, rSize*ROWS);
-	rect(cX+rSize*COLS/2, cY-rSize*ROWS/2, rSize/5,  rSize*ROWS);
 
 	// Title
-	textAlign(CENTER);
-	textSize(rSize*1.5);
+	fill("#333333");
+	textSize(rSize*1.5); textAlign(CENTER);
 	text("TETRIS", cX, cY-rSize*ROWS/2-rSize*1.0);
-	textSize(rSize*0.8);
+	textSize(rSize*0.8); textAlign(CENTER);
 	text("LEFT key: move left.\nRIGHT key: move right.\nUP key: rotate.\n",
 		cX, cY+rSize*ROWS/2+rSize*1.5);
 }
