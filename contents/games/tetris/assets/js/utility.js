@@ -153,6 +153,8 @@ class TetrisManager{
 	constructor(){
 		this._grids = [];
 		this._mino  = null;
+		this._scoreLines = 0;
+		this._scoreTotal = 0;
 		this.init();
 	}
 
@@ -165,6 +167,10 @@ class TetrisManager{
 		this.updateTetris();// Update
 	}
 
+	getScore(){
+		return this._scoreTotal;
+	}
+
 	updateTetris(){
 		this.stepDown();
 		if(this.checkCollision()){
@@ -172,7 +178,9 @@ class TetrisManager{
 			this.fixMino();
 			this.createMino();
 		}
+		this._scoreLines = 0;
 		this.checkLines(T_ROWS-1);
+		this._scoreTotal += this._scoreLines;
 		setTimeout(()=>{this.updateTetris();}, 1000);
 	}
 
@@ -256,6 +264,7 @@ class TetrisManager{
 			if(filled == true){
 				this._grids.splice(r*T_COLS, T_COLS);// Delete and fill
 				for(let i=0; i<T_COLS; i++) this._grids.unshift(0);
+				this._scoreLines++;
 				this.checkLines(r);// Recursive
 			}
 		}
