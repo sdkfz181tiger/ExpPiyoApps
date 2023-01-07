@@ -44,6 +44,15 @@ class MyButton{
 //==========
 // Tile
 
+const T_COLORS = [
+	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
+	"#2196F3", "#03A9f4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", 
+	"#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"];
+const F_COLORS = [
+	"#333", "#FFF", "#FFF", "#FFF", "#FFF", "#FFF", 
+	"#333", "#333", "#333", "#FFF", "#FFF", "#FFF", 
+	"#333", "#333", "#333", "#333", "#FFF", "#FFF"];
+
 class Tile{
 
 	constructor(num, r, c, pad, size, corner){
@@ -93,12 +102,12 @@ class Tile{
 			this._y += (this._dY - this._y) / 2;
 		}
 		if(this._num != 0){
-			let i = Math.floor(this._num%T_COLOR.length);
+			let i = Math.floor(this._num%T_COLORS.length);
 			// Background
-			noStroke(); fill(T_COLOR[i]);
+			noStroke(); fill(T_COLORS[i]);
 			square(this._x, this._y, this._size, this._size, this._corner);
 			// Font
-			fill(F_COLOR[i]); textSize(this._size*0.5); textAlign(CENTER);
+			fill(F_COLORS[i]); textSize(this._size*0.5); textAlign(CENTER);
 			text(this._num, this._x+this._size/2, this._y+this._size*0.7);
 		}
 	}

@@ -2,15 +2,6 @@ console.log("main.js!!");
 
 const TITLE = "15パズル";
 
-const T_COLOR = [
-	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
-	"#2196F3", "#03A9f4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", 
-	"#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"];
-const F_COLOR = [
-	"#333", "#FFF", "#FFF", "#FFF", "#FFF", "#FFF", 
-	"#333", "#333", "#333", "#FFF", "#FFF", "#FFF", 
-	"#333", "#333", "#333", "#333", "#FFF", "#FFF"];
-
 let font, btnHome, btnAuto;
 let pad, size, corner;
 let fMng, sX, sY, tiles;

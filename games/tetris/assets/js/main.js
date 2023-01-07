@@ -24,7 +24,7 @@ function setup(){
 	// Tetris
 	cX = width / 2;
 	cY = height / 2;
-	rSize = height * 0.025;
+	rSize = Math.floor(height * 0.025);
 	tMng = new TetrisManager();
 }
 
@@ -37,19 +37,19 @@ function draw(){
 
 	// Frame
 	fill("#DDDDDD");
-	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize*COLS, rSize*ROWS);
+	rect(cX-rSize*T_COLS/2, cY-rSize*T_ROWS/2, rSize*T_COLS, rSize*T_ROWS);
 
 	// Tetris
 	let data = tMng.check();
-	for(let r=0; r<ROWS; r++){
-		for(let c=0; c<COLS; c++){
-			let sX = cX - (rSize*COLS) / 2;
-			let sY = cY - (rSize*ROWS) / 2;
-			let n = data[r*COLS+c];
+	for(let r=0; r<T_ROWS; r++){
+		for(let c=0; c<T_COLS; c++){
+			let sX = cX - (rSize*T_COLS) / 2;
+			let sY = cY - (rSize*T_ROWS) / 2;
+			let n = data[r*T_COLS+c];
 			if(n == 0) continue;
 			let x = sX + rSize * c;
 			let y = sY + rSize * r;
-			fill(COLORS[n%COLORS.length]);
+			fill(T_COLORS[n%T_COLORS.length]);
 			square(x, y, rSize);
 		}
 	}
@@ -57,10 +57,10 @@ function draw(){
 	// Title
 	fill("#333333");
 	textSize(rSize*1.5); textAlign(CENTER);
-	text("TETRIS", cX, cY-rSize*ROWS/2-rSize*1.0);
+	text("TETRIS", cX, cY-rSize*T_ROWS/2-rSize*1.0);
 	textSize(rSize*0.8); textAlign(CENTER);
 	text("LEFT key: move left.\nRIGHT key: move right.\nUP key: rotate.\n",
-		cX, cY+rSize*ROWS/2+rSize*1.5);
+		cX, cY+rSize*T_ROWS/2+rSize*1.5);
 }
 
 function mousePressed(){
