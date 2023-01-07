@@ -16,7 +16,7 @@ function setup(){
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
 	btnHome = new MyButton("caret-l-w.png", ()=>{
-		window.location.replace("../../");
+		window.location.replace("../../../");
 	});
 	btnLeft = new MyButton("caret-l-w.png", ()=>{
 		actionLeft();

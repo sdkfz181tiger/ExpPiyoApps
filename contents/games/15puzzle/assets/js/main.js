@@ -16,7 +16,7 @@ function setup(){
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
 	btnHome = new MyButton("caret-l-w.png", ()=>{
-		window.location.replace("../../");
+		window.location.replace("../../../");
 	});
 	btnAuto = new MyButton("caret-r-w.png", ()=>{
 		setTimeout(autoMove, 300);

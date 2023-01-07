@@ -8,13 +8,13 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="ぴよタイマー">
+	<meta name="apple-mobile-web-app-title" content="ぴよクイズ">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
-	<title>ぴよタイマー</title>
+	<title>ぴよクイズ</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
@@ -30,12 +30,12 @@
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
-					<a class="btn btn-primary btn-sm me-4" href="../../">
+					<a class="btn btn-primary btn-sm me-4" href="../../../">
 						<i class="bi-caret-left-fill" role="img"></i>
 					</a>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
-						<a class="navbar-brand" href="../../index.html">ぴよタイマー</a>
+						<a class="navbar-brand" href="../../index.html">ぴよクイズ</a>
 						<small class="text-white ps-1">{{ version }}</small>
 					</div>
 					<button class="navbar-toggler" type="button"
@@ -78,95 +78,143 @@
 			</div>
 			<!-- Loading(End) -->
 
-			<!-- Timer(Start) -->
+			<!-- Title(Start) -->
 			<div class="container text-center" v-if="mode==1">
 				<div class="row pt-4">
 					<div class="col">
-						<h1 id="timer-logo-1">ぴよ</h1>
-						<h1 id="timer-logo-2">タイマ-</h1>
+						<div class="d-flex d-flex justify-content-center title-flags">
+							<img v-for="flag of getFlgLineTop" v-bind:src="flag.src">
+						</div>
 					</div>
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						<div id="timer-hms">{{ getDisplayHMS }}</div>
-						<small id="timer-millis">{{ getDisplayMillis }}</small>
+						<h1 id="title-logo-1">国旗</h1>
+						<h1 id="title-logo-2">クイズ</h1>
+					</div>
+				</div>
+				<div class="row pt-2">
+					<div class="col">
+						<div class="d-flex d-flex justify-content-center title-flags">
+							<img v-for="flag of getFlgLineBottom" v-bind:src="flag.src">
+						</div>
+					</div>
+				</div>
+				<div class="row pt-5">
+					<div class="col">
+						<p>
+							<button class="btn btn-primary btn-lg px-5 py-2"
+								v-on:click="clickGameLevel(1)">レベル1</button>
+						</p>
+						<p>
+							<button class="btn btn-primary btn-lg px-5 py-2"
+								v-on:click="clickGameLevel(2)">レベル2</button>
+						</p>
+						<p>
+							<button class="btn btn-primary btn-lg px-5 py-2"
+								v-on:click="clickGameLevel(3)">レベル3</button>
+						</p>
+					</div>
+				</div>
+			</div>
+			<!-- Title(End) -->
+
+			<!-- Game(Start) -->
+			<div class="container text-center" v-if="mode==2">
+				<div class="row">
+					<div class="d-flex align-items-center">
+						<div class="p-2" id="game-score">
+							{{ getResultCount }}/{{ quizes.length }}
+						</div>
+						<div class="flex-grow-1 p-2"></div>
+						<div class="pe-1" id="game-flags" v-for="result of results">
+								<img src="./assets/images/mark_bkg.png" v-if="result == 0">
+								<img src="./assets/images/mark_ok.png" v-if="result == 1">
+								<img src="./assets/images/mark_ng.png" v-if="result == 2">
+						</div>
+					</div>
+				</div>
+				<div class="row mt-4 mb-2">
+					<div class="col">
+						<img id="game-flag" v-bind:src="answer.src">
+						<p id="game-hint">ヒント:首都は{{ answer.capital }}</p>
+					</div>
+				</div>
+				<div class="game-choises mb-2" id="myChoise" 
+					v-for="choise of choises" v-on:click="clickChoise(choise.name)">
+					<div class="text-center m-2">
+						{{ choise.name }}
+					</div>
+				</div>
+			</div>
+			<!-- Game(End) -->
+
+			<!-- Result(Start) -->
+			<div class="container text-center" v-if="mode==3">
+				<div class="row pt-4">
+					<div class="col">
+						<h1 class="fw-light">Result</h1>
 					</div>
 				</div>
 				<div class="row pt-4">
 					<div class="d-flex justify-content-center">
-						<table>
-							<tr>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickHours(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickMinutes(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickSeconds(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickHours(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickMinutes(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickSeconds(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-							</tr>
-						</table>
+						<h2 class="p-2" id="result-score">
+							{{ getResultCount }}/{{ quizes.length }}
+						</h2>
+					</div>
+				</div>
+				<div class="row py-4">
+					<div class="d-flex justify-content-center">
+						<div class="btn-group btn-group-lg w-100">
+							<button class="btn btn-secondary py-2" v-on:click="clickTitle()">
+								<i class="bi-house-fill" role="img"></i>
+							</button>
+							<button class="btn btn-primary py-2" v-on:click="clickRetry()">
+								<i class="bi-caret-left-fill" role="img"></i>
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="row pt-4">
-					<div class="col-1"></div>
-					<div class="col-5 d-grid">
-						<button class="btn btn-primary btn-lg"
-							v-on:click="clickStart">
-							<i class="bi-play-fill" role="img"></i>Start
-						</button>
+					<div class="d-flex justify-content-center">
+						<table id="result-table">
+							<thead>
+								<tr>
+									<td></td>
+									<td>No.</td>
+									<td>Flag</td>
+									<td>Name</td>
+									<td>Capital</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(quiz, i) of quizes">
+									<td class="p-1">
+										<img src="./assets/images/mark_ok.png" v-if="quiz.result==true">
+										<img src="./assets/images/mark_ng.png" v-else>
+									</td>
+									<td class="p-1">{{ i }}</td>
+									<td class="p-1"><img v-bind:src="quiz.src"></td>
+									<td class="p-2">{{ quiz.name }}</td>
+									<td class="p-2">{{ quiz.capital }}</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
-					<div class="col-5 d-grid">
-						<button class="btn btn-primary btn-lg"
-							v-on:click="clickStop">
-							<i class="bi-pause-fill" role="img"></i>Stop
-						</button>
-					</div>
-					<div class="col-1"></div>
 				</div>
 			</div>
-			<!-- Timer(End) -->
+			<!-- Result(End) -->
 
 		</main>
 		<!-- Main(End) -->
 
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
-			<!-- <a class="btn btn-primary rounded-circle shadow m-3" href="#"
-				v-if="mode!=0" v-on:click="showModal()">
-				<i class="bi-clock-history" role="img"></i>
-			</a> -->
-			<!-- <div id="im-xxx"></div> -->
+			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
+				v-if="mode==2" v-on:click="showModal()">
+				<i class="bi-house-fill" role="img"></i>
+			</a>
+			<div id="im-ba64155dfb134b0bb1bb1e405d3bb6a1"></div>
 		</footer>
 		<!-- Footer(End) -->
 
@@ -190,7 +238,7 @@
 							サウンドOn/Off
 						</label>
 					</div>
-					<!-- <div class="overflow-hidden" id="im-xxx"></div> -->
+					<div class="overflow-hidden" id="im-dda46e50a06f4361a575c49d16c212fb"></div>
 				</div>
 			</div>
 		</div>
@@ -209,7 +257,7 @@
 						</div>
 						<div class="modal-body">
 							<div class="container-fluid">
-								Hello, Modal!!
+								タイトルに戻ります
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -242,24 +290,23 @@
 
 	</div>
 
-	<!-- <script>
+	<script>
 		// Banner_468x60
 		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:26719, mid:550231, asid:xxx, type:"banner", display:"inline",
-			elementid:"im-xxx"});
+			pid:26719, mid:550231, asid:1792594, type:"banner", display:"inline",
+			elementid:"im-ba64155dfb134b0bb1bb1e405d3bb6a1"});
 		// Rectangle_336x280 
 		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:26719, mid:550231, asid:xxx, type:"banner", display:"inline",
-			elementid:"im-xxx"});
+			pid:26719, mid:550231, asid:1807741, type:"banner", display:"inline",
+			elementid:"im-dda46e50a06f4361a575c49d16c212fb"});
 	</script>
-	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script> -->
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
 
 	<!-- JavaScript -->
 	<script src="./assets/libs/vue/vue.global.js"></script>
 	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
 	<script src="./assets/libs/axios/axios.min.js"></script>
 	<script src="./assets/libs/howler/howler.min.js"></script>
-	<script src="./assets/libs/pushjs/push.min.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
 </body>
