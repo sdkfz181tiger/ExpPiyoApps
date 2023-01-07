@@ -2,10 +2,14 @@ console.log("main.js!!");
 
 const TITLE = "2048";
 const TILE_NUMS = 4;
+const TILE_COLORS = [
+	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
+	"#2196F3", "#03A9f4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", 
+	"#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"];
 
 let font, btnHome, flkManager;
 let my2048;
-let tilePad, tileSize, tileCorner;
+let tilePad, tileSize, tileCorner, tileColor;
 let sX, sY, tiles, lockFlg;
 
 function preload(){
@@ -46,6 +50,7 @@ function setup(){
 		tileSize = tilePad * 0.95;
 	}
 	tileCorner = tileSize * 0.1;
+	tileColor = TILE_COLORS[Math.floor(Math.random() * TILE_COLORS.length)];
 
 	sX = width*0.5  - tilePad*TILE_NUMS*0.5;
 	sY = height*0.5 - tilePad*TILE_NUMS*0.5;
@@ -141,7 +146,6 @@ function actionDown(){
 
 function refleshBoard(){
 	lockFlg = false;
-	let tC = color("#99BBEE");
 	let board = my2048.getBoard();
 	tiles = [];
 	for(let r=0; r<TILE_NUMS; r++){
@@ -151,7 +155,7 @@ function refleshBoard(){
 			let x = sX + tilePad * c;
 			let y = sY + tilePad * r;
 			if(n != 0){
-				line.push(new Tile(n, x, y, tC));
+				line.push(new Tile(n, x, y, tileColor));
 			}else{
 				line.push(null);
 			}

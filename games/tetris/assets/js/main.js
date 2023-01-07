@@ -5,7 +5,7 @@ const TITLE = "テトリス";
 const ROWS   = 20;
 const COLS   = 10;
 const MINOS  = [MINO_I, MINO_L, MINO_J, MINO_O, MINO_S, MINO_Z, MINO_T];
-const COLORS = ["#A7C957", "#F2E8CF", "#386641", "#6A994E", "#BC4749"];
+const COLORS = ["#F44336", "#673Ab7", "#03A9f4", "#4CAF50", "#FFEB3B", "#FF9800", "#795548"];
 let cX, cY, rSize, tMng;
 
 let font, btnHome;
@@ -43,7 +43,7 @@ function draw(){
 	// Frame
 	fill("#DDDDDD");
 	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize*COLS, rSize*ROWS);
-	
+
 	// Tetris
 	let data = tMng.check();
 	for(let r=0; r<ROWS; r++){
