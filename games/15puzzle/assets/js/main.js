@@ -12,6 +12,7 @@ const F_COLOR = [
 	"#333", "#333", "#333", "#333", "#FFF", "#FFF"];
 
 let font, btnHome, btnAuto;
+let pad, size, corner;
 let fMng, sX, sY, tiles;
 
 function preload(){
@@ -33,8 +34,7 @@ function setup(){
 	textFont(font);
 	noSmooth();
 
-	let pad = 32;
-	let size = 30;
+	// Padding, Size, Corner
 	if(width < height){
 		pad = width * 0.2;
 		size = pad * 0.95;
@@ -42,7 +42,7 @@ function setup(){
 		pad = height * 0.15;
 		size = pad * 0.95;
 	}
-	let corner = size * 0.1;
+	corner = size * 0.1;
 
 	// 15Puzzle
 	fMng = new FpzManager();
@@ -64,12 +64,15 @@ function setup(){
 }
 
 function draw(){
-	background("whitesmoke");
-	noStroke(); fill(33, 33, 33);
+	background("#EFEFEF");
+	noStroke(); fill("#333333");
 	textSize(28); textAlign(RIGHT);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	btnAuto.drawBtn();
+	// 15Puzzle
+	fill("#DDDDDD");
+	square(sX, sY, pad*fMng.getGrids(), corner);
 	for(let tile of tiles) tile.draw();
 }
 

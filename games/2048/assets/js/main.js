@@ -28,7 +28,6 @@ function setup(){
 		if(e.dir == "down") actionDown();
 	});
 	textFont(font);
-	colorMode(HSB);
 	frameRate(32);
 	noSmooth();
 
@@ -57,16 +56,16 @@ function setup(){
 }
 
 function draw(){
-	background("whitesmoke");
-	noStroke(); fill(33, 33, 33);
+	background("#EFEFEF");
+	noStroke(); fill("#333333");
 	textSize(28); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	// Board
-	fill(33, 33, 33);
+	fill("#333333");
 	textSize(28); textAlign(CENTER, BASELINE);
 	text("SCR:"+my2048.getScore(), width*0.5, sY-tilePad*0.4);
-	fill(33, 33, 99);
+	fill("#DDDDDD");
 	square(sX, sY, tilePad*TILE_NUMS, tileCorner);
 	for(let r=0; r<TILE_NUMS; r++){
 		for(let c=0; c<TILE_NUMS; c++){
@@ -142,7 +141,7 @@ function actionDown(){
 
 function refleshBoard(){
 	lockFlg = false;
-	let tC = color(33, 66, 99);
+	let tC = color("#99BBEE");
 	let board = my2048.getBoard();
 	tiles = [];
 	for(let r=0; r<TILE_NUMS; r++){
@@ -175,64 +174,4 @@ function updateBoard(){
 		my2048.randomPut();
 		refleshBoard();
 	}, 250);
-}
-
-//==========
-// Tile
-
-class Tile{
-
-	constructor(n, x, y, c){
-		this._n = n;
-		this._x = x;
-		this._y = y;
-		this._c = c;
-		this._dX = x;
-		this._dY = y;
-	}
-
-	setNum(n){
-		this._n = n;
-	}
-
-	setPosition(x, y, c){
-		this._x = x;
-		this._y = y;
-		this._c = c;
-	}
-
-	moveTo(gR, gC){
-		this._dX = this._x + gC * tilePad;
-		this._dY = this._y + gR * tilePad;
-	}
-
-	draw(){
-		// Move
-		if(this.calcDistance() < 4){
-			this._x = this._dX;
-			this._y = this._dY;
-		}else{
-			this._x += (this._dX - this._x) / 2;
-			this._y += (this._dY - this._y) / 2;
-		}
-		if(this._n == 0) return;
-		// Background
-		noStroke(); fill(this._c);
-		square(this._x, this._y, tileSize, tileCorner);
-		// Font
-		let size = tileSize * 0.6;
-		if(this._n.toString().length == 2) size = tileSize * 0.5;
-		if(this._n.toString().length == 3) size = tileSize * 0.4;
-		if(this._n.toString().length == 4) size = tileSize * 0.3;
-		if(this._n.toString().length == 5) size = tileSize * 0.2;
-		if(5 < this._n.toString().length) size = tileSize * 0.1;
-		fill(33, 33, 33); textSize(size); textAlign(CENTER, CENTER);
-		text(this._n, this._x+tileSize/2, this._y+tileSize/2-size*0.1);
-	}
-
-	calcDistance(){
-		let x = this._dX - this._x;
-		let y = this._dY - this._y;
-		return x*x+y*y;
-	}
 }

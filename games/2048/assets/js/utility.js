@@ -102,6 +102,63 @@ class FlickManager{
 //==========
 // 2048
 
+class Tile{
+
+	constructor(n, x, y, c){
+		this._n = n;
+		this._x = x;
+		this._y = y;
+		this._c = c;
+		this._dX = x;
+		this._dY = y;
+	}
+
+	setNum(n){
+		this._n = n;
+	}
+
+	setPosition(x, y, c){
+		this._x = x;
+		this._y = y;
+		this._c = c;
+	}
+
+	moveTo(gR, gC){
+		this._dX = this._x + gC * tilePad;
+		this._dY = this._y + gR * tilePad;
+	}
+
+	draw(){
+		// Move
+		if(this.calcDistance() < 4){
+			this._x = this._dX;
+			this._y = this._dY;
+		}else{
+			this._x += (this._dX - this._x) / 2;
+			this._y += (this._dY - this._y) / 2;
+		}
+		if(this._n == 0) return;
+		// Background
+		noStroke(); fill(this._c);
+		square(this._x, this._y, tileSize, tileCorner);
+		// Font
+		let size = tileSize * 0.6;
+		if(this._n.toString().length == 2) size = tileSize * 0.5;
+		if(this._n.toString().length == 3) size = tileSize * 0.4;
+		if(this._n.toString().length == 4) size = tileSize * 0.3;
+		if(this._n.toString().length == 5) size = tileSize * 0.2;
+		if(5 < this._n.toString().length) size = tileSize * 0.1;
+		fill(33, 33, 33); textSize(size); textAlign(CENTER, CENTER);
+		text(this._n, this._x+tileSize/2, this._y+tileSize/2-size*0.1);
+	}
+
+	calcDistance(){
+		let x = this._dX - this._x;
+		let y = this._dY - this._y;
+		return x*x+y*y;
+	}
+}
+
 class Smz2048{
 
 	constructor(){

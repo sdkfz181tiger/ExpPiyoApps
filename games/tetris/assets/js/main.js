@@ -6,8 +6,7 @@ const ROWS   = 20;
 const COLS   = 10;
 const MINOS  = [MINO_I, MINO_L, MINO_J, MINO_O, MINO_S, MINO_Z, MINO_T];
 const COLORS = ["#A7C957", "#F2E8CF", "#386641", "#6A994E", "#BC4749"];
-const R_SIZE = 18;
-let cX, cY, tMng;
+let cX, cY, rSize, tMng;
 
 let font, btnHome;
 
@@ -24,19 +23,19 @@ function setup(){
 		window.location.replace("../../");
 	});
 	textFont(font);
-	colorMode(RGB);
 	frameRate(32);
 	noSmooth();
 
 	// Tetris
 	cX = width / 2;
 	cY = height / 2;
+	rSize = height * 0.025;
 	tMng = new TetrisManager();
 }
 
 function draw(){
-	background("whitesmoke");
-	noStroke(); fill(33, 33, 33);
+	background("#EFEFEF");
+	noStroke(); fill("#333333");
 	textSize(28); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
@@ -45,30 +44,30 @@ function draw(){
 	let data = tMng.check();
 	for(let r=0; r<ROWS; r++){
 		for(let c=0; c<COLS; c++){
-			let sX = cX - (R_SIZE*COLS) / 2;
-			let sY = cY - (R_SIZE*ROWS) / 2;
+			let sX = cX - (rSize*COLS) / 2;
+			let sY = cY - (rSize*ROWS) / 2;
 			let n = data[r*COLS+c];
 			if(n == 0) continue;
-			let x = sX + R_SIZE * c;
-			let y = sY + R_SIZE * r;
+			let x = sX + rSize * c;
+			let y = sY + rSize * r;
 			fill(COLORS[n%COLORS.length]);
-			square(x, y, R_SIZE);
+			square(x, y, rSize);
 		}
 	}
 	// Frame
-	fill("silver");
-	rect(cX-R_SIZE*COLS/2, cY-R_SIZE*ROWS/2, R_SIZE*COLS, R_SIZE/-5);
-	rect(cX-R_SIZE*COLS/2, cY+R_SIZE*ROWS/2, R_SIZE*COLS, R_SIZE/5);
-	rect(cX-R_SIZE*COLS/2, cY-R_SIZE*ROWS/2, R_SIZE/-5, R_SIZE*ROWS);
-	rect(cX+R_SIZE*COLS/2, cY-R_SIZE*ROWS/2, R_SIZE/5,  R_SIZE*ROWS);
-	
+	fill("#AAAAAA");
+	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize*COLS, rSize/-5);
+	rect(cX-rSize*COLS/2, cY+rSize*ROWS/2, rSize*COLS, rSize/5);
+	rect(cX-rSize*COLS/2, cY-rSize*ROWS/2, rSize/-5, rSize*ROWS);
+	rect(cX+rSize*COLS/2, cY-rSize*ROWS/2, rSize/5,  rSize*ROWS);
+
 	// Title
 	textAlign(CENTER);
-	textSize(R_SIZE*1.5);
-	text("TETRIS", cX, cY-R_SIZE*ROWS/2-R_SIZE*1.0);
-	textSize(R_SIZE*0.8);
+	textSize(rSize*1.5);
+	text("TETRIS", cX, cY-rSize*ROWS/2-rSize*1.0);
+	textSize(rSize*0.8);
 	text("LEFT key: move left.\nRIGHT key: move right.\nUP key: rotate.\n",
-		cX, cY+R_SIZE*ROWS/2+R_SIZE*1.5);
+		cX, cY+rSize*ROWS/2+rSize*1.5);
 }
 
 function mousePressed(){
@@ -77,4 +76,33 @@ function mousePressed(){
 
 function touchStarted(){
 	btnHome.checkBtn();
+}
+
+function keyPressed(){
+	if(keyCode == LEFT_ARROW){
+		if(tMng.checkWallL()) return;
+		tMng.stepLeft();
+		if(tMng.checkCollision()) tMng.stepRight();
+	}
+	if(keyCode == RIGHT_ARROW){
+		if(tMng.checkWallR()) return;
+		tMng.stepRight();
+		if(tMng.checkCollision()) tMng.stepLeft();
+	}
+	if(keyCode == UP_ARROW){
+		tMng.rotateL();
+		if(tMng.checkCollision()){
+			tMng.rotateR();
+		}else{
+			tMng.checkRotation();
+		}
+	}
+	if(keyCode == DOWN_ARROW){
+		tMng.stepDown();
+		if(tMng.checkCollision()){
+			tMng.stepUp();
+			tMng.fixMino();
+			tMng.createMino();
+		}
+	}
 }
