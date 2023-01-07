@@ -1,15 +1,15 @@
 console.log("main.js!!");
 
 const TITLE = "2048";
-const TILE_NUMS = 4;
-const TILE_COLORS = [
-	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
-	"#2196F3", "#03A9f4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", 
-	"#CDDC39", "#FFEB3B", "#FFC107", "#FF9800", "#FF5722", "#795548"];
+const T_NUMS = 4;
+const T_COLORS = [
+	"#FFFFFF", "#FF9800", "#FFC107", "#FFEB3B", "#CDDC39", "#8BC34A", 
+	"#4CAF50", "#009688", "#00BCD4", "#03A9f4", "#2196F3", "#3F51B5",
+	"#673Ab7", "#9C27B0", "#E91E63", "#F44336", "#FF5722", "#795548"];
 
 let font, btnHome, flkManager;
 let my2048;
-let tilePad, tileSize, tileCorner, tileColor;
+let tilePad, tileSize, tileCorner;
 let sX, sY, tiles, lockFlg;
 
 function preload(){
@@ -50,10 +50,9 @@ function setup(){
 		tileSize = tilePad * 0.95;
 	}
 	tileCorner = tileSize * 0.1;
-	tileColor = TILE_COLORS[Math.floor(Math.random() * TILE_COLORS.length)];
 
-	sX = width*0.5  - tilePad*TILE_NUMS*0.5;
-	sY = height*0.5 - tilePad*TILE_NUMS*0.5;
+	sX = width*0.5  - tilePad*T_NUMS*0.5;
+	sY = height*0.5 - tilePad*T_NUMS*0.5;
 	lockFlg = false;
 
 	// Reflesh
@@ -71,9 +70,9 @@ function draw(){
 	textSize(28); textAlign(CENTER, BASELINE);
 	text("SCR:"+my2048.getScore(), width*0.5, sY-tilePad*0.4);
 	fill("#DDDDDD");
-	square(sX, sY, tilePad*TILE_NUMS, tileCorner);
-	for(let r=0; r<TILE_NUMS; r++){
-		for(let c=0; c<TILE_NUMS; c++){
+	square(sX, sY, tilePad*T_NUMS, tileCorner);
+	for(let r=0; r<T_NUMS; r++){
+		for(let c=0; c<T_NUMS; c++){
 			if(tiles[r][c]) tiles[r][c].draw();
 		}
 	}
@@ -148,14 +147,14 @@ function refleshBoard(){
 	lockFlg = false;
 	let board = my2048.getBoard();
 	tiles = [];
-	for(let r=0; r<TILE_NUMS; r++){
+	for(let r=0; r<T_NUMS; r++){
 		let line = [];
-		for(let c=0; c<TILE_NUMS; c++){
+		for(let c=0; c<T_NUMS; c++){
 			let n = board[r][c];
 			let x = sX + tilePad * c;
 			let y = sY + tilePad * r;
 			if(n != 0){
-				line.push(new Tile(n, x, y, tileColor));
+				line.push(new Tile(n, x, y, T_COLORS[Math.log2(n)]));
 			}else{
 				line.push(null);
 			}
@@ -166,8 +165,8 @@ function refleshBoard(){
 
 function updateBoard(){
 	// Move
-	for(let r=0; r<TILE_NUMS; r++){
-		for(let c=0; c<TILE_NUMS; c++){
+	for(let r=0; r<T_NUMS; r++){
+		for(let c=0; c<T_NUMS; c++){
 			let move = my2048.getMove(r, c);
 			if(move == null) continue;
 			tiles[r][c].moveTo(move.gR, move.gC);

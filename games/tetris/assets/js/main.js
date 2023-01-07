@@ -2,12 +2,7 @@ console.log("main.js!!");
 
 const TITLE = "テトリス";
 
-const ROWS   = 20;
-const COLS   = 10;
-const MINOS  = [MINO_I, MINO_L, MINO_J, MINO_O, MINO_S, MINO_Z, MINO_T];
-const COLORS = ["#F44336", "#673Ab7", "#03A9f4", "#4CAF50", "#FFEB3B", "#FF9800", "#795548"];
 let cX, cY, rSize, tMng;
-
 let font, btnHome;
 
 function preload(){

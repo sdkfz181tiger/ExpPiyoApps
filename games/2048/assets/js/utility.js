@@ -113,16 +113,6 @@ class Tile{
 		this._dY = y;
 	}
 
-	setNum(n){
-		this._n = n;
-	}
-
-	setPosition(x, y, c){
-		this._x = x;
-		this._y = y;
-		this._c = c;
-	}
-
 	moveTo(gR, gC){
 		this._dX = this._x + gC * tilePad;
 		this._dY = this._y + gR * tilePad;
@@ -148,7 +138,7 @@ class Tile{
 		if(this._n.toString().length == 4) size = tileSize * 0.3;
 		if(this._n.toString().length == 5) size = tileSize * 0.2;
 		if(5 < this._n.toString().length) size = tileSize * 0.1;
-		fill(33, 33, 33); textSize(size); textAlign(CENTER, CENTER);
+		fill("#333333"); textSize(size); textAlign(CENTER, CENTER);
 		text(this._n, this._x+tileSize/2, this._y+tileSize/2-size*0.1);
 	}
 
