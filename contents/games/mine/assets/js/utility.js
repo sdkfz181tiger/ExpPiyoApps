@@ -43,7 +43,64 @@ class MyButton{
 //==========
 // MineSweeper
 
-class MineSweeper{
+class Tile{
+
+	constructor(r, c, g, m, s){
+		this._r = r;
+		this._c = c;
+		this._g = g * 0.95;
+		this._m = m;
+		this._s = s;
+		this._x = c * g + width / 2 - g * MS_GRIDS / 2;
+		this._y = r * g + height / 2 - g * MS_GRIDS / 2;
+		this._opened = false;
+	}
+
+	getR(){return this._r;}
+
+	getC(){return this._c;}
+
+	open(){this._opened = true;}
+
+	close(){this._opened = false;}
+
+	draw(){
+		if(!this._opened){
+			this.drawClosed();
+		}else{
+			this.drawOpened();
+		}
+	}
+
+	mousePressed(x, y){
+		if(x < this._x) return false;
+		if(y < this._y) return false;
+		if(this._x + this._g < x) return false;
+		if(this._y + this._g < y) return false;
+		return true;
+	}
+
+	drawClosed(){
+		// Background
+		fill("#AAAAAA"); noStroke();
+		square(this._x, this._y, this._g, 5);
+	}
+
+	drawOpened(){
+		// Background
+		let tColor = (this._m == 1) ? color("#FF9999") : color("#CCCCCC");
+		fill(tColor); noStroke();
+		square(this._x, this._y, this._g, 5);
+		// Font
+		let str = "";
+		if(this._m == 1) str = "X";
+		if(this._s != 0) str = this._s;
+		fill("#333333"); textSize(this._g*0.8); textAlign(CENTER);
+		text(str, this._x+this._g/2, this._y+this._g*0.75);
+	}
+}
+
+class MineSweeperManager{
 
 	constructor(rows, cols, mines){
 		this._rows = rows;
