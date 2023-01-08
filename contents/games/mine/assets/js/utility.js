@@ -95,7 +95,7 @@ class Tile{
 		let str = "";
 		if(this._m == 1) str = "X";
 		if(this._s != 0) str = this._s;
-		fill("#333333"); textSize(this._g*0.8); textAlign(CENTER);
+		fill("#333333"); textSize(this._g*0.8); textAlign(CENTER, BASELINE);
 		text(str, this._x+this._g/2, this._y+this._g*0.75);
 	}
 }

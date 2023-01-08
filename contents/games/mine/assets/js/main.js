@@ -52,6 +52,14 @@ function draw(){
 	textSize(28); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
+	// Score
+	fill("#333333");
+	textSize(28); textAlign(RIGHT, TOP);
+	text("X:" + MS_MINES, 
+		width*0.5+gSize*MS_GRIDS*0.5, 
+		height*0.5-gSize*(MS_GRIDS+2)*0.5);
+
+
 	// Title
 	for(let tile of tiles) tile.draw();
 }
