@@ -52,11 +52,6 @@ function draw(){
 	textSize(28); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
-
-	// Frame
-	fill("#DDDDDD");
-	//rect(cX-rSize*T_COLS/2, cY-rSize*T_ROWS/2, rSize*T_COLS, rSize*T_ROWS);
-
 	// Title
 	for(let tile of tiles) tile.draw();
 }
