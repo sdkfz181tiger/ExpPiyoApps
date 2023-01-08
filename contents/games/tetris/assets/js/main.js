@@ -79,8 +79,8 @@ function draw(){
 
 	// Title
 	fill("#333333");
-	textSize(28); textAlign(CENTER);
-	text("SCORE:"+tMng.getScore(), cX, cY-rSize*T_ROWS/2-rSize*1.0);
+	textSize(28); textAlign(CENTER, BASELINE);
+	text("SCORE:"+tMng.getScore(), cX, cY-rSize*T_ROWS/2 - 28);
 }
 
 function mousePressed(){

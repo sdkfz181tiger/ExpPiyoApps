@@ -54,10 +54,9 @@ function draw(){
 	btnHome.drawBtn();
 	// Score
 	fill("#333333");
-	textSize(28); textAlign(RIGHT, TOP);
+	textSize(28); textAlign(CENTER, BASELINE);
 	text("X:" + MS_MINES, 
-		width*0.5+gSize*MS_GRIDS*0.5, 
-		height*0.5-gSize*(MS_GRIDS+2)*0.5);
+		width*0.5, height*0.5-gSize*MS_GRIDS*0.5 - 28);
 
 
 	// Title

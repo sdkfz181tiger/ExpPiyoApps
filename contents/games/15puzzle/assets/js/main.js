@@ -51,7 +51,7 @@ function setup(){
 	}
 
 	// Reposition
-	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), size*0.7);
+	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), size*0.5);
 }
 
 function draw(){

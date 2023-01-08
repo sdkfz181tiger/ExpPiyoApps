@@ -68,7 +68,7 @@ function draw(){
 	// Board
 	fill("#333333");
 	textSize(28); textAlign(CENTER, BASELINE);
-	text("SCORE:"+my2048.getScore(), width*0.5, sY-tilePad*0.4);
+	text("SCORE:"+my2048.getScore(), width*0.5, sY-28);
 	fill("#DDDDDD");
 	square(sX, sY, tilePad*T_NUMS, tileCorner);
 	for(let r=0; r<T_NUMS; r++){
