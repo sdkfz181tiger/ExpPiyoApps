@@ -35,7 +35,7 @@
 					</a>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
-						<a class="navbar-brand" href="../../index.html">ぴよタイマー</a>
+						<a class="navbar-brand">ぴよタイマー</a>
 						<small class="text-white ps-1">{{ version }}</small>
 					</div>
 					<button class="navbar-toggler" type="button"
@@ -92,7 +92,7 @@
 						<small id="timer-millis">{{ getDisplayMillis }}</small>
 					</div>
 				</div>
-				<div class="row pt-4">
+				<div class="row pt-2">
 					<div class="d-flex justify-content-center">
 						<table>
 							<tr>
@@ -139,20 +139,18 @@
 					</div>
 				</div>
 				<div class="row pt-4">
-					<div class="col-1"></div>
-					<div class="col-5 d-grid">
-						<button class="btn btn-primary btn-lg"
+					<div class="col"></div>
+					<div class="col-7 col-sm-7 col-md-6 col-lg-5 d-grid">
+						<button class="btn btn-primary btn-lg my-2"
 							v-on:click="clickStart">
 							<i class="bi-play-fill" role="img"></i>Start
 						</button>
-					</div>
-					<div class="col-5 d-grid">
-						<button class="btn btn-primary btn-lg"
+						<button class="btn btn-primary btn-lg my-2"
 							v-on:click="clickStop">
 							<i class="bi-pause-fill" role="img"></i>Stop
 						</button>
 					</div>
-					<div class="col-1"></div>
+					<div class="col"></div>
 				</div>
 			</div>
 			<!-- Timer(End) -->

@@ -55,7 +55,7 @@ function draw(){
 	// Score
 	fill("#333333");
 	textSize(28); textAlign(CENTER, BASELINE);
-	text("X:" + MS_MINES, 
+	text("MINES:" + MS_MINES, 
 		width*0.5, height*0.5-gSize*MS_GRIDS*0.5 - 28);
 
 
