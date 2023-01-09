@@ -2,8 +2,8 @@ console.log("main.js!!");
 
 const TITLE = "マインスイーパー";
 
-const MS_GRIDS = 10;
-const MS_MINES = 10;
+const MS_GRIDS = 8;
+const MS_MINES = 8;
 
 const FONT_SIZE = 24;
 
@@ -27,7 +27,7 @@ function setup(){
 	noSmooth();
 
 	// MineSweeper
-	gSize = Math.floor((width<height) ? width*0.08:height*0.08);
+	gSize = Math.floor((width<height) ? width*0.1:height*0.1);
 	mMng = new MineSweeperManager(MS_GRIDS, MS_GRIDS, MS_MINES);
 	//mMng.consoleAll();
 
@@ -57,7 +57,6 @@ function draw(){
 	textSize(28); textAlign(CENTER, BASELINE);
 	text("MINES:" + MS_MINES, 
 		width*0.5, height*0.5-gSize*MS_GRIDS*0.5 - 28);
-
 
 	// Title
 	for(let tile of tiles) tile.draw();
