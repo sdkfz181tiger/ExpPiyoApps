@@ -1,11 +1,10 @@
 console.log("main.js!!");
 
 const TITLE = "マインスイーパー";
+const FONT_SIZE = 28;
 
 const MS_GRIDS = 8;
 const MS_MINES = 8;
-
-const FONT_SIZE = 24;
 
 let font, btnHome;
 let gSize, mMng, tiles;
@@ -49,14 +48,14 @@ function setup(){
 function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
-	textSize(28); textAlign(RIGHT, BASELINE);
+	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	// Score
 	fill("#333333");
-	textSize(28); textAlign(CENTER, BASELINE);
+	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
 	text("MINES:" + MS_MINES, 
-		width*0.5, height*0.5-gSize*MS_GRIDS*0.5 - 28);
+		width*0.5, height*0.5-gSize*MS_GRIDS*0.5-FONT_SIZE);
 
 	// Title
 	for(let tile of tiles) tile.draw();

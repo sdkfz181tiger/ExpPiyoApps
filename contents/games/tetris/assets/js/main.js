@@ -1,6 +1,7 @@
 console.log("main.js!!");
 
 const TITLE = "テトリス";
+const FONT_SIZE = 28;
 
 let rSize, cX, cY, tMng;
 let font, btnHome;
@@ -50,7 +51,7 @@ function setup(){
 function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
-	textSize(28); textAlign(RIGHT, BASELINE);
+	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	btnLeft.drawBtn();
@@ -79,8 +80,8 @@ function draw(){
 
 	// Title
 	fill("#333333");
-	textSize(28); textAlign(CENTER, BASELINE);
-	text("SCORE:"+tMng.getScore(), cX, cY-rSize*T_ROWS/2 - 28);
+	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
+	text("SCORE:"+tMng.getScore(), cX, cY-rSize*T_ROWS/2-FONT_SIZE);
 }
 
 function mousePressed(){

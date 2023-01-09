@@ -1,6 +1,8 @@
 console.log("main.js!!");
 
 const TITLE = "2048";
+const FONT_SIZE = 28;
+
 const T_NUMS = 4;
 const T_COLORS = [
 	"#FFFFFF", "#FF9800", "#FFC107", "#FFEB3B", "#CDDC39", "#8BC34A", 
@@ -62,13 +64,13 @@ function setup(){
 function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
-	textSize(28); textAlign(RIGHT, BASELINE);
+	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	// Board
 	fill("#333333");
-	textSize(28); textAlign(CENTER, BASELINE);
-	text("SCORE:"+my2048.getScore(), width*0.5, sY-28);
+	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
+	text("SCORE:"+my2048.getScore(), width*0.5, sY-FONT_SIZE);
 	fill("#DDDDDD");
 	square(sX, sY, tilePad*T_NUMS, tileCorner);
 	for(let r=0; r<T_NUMS; r++){

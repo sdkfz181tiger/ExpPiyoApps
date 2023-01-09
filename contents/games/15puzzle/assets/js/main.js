@@ -1,6 +1,7 @@
 console.log("main.js!!");
 
 const TITLE = "15パズル";
+const FONT_SIZE = 28;
 
 let font, btnHome, btnAuto;
 let pad, size, corner;
@@ -57,7 +58,7 @@ function setup(){
 function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
-	textSize(28); textAlign(RIGHT);
+	textSize(FONT_SIZE); textAlign(RIGHT);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 	btnAuto.drawBtn();
