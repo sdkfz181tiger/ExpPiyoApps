@@ -16,20 +16,8 @@ function setup(){
 	const W = window.innerWidth;
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
-	btnHome = new MyButton("caret-l-w.png", ()=>{
+	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
-	});
-	btnLeft = new MyButton("caret-l-w.png", ()=>{
-		actionLeft();
-	});
-	btnRight = new MyButton("caret-r-w.png", ()=>{
-		actionRight();
-	});
-	btnDown = new MyButton("caret-d-w.png", ()=>{
-		actionDown();
-	});
-	btnRoll = new MyButton("arrow-roll-r-w.png", ()=>{
-		actionRoll();
 	});
 	textFont(font);
 	frameRate(32);
@@ -41,11 +29,23 @@ function setup(){
 	cY = height / 2 - rSize * 1;
 	tMng = new TetrisManager();
 
-	// Reposition
-	btnLeft.setPos(cX-rSize*5.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5);
-	btnRight.setPos(cX-rSize*2.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5);
-	btnDown.setPos(cX-rSize*4, cY+rSize*(T_ROWS+7)*0.5, rSize * 1.5);
-	btnRoll.setPos(cX+rSize*4.5, cY+rSize*(T_ROWS+5)*0.5, rSize * 3);
+	// Controller
+	btnLeft = new MyButton("caret-l-w.png", 
+		cX-rSize*5.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5, ()=>{
+		actionLeft();
+	});
+	btnRight = new MyButton("caret-r-w.png",
+		cX-rSize*2.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5, ()=>{
+		actionRight();
+	});
+	btnDown = new MyButton("caret-d-w.png",
+		cX-rSize*4, cY+rSize*(T_ROWS+7)*0.5, rSize * 1.5, ()=>{
+		actionDown();
+	});
+	btnRoll = new MyButton("arrow-roll-r-w.png",
+		cX+rSize*4.5, cY+rSize*(T_ROWS+5)*0.5, rSize * 3, ()=>{
+		actionRoll();
+	});
 }
 
 function draw(){

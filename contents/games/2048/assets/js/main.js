@@ -23,7 +23,7 @@ function setup(){
 	const W = window.innerWidth;
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
-	btnHome = new MyButton("caret-l-w.png", ()=>{
+	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
 	});
 	flkManager = new FlickManager(6, e=>{

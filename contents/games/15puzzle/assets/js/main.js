@@ -16,11 +16,8 @@ function setup(){
 	const W = window.innerWidth;
 	const H = window.innerHeight;
 	const canvas = createCanvas(W, H);
-	btnHome = new MyButton("caret-l-w.png", ()=>{
+	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
-	});
-	btnAuto = new MyButton("caret-r-w.png", ()=>{
-		setTimeout(autoMove, 300);
 	});
 	frameRate(32);
 	textFont(font);
@@ -51,8 +48,11 @@ function setup(){
 		}
 	}
 
-	// Reposition
-	btnAuto.setPos(width*0.5, sY + pad*(fMng.getGrids()+0.5), size*0.5);
+	// Auto
+	btnAuto = new MyButton("caret-r-w.png", 
+		width*0.5, sY + pad*(fMng.getGrids()+0.5), size*0.5, ()=>{
+		setTimeout(autoMove, 300);
+	});
 }
 
 function draw(){

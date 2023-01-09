@@ -9,14 +9,16 @@ navigator.serviceWorker.register("./pwa_sw.js");
 
 class MyButton{
 
-	constructor(file, onPressed=null){
-		this._img = loadImage("./assets/images/" + file);
+	constructor(file, x, y, size=32, onPressed=null){
+		this._img = loadImage("./assets/images/" + file, ()=>{
+			this.setPos(x, y, size);
+			this.drawBtn();
+		});
 		this._onPressed = onPressed;
-		this.setPos(24, 24);// Default
 	}
 
-	setPos(x, y, size=32){
-		this._size = size;
+	setPos(x, y, size=null){
+		if(size) this._size = size;
 		this._x = x - this._size*0.5;
 		this._y = y - this._size*0.5;
 		this._corner = this._size * 0.1;
