@@ -2,8 +2,12 @@ console.log("main.js!!");
 
 const TITLE = "Flappy";
 const FONT_SIZE = 28;
+const ASPECT_W = 9;
+const ASPECT_H = 16;
 
 let font, btnHome;
+let cX, cY, sX, sY;
+let gWidth, gHeight;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
@@ -20,6 +24,14 @@ function setup(){
 	textFont(font);
 	frameRate(8);
 	noSmooth();
+
+	// GameArea
+	cX = Math.floor(width * 0.5);
+	cY = Math.floor(height * 0.5);
+	gHeight = Math.floor(height * 0.5);
+	gWidth = Math.floor(gHeight * ASPECT_W / ASPECT_H);
+	sX = Math.floor(cX - gWidth * 0.5);
+	sY = Math.floor(cY - gHeight * 0.5);
 }
 
 function draw(){
@@ -28,11 +40,15 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
+
+	// GameArea
+	fill("#DDDDDD");
+	rect(sX, sY, gWidth, gHeight);
+
 	// Score
-	// fill("#333333");
-	// textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
-	// text("MINES:" + MS_MINES, 
-	// 	width*0.5, height*0.5-gSize*MS_GRIDS*0.5 - FONT_SIZE);
+	fill("#333333");
+	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
+	text("SCORE:000", cX, cY-gHeight*0.5 - FONT_SIZE);
 }
 
 function mousePressed(){
