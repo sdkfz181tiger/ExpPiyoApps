@@ -2,12 +2,16 @@ console.log("main.js!!");
 
 const TITLE = "Flappy";
 const FONT_SIZE = 28;
-const ASPECT_W = 9;
+const ASPECT_W = 10;
 const ASPECT_H = 16;
 
-const GRAVITY = 0.8;
-const P_COIN_X = 150;
-const P_TNL_Y = 50;
+const BIRD_GRAVITY = 0.4;
+const BIRD_VEL     = 1.2;
+const BIRD_JUMP    = 5;
+const COIN_MIN_Y   = -100;
+const COIN_MAX_Y   = 10;
+const PAD_NEXT_X   = 120;
+const PAD_TNL_Y    = 70;
 
 let font, btnHome;
 let cX, cY, sX, sY;
@@ -15,18 +19,19 @@ let gWidth, gHeight;
 
 let bkgGroup, coinGroup, tnlGroup, grdGroup;
 let sndJump, sndCoin, sndOmg;
-let ready, bird, score;
+let score, logoReady, logoOver, bird;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
 	
 	// Animation
-	loadAni("ready", "./assets/images/fb_ready.png");
-	loadAni("fly", "./assets/images/fb_bird_01.png", 3);
-	loadAni("bkg", "./assets/images/fb_bkg.png");
-	loadAni("grd", "./assets/images/fb_grd.png");
+	loadAni("ready",  "./assets/images/fb_ready.png");
+	loadAni("over",   "./assets/images/fb_over.png");
+	loadAni("fly",    "./assets/images/fb_bird_01.png", 3);
+	loadAni("bkg",    "./assets/images/fb_bkg.png");
+	loadAni("grd",    "./assets/images/fb_grd.png");
 	loadAni("tunnel", "./assets/images/fb_tunnel.png");
-	loadAni("coin", "./assets/images/fb_coin.png");
+	loadAni("coin",   "./assets/images/fb_coin.png");
 
 	// Group
 	bkgGroup = new Group();
@@ -57,18 +62,53 @@ function setup(){
 	
 	// All sprites
 	allSprites.collider = "static";
-	allSprites.shapeColor = color("silver");
+	allSprites.shapeColor = color("#AAAAAA");
 
 	// Background
 	createBkg();
 
-	// Ready
-	ready = new Sprite("ready", cX, cY, 16, "none");
+	// Score
+	score = 0;
+
+	// Ready, Over
+	logoReady = new Sprite("ready", cX, cY, 16, "none");
+	logoReady.visible = true;
+	logoOver = new Sprite("over", cX, cY, 16, "none");
+	logoOver.visible = false;
 
 	// Bird
 	bird = new Sprite("fly", cX, cY, 16, "dynamic");
 	bird.rotationLock = true;
 	bird.rotation = 90;
+
+	// Coin x Bird
+	coinGroup.overlap(bird, (a, b)=>{
+		console.log("Coin x Bird");
+		if(!a.visible) return;
+		a.visible = false;// Invisible
+		score += 1;// Score
+	});
+
+	// Tunnel x Bird
+	tnlGroup.overlap(bird, (a, b)=>{
+		console.log("Tunnel x Bird");
+		gameOver();// GameOver
+	});
+
+	// Ground x Bird
+	grdGroup.collide(bird, (a, b)=>{
+		console.log("Ground x Bird");
+		gameOver();// GameOver
+	});
+
+	// Tunnel x Ground
+	tnlGroup.overlap(grdGroup);
+
+	// Coin and Tunnel
+	createCoinAndTunnel(cX + PAD_NEXT_X * 1);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 2);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 3);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 4);
 
 	// Ground
 	createGrd();
@@ -81,25 +121,50 @@ function draw(){
 	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 
+	// GameArea
+	fill("#DDDDDD");
+	rect(sX, sY, gWidth, gHeight);
+
 	// Left
-	const left = camera.x - gWidth * 1.5;
+	const left = camera.x - gWidth * 1.0;
 
 	// Gravity
-	bird.vel.y += GRAVITY;
+	bird.vel.y += BIRD_GRAVITY;
 	bird.rotation = bird.vel.y * 4;
 
 	// Camera
 	camera.on();
 	camera.x = bird.x;
 	camera.off();
-	
-	// GameArea
-	fill("#DDDDDD");
-	rect(sX, sY, gWidth, gHeight);
 
 	// Background
 	for(let bkg of bkgGroup){
 		if(bkg.x < left) bkg.x += bkg.width * 4;
+	}
+
+	// Coin
+	let nextY = cY;
+	for(let coin of coinGroup){
+		if(coin.x < left){
+			console.log("Offset!!");
+			nextY += random(COIN_MIN_Y, COIN_MAX_Y);// Random
+			coin.x += PAD_NEXT_X * 4;
+			coin.y = nextY;
+			coin.visible = true;
+		}
+	}
+
+	// Tunnel
+	for(let tnl of tnlGroup){
+		if(tnl.x < left){
+			tnl.x += PAD_NEXT_X * 4;
+			if(tnl.tag == "a"){
+				tnl.y = nextY - PAD_TNL_Y - 180;
+			}
+			if(tnl.tag == "b"){
+				tnl.y = nextY + PAD_TNL_Y + 180;
+			}
+		}
 	}
 
 	// Ground
@@ -110,7 +175,7 @@ function draw(){
 	// Score
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
-	text("SCORE:888", cX, cY-gHeight*0.5 - FONT_SIZE);
+	text("SCORE:" + score, cX, cY-gHeight*0.5 - FONT_SIZE);
 }
 
 function mousePressed(){
@@ -128,23 +193,25 @@ function actionJump(){
 
 	// Tap to start
 	if(!isLooping()){
+		logoReady.visible = false;
+		logoOver.visible = false;
 		loop();
 	}
 
 	// Jump
 	if(isLooping()){
-		bird.vel.x = 2;
-		bird.vel.y = -8;
+		bird.vel.x = BIRD_VEL;
+		bird.vel.y = BIRD_JUMP * -1.0;
 	}
 }
 
 function createCoinAndTunnel(x){
 	// Coin, Tunnel
-	const y = random(150, height-150);
+	const y = cY + random(COIN_MIN_Y, COIN_MAX_Y);
 	const coin = new coinGroup.Sprite("coin", x, y, 12, 16);
-	const tnla = new tnlGroup.Sprite("tunnel", x, y-P_TNL_Y-180, 52, 360);
+	const tnla = new tnlGroup.Sprite("tunnel", x, y-PAD_TNL_Y-180, 52, 360);
 	tnla.tag = "a";// Tag
-	const tnlb = new tnlGroup.Sprite("tunnel", x, y+P_TNL_Y+180, 52, 360);
+	const tnlb = new tnlGroup.Sprite("tunnel", x, y+PAD_TNL_Y+180, 52, 360);
 	tnlb.tag = "b";// Tag
 }
 
@@ -168,22 +235,10 @@ function createGrd(){
 	const grd4 = new grdGroup.Sprite("grd", grd3.x+grd3.width, y);
 }
 
-function drawTitle(){
-	fill(255);
-	// Title
-	textAlign(CENTER, TOP);
-	textSize(40);
-	text(TITLE, cX, 20);
-	// Score
-	textAlign(CENTER, TOP);
-	textSize(60);
-	text(score, cX, 80);
-}
-
 function gameOver(){
-	fill(255);
-	textAlign(CENTER, CENTER);
-	textSize(20);
-	text("Game Over", cX, cY);
-	noLoop();
+	logoOver.x = camera.x;
+	logoOver.visible = true;
+	setTimeout(()=>{
+		noLoop();
+	}, 10);
 }
