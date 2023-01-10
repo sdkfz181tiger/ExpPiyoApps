@@ -34,10 +34,10 @@ function preload(){
 	loadAni("coin",   "./assets/images/fb_coin.png");
 
 	// Group
-	bkgGroup = new Group();
+	bkgGroup  = new Group();
 	coinGroup = new Group();
-	tnlGroup = new Group();
-	grdGroup = new Group();
+	tnlGroup  = new Group();
+	grdGroup  = new Group();
 }
 
 function setup(){
@@ -90,7 +90,7 @@ function setup(){
 	});
 
 	// Tunnel x Bird
-	tnlGroup.overlap(bird, (a, b)=>{
+	tnlGroup.collide(bird, (a, b)=>{
 		console.log("Tunnel x Bird");
 		gameOver();// GameOver
 	});
@@ -101,14 +101,12 @@ function setup(){
 		gameOver();// GameOver
 	});
 
-	// Tunnel x Ground
-	tnlGroup.overlap(grdGroup);
-
 	// Coin and Tunnel
 	createCoinAndTunnel(cX + PAD_NEXT_X * 1);
 	createCoinAndTunnel(cX + PAD_NEXT_X * 2);
 	createCoinAndTunnel(cX + PAD_NEXT_X * 3);
 	createCoinAndTunnel(cX + PAD_NEXT_X * 4);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 5);
 
 	// Ground
 	createGrd();
@@ -146,9 +144,8 @@ function draw(){
 	let nextY = cY;
 	for(let coin of coinGroup){
 		if(coin.x < left){
-			console.log("Offset!!");
 			nextY += random(COIN_MIN_Y, COIN_MAX_Y);// Random
-			coin.x += PAD_NEXT_X * 4;
+			coin.x += PAD_NEXT_X * 5;
 			coin.y = nextY;
 			coin.visible = true;
 		}
@@ -157,7 +154,7 @@ function draw(){
 	// Tunnel
 	for(let tnl of tnlGroup){
 		if(tnl.x < left){
-			tnl.x += PAD_NEXT_X * 4;
+			tnl.x += PAD_NEXT_X * 5;
 			if(tnl.tag == "a"){
 				tnl.y = nextY - PAD_TNL_Y - 180;
 			}
