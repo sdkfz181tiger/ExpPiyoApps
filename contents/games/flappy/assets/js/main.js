@@ -152,14 +152,15 @@ function draw(){
 	}
 
 	// Tunnel
+	const padY = random(160, 190);
 	for(let tnl of tnlGroup){
 		if(tnl.x < left){
 			tnl.x += PAD_NEXT_X * 5;
 			if(tnl.tag == "a"){
-				tnl.y = nextY - PAD_TNL_Y - 180;
+				tnl.y = nextY - PAD_TNL_Y - padY;
 			}
 			if(tnl.tag == "b"){
-				tnl.y = nextY + PAD_TNL_Y + 180;
+				tnl.y = nextY + PAD_TNL_Y + padY;
 			}
 		}
 	}
