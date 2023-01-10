@@ -6,7 +6,22 @@
 }
 
 html, body{
+	width: 100%; height: 100%;
 	margin: 0px; padding: 0px;
 	font-family: "Nicokaku-v2"; font-size: 1.0rem;
 	overflow: hidden;
+}
+
+body{
+	display: flex;
+/*	align-items: center;*/
+	justify-content: center;
+}
+
+header i{
+	font-size: 1.2rem;
+}
+
+canvas{
+	margin: 55px 0px 0px 0px !important;
 }

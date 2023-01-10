@@ -1,6 +1,5 @@
 console.log("main.js!!");
 
-const TITLE = "Flappy";
 const FONT_SIZE = 28;
 const ASPECT_W = 10;
 const ASPECT_H = 16;
@@ -14,8 +13,7 @@ const PAD_NEXT_X   = 120;
 const PAD_TNL_Y    = 70;
 
 let font, btnHome;
-let cX, cY, sX, sY;
-let gWidth, gHeight;
+let cX, cY;
 
 let bkgGroup, coinGroup, tnlGroup, grdGroup;
 let score, logoReady, logoOver, bird;
@@ -40,10 +38,11 @@ function preload(){
 }
 
 function setup(){
-	console.log("setup");
-	const W = window.innerWidth;
-	const H = window.innerHeight;
-	const canvas = createCanvas(W, H);
+
+	const wH = window.innerHeight;
+	const cH = Math.floor(window.innerHeight - 110);
+	const cW = Math.floor(cH * ASPECT_W / ASPECT_H);
+	const canvas = createCanvas(w, h);
 	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
 	});
@@ -51,14 +50,9 @@ function setup(){
 	noLoop();
 	noSmooth();
 
-	// GameArea
 	cX = Math.floor(width * 0.5);
 	cY = Math.floor(height * 0.5);
-	gHeight = Math.floor(height * 0.65);
-	gWidth = Math.floor(gHeight * ASPECT_W / ASPECT_H);
-	sX = Math.floor(cX - gWidth * 0.5);
-	sY = Math.floor(cY - gHeight * 0.5);
-	
+
 	// All sprites
 	allSprites.collider = "static";
 	allSprites.shapeColor = color("#AAAAAA");
@@ -92,7 +86,6 @@ function setup(){
 
 	// Coin x Bird
 	coinGroup.overlap(bird, (a, b)=>{
-		console.log("Coin x Bird");
 		if(!a.visible) return;
 		a.visible = false;// Invisible
 		score += 1;// Score
@@ -100,13 +93,11 @@ function setup(){
 
 	// Tunnel x Bird
 	tnlGroup.overlap(bird, (a, b)=>{
-		console.log("Tunnel x Bird");
 		gameOver();// GameOver
 	});
 
 	// Ground x Bird
 	grdGroup.collide(bird, (a, b)=>{
-		console.log("Ground x Bird");
 		gameOver();// GameOver
 	});
 }
@@ -115,17 +106,12 @@ function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
-	text(TITLE, width - 12, 32);
 	btnHome.drawBtn();
 
-	// GameArea
-	fill("#DDDDDD");
-	rect(sX, sY, gWidth, gHeight);
-
 	// Left
-	const left = camera.x - gWidth * 1.0;
+	const left = camera.x - width;
 
-	// Gravity
+	// Bird
 	bird.vel.y += BIRD_GRAVITY;
 	bird.rotation = bird.vel.y * 4;
 
@@ -171,8 +157,8 @@ function draw(){
 
 	// Score
 	fill("#333333");
-	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
-	text("SCORE:" + score, cX, cY-gHeight*0.5 - FONT_SIZE);
+	textSize(FONT_SIZE); textAlign(CENTER, TOP);
+	text("SCORE:" + score, cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){
@@ -186,7 +172,6 @@ function touchStarted(){
 }
 
 function actionJump(){
-	console.log("actionJump");
 
 	// Tap to start
 	if(!isLooping()){
@@ -214,8 +199,8 @@ function createCoinAndTunnel(x){
 
 function createBkg(){
 	// Background
-	const x = cX + gWidth * -1.0;
-	const y = cY + gHeight * 0.25;
+	const x = cX + width * -1.0;
+	const y = cY + height * 0.25;
 	const bkg1 = new bkgGroup.Sprite("bkg", x, y, "none");
 	const bkg2 = new bkgGroup.Sprite("bkg", bkg1.x+bkg1.width, y, "none");
 	const bkg3 = new bkgGroup.Sprite("bkg", bkg2.x+bkg1.width, y, "none");
@@ -224,8 +209,8 @@ function createBkg(){
 
 function createGrd(){
 	// Ground
-	const x = cX + gWidth * -1.0;
-	const y = cY + gHeight * 0.5;
+	const x = cX + width * -1.0;
+	const y = cY + height * 0.5;
 	const grd1 = new grdGroup.Sprite("grd", x, y);
 	const grd2 = new grdGroup.Sprite("grd", grd1.x+grd1.width, y);
 	const grd3 = new grdGroup.Sprite("grd", grd2.x+grd2.width, y);
