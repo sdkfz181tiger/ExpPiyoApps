@@ -18,7 +18,6 @@ let cX, cY, sX, sY;
 let gWidth, gHeight;
 
 let bkgGroup, coinGroup, tnlGroup, grdGroup;
-let sndJump, sndCoin, sndOmg;
 let score, logoReady, logoOver, bird;
 
 function preload(){
@@ -70,6 +69,16 @@ function setup(){
 	// Score
 	score = 0;
 
+	// Coin and Tunnel
+	createCoinAndTunnel(cX + PAD_NEXT_X * 1);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 2);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 3);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 4);
+	createCoinAndTunnel(cX + PAD_NEXT_X * 5);
+
+	// Ground
+	createGrd();
+
 	// Ready, Over
 	logoReady = new Sprite("ready", cX, cY, 16, "none");
 	logoReady.visible = true;
@@ -90,7 +99,7 @@ function setup(){
 	});
 
 	// Tunnel x Bird
-	tnlGroup.collide(bird, (a, b)=>{
+	tnlGroup.overlap(bird, (a, b)=>{
 		console.log("Tunnel x Bird");
 		gameOver();// GameOver
 	});
@@ -100,16 +109,6 @@ function setup(){
 		console.log("Ground x Bird");
 		gameOver();// GameOver
 	});
-
-	// Coin and Tunnel
-	createCoinAndTunnel(cX + PAD_NEXT_X * 1);
-	createCoinAndTunnel(cX + PAD_NEXT_X * 2);
-	createCoinAndTunnel(cX + PAD_NEXT_X * 3);
-	createCoinAndTunnel(cX + PAD_NEXT_X * 4);
-	createCoinAndTunnel(cX + PAD_NEXT_X * 5);
-
-	// Ground
-	createGrd();
 }
 
 function draw(){
