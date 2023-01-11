@@ -1,9 +1,8 @@
 console.log("main.js!!");
 
 const FONT_SIZE = 28;
-
-const CANVAS_W = 480;
-const CANVAS_H = 720 - 110;
+const CANVAS_W  = 320;// 480
+const CANVAS_H  = 480;// 720 - 110
 
 const BIRD_GRAVITY = 0.4;
 const BIRD_VEL     = 1.2;
@@ -13,8 +12,7 @@ const COIN_MAX_Y   = 10;
 const PAD_NEXT_X   = 120;
 const PAD_TNL_Y    = 70;
 
-let font, btnHome;
-let cX, cY;
+let font, cX, cY;
 
 let bkgGroup, coinGroup, tnlGroup, grdGroup;
 let score, logoReady, logoOver, bird;
@@ -23,13 +21,16 @@ function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
 	
 	// Animation
-	loadAni("ready",  "./assets/images/fb_ready.png");
-	loadAni("over",   "./assets/images/fb_over.png");
-	loadAni("fly",    "./assets/images/fb_bird_01.png", 3);
-	loadAni("bkg",    "./assets/images/fb_bkg.png");
-	loadAni("grd",    "./assets/images/fb_grd.png");
-	loadAni("tunnel", "./assets/images/fb_tunnel.png");
-	loadAni("coin",   "./assets/images/fb_coin.png");
+	loadAni("bird",       "./assets/images/fb_bird_01.png", 3);
+	loadAni("btn_play",   "./assets/images/fb_btn_play.png");
+	loadAni("btn_retry",  "./assets/images/fb_btn_retry.png");
+	loadAni("bkg",        "./assets/images/fb_bkg.png");
+	loadAni("coin",       "./assets/images/fb_coin.png");
+	loadAni("grd",        "./assets/images/fb_grd.png");
+	loadAni("logo_over",  "./assets/images/fb_logo_over.png");
+	loadAni("logo_ready", "./assets/images/fb_logo_ready.png");
+	loadAni("logo_tap",   "./assets/images/fb_logo_tap.png");
+	loadAni("tunnel",     "./assets/images/fb_tunnel.png");
 
 	// Group
 	bkgGroup  = new Group();
@@ -43,9 +44,6 @@ function setup(){
 	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
 	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
 	const canvas = createCanvas(cW, cH);
-	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
-		window.location.replace("../../../");
-	});
 	textFont(font);
 	noLoop();
 	noSmooth();
@@ -74,13 +72,16 @@ function setup(){
 	createGrd();
 
 	// Ready, Over
-	logoReady = new Sprite("ready", cX, cY, 16, "none");
+	logoReady = new Sprite("logo_ready", cX, cY, 16, "none");
 	logoReady.visible = true;
-	logoOver = new Sprite("over", cX, cY, 16, "none");
-	logoOver.visible = false;
+	logoOver = new Sprite("logo_over", cX, cY-60, 16, "none");
+	logoOver.visible = true;
+
+	// Retry
+	btnRetry = new Sprite("btn_retry", cX, cY+20, "none");
 
 	// Bird
-	bird = new Sprite("fly", cX, cY, 16, "dynamic");
+	bird = new Sprite("bird", cX, cY, 16, "dynamic");
 	bird.rotationLock = true;
 	bird.rotation = 90;
 
@@ -97,7 +98,7 @@ function setup(){
 	});
 
 	// Ground x Bird
-	grdGroup.collide(bird, (a, b)=>{
+	grdGroup.overlap(bird, (a, b)=>{
 		gameOver();// GameOver
 	});
 }
@@ -106,7 +107,6 @@ function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
-	btnHome.drawBtn();
 
 	// Left
 	const left = camera.x - width * 0.5;
@@ -164,29 +164,34 @@ function draw(){
 }
 
 function mousePressed(){
-	btnHome.checkBtn();
 	actionJump();
 }
 
 function touchStarted(){
-	btnHome.checkBtn();
 	actionJump();
 }
 
 function actionJump(){
 
+	if(isSpritePressed(btnRetry)){
+		console.log("Retry!!");
+	}else{
+		console.log("Byebye!!");
+	}
+
 	// Tap to start
 	if(!isLooping()){
-		logoReady.visible = false;
-		logoOver.visible = false;
-		loop();
+		//logoReady.visible = false;
+		//logoOver.visible = false;
+		//btnRetry.visible = false;
+		//loop();
 	}
 
 	// Jump
-	if(isLooping()){
-		bird.vel.x = BIRD_VEL;
-		bird.vel.y = BIRD_JUMP * -1.0;
-	}
+	// if(isLooping()){
+	// 	bird.vel.x = BIRD_VEL;
+	// 	bird.vel.y = BIRD_JUMP * -1.0;
+	// }
 }
 
 function createCoinAndTunnel(x){
@@ -222,7 +227,18 @@ function createGrd(){
 function gameOver(){
 	logoOver.x = camera.x;
 	logoOver.visible = true;
+	btnRetry.x = camera.x; 
+	btnRetry.visible = true;
 	setTimeout(()=>{
 		noLoop();
 	}, 10);
+}
+
+function isSpritePressed(spr){
+	if(!spr.visible) return false;
+	if(mouseX < spr.x-spr.hw) return false;
+	if(spr.x+spr.hw < mouseX) return false;
+	if(mouseY < spr.y-spr.hh) return false;
+	if(spr.y+spr.hh < mouseY) return false;
+	return true;
 }
