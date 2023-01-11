@@ -42,7 +42,7 @@ function setup(){
 	const wH = window.innerHeight;
 	const cH = Math.floor(window.innerHeight - 110);
 	const cW = Math.floor(cH * ASPECT_W / ASPECT_H);
-	const canvas = createCanvas(w, h);
+	const canvas = createCanvas(cW, cH);
 	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
 	});
