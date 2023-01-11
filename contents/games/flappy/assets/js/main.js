@@ -1,8 +1,9 @@
 console.log("main.js!!");
 
 const FONT_SIZE = 28;
-const ASPECT_W = 10;
-const ASPECT_H = 16;
+
+const CANVAS_W = 480;
+const CANVAS_H = 720 - 110;
 
 const BIRD_GRAVITY = 0.4;
 const BIRD_VEL     = 1.2;
@@ -39,9 +40,8 @@ function preload(){
 
 function setup(){
 
-	const wH = window.innerHeight;
-	const cH = Math.floor(window.innerHeight - 110);
-	const cW = Math.floor(cH * ASPECT_W / ASPECT_H);
+	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
+	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
 	const canvas = createCanvas(cW, cH);
 	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
 		window.location.replace("../../../");
@@ -109,7 +109,7 @@ function draw(){
 	btnHome.drawBtn();
 
 	// Left
-	const left = camera.x - width;
+	const left = camera.x - width * 0.5;
 
 	// Bird
 	bird.vel.y += BIRD_GRAVITY;
@@ -122,7 +122,8 @@ function draw(){
 
 	// Background
 	for(let bkg of bkgGroup){
-		if(bkg.x < left) bkg.x += bkg.width * 4;
+		if(left < bkg.x+bkg.width*0.5) continue
+		bkg.x += bkg.width * 4;
 	}
 
 	// Coin
@@ -152,7 +153,8 @@ function draw(){
 
 	// Ground
 	for(let grd of grdGroup){
-		if(grd.x < left) grd.x += grd.width * 4;
+		if(left < grd.x+grd.width*0.5) continue;
+		grd.x += grd.width * 4;
 	}
 
 	// Score
@@ -199,7 +201,7 @@ function createCoinAndTunnel(x){
 
 function createBkg(){
 	// Background
-	const x = cX + width * -1.0;
+	const x = 0;
 	const y = cY + height * 0.25;
 	const bkg1 = new bkgGroup.Sprite("bkg", x, y, "none");
 	const bkg2 = new bkgGroup.Sprite("bkg", bkg1.x+bkg1.width, y, "none");
@@ -209,7 +211,7 @@ function createBkg(){
 
 function createGrd(){
 	// Ground
-	const x = cX + width * -1.0;
+	const x = 0;
 	const y = cY + height * 0.5;
 	const grd1 = new grdGroup.Sprite("grd", x, y);
 	const grd2 = new grdGroup.Sprite("grd", grd1.x+grd1.width, y);
