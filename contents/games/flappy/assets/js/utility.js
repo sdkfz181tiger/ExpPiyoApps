@@ -95,6 +95,7 @@ class Sprite{
 	}
 
 	contains(x, y){
+		if(!this._visible) return false;
 		if(x < this.l) return false;
 		if(this.r < x) return false;
 		if(y < this.t) return false;
@@ -103,6 +104,7 @@ class Sprite{
 	}
 
 	intersects(spr){
+		if(!this._visible) return false;
 		if(spr.r < this.l) return false;
 		if(this.r < spr.l) return false;
 		if(spr.b < this.t) return false;
@@ -169,8 +171,8 @@ class MyBird extends Sprite{
 
 	constructor(file, x, y){
 		super(file, x, y);
-		this._jY = -10;
-		this._gY = 0.6;
+		this._jY = BIRD_JUMP_Y;
+		this._gY = BIRD_GRV_Y;
 	}
 
 	reset(x, y){
@@ -203,5 +205,68 @@ class MyScroller extends Sprite{
 		super.update();
 		if(!this.vFlg) return;
 		if(this.r < 0) this.x += this.w * 4;
+	}
+}
+
+class MyTunnel{
+
+	constructor(fileT, fileC, x, y, pY){
+		this._tTop = new Sprite(fileT, x, y);
+		this._tBtm = new Sprite(fileT, x, y);
+		this._coin = new Sprite(fileC, x, y);
+		this.setPos(x, y, pY);
+	}
+
+	setPos(x, y, pY){
+		this._tTop.x = x;
+		this._tTop.y = y - (this._tTop.hh + pY/2);
+		this._tBtm.x = x;
+		this._tBtm.y = y + (this._tBtm.hh + pY/2);
+		this._coin.x = x;
+		this._coin.y = y;
+		this.showCoin();
+	}
+
+	startMove(vX, vY){
+		this._tTop.startMove(vX, vY);
+		this._tBtm.startMove(vX, vY);
+		this._coin.startMove(vX, vY);
+	}
+
+	stopMove(){
+		this._tTop.stopMove();
+		this._tBtm.stopMove();
+		this._coin.stopMove();
+	}
+
+	intersectCoin(spr){
+		if(!this._coin.visible) return false;
+		return this._coin.intersects(spr);
+	}
+
+	intersectTnls(spr){
+		if(this._tTop.intersects(spr)) return true;
+		if(this._tBtm.intersects(spr)) return true;
+		return false;
+	}
+
+	showCoin(){
+		this._coin.visible = true;
+	}
+
+	hideCoin(){
+		this._coin.visible = false;
+	}
+
+	update(){
+		this._tTop.update();
+		this._tBtm.update();
+		this._coin.update();
+	}
+
+	draw(){
+		this._tTop.draw();
+		this._tBtm.draw();
+		this._coin.draw();
 	}
 }

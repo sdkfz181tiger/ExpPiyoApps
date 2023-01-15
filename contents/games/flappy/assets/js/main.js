@@ -7,11 +7,17 @@ const CANVAS_H  = 480;// 720 - 110
 const FILES_IMG = [
 	"caret-l-w.png", "caret-r-w.png",
 	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_02.png",
-	"fb_bkg.png", "fb_btn_play.png", "fb_btn_retry.png", "fb_grd.png",
+	"fb_bkg.png", "fb_btn_play.png", "fb_btn_retry.png", 
+	"fb_coin.png", "fb_grd.png",
 	"fb_logo_over.png", "fb_logo_ready.png",
+	"fb_tunnel.png"
 ];
 
-const SCR_SPD_X = 1.8;
+const SCR_SPD_X   = 1.8;
+const TNL_PAD_X   = 160;
+const TNL_PAD_Y   = 160;
+const BIRD_JUMP_Y = -6;
+const BIRD_GRV_Y  = 0.5;
 
 const MODE_INIT  = 0;
 const MODE_READY = 1;
@@ -20,7 +26,7 @@ const MODE_OVER  = 3;
 
 let font, cX, cY, score, mode;
 
-let bkgs, grds;
+let bkgs, tnls, grds;
 let logoReady, logoOver;
 let bird;
 
@@ -46,6 +52,10 @@ function setup(){
 	// Backgrounds
 	bkgs = [];
 	createBkgs("fb_bkg.png", 0, height-100);
+
+	// Tunnels
+	tnls = [];
+	createTnls("fb_tunnel.png", "fb_coin.png", width-32, height/2);
 
 	// Grounds
 	grds = [];
@@ -83,6 +93,9 @@ function draw(){
 function startReady(){
 	if(mode != MODE_INIT && mode != MODE_OVER) return;
 	mode = MODE_READY;
+	for(let i=0; i<tnls.length; i++){
+		tnls[i].setPos(width+TNL_PAD_X*i, height/2, TNL_PAD_Y);
+	}
 	logoReady.show(cX, cY);
 	logoOver.hide();
 	bird.reset(cX, cY);
@@ -103,6 +116,7 @@ function startOver(){
 function updateReady(){
 	// Sprite
 	for(let bkg of bkgs) bkg.draw();
+	for(let tnl of tnls) tnl.draw();
 	for(let grd of grds) grd.draw();
 	logoReady.draw();
 	logoOver.draw();
@@ -112,9 +126,20 @@ function updateReady(){
 function updateGame(){
 	// Sprite
 	for(let bkg of bkgs) bkg.update();
+	for(let tnl of tnls){
+		tnl.update();
+		if(tnl.intersectCoin(bird)){
+			tnl.hideCoin();// Hide
+		}
+		if(tnl.intersectTnls(bird)){
+			startOver();// Game Over
+		}
+	}
 	for(let grd of grds){
 		grd.update();
-		if(grd.intersects(bird)) startOver();
+		if(grd.intersects(bird)){
+			startOver();// Game Over
+		}
 	}
 	logoReady.draw();
 	logoOver.draw();
@@ -124,6 +149,7 @@ function updateGame(){
 function updateOver(){
 	// Sprite
 	for(let bkg of bkgs) bkg.draw();
+	for(let tnl of tnls) tnl.draw();
 	for(let grd of grds) grd.draw();
 	logoReady.draw();
 	logoOver.draw();
@@ -140,11 +166,11 @@ function actionJump(){
 	if(mode == MODE_GAME) bird.jump();// Jump
 }
 
-function createBkgs(img, x, y){
-	const bkg1 = new MyScroller(img, x, y);
-	const bkg2 = new MyScroller(img, bkg1.x+bkg1.w, y);
-	const bkg3 = new MyScroller(img, bkg2.x+bkg2.w, y);
-	const bkg4 = new MyScroller(img, bkg3.x+bkg3.w, y);
+function createBkgs(file, x, y){
+	const bkg1 = new MyScroller(file, x, y);
+	const bkg2 = new MyScroller(file, bkg1.x+bkg1.w, y);
+	const bkg3 = new MyScroller(file, bkg2.x+bkg2.w, y);
+	const bkg4 = new MyScroller(file, bkg3.x+bkg3.w, y);
 	bkg1.startMove(SCR_SPD_X/-2, 0);
 	bkg2.startMove(SCR_SPD_X/-2, 0);
 	bkg3.startMove(SCR_SPD_X/-2, 0);
@@ -155,11 +181,26 @@ function createBkgs(img, x, y){
 	bkgs.push(bkg4);
 }
 
-function createGrds(img, x, y){
-	const grd1 = new MyScroller(img, x, y);
-	const grd2 = new MyScroller(img, grd1.x+grd1.w, y);
-	const grd3 = new MyScroller(img, grd2.x+grd2.w, y);
-	const grd4 = new MyScroller(img, grd3.x+grd3.w, y);
+function createTnls(fileT, fileC, x, y){
+	const tnl1 = new MyTunnel(fileT, fileC, x, y, TNL_PAD_Y);
+	const tnl2 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*1, y, TNL_PAD_Y);
+	const tnl3 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*2, y, TNL_PAD_Y);
+	const tnl4 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*3, y, TNL_PAD_Y);
+	tnl1.startMove(-SCR_SPD_X, 0);
+	tnl2.startMove(-SCR_SPD_X, 0);
+	tnl3.startMove(-SCR_SPD_X, 0);
+	tnl4.startMove(-SCR_SPD_X, 0);
+	tnls.push(tnl1);
+	tnls.push(tnl2);
+	tnls.push(tnl3);
+	tnls.push(tnl4);
+}
+
+function createGrds(file, x, y){
+	const grd1 = new MyScroller(file, x, y);
+	const grd2 = new MyScroller(file, grd1.x+grd1.w, y);
+	const grd3 = new MyScroller(file, grd2.x+grd2.w, y);
+	const grd4 = new MyScroller(file, grd3.x+grd3.w, y);
 	grd1.startMove(-SCR_SPD_X, 0);
 	grd2.startMove(-SCR_SPD_X, 0);
 	grd3.startMove(-SCR_SPD_X, 0);
