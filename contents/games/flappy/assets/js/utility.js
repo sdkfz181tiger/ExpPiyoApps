@@ -22,23 +22,41 @@ class ImgLoader{
 }
 
 //==========
-// Rect
+// Sprite
 
-class Rect{
+class Sprite{
 
-	constructor(x, y, w, h){
-		this._x = x;
-		this._y = y;
-		this._w = w;
-		this._h = h;
-		this._hw = w / 2;
-		this._hh = h / 2;
+	constructor(file, x, y, s=1.0, a=255){
+		this._img     = ImgLoader.getImg(file);
+		this._x       = x;
+		this._y       = y;
+		this._scale   = s;
+		this._alpha   = a;
+		this._visible = true;
+		this._w       = this._img.width * s;
+		this._h       = this._img.height * s;
+		this._hw      = this._w / 2;
+		this._hh      = this._h / 2;
+		this._vFlg    = false;
+		this._vX      = 0;
+		this._vY      = 0;
 	}
 
 	get x(){return this._x;}
 	set x(n){this._x = n;}
 	get y(){return this._y;}
 	set y(n){this._y = n;}
+
+	get scale(){return this._scale;}
+	set scale(n){
+		this._scale = n;
+		this.w = this._img.width * n;
+		this.h = this._img.height * n;
+	}
+	get alpha(){return this._alpha;}
+	set alpha(n){this._alpha = n;}
+	get visible(){return this._visible;}
+	set visible(n){this._visible = n;}
 
 	get w(){return this._w;}
 	set w(n){
@@ -58,39 +76,6 @@ class Rect{
 	get r(){return this._x+this._hw;}
 	get t(){return this._y-this._hh;}
 	get b(){return this._y+this._hh;}
-}
-
-//==========
-// Sprite
-//	 Ease: https://milchreis.github.io/p5.tween/docs/
-
-class Sprite{
-
-	constructor(file, x, y, s=1.0, a=255){
-		this._img = ImgLoader.getImg(file);
-		this._rect = new Rect(x, y, 
-			this._img.width, this._img.height);
-		this.scale = s;
-		this.alpha = a;
-		this.visible = true;
-		this._vFlg = false;
-		this._vX = 0;
-		this._vY = 0;
-	}
-
-	get img(){return this._img;}
-	get rect(){return this._rect;}
-
-	get scale(){return this._scale;}
-	set scale(n){
-		this._scale = n;
-		this._rect.w = this._img.width * n;
-		this._rect.h = this._img.height * n;
-	}
-	get alpha(){return this._alpha;}
-	set alpha(n){this._alpha = n;}
-	get visible(){return this._visible;}
-	set visible(n){this._visible = n;}
 
 	startMove(vX, vY){
 		this._vFlg = true;
@@ -103,25 +88,25 @@ class Sprite{
 	}
 
 	contains(x, y){
-		if(x < this._rect.l) return false;
-		if(this._rect.r < x) return false;
-		if(y < this._rect.t) return false;
-		if(this._rect.b < y) return false;
+		if(x < this.l) return false;
+		if(this.r < x) return false;
+		if(y < this.t) return false;
+		if(this.b < y) return false;
 		return true;
 	}
 
 	intersects(spr){
-		if(spr.rect.r < this._rect.l) return false;
-		if(this._rect.r < spr.rect.l) return false;
-		if(spr.rect.b < this._rect.t) return false;
-		if(this._rect.b < spr.rect.t) return false;
+		if(spr.r < this.l) return false;
+		if(this.r < spr.l) return false;
+		if(spr.b < this.t) return false;
+		if(this.b < spr.t) return false;
 		return true;
 	}
 
 	update(){
 		if(this._vFlg){
-			this.rect.x += this._vX;
-			this.rect.y += this._vY;
+			this.x += this._vX;
+			this.y += this._vY;
 		}
 		this.draw();
 	}
@@ -129,9 +114,7 @@ class Sprite{
 	draw(){
 		if(!this._visible) return;
 		tint(255, this._alpha);
-		image(this._img, 
-			this._rect.l, this._rect.t, 
-			this._rect.w, this._rect.h);
+		image(this._img, this.l, this.t, this.w, this.h);
 	}
 }
 
@@ -154,27 +137,25 @@ class Button extends Sprite{
 	}
 
 	show(x, y){
-		console.log("Show!!");
-		this.rect.x = x;
-		this.rect.y = y;
+		this.x = x;
+		this.y = y;
 		this.visible = true;// Show
+		this.scale = 1.0;
 		this.alpha = 255;
 		if(this._tween) this._tween.resetMotions();// Important
-		this._tween = p5.tween.manager.addTween(this.rect, "show");
-		this._tween.addMotion("y", this.rect.y+5, 1000, "easeOutQuad")
-			.addMotion("y", this.rect.y, 1000, "easeOutQuad")
-			.startLoop();
+		this._tween = p5.tween.manager.addTween(this, "show");
+		this._tween.addMotion("y", this.y+5, 1000, "easeOutQuad")
+			.addMotion("y", this.y, 1000, "easeOutQuad").startLoop();
 	}
 
 	hide(){
-		console.log("Hide!!");
-		setTimeout(()=>{this.visible=false;}, 400);// Hide
+		setTimeout(()=>{this.visible=false;}, 200);// Hide
 		if(this._tween) this._tween.resetMotions();// Important
-		this._tween = p5.tween.manager.addTween(this.rect, "hide");
-		this._tween.addMotions(
-			[{key:"y", target: this.rect.y-50}, {key:"alpha", target: 0}],
-			400, "easeOutQuad")
-			.startTween();
+		this._tween = p5.tween.manager.addTween(this, "hide");
+		this._tween.addMotions([
+			{key:"scale", target: 0.8},
+			{key:"alpha", target: 0}],
+			200, "easeOutQuad").startTween();
 	}
 }
 
@@ -187,8 +168,8 @@ class MyBird extends Sprite{
 	}
 
 	reset(x, y){
-		this.rect.x = x;
-		this.rect.y = y;
+		this.x = x;
+		this.y = y;
 		this._vFlg  = false;
 		this._vX = 0;
 		this._vY = 0;
@@ -215,6 +196,6 @@ class MyScroller extends Sprite{
 	update(){
 		super.update();
 		if(!this._vFlg) return;
-		if(this.rect.r < 0) this.rect.x += this.rect.w * 4;
+		if(this.r < 0) this.x += this.w * 4;
 	}
 }
