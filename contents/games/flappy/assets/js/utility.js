@@ -110,6 +110,14 @@ class Sprite{
 		return true;
 	}
 
+	intersects(spr){
+		if(spr.rect.r < this._rect.l) return false;
+		if(this._rect.r < spr.rect.l) return false;
+		if(spr.rect.b < this._rect.t) return false;
+		if(this._rect.b < spr.rect.t) return false;
+		return true;
+	}
+
 	update(){
 		if(this._vFlg){
 			this.rect.x += this._vX;
@@ -139,16 +147,19 @@ class Button extends Sprite{
 	}
 
 	press(x, y){
-		if(!this._visible) return;
+		if(!this.visible) return;
 		if(!this._onPressed) return;
 		if(!this.contains(x, y)) return;
 		this._onPressed();// Callback
 	}
 
 	show(x, y){
+		console.log("Show!!");
 		this.rect.x = x;
 		this.rect.y = y;
+		this.visible = true;// Show
 		this.alpha = 255;
+		if(this._tween) this._tween.resetMotions();// Important
 		this._tween = p5.tween.manager.addTween(this.rect, "show");
 		this._tween.addMotion("y", this.rect.y+5, 1000, "easeOutQuad")
 			.addMotion("y", this.rect.y, 1000, "easeOutQuad")
@@ -156,10 +167,12 @@ class Button extends Sprite{
 	}
 
 	hide(){
-		this._tween.resetMotions();// Important
+		console.log("Hide!!");
+		setTimeout(()=>{this.visible=false;}, 400);// Hide
+		if(this._tween) this._tween.resetMotions();// Important
 		this._tween = p5.tween.manager.addTween(this.rect, "hide");
 		this._tween.addMotions(
-			[{key:"y", target: this.rect.y-100}, {key:"alpha", target: 0}],
+			[{key:"y", target: this.rect.y-50}, {key:"alpha", target: 0}],
 			400, "easeOutQuad")
 			.startTween();
 	}
@@ -169,8 +182,16 @@ class MyBird extends Sprite{
 
 	constructor(file, x, y){
 		super(file, x, y);
-		this._jY = -5;
-		this._gY = 0.8;
+		this._jY = -10;
+		this._gY = 0.6;
+	}
+
+	reset(x, y){
+		this.rect.x = x;
+		this.rect.y = y;
+		this._vFlg  = false;
+		this._vX = 0;
+		this._vY = 0;
 	}
 
 	jump(){

@@ -13,7 +13,11 @@ const FILES_IMG = [
 
 const SCR_SPD_X = 0.4;
 
-let font, cX, cY, score;
+const MODE_READY = 0;
+const MODE_GAME  = 1;
+const MODE_OVER  = 2;
+
+let font, cX, cY, score, mode;
 
 let bkgs, grds;
 let logoReady, logoOver;
@@ -36,6 +40,7 @@ function setup(){
 	cX = Math.floor(width * 0.5);
 	cY = Math.floor(height * 0.5);
 	score = 999;
+	mode = MODE_READY;
 
 	// Backgrounds
 	bkgs = [];
@@ -47,17 +52,21 @@ function setup(){
 
 	// Get Ready
 	logoReady = new Button("fb_logo_ready.png", cX, cY, ()=>{
-		console.log("Start!!");
+		if(mode != MODE_READY) return;
+		mode = MODE_GAME;
+		logoReady.hide();// Hide
 	});
-	logoReady.visible = true;
+	logoReady.visible = false;
 	logoReady.show(cX, cY);
 
 	// Game Over
 	logoOver = new Button("fb_logo_over.png", cX, cY, ()=>{
-		console.log("Retry!!");
+		if(mode != MODE_OVER) return;
+		mode = MODE_READY;
+		logoReady.show(cX, cY);// Show
+		bird.reset(cX, cY);
 	});
 	logoOver.visible = false;
-	//logoOver.show(cX, cY);
 
 	// Bird
 	bird = new MyBird("fb_bird_01.png", cX, cY);
@@ -68,17 +77,45 @@ function draw(){
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
-	// Sprite
-	for(let bkg of bkgs) bkg.update();
-	for(let grd of grds) grd.update();
-	logoReady.update();
-	logoOver.update();
-	bird.update();
+	if(mode == MODE_READY) updateReady();
+	if(mode == MODE_GAME) updateGame();
+	if(mode == MODE_OVER) updateOver();
 
 	// Score
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
 	text("SCORE:" + score, cX, FONT_SIZE * 0.5);
+}
+
+function updateReady(){
+	// Sprite
+	for(let bkg of bkgs) bkg.draw();
+	for(let grd of grds) grd.draw();
+	logoReady.draw();
+	bird.draw();
+}
+
+function updateGame(){
+	// Sprite
+	for(let bkg of bkgs) bkg.update();
+	for(let grd of grds){
+		grd.update();
+		if(grd.intersects(bird)){
+			console.log("Hit!!");
+			mode = MODE_OVER;
+			logoOver.show(cX, cY);// Show
+		}
+	}
+	logoReady.update();
+	bird.update();
+}
+
+function updateOver(){
+	// Sprite
+	for(let bkg of bkgs) bkg.draw();
+	for(let grd of grds) grd.draw();
+	logoOver.draw();
+	bird.draw();
 }
 
 function mousePressed(){
@@ -91,11 +128,12 @@ function touchStarted(){
 
 function actionJump(){
 	//console.log("Jump!!");
-
 	logoReady.press(mouseX, mouseY);
 	logoOver.press(mouseX, mouseY);
 
-	bird.jump();// Test
+	if(mode == MODE_GAME){
+		bird.jump();// Jump
+	}
 }
 
 function createBkgs(img, x, y){
