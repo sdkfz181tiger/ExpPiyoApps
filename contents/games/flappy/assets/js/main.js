@@ -16,7 +16,7 @@ const SCR_SPD_X = 0.4;
 let font, cX, cY, score;
 
 let bkgs, grds;
-let logoReady, logoOver, btnRetry;
+let logoReady, logoOver;
 let bird;
 
 function preload(){
@@ -30,7 +30,7 @@ function setup(){
 	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
 	const canvas = createCanvas(cW, cH);
 	textFont(font);
-	frameRate(60);
+	frameRate(48);
 	noSmooth();
 
 	cX = Math.floor(width * 0.5);
@@ -45,15 +45,19 @@ function setup(){
 	grds = [];
 	createGrds("fb_grd.png", 0, height);
 
-	// Logo
-	logoReady = new MyLogo("fb_logo_ready.png", cX, cY);
+	// Get Ready
+	logoReady = new Button("fb_logo_ready.png", cX, cY, ()=>{
+		console.log("Start!!");
+	});
 	logoReady.visible = true;
-	logoOver = new MyLogo("fb_logo_over.png", cX, cY-50);
-	logoOver.visible = false;
-	btnRetry = new Button("fb_btn_retry.png", cX, cY+20, ()=>{
+	logoReady.show(cX, cY);
+
+	// Game Over
+	logoOver = new Button("fb_logo_over.png", cX, cY, ()=>{
 		console.log("Retry!!");
 	});
-	btnRetry.visible = false;
+	logoOver.visible = false;
+	//logoOver.show(cX, cY);
 
 	// Bird
 	bird = new MyBird("fb_bird_01.png", cX, cY);
@@ -67,10 +71,9 @@ function draw(){
 	// Sprite
 	for(let bkg of bkgs) bkg.update();
 	for(let grd of grds) grd.update();
-	logoReady.draw();
-	logoOver.draw();
-	btnRetry.draw();
-	bird.draw();
+	logoReady.update();
+	logoOver.update();
+	bird.update();
 
 	// Score
 	fill("#333333");
@@ -89,25 +92,21 @@ function touchStarted(){
 function actionJump(){
 	//console.log("Jump!!");
 
-	if(btnRetry.onPressed(mouseX, mouseY)){
-		console.log("Inside!!");
+	logoReady.press(mouseX, mouseY);
+	logoOver.press(mouseX, mouseY);
 
-		logoReady.show(cX, cY);
-		logoReady.hide();// Test
-
-		bird.x = cX;
-		bird.y = cY;
-		bird.moveTo(0, 0, 1000);
-	}else{
-		console.log("Outside!!");
-	}
+	bird.jump();// Test
 }
 
 function createBkgs(img, x, y){
-	const bkg1 = new MyScroller(img, x, y, SCR_SPD_X/2);
-	const bkg2 = new MyScroller(img, bkg1.x+bkg1.w, y, SCR_SPD_X/2);
-	const bkg3 = new MyScroller(img, bkg2.x+bkg2.w, y, SCR_SPD_X/2);
-	const bkg4 = new MyScroller(img, bkg3.x+bkg3.w, y, SCR_SPD_X/2);
+	const bkg1 = new MyScroller(img, x, y);
+	const bkg2 = new MyScroller(img, bkg1.rect.x+bkg1.rect.w, y);
+	const bkg3 = new MyScroller(img, bkg2.rect.x+bkg2.rect.w, y);
+	const bkg4 = new MyScroller(img, bkg3.rect.x+bkg3.rect.w, y);
+	bkg1.startMove(SCR_SPD_X/-2, 0);
+	bkg2.startMove(SCR_SPD_X/-2, 0);
+	bkg3.startMove(SCR_SPD_X/-2, 0);
+	bkg4.startMove(SCR_SPD_X/-2, 0);
 	bkgs.push(bkg1);
 	bkgs.push(bkg2);
 	bkgs.push(bkg3);
@@ -115,10 +114,14 @@ function createBkgs(img, x, y){
 }
 
 function createGrds(img, x, y){
-	const grd1 = new MyScroller(img, x, y, SCR_SPD_X);
-	const grd2 = new MyScroller(img, grd1.x+grd1.w, y, SCR_SPD_X);
-	const grd3 = new MyScroller(img, grd2.x+grd2.w, y, SCR_SPD_X);
-	const grd4 = new MyScroller(img, grd3.x+grd3.w, y, SCR_SPD_X);
+	const grd1 = new MyScroller(img, x, y);
+	const grd2 = new MyScroller(img, grd1.rect.x+grd1.rect.w, y);
+	const grd3 = new MyScroller(img, grd2.rect.x+grd2.rect.w, y);
+	const grd4 = new MyScroller(img, grd3.rect.x+grd3.rect.w, y);
+	grd1.startMove(-SCR_SPD_X, 0);
+	grd2.startMove(-SCR_SPD_X, 0);
+	grd3.startMove(-SCR_SPD_X, 0);
+	grd4.startMove(-SCR_SPD_X, 0);
 	grds.push(grd1);
 	grds.push(grd2);
 	grds.push(grd3);

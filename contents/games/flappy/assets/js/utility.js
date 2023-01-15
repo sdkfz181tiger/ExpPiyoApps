@@ -73,9 +73,13 @@ class Sprite{
 		this.scale = s;
 		this.alpha = a;
 		this.visible = true;
+		this._vFlg = false;
 		this._vX = 0;
 		this._vY = 0;
 	}
+
+	get img(){return this._img;}
+	get rect(){return this._rect;}
 
 	get scale(){return this._scale;}
 	set scale(n){
@@ -88,15 +92,15 @@ class Sprite{
 	get visible(){return this._visible;}
 	set visible(n){this._visible = n;}
 
-	get x(){return this._rect.x;}
-	set x(n){this._rect.x = n;}
-	get y(){return this._rect.y;}
-	set y(n){this._rect.y = n;}
+	startMove(vX, vY){
+		this._vFlg = true;
+		this._vX = vX;
+		this._vY = vY;
+	}
 
-	get w(){return this._rect.w;}
-	get h(){return this._rect.h;}
-	get hw(){return this._rect.hw;}
-	get hh(){return this._rect.hh;}
+	stopMove(){
+		this._vFlg = false;
+	}
 
 	contains(x, y){
 		if(x < this._rect.l) return false;
@@ -104,6 +108,14 @@ class Sprite{
 		if(y < this._rect.t) return false;
 		if(this._rect.b < y) return false;
 		return true;
+	}
+
+	update(){
+		if(this._vFlg){
+			this.rect.x += this._vX;
+			this.rect.y += this._vY;
+		}
+		this.draw();
 	}
 
 	draw(){
@@ -123,41 +135,31 @@ class Button extends Sprite{
 	constructor(file, x, y, onPressed=null){
 		super(file, x, y);
 		this._onPressed = onPressed;
-	}
-
-	onPressed(x, y){
-		if(!this._visible) return false;
-		if(!this._onPressed) return false;
-		return this.contains(x, y);
-	}
-}
-
-//==========
-// Game
-
-class MyLogo extends Sprite{
-
-	constructor(file, x, y){
-		super(file, x, y);
 		this._tween = null;
-		this.show(x, y);
+	}
+
+	press(x, y){
+		if(!this._visible) return;
+		if(!this._onPressed) return;
+		if(!this.contains(x, y)) return;
+		this._onPressed();// Callback
 	}
 
 	show(x, y){
-		this.x = x;
-		this.y = y;
+		this.rect.x = x;
+		this.rect.y = y;
 		this.alpha = 255;
-		this._tween = p5.tween.manager.addTween(this, "show");
-		this._tween.addMotion("y", this.y-5, 1000, "easeOutQuad")
-			.addMotion("y", this.y, 1000, "easeOutQuad")
+		this._tween = p5.tween.manager.addTween(this.rect, "show");
+		this._tween.addMotion("y", this.rect.y+5, 1000, "easeOutQuad")
+			.addMotion("y", this.rect.y, 1000, "easeOutQuad")
 			.startLoop();
 	}
 
 	hide(){
 		this._tween.resetMotions();// Important
-		this._tween = p5.tween.manager.addTween(this, "hide");
+		this._tween = p5.tween.manager.addTween(this.rect, "hide");
 		this._tween.addMotions(
-			[{key:"y", target: this.y-100}, {key:"alpha", target: 0}],
+			[{key:"y", target: this.rect.y-100}, {key:"alpha", target: 0}],
 			400, "easeOutQuad")
 			.startTween();
 	}
@@ -167,25 +169,31 @@ class MyBird extends Sprite{
 
 	constructor(file, x, y){
 		super(file, x, y);
+		this._jY = -5;
+		this._gY = 0.8;
 	}
 
-	moveTo(x, y, mil, ease="linear"){
-		p5.tween.manager.addTween(this, "moveto")
-			.addMotions([{key:"x", target: x}, {key:"y", target: y}], mil, ease)
-			.startTween();
+	jump(){
+		this._vFlg = true;
+		this._vY = this._jY;
+	}
+
+	update(){
+		super.update();
+		if(!this._vFlg) return;
+		this._vY += this._gY;
 	}
 }
 
 class MyScroller extends Sprite{
 
-	constructor(file, x, y, spd){
+	constructor(file, x, y){
 		super(file, x, y);
-		this._spdX = spd;
 	}
 
 	update(){
-		if(this._rect.r < 0) this.x += this.w * 4;
-		this.x -= this._spdX;
-		this.draw();
+		super.update();
+		if(!this._vFlg) return;
+		if(this.rect.r < 0) this.rect.x += this.rect.w * 4;
 	}
 }
