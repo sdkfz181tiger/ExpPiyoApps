@@ -35,7 +35,7 @@ function setup(){
 	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
 	const canvas = createCanvas(cW, cH);
 	textFont(font);
-	frameRate(48);
+	frameRate(60);
 	noSmooth();
 
 	cX = Math.floor(width * 0.5);
@@ -97,7 +97,7 @@ function startGame(){
 function startOver(){
 	if(mode != MODE_GAME) return;
 	mode = MODE_OVER;
-	logoOver.show(cX, cY);// Show
+	logoOver.show(cX, cY);
 }
 
 function updateReady(){
@@ -133,10 +133,6 @@ function updateOver(){
 function mousePressed(){
 	actionJump();
 }
-
-// function touchStarted(){
-// 	actionJump();
-// }
 
 function actionJump(){
 	logoReady.press(mouseX, mouseY);

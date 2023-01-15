@@ -133,7 +133,7 @@ class Button extends Sprite{
 	constructor(file, x, y, onPressed=null){
 		super(file, x, y);
 		this._onPressed = onPressed;
-		this._tween = null;
+		this._tween     = null;
 	}
 
 	press(x, y){
@@ -143,11 +143,11 @@ class Button extends Sprite{
 	}
 
 	show(x, y){
-		this.x = x;
-		this.y = y;
-		this.visible = true;// Show
+		this.x     = x;
+		this.y     = y;
 		this.scale = 1.0;
 		this.alpha = 255;
+		this.visible = true;// Show
 		if(this._tween) this._tween.resetMotions();// Important
 		this._tween = p5.tween.manager.addTween(this, "show");
 		this._tween.addMotion("y", this.y+5, 1000, "easeOutQuad")
@@ -174,16 +174,16 @@ class MyBird extends Sprite{
 	}
 
 	reset(x, y){
-		this.x = x;
-		this.y = y;
+		this.x    = x;
+		this.y    = y;
 		this.vFlg = false;
-		this.vX = 0;
-		this.vY = 0;
+		this.vX   = 0;
+		this.vY   = 0;
 	}
 
 	jump(){
 		this.vFlg = true;
-		this.vY = this._jY;
+		this.vY   = this._jY;
 	}
 
 	update(){
