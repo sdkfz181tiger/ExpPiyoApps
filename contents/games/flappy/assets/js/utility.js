@@ -72,6 +72,13 @@ class Sprite{
 	get hw(){return this._hw;}
 	get hh(){return this._hh;}
 
+	get vFlg(){return this._vFlg;}
+	set vFlg(n){this._vFlg = n;}
+	get vX(){return this._vX;}
+	set vX(n){this._vX = n;}
+	get vY(){return this._vY;}
+	set vY(n){this._vY = n;}
+
 	get l(){return this._x-this._hw;}
 	get r(){return this._x+this._hw;}
 	get t(){return this._y-this._hh;}
@@ -131,9 +138,8 @@ class Button extends Sprite{
 
 	press(x, y){
 		if(!this.visible) return;
-		if(!this._onPressed) return;
 		if(!this.contains(x, y)) return;
-		this._onPressed();// Callback
+		if(this._onPressed) this._onPressed();// Callback
 	}
 
 	show(x, y){
@@ -170,20 +176,20 @@ class MyBird extends Sprite{
 	reset(x, y){
 		this.x = x;
 		this.y = y;
-		this._vFlg  = false;
-		this._vX = 0;
-		this._vY = 0;
+		this.vFlg = false;
+		this.vX = 0;
+		this.vY = 0;
 	}
 
 	jump(){
-		this._vFlg = true;
-		this._vY = this._jY;
+		this.vFlg = true;
+		this.vY = this._jY;
 	}
 
 	update(){
 		super.update();
-		if(!this._vFlg) return;
-		this._vY += this._gY;
+		if(!this.vFlg) return;
+		this.vY += this._gY;
 	}
 }
 
@@ -195,7 +201,7 @@ class MyScroller extends Sprite{
 
 	update(){
 		super.update();
-		if(!this._vFlg) return;
+		if(!this.vFlg) return;
 		if(this.r < 0) this.x += this.w * 4;
 	}
 }
