@@ -62,25 +62,26 @@ class Rect{
 
 //==========
 // Sprite
-//	 Ease: //milchreis.github.io/p5.tween/docs/modules/_easings_.p5.tween.html
+//	 Ease: https://milchreis.github.io/p5.tween/docs/
 
 class Sprite{
 
-	constructor(file, x, y){
+	constructor(file, x, y, s=1.0, a=255){
 		this._img = ImgLoader.getImg(file);
 		this._rect = new Rect(x, y, 
 			this._img.width, this._img.height);
+		this.scale = s;
+		this.alpha = a;
 	}
 
-	setPos(x, y){
-		this._rect.x = x;
-		this._rect.y = y;
+	get scale(){return this._scale;}
+	set scale(n){
+		this._scale = n;
+		this._rect.w = this._img.width * n;
+		this._rect.h = this._img.height * n;
 	}
-
-	setScale(s){
-		this._rect.w *= s;
-		this._rect.h *= s;
-	}
+	get alpha(){return this._alpha;}
+	set alpha(n){this._alpha = n;}
 
 	get x(){return this._rect.x;}
 	set x(n){this._rect.x = n;}
@@ -101,9 +102,10 @@ class Sprite{
 	}
 
 	draw(){
-		fill("#0D6EFD");
-		rect(this._rect.l, this._rect.t, 
-			this._rect.w, this._rect.h);
+		// fill("#0D6EFD");
+		// rect(this._rect.l, this._rect.t, 
+		// 	this._rect.w, this._rect.h);
+		tint(255, this._alpha);
 		image(this._img, 
 			this._rect.l, this._rect.t, 
 			this._rect.w, this._rect.h);
@@ -115,8 +117,8 @@ class Sprite{
 
 class Button extends Sprite{
 
-	constructor(file, x, y, onPressed=null){
-		super(file, x, y);
+	constructor(file, x, y, s, a, onPressed=null){
+		super(file, x, y, s, a);
 		this._onPressed = onPressed;
 	}
 
@@ -127,7 +129,34 @@ class Button extends Sprite{
 }
 
 //==========
-// Bird
+// Game
+
+class MyLogo extends Sprite{
+
+	constructor(file, x, y){
+		super(file, x, y);
+		this._tween = null;
+	}
+
+	show(x, y){
+		this.x = x;
+		this.y = y;
+		this.alpha = 255;
+		this._tween = p5.tween.manager.addTween(this, "show");
+		this._tween.addMotion("y", this.y-5, 1000, "easeOutQuad")
+			.addMotion("y", this.y, 1000, "easeOutQuad")
+			.startLoop();
+	}
+
+	hide(){
+		this._tween.resetMotions();// Important
+		this._tween = p5.tween.manager.addTween(this, "hide");
+		this._tween.addMotions(
+			[{key:"y", target: this.y-100}, {key:"alpha", target: 0}],
+			400, "easeOutQuad")
+			.startTween();
+	}
+}
 
 class MyBird extends Sprite{
 

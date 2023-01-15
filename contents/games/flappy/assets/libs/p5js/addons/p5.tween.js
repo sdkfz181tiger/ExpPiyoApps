@@ -114,6 +114,7 @@ var p5;
                 if (!this.active || this.isPaused)
                     return;
                 const motion = this.motions[this.currentMotionIndex];
+                if(!motion) return;
                 if (motion.leftTime >= motion.duration) {
                     motion.leftTime = 0;
                     this.motionStart = this.createStartObject(this.obj);

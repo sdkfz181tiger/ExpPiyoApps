@@ -7,12 +7,14 @@ const CANVAS_H  = 480;// 720 - 110
 const FILES_IMG = [
 	"caret-l-w.png", "caret-r-w.png",
 	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_02.png",
-	"fb_bkg.png", "fb_grd.png"
+	"fb_bkg.png", "fb_grd.png",
+	"fb_logo_over.png", "fb_logo_ready.png",
 ];
 
 let font, cX, cY, score;
 
 let bkgs, grds;
+let logoReady, logoOver;
 let bird, btn;
 
 function preload(){
@@ -41,14 +43,17 @@ function setup(){
 	grds = [];
 	createGrds("fb_grd.png", 0, height);
 
-	// Sprite
+	// Logo
+	logoReady = new MyLogo("fb_logo_ready.png", cX, cY);
+	logoReady.show(cX, cY);
+
+	// Bird
 	bird = new MyBird("fb_bird_01.png", cX, cY);
 
 	// Button
-	btn = new Button("caret-l-w.png", 20, 20, ()=>{
+	btn = new Button("caret-l-w.png", 20, 20, 0.1, null, ()=>{
 		console.log("Caret!!");
 	});
-	btn.setScale(0.1);
 }
 
 function draw(){
@@ -56,10 +61,10 @@ function draw(){
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
+	// Sprite
 	for(let bkg of bkgs) bkg.draw();
 	for(let grd of grds) grd.draw();
-
-	// Sprite
+	logoReady.draw();
 	bird.draw();
 	btn.draw();
 
@@ -82,13 +87,16 @@ function actionJump(){
 
 	if(btn.onPressed(mouseX, mouseY)){
 		console.log("Inside!!");
+
+		logoReady.hide();// Test
+
+
+		bird.x = cX;
+		bird.y = cY;
+		bird.moveTo(0, 0, 1000);
 	}else{
 		console.log("Outside!!");
 	}
-
-	// Test
-	bird.setPos(cX, cY);
-	bird.moveTo(0, 0, 1000);
 }
 
 function createBkgs(img, x, y){
