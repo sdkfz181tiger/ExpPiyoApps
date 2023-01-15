@@ -72,6 +72,9 @@ class Sprite{
 			this._img.width, this._img.height);
 		this.scale = s;
 		this.alpha = a;
+		this.visible = true;
+		this._vX = 0;
+		this._vY = 0;
 	}
 
 	get scale(){return this._scale;}
@@ -82,6 +85,8 @@ class Sprite{
 	}
 	get alpha(){return this._alpha;}
 	set alpha(n){this._alpha = n;}
+	get visible(){return this._visible;}
+	set visible(n){this._visible = n;}
 
 	get x(){return this._rect.x;}
 	set x(n){this._rect.x = n;}
@@ -102,9 +107,7 @@ class Sprite{
 	}
 
 	draw(){
-		// fill("#0D6EFD");
-		// rect(this._rect.l, this._rect.t, 
-		// 	this._rect.w, this._rect.h);
+		if(!this._visible) return;
 		tint(255, this._alpha);
 		image(this._img, 
 			this._rect.l, this._rect.t, 
@@ -117,13 +120,14 @@ class Sprite{
 
 class Button extends Sprite{
 
-	constructor(file, x, y, s, a, onPressed=null){
-		super(file, x, y, s, a);
+	constructor(file, x, y, onPressed=null){
+		super(file, x, y);
 		this._onPressed = onPressed;
 	}
 
 	onPressed(x, y){
-		if(this._onPressed == null) return false;
+		if(!this._visible) return false;
+		if(!this._onPressed) return false;
 		return this.contains(x, y);
 	}
 }
@@ -136,6 +140,7 @@ class MyLogo extends Sprite{
 	constructor(file, x, y){
 		super(file, x, y);
 		this._tween = null;
+		this.show(x, y);
 	}
 
 	show(x, y){
@@ -168,5 +173,19 @@ class MyBird extends Sprite{
 		p5.tween.manager.addTween(this, "moveto")
 			.addMotions([{key:"x", target: x}, {key:"y", target: y}], mil, ease)
 			.startTween();
+	}
+}
+
+class MyScroller extends Sprite{
+
+	constructor(file, x, y, spd){
+		super(file, x, y);
+		this._spdX = spd;
+	}
+
+	update(){
+		if(this._rect.r < 0) this.x += this.w * 4;
+		this.x -= this._spdX;
+		this.draw();
 	}
 }
