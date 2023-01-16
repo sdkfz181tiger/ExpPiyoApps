@@ -19,10 +19,10 @@ const TNL_PAD_Y   = 160;
 const BIRD_JUMP_Y = -6;
 const BIRD_GRV_Y  = 0.5;
 
-const MODE_INIT  = 0;
-const MODE_READY = 1;
-const MODE_GAME  = 2;
-const MODE_OVER  = 3;
+const MODE_INIT   = 0;
+const MODE_READY  = 1;
+const MODE_GAME   = 2;
+const MODE_OVER   = 3;
 
 let font, cX, cY, mode, score;
 
@@ -189,15 +189,12 @@ function createTnls(fileC, fileT, x, y){
 	const tnl1 = new MyTunnel(fileC, fileT, x, y, TNL_PAD_Y);
 	const tnl2 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*1, y, TNL_PAD_Y);
 	const tnl3 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*2, y, TNL_PAD_Y);
-	const tnl4 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*3, y, TNL_PAD_Y);
 	tnl1.startMove(-SCR_SPD_X, 0);
 	tnl2.startMove(-SCR_SPD_X, 0);
 	tnl3.startMove(-SCR_SPD_X, 0);
-	tnl4.startMove(-SCR_SPD_X, 0);
 	tnls.push(tnl1);
 	tnls.push(tnl2);
 	tnls.push(tnl3);
-	tnls.push(tnl4);
 }
 
 function createGrds(file, x, y){

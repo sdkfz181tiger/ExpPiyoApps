@@ -245,8 +245,8 @@ class MyTunnel{
 	}
 
 	intersectTnls(spr){
-		if(this._tTop.intersects(spr)) return true;
-		if(this._tBtm.intersects(spr)) return true;
+		if(this._tTop.contains(spr.x, spr.y)) return true;
+		if(this._tBtm.contains(spr.x, spr.y)) return true;
 		return false;
 	}
 
@@ -264,9 +264,15 @@ class MyTunnel{
 		this._tBtm.update();
 		// Offset
 		if(0 < this._tTop.r) return;
-		this._coin.x += TNL_PAD_X * 4;
-		this._tTop.x += TNL_PAD_X * 4;
-		this._tBtm.x += TNL_PAD_X * 4;
+		const x = TNL_PAD_X * 3;
+		const y = height/2 + random(-80, 80);
+		const pY = floor(random(TNL_PAD_Y*0.25, TNL_PAD_Y*0.50));
+		this._coin.x += x;
+		this._tTop.x += x;
+		this._tBtm.x += x;
+		this._coin.y = y;
+		this._tTop.y = y - (this._tTop.hh+pY);
+		this._tBtm.y = y + (this._tBtm.hh+pY);
 		this.showCoin();
 	}
 
