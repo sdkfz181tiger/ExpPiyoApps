@@ -4,16 +4,11 @@ const FONT_SIZE = 28;
 const CANVAS_W  = 320;// 480
 const CANVAS_H  = 480;// 720 - 110
 
-const FILES_IMG = [
-	"caret-l-w.png", "caret-r-w.png",
-	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_03.png",
-	"fb_bkg.png", "fb_btn_play.png", "fb_btn_retry.png", 
-	"fb_coin.png", "fb_grd.png",
-	"fb_logo_over.png", "fb_logo_ready.png",
-	"fb_tunnel.png"
-];
+const FILES_IMG = [];
 
 let font, cX, cY;
+let pad, size, corner;
+let fMng, sX, sY, tiles;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
@@ -31,6 +26,31 @@ function setup(){
 
 	cX = Math.floor(width * 0.5);
 	cY = Math.floor(height * 0.5);
+
+	// Padding, Size, Corner
+	if(width < height){
+		pad = width * 0.2;
+		size = pad * 0.95;
+	}else{
+		pad = height * 0.15;
+		size = pad * 0.95;
+	}
+	corner = size * 0.1;
+
+	// 15Puzzle
+	fMng = new FpzManager();
+
+	sX = width / 2 - pad * fMng.getGrids() / 2;
+	sY = height / 2 - pad * (fMng.getGrids()+0.5) / 2;
+
+	// Tiles
+	tiles = [];
+	let board = fMng.getBoard();
+	for(let r=0; r<fMng.getGrids(); r++){
+		for(let c=0; c<fMng.getGrids(); c++){
+			tiles.push(new Tile(board[r][c], r, c, pad, size, corner));
+		}
+	}
 }
 
 function draw(){
@@ -38,8 +58,47 @@ function draw(){
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
+	// 15Puzzle
+	fill("#DDDDDD");
+	square(sX, sY, pad*fMng.getGrids(), corner);
+	for(let tile of tiles) tile.draw();
+
 	// Score
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
 	text("SCORE:000", cX, FONT_SIZE * 0.5);
+}
+
+function mousePressed(){
+	checkTiles();
+}
+
+function checkTiles(){
+	for(let tile of tiles){
+		if(tile.contains(mouseX, mouseY)){
+			let target = fMng.checkVH(tile.r, tile.c);
+			if(target.r < 0 || target.c < 0) return;
+			fMng.pushHistory(tile.r, tile.c, target.r, target.c);
+			swapTiles(tile.r, tile.c, target.r, target.c);
+			return;
+		}
+	}
+}
+
+function autoMove(){
+	let history = fMng.popHistory();
+	if(!history) return;
+	fMng.swapGrid(history.tR, history.tC, history.fR, history.fC);
+	swapTiles(history.tR, history.tC, history.fR, history.fC);
+	setTimeout(autoMove, 300);
+}
+
+function swapTiles(fR, fC, tR, tC){
+	let f = fR * fMng.getGrids() + fC;
+	let t = tR * fMng.getGrids() + tC;
+	tiles[f].change(tR, tC);
+	tiles[t].change(fR, fC);
+	let tmp = tiles[t];
+	tiles[t] = tiles[f];
+	tiles[f] = tmp;
 }

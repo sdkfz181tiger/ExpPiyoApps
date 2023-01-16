@@ -42,7 +42,6 @@ class MyButton{
 	}
 }
 
-
 //==========
 // Tile
 
