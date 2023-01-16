@@ -6,7 +6,7 @@ const CANVAS_H  = 480;// 720 - 110
 
 const FILES_IMG = [
 	"caret-l-w.png", "caret-r-w.png",
-	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_02.png",
+	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_03.png",
 	"fb_bkg.png", "fb_btn_play.png", "fb_btn_retry.png", 
 	"fb_coin.png", "fb_grd.png",
 	"fb_logo_over.png", "fb_logo_ready.png",
@@ -70,7 +70,8 @@ function setup(){
 	logoOver.visible = false;
 
 	// Bird
-	bird = new MyBird("fb_bird_01.png", cX, cY);
+	bird = new MyBird(["fb_bird_01.png", "fb_bird_02.png", "fb_bird_03.png"], cX, cY);
+	bird.rotation = 0;
 
 	startReady();// Ready
 }
@@ -145,7 +146,13 @@ function updateGame(){
 	}
 	logoReady.draw();
 	logoOver.draw();
-	if(mode == MODE_GAME) bird.update();
+	if(mode == MODE_GAME){
+		let rotation = (bird.y-height/2);
+		if(90 < rotation) rotation = 90;
+		if(rotation < -90) rotation = -90;
+		bird.rotation = rotation;
+		bird.update();
+	}
 }
 
 function updateOver(){

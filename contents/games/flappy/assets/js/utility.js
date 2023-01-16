@@ -26,22 +26,25 @@ class ImgLoader{
 
 class Sprite{
 
-	constructor(file, x, y, s=1.0, a=255){
-		this._img     = ImgLoader.getImg(file);
-		this._x       = x;
-		this._y       = y;
-		this._scale   = s;
-		this._alpha   = a;
-		this._visible = true;
-		this._w       = this._img.width * s;
-		this._h       = this._img.height * s;
-		this._hw      = this._w / 2;
-		this._hh      = this._h / 2;
-		this._vFlg    = false;
-		this._vX      = 0;
-		this._vY      = 0;
+	constructor(file, x, y, s=1.0, a=255, r=0){
+		this._img      = ImgLoader.getImg(file);
+		this._x        = x;
+		this._y        = y;
+		this._scale    = s;
+		this._alpha    = a;
+		this._rotation = r;
+		this._visible  = true;
+		this._w        = this._img.width * s;
+		this._h        = this._img.height * s;
+		this._hw       = this._w / 2;
+		this._hh       = this._h / 2;
+		this._vFlg     = false;
+		this._vX       = 0;
+		this._vY       = 0;
 	}
 
+	get img(){return this._img;}
+	set img(n){this._img = n;}
 	get x(){return this._x;}
 	set x(n){this._x = n;}
 	get y(){return this._y;}
@@ -55,6 +58,8 @@ class Sprite{
 	}
 	get alpha(){return this._alpha;}
 	set alpha(n){this._alpha = n;}
+	get rotation(){return this._rotation;}
+	set rotation(n){this._rotation = n;}
 	get visible(){return this._visible;}
 	set visible(n){this._visible = n;}
 
@@ -123,7 +128,15 @@ class Sprite{
 	draw(){
 		if(!this._visible) return;
 		tint(255, this._alpha);
-		image(this._img, this.l, this.t, this.w, this.h);
+		if(this._rotation == 0){
+			image(this._img, this.l, this.t, this.w, this.h);
+		}else{
+			push();
+			translate(this.x, this.y);
+			rotate(this._rotation * PI/180);
+			image(this._img, -this.hw, -this.hh, this.w, this.h);
+			pop();
+		}
 	}
 }
 
@@ -145,11 +158,12 @@ class Button extends Sprite{
 	}
 
 	show(x, y){
-		this.x     = x;
-		this.y     = y;
-		this.scale = 1.0;
-		this.alpha = 255;
-		this.visible = true;// Show
+		this.x        = x;
+		this.y        = y;
+		this.scale    = 1.0;
+		this.alpha    = 255;
+		this.rotation = 0;
+		this.visible  = true;// Show
 		if(this._tween) this._tween.resetMotions();// Important
 		this._tween = p5.tween.manager.addTween(this, "show");
 		this._tween.addMotion("y", this.y+5, 1000, "easeOutQuad")
@@ -169,18 +183,28 @@ class Button extends Sprite{
 
 class MyBird extends Sprite{
 
-	constructor(file, x, y){
-		super(file, x, y);
+	constructor(files, x, y){
+		super(files[0], x, y);
+		this._frInterMin = 0;
+		this._frInterMax = 10;
+		this._frIndex    = 0;
+		this._frImgs     = [];
+		for(let file of files){
+			this._frImgs.push(ImgLoader.getImg(file));
+		}
 		this._jY = BIRD_JUMP_Y;
 		this._gY = BIRD_GRV_Y;
 	}
 
 	reset(x, y){
-		this.x    = x;
-		this.y    = y;
-		this.vFlg = false;
-		this.vX   = 0;
-		this.vY   = 0;
+		this.x        = x;
+		this.y        = y;
+		this.scale    = 1.0;
+		this.alpha    = 255;
+		this.rotation = 0;
+		this.vFlg     = false;
+		this.vX       = 0;
+		this.vY       = 0;
 	}
 
 	jump(){
@@ -192,6 +216,18 @@ class MyBird extends Sprite{
 		super.update();
 		if(!this.vFlg) return;
 		this.vY += this._gY;
+	}
+
+	draw(){
+		super.draw();
+		// Interval
+		this._frInterMin++;
+		if(this._frInterMin < this._frInterMax) return;
+		this._frInterMin = 0;
+		// Frames
+		this._frIndex++;
+		if(this._frImgs.length <= this._frIndex) this._frIndex = 0;
+		this.img = this._frImgs[this._frIndex];
 	}
 }
 
