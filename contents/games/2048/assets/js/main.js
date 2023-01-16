@@ -75,9 +75,6 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
 	// Board
-	fill("#333333");
-	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
-	text("SCORE:"+my2048.getScore(), width*0.5, sY-FONT_SIZE);
 	fill("#DDDDDD");
 	square(sX, sY, tilePad*T_NUMS, tileCorner);
 	for(let r=0; r<T_NUMS; r++){
@@ -90,9 +87,13 @@ function draw(){
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
 	text("2048", cX, FONT_SIZE * 0.5);
-
+	// Score
 	textSize(FONT_SIZE*0.8);
-	text("FLICK:←↑→↓", cX, cY + 160);
+	text("SCORE:"+my2048.getScore(), width*0.5, 70);
+	// Howto
+	textSize(FONT_SIZE*0.8);
+	text("Flick/Keyboard", cX, cY + 160);
+	text("←↑→↓", cX, cY + 190);
 }
 
 function mousePressed(){

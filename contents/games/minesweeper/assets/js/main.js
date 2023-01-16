@@ -62,7 +62,7 @@ function draw(){
 	// Mine
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("MINE:xx", cX, FONT_SIZE * 0.5);
+	text("マインスイーパ", cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){
