@@ -1,7 +1,10 @@
 console.log("main.js!!");
 
-const TITLE = "2048";
 const FONT_SIZE = 28;
+const CANVAS_W  = 320;// 480
+const CANVAS_H  = 480;// 720 - 110
+
+const FILES_IMG = ["caret-l-b.png", "caret-r-b.png"];
 
 const T_NUMS = 4;
 const T_COLORS = [
@@ -9,23 +12,29 @@ const T_COLORS = [
 	"#4CAF50", "#009688", "#00BCD4", "#03A9f4", "#2196F3", "#3F51B5",
 	"#673Ab7", "#9C27B0", "#E91E63", "#F44336", "#FF5722", "#795548"];
 
-let font, btnHome, flkManager;
-let my2048;
+let font, cX, cY;
+let flkManager, my2048;
 let tilePad, tileSize, tileCorner;
 let sX, sY, tiles, lockFlg;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
+	for(let file of FILES_IMG) ImgLoader.loadImg(file);
 }
 
 function setup(){
-	console.log("setup");
-	const W = window.innerWidth;
-	const H = window.innerHeight;
-	const canvas = createCanvas(W, H);
-	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
-		window.location.replace("../../../");
-	});
+
+	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
+	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
+	const canvas = createCanvas(cW, cH);
+	textFont(font);
+	frameRate(60);
+	noSmooth();
+
+	cX = Math.floor(width * 0.5);
+	cY = Math.floor(height * 0.5);
+
+	// FlickManager
 	flkManager = new FlickManager(6, e=>{
 		//console.log("Flicked:", e);
 		if(e.dir == "left") actionLeft();
@@ -33,9 +42,6 @@ function setup(){
 		if(e.dir == "up") actionUp();
 		if(e.dir == "down") actionDown();
 	});
-	textFont(font);
-	frameRate(32);
-	noSmooth();
 
 	// 2048
 	my2048 = new Smz2048();
@@ -65,8 +71,7 @@ function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
-	text(TITLE, width - 12, 32);
-	btnHome.drawBtn();
+
 	// Board
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
@@ -78,10 +83,17 @@ function draw(){
 			if(tiles[r][c]) tiles[r][c].draw();
 		}
 	}
+
+	// Title
+	fill("#333333");
+	textSize(FONT_SIZE); textAlign(CENTER, TOP);
+	text("2048", cX, FONT_SIZE * 0.5);
+
+	textSize(FONT_SIZE*0.8);
+	text("FLICK:←↑→↓", cX, cY + 160);
 }
 
 function mousePressed(){
-	btnHome.checkBtn();
 	if(flkManager) flkManager.touchStarted();
 }
 
@@ -94,7 +106,6 @@ function mouseEnded(){
 }
 
 function touchStarted(){
-	btnHome.checkBtn();
 	if(flkManager) flkManager.touchStarted();
 }
 
