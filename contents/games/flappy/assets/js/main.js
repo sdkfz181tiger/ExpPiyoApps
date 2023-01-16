@@ -5,7 +5,7 @@ const CANVAS_W  = 320;// 480
 const CANVAS_H  = 480;// 720 - 110
 
 const FILES_IMG = [
-	"caret-l-w.png", "caret-r-w.png",
+	"caret-l-b.png", "caret-r-b.png",
 	"fb_bird_01.png", "fb_bird_02.png", "fb_bird_03.png",
 	"fb_bkg.png", "fb_btn_play.png", "fb_btn_retry.png", 
 	"fb_coin.png", "fb_grd.png",

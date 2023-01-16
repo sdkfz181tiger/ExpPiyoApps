@@ -16,15 +16,37 @@
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
 	<title>テトリス</title>
 	<!-- CSS -->
+	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="./assets/css/custom.css">
+</head>
+<body> 
+	<!-- Header(Start) -->
+	<header class="fixed-top" v-if="mode!=0">
+
+		<!-- Navigation(Start) -->
+		<nav class="navbar navbar-dark bg-primary">
+			<div class="container-fluid">
+				<a class="btn btn-primary btn-sm me-4" href="../../../">
+					<i class="bi-caret-left-fill" role="img"></i>
+				</a>
+				<div>
+					<i class="bi-github text-white m-1"></i><a class="navbar-brand">テトリス</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Navigation(End) -->
+
+	</header>
+	<!-- Header(End) -->
+
 	<!-- JavaScript -->
+	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
 	<script src="./assets/libs/p5js/p5.min.js"></script>
 	<script src="./assets/libs/p5js/addons/p5.sound.min.js"></script>
-	<script src="./assets/libs/p5js/addons/planck.min.js"></script>
-	<script src="./assets/libs/p5js/addons/p5.play.js"></script>
+	<script src="./assets/libs/p5js/addons/p5.tween.min.js"></script>
+	<script src="./assets/js/sprite.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
-</head>
-<body>
 </body>
 </html>

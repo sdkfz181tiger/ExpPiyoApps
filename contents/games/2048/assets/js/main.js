@@ -4,7 +4,9 @@ const FONT_SIZE = 28;
 const CANVAS_W  = 320;// 480
 const CANVAS_H  = 480;// 720 - 110
 
-const FILES_IMG = ["caret-l-b.png", "caret-r-b.png"];
+const FILES_IMG = [
+	"caret-l-b.png", "caret-r-b.png"
+];
 
 const T_NUMS = 4;
 const T_COLORS = [

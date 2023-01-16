@@ -1,63 +1,51 @@
 console.log("main.js!!");
 
-const TITLE = "テトリス";
 const FONT_SIZE = 28;
+const CANVAS_W  = 320;// 480
+const CANVAS_H  = 480;// 720 - 110
 
-let rSize, cX, cY, tMng;
-let font, btnHome;
+const FILES_IMG = [
+	"caret-l-b.png", "caret-r-b.png", 
+	"caret-u-b.png", "caret-d-b.png",
+	"arrow-roll-l-b.png", "arrow-roll-r-b.png"
+];
+
+let font, cX, cY;
+let tMng, rSize;
 let btnLeft, btnRight, btnDown, btnRoll;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
+	for(let file of FILES_IMG) ImgLoader.loadImg(file);
 }
 
 function setup(){
-	console.log("setup");
-	const W = window.innerWidth;
-	const H = window.innerHeight;
-	const canvas = createCanvas(W, H);
-	btnHome = new MyButton("caret-l-w.png", 24, 24, 32, ()=>{
-		window.location.replace("../../../");
-	});
+
+	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
+	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
+	const canvas = createCanvas(cW, cH);
 	textFont(font);
-	frameRate(32);
+	frameRate(60);
 	noSmooth();
 
+	cX = Math.floor(width * 0.5);
+	cY = Math.floor(height * 0.5);
+
 	// Tetris
-	rSize = Math.floor(height * 0.032);
-	cX = width / 2;
-	cY = height / 2 - rSize * 1;
 	tMng = new TetrisManager();
+	rSize = Math.floor(height * 0.035);
 
 	// Controller
-	btnLeft = new MyButton("caret-l-w.png", 
-		cX-rSize*5.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5, ()=>{
-		actionLeft();
-	});
-	btnRight = new MyButton("caret-r-w.png",
-		cX-rSize*2.5, cY+rSize*(T_ROWS+4)*0.5, rSize * 1.5, ()=>{
-		actionRight();
-	});
-	btnDown = new MyButton("caret-d-w.png",
-		cX-rSize*4, cY+rSize*(T_ROWS+7)*0.5, rSize * 1.5, ()=>{
-		actionDown();
-	});
-	btnRoll = new MyButton("arrow-roll-r-w.png",
-		cX+rSize*4.5, cY+rSize*(T_ROWS+5)*0.5, rSize * 3, ()=>{
-		actionRoll();
-	});
+	btnLeft = new Button("caret-l-b.png", cX-120, cY+190, 0.2, actionLeft);
+	btnRight = new Button("caret-r-b.png", cX-20, cY+190, 0.2, actionRight);
+	btnDown = new Button("caret-d-b.png", cX-70, cY+220, 0.2, actionDown);
+	btnRoll = new Button("arrow-roll-r-b.png", cX+95, cY+200, 0.2, actionRoll);
 }
 
 function draw(){
 	background("#EFEFEF");
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
-	text(TITLE, width - 12, 32);
-	btnHome.drawBtn();
-	btnLeft.drawBtn();
-	btnRight.drawBtn();
-	btnDown.drawBtn();
-	btnRoll.drawBtn();
 
 	// Frame
 	fill("#DDDDDD");
@@ -78,33 +66,37 @@ function draw(){
 		}
 	}
 
+	// Controller
+	btnLeft.draw();
+	btnRight.draw();
+	btnDown.draw();
+	btnRoll.draw();
+
 	// Title
 	fill("#333333");
-	textSize(FONT_SIZE); textAlign(CENTER, BASELINE);
-	text("SCORE:"+tMng.getScore(), cX, cY-rSize*T_ROWS/2-FONT_SIZE);
+	textSize(FONT_SIZE); textAlign(CENTER, TOP);
+	text("SCORE:" + tMng.getScore(), cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){
-	btnHome.checkBtn();
-	btnLeft.checkBtn();
-	btnRight.checkBtn();
-	btnDown.checkBtn();
-	btnRoll.checkBtn();
+	btnLeft.press(mouseX, mouseY);
+	btnRight.press(mouseX, mouseY);
+	btnDown.press(mouseX, mouseY);
+	btnRoll.press(mouseX, mouseY);
 }
 
 function touchStarted(){
-	btnHome.checkBtn();
-	btnLeft.checkBtn();
-	btnRight.checkBtn();
-	btnDown.checkBtn();
-	btnRoll.checkBtn();
+	btnLeft.press(mouseX, mouseY);
+	btnRight.press(mouseX, mouseY);
+	btnDown.press(mouseX, mouseY);
+	btnRoll.press(mouseX, mouseY);
 }
 
 function keyPressed(){
 	if(keyCode == LEFT_ARROW) actionLeft();
 	if(keyCode == RIGHT_ARROW) actionRight();
-	if(keyCode == UP_ARROW) actionRoll();
 	if(keyCode == DOWN_ARROW) actionDown();
+	if(keyCode == UP_ARROW) actionRoll();
 }
 
 function actionLeft(){
@@ -119,20 +111,20 @@ function actionRight(){
 	if(tMng.checkCollision()) tMng.stepLeft();
 }
 
-function actionRoll(){
-	tMng.rotateL();
-	if(tMng.checkCollision()){
-		tMng.rotateR();
-	}else{
-		tMng.checkRotation();
-	}
-}
-
 function actionDown(){
 	tMng.stepDown();
 	if(tMng.checkCollision()){
 		tMng.stepUp();
 		tMng.fixMino();
 		tMng.createMino();
+	}
+}
+
+function actionRoll(){
+	tMng.rotateL();
+	if(tMng.checkCollision()){
+		tMng.rotateR();
+	}else{
+		tMng.checkRotation();
 	}
 }

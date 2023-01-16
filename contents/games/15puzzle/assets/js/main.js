@@ -4,7 +4,9 @@ const FONT_SIZE = 28;
 const CANVAS_W  = 320;// 480
 const CANVAS_H  = 480;// 720 - 110
 
-const FILES_IMG = ["caret-l-b.png", "caret-r-b.png"];
+const FILES_IMG = [
+	"caret-l-b.png", "caret-r-b.png"
+];
 
 let font, cX, cY;
 let pad, size, corner;
