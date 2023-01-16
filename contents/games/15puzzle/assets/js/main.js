@@ -4,11 +4,11 @@ const FONT_SIZE = 28;
 const CANVAS_W  = 320;// 480
 const CANVAS_H  = 480;// 720 - 110
 
-const FILES_IMG = [];
+const FILES_IMG = ["caret-l-b.png", "caret-r-b.png"];
 
 let font, cX, cY;
 let pad, size, corner;
-let fMng, sX, sY, tiles;
+let fMng, sX, sY, tiles, btnAuto;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
@@ -51,6 +51,9 @@ function setup(){
 			tiles.push(new Tile(board[r][c], r, c, pad, size, corner));
 		}
 	}
+
+	// Auto
+	btnAuto = new Button("caret-r-b.png", cX, cY+160, 0.2, autoMove);
 }
 
 function draw(){
@@ -63,13 +66,16 @@ function draw(){
 	square(sX, sY, pad*fMng.getGrids(), corner);
 	for(let tile of tiles) tile.draw();
 
+	btnAuto.draw();// Auto
+
 	// Score
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("SCORE:000", cX, FONT_SIZE * 0.5);
+	text("15パズル", cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){
+	btnAuto.press(mouseX, mouseY);
 	checkTiles();
 }
 
