@@ -210,33 +210,33 @@ class MyScroller extends Sprite{
 
 class MyTunnel{
 
-	constructor(fileT, fileC, x, y, pY){
+	constructor(fileC, fileT, x, y, pY){
+		this._coin = new Sprite(fileC, x, y);
 		this._tTop = new Sprite(fileT, x, y);
 		this._tBtm = new Sprite(fileT, x, y);
-		this._coin = new Sprite(fileC, x, y);
 		this.setPos(x, y, pY);
 	}
 
 	setPos(x, y, pY){
+		this._coin.x = x;
+		this._coin.y = y;
 		this._tTop.x = x;
 		this._tTop.y = y - (this._tTop.hh + pY/2);
 		this._tBtm.x = x;
 		this._tBtm.y = y + (this._tBtm.hh + pY/2);
-		this._coin.x = x;
-		this._coin.y = y;
 		this.showCoin();
 	}
 
 	startMove(vX, vY){
+		this._coin.startMove(vX, vY);
 		this._tTop.startMove(vX, vY);
 		this._tBtm.startMove(vX, vY);
-		this._coin.startMove(vX, vY);
 	}
 
 	stopMove(){
+		this._coin.stopMove();
 		this._tTop.stopMove();
 		this._tBtm.stopMove();
-		this._coin.stopMove();
 	}
 
 	intersectCoin(spr){
@@ -259,14 +259,20 @@ class MyTunnel{
 	}
 
 	update(){
+		this._coin.update();
 		this._tTop.update();
 		this._tBtm.update();
-		this._coin.update();
+		// Offset
+		if(0 < this._tTop.r) return;
+		this._coin.x += TNL_PAD_X * 4;
+		this._tTop.x += TNL_PAD_X * 4;
+		this._tBtm.x += TNL_PAD_X * 4;
+		this.showCoin();
 	}
 
 	draw(){
+		this._coin.draw();
 		this._tTop.draw();
 		this._tBtm.draw();
-		this._coin.draw();
 	}
 }

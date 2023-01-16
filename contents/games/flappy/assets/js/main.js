@@ -24,7 +24,7 @@ const MODE_READY = 1;
 const MODE_GAME  = 2;
 const MODE_OVER  = 3;
 
-let font, cX, cY, score, mode;
+let font, cX, cY, mode, score;
 
 let bkgs, tnls, grds;
 let logoReady, logoOver;
@@ -46,8 +46,8 @@ function setup(){
 
 	cX = Math.floor(width * 0.5);
 	cY = Math.floor(height * 0.5);
-	score = 999;
 	mode = MODE_INIT;
+	score = 0;
 
 	// Backgrounds
 	bkgs = [];
@@ -55,14 +55,14 @@ function setup(){
 
 	// Tunnels
 	tnls = [];
-	createTnls("fb_tunnel.png", "fb_coin.png", width-32, height/2);
+	createTnls("fb_coin.png", "fb_tunnel.png", width-32, height/2);
 
 	// Grounds
 	grds = [];
 	createGrds("fb_grd.png", 0, height);
 
 	// Get Ready
-	logoReady = new Button("fb_logo_ready.png", cX, cY, startGame);
+	logoReady = new Button("fb_logo_ready.png", cX, cY);
 	logoReady.visible = false;
 
 	// Game Over
@@ -93,6 +93,7 @@ function draw(){
 function startReady(){
 	if(mode != MODE_INIT && mode != MODE_OVER) return;
 	mode = MODE_READY;
+	score = 0;
 	for(let i=0; i<tnls.length; i++){
 		tnls[i].setPos(width+TNL_PAD_X*i, height/2, TNL_PAD_Y);
 	}
@@ -130,6 +131,7 @@ function updateGame(){
 		tnl.update();
 		if(tnl.intersectCoin(bird)){
 			tnl.hideCoin();// Hide
+			score++;// Score
 		}
 		if(tnl.intersectTnls(bird)){
 			startOver();// Game Over
@@ -157,7 +159,9 @@ function updateOver(){
 }
 
 function mousePressed(){
-	actionJump();
+	// Ready to Game
+	if(mode == MODE_READY) startGame();
+	actionJump();// Jump
 }
 
 function actionJump(){
@@ -181,11 +185,11 @@ function createBkgs(file, x, y){
 	bkgs.push(bkg4);
 }
 
-function createTnls(fileT, fileC, x, y){
-	const tnl1 = new MyTunnel(fileT, fileC, x, y, TNL_PAD_Y);
-	const tnl2 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*1, y, TNL_PAD_Y);
-	const tnl3 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*2, y, TNL_PAD_Y);
-	const tnl4 = new MyTunnel(fileT, fileC, x+TNL_PAD_X*3, y, TNL_PAD_Y);
+function createTnls(fileC, fileT, x, y){
+	const tnl1 = new MyTunnel(fileC, fileT, x, y, TNL_PAD_Y);
+	const tnl2 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*1, y, TNL_PAD_Y);
+	const tnl3 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*2, y, TNL_PAD_Y);
+	const tnl4 = new MyTunnel(fileC, fileT, x+TNL_PAD_X*3, y, TNL_PAD_Y);
 	tnl1.startMove(-SCR_SPD_X, 0);
 	tnl2.startMove(-SCR_SPD_X, 0);
 	tnl3.startMove(-SCR_SPD_X, 0);
