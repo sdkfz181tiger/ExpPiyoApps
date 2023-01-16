@@ -9,10 +9,10 @@ const FILES_IMG = [
 ];
 
 const MS_GRIDS = 8;
-const MS_MINES = 8;
+const MS_MINES = 4;
 
 let font, cX, cY;
-let gSize, mMng, tiles;
+let gSize, mMng, tiles, msg;
 
 function preload(){
 	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
@@ -49,6 +49,9 @@ function setup(){
 		let tile = new Tile(r, c, gSize, m, s);
 		tiles.push(tile);
 	}
+
+	// Message
+	msg = "PLAYING";
 }
 
 function draw(){
@@ -59,10 +62,17 @@ function draw(){
 	// Title
 	for(let tile of tiles) tile.draw();
 
-	// Mine
+	// Title
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
 	text("マインスイーパ", cX, FONT_SIZE * 0.5);
+
+	// Mine
+	textSize(FONT_SIZE*0.8);
+	text("Mine:" + MS_MINES, cX, 70);
+
+	// Message
+	text(msg, cX, 390);
 }
 
 function mousePressed(){
@@ -98,5 +108,23 @@ function mineSweep(r, c){
 		console.log("GAME OVER!!");
 		let t = r * MS_GRIDS + c;
 		tiles[t].open();
+	}
+
+	// Count
+	let cntMine = 0;
+	let cntOpened = 0;
+	for(let tile of tiles){
+		if(!tile.isOpened()) continue;
+		if(tile.isMine()) cntMine++;
+		cntOpened++;
+	}
+	if(0 < cntMine){
+		msg = "GAME OVER";
+		return;
+	}
+	if(MS_GRIDS**2-MS_MINES <= cntOpened){
+		msg = "GAME CLEAR";
+	}else{
+		msg = "CONTINUE";
 	}
 }

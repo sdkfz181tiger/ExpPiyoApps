@@ -42,6 +42,10 @@ class Tile{
 
 	getC(){return this._c;}
 
+	isMine(){return this._m==1;}
+	
+	isOpened(){return this._opened;}
+
 	open(){this._opened = true;}
 
 	close(){this._opened = false;}
@@ -85,9 +89,9 @@ class Tile{
 class MineSweeperManager{
 
 	constructor(rows, cols, mines){
-		this._rows = rows;
-		this._cols = cols;
-		this._tblMine = [];
+		this._rows      = rows;
+		this._cols      = cols;
+		this._tblMine   = [];
 		this._tblSensor = [];
 		this._tblSearch = [];
 		this.initTrap(mines);
