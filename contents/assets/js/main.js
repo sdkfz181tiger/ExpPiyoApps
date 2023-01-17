@@ -17,6 +17,10 @@ const app = Vue.createApp({
 	},
 	created(){
 		console.log("created!!");
+
+		// Installed or not
+		const msg = (this.beforeInstalled) ? "Already installed.":"Before installed.";
+		showToast("Hello", "0 min ago.", msg);
 	},
 	mounted(){
 		console.log("mounted!!");
