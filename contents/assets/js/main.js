@@ -6,7 +6,8 @@ const MODE_LOADING = 0;
 const MODE_TITLE   = 1;
 
 const myData = {
-	beforeInstalled: beforeInstalled,
+	devicePlatforms: devicePlatforms,
+	deviceInstalled: deviceInstalled,
 	mode: MODE_LOADING,
 }
 
@@ -19,7 +20,7 @@ const app = Vue.createApp({
 		console.log("created!!");
 
 		// Installed or not
-		const msg = (this.beforeInstalled) ? "Before":"Already";
+		const msg = (this.deviceInstalled) ? "Already":"Before";
 		showToast("Hello", "0 min ago.", msg + " installed.");
 	},
 	mounted(){
