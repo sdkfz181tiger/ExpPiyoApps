@@ -6,11 +6,10 @@ navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
 // BeforeInstall
-let devicePlatforms = "none";
-let deviceInstalled = true;
 window.addEventListener("beforeinstallprompt", (e)=>{
-	devicePlatforms = e.platforms;
-	deviceInstalled = false;
+	e.preventDefault();
+	console.log("platforms:", e.platforms);
+	showToast("Install", e.platforms, "How about you?");
 });
 
 //==========
