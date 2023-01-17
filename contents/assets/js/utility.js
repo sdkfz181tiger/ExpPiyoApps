@@ -12,6 +12,10 @@ window.addEventListener("beforeinstallprompt", (e)=>{
 	showToast("Install", e.platforms, "How about you?");
 });
 
+window.addEventListener("appinstalled", ()=>{
+	showToast("Success", "0 min ago.", "installed!!");
+});
+
 //==========
 // Toast
 function showToast(title, sub, msg, autohide=true, delay=400){
