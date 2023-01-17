@@ -19,9 +19,13 @@ const app = Vue.createApp({
 	created(){
 		console.log("created!!");
 
-		// Installed or not
-		const msg = (this.deviceInstalled) ? "Already":"Before";
-		showToast("Hello", "0 min ago.", msg + " installed.");
+		setTimeout(()=>{
+			// Installed or not
+			const msg = (this.deviceInstalled) ? "Already":"Before";
+			showToast("Hello", "0 min ago.", msg + " installed.");
+
+			console.log(devicePlatforms, deviceInstalled);
+		}, 3000);
 	},
 	mounted(){
 		console.log("mounted!!");
