@@ -65,7 +65,8 @@
 					<div class="col">
 						<h1 id="title-logo-1">ぴよ</h1>
 						<h1 id="title-logo-2">Apps</h1>
-						<small>Tips!!</small>
+						<small v-if="beforeInstalled">Before installed.</small>
+						<small v-else>Already installed.</small>
 					</div>
 				</div>
 				<div class="row pt-4">

@@ -1,13 +1,12 @@
 console.log("main.js!!");
 
-const VERSION      = "v1.0.0";
 const KEY_STORAGE  = "apps";
 
 const MODE_LOADING = 0;
 const MODE_TITLE   = 1;
 
 const myData = {
-	version: VERSION,
+	beforeInstalled: beforeInstalled,
 	mode: MODE_LOADING,
 }
 
