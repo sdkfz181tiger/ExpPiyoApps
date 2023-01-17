@@ -6,10 +6,15 @@ navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
 // BeforeInstall
-window.addEventListener("beforeinstallprompt", (e)=>{
-	e.preventDefault();
-	console.log("platforms:", e.platforms);
-	showToast("Install", e.platforms, "How about you?");
+window.addEventListener("beforeinstallprompt", (prompt)=>{
+	prompt.preventDefault();
+	const elem = document.getElementById("btnInstall");
+	elem.classList.remove("invisible");
+	elem.addEventListener("click", (e)=>{
+		e.preventDefault();
+		console.log("Click!!");
+		prompt.prompt();
+	});
 });
 
 window.addEventListener("appinstalled", ()=>{
