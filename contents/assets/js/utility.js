@@ -12,8 +12,15 @@ window.addEventListener("beforeinstallprompt", (prompt)=>{
 	elem.classList.remove("invisible");
 	elem.addEventListener("click", (e)=>{
 		e.preventDefault();
-		console.log("Click!!");
-		prompt.prompt();
+		prompt.prompt();// Prompt
+		prompt.userChoice.then((choice)=>{
+			if(choice.outcome === "accepted"){
+				console.log("Accepted");
+			}else{
+				console.log("Dismissed");
+			}
+			e.target.classList.add("invisible");
+		});
 	});
 });
 
