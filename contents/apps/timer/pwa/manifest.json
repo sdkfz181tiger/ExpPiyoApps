@@ -2,6 +2,11 @@
 	"name":"ぴよタイマー",
 	"short_name":"ぴよタイマー",
 	"icons": [{
+		"src": "./icon144x144.png",
+		"sizes":"144x144",
+		"type": "image/png",
+		"purpose": "any"
+	},{
 		"src": "./icon152x152.png",
 		"sizes":"152x152",
 		"type": "image/png",
@@ -17,7 +22,7 @@
 		"type": "image/png",
 		"purpose": "maskable"
 	}],
-	"start_url": "../",
+	"start_url": "../../",
 	"display": "standalone",
 	"background_color": "lightskyblue",
 	"theme_color": "dodgerblue",
