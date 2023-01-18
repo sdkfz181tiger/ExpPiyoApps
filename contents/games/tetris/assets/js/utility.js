@@ -5,7 +5,7 @@ console.log("utility.js!!");
 navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
-// TouchDevice
+// Mobile
 const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 //==========

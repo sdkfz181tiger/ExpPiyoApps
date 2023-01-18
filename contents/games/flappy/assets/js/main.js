@@ -166,7 +166,12 @@ function updateOver(){
 }
 
 function mousePressed(){
-	// Ready to Game
+	if(FLG_MOBILE) return;
+	if(mode == MODE_READY) startGame();
+	actionJump();// Jump
+}
+
+function touchStarted(){
 	if(mode == MODE_READY) startGame();
 	actionJump();// Jump
 }

@@ -97,14 +97,17 @@ function draw(){
 }
 
 function mousePressed(){
+	if(FLG_MOBILE) return;
 	if(flkManager) flkManager.touchStarted();
 }
 
 function mouseMoved(){
+	if(FLG_MOBILE) return;
 	if(flkManager) flkManager.touchMoved();
 }
 
 function mouseEnded(){
+	if(FLG_MOBILE) return;
 	if(flkManager) flkManager.touchEnded();
 }
 

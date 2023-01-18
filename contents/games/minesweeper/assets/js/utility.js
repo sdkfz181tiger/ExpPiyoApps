@@ -5,6 +5,10 @@ console.log("utility.js!!");
 navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
+// Mobile
+const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
+
+//==========
 // Button
 
 class Button extends Sprite{

@@ -77,6 +77,12 @@ function draw(){
 }
 
 function mousePressed(){
+	if(FLG_MOBILE) return;
+	btnAuto.press(mouseX, mouseY);
+	checkTiles();
+}
+
+function touchStarted(){
 	btnAuto.press(mouseX, mouseY);
 	checkTiles();
 }

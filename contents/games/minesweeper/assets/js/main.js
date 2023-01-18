@@ -76,6 +76,7 @@ function draw(){
 }
 
 function mousePressed(){
+	if(FLG_MOBILE) return;
 	checkTiles();
 }
 
