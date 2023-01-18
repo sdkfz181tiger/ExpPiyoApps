@@ -11,9 +11,10 @@
 }
 
 html, body{
+	width: 100%; height: 100%;
 	margin: 0px; padding: 0px;
 	font-family: "NotoSans"; font-size: 1.0rem;
-	/*user-select:none;*/
+	user-select:none; overflow: hidden;
 }
 
 header{
