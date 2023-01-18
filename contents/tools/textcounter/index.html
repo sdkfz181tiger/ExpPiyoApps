@@ -37,7 +37,7 @@
 						<i class="bi-github text-white m-1"></i>
 						<a class="navbar-brand">文字カウンター</a>
 					</div>
-					<button class="navbar-toggler" type="button"
+					<button class="navbar-toggler invisible" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
 						<span class="navbar-toggler-icon"></span>
 					</button>
@@ -90,8 +90,8 @@
 					<div class="col">
 						<!-- Switch(Start) -->
 						<div class="form-check form-switch m-1">
-							<input class="form-check-input" id="swHTML" type="checkbox">
-							<label class="form-check-label" for="swHTML">HTMLエスケープ</label>
+							<input class="form-check-input" id="swHTML" type="checkbox" v-model="flgTag">
+							<label class="form-check-label" for="swHTML">HTMLタグを含めない</label>
 						</div>
 						<!-- Switch(End) -->
 					</div>

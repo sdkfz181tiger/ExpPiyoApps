@@ -11,7 +11,8 @@ const myData = {
 	myOffcanvas: null,
 	modalText: "",
 	data: null,
-	txtData: ""
+	txtData: "",
+	flgTag: false
 }
 
 // Vue.js
@@ -49,16 +50,23 @@ const app = Vue.createApp({
 			}
 		},
 		getLengthTotal(){
+			if(this.flgTag) return this.removeTags(this.txtData).length;
 			return this.txtData.length;
 		},
 		getLengthTrim(){
 			const regex = /\s+/g;
+			if(this.flgTag) return this.removeTags(this.txtData).replace(regex, "").length;
 			return this.txtData.replace(regex, "").length;
 		},
 		getLines(){
 			if(this.txtData.length <= 0) return 0;
 			const regex = /\r|\n|\r\n/g;
+			if(this.flgTag) return this.removeTags(this.txtData).split(regex).length;
 			return this.txtData.split(regex).length;
+		},
+		removeTags(str){
+			const regex = /<.*?>/g;
+			return str.replace(regex, "");
 		},
 		showModal(){
 			console.log("showModal");
