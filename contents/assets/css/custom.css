@@ -1,8 +1,8 @@
 /* CSS */
 
 @font-face {
-	font-family: "Noto-Regular";
-	src: url("../fonts/NotoSansJP-Regular.otf") format("opentype");
+	font-family: "NotoSans";
+	src: url("../fonts/NotoSansJP-Medium.otf") format("opentype");
 }
 
 @font-face{
@@ -12,7 +12,7 @@
 
 html, body{
 	margin: 0px; padding: 0px;
-	font-family: "Noto-Regular"; font-size: 1.0rem;
+	font-family: "NotoSans"; font-size: 1.0rem;
 	user-select:none;
 }
 
