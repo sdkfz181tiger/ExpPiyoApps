@@ -6,7 +6,7 @@ navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
 // TouchDevice
-const FLG_MOBILE = "ontouchstart" in window || navigator.maxTouchPoints;
+const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 //==========
 // Button
