@@ -1,6 +1,6 @@
 {
-	"name":"マイン",
-	"short_name":"マイン",
+	"name":"マインスイーパ",
+	"short_name":"マインスイーパ",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
