@@ -1,15 +1,23 @@
 /* CSS */
 
+@font-face {
+	font-family: "Noto-Regular";
+	src: url("../../../../assets/fonts/NotoSansJP-Regular.otf") format("opentype");
+}
+
 @font-face{
 	font-family: "Nicokaku-v2";
-	src: url("../fonts/nicokaku_v2.ttf");
+	src: url("../../../../assets/fonts/nicokaku_v2.ttf");
 }
 
 html, body{
-	width: 100%; height: 100%;
 	margin: 0px; padding: 0px;
-	font-family: "Nicokaku-v2"; font-size: 1.0rem;
-	user-select:none; overflow: hidden;
+	font-family: "Noto-Regular"; font-size: 1.0rem;
+	/*user-select:none;*/
+}
+
+header{
+	font-family: "Nicokaku-v2";
 }
 
 body{

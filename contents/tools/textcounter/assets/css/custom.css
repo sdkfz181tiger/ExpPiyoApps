@@ -1,14 +1,23 @@
 /* CSS */
 
+@font-face {
+	font-family: "Noto-Regular";
+	src: url("../../../../assets/fonts/NotoSansJP-Regular.otf") format("opentype");
+}
+
 @font-face{
 	font-family: "Nicokaku-v2";
-	src: url("../fonts/nicokaku_v2.ttf");
+	src: url("../../../../assets/fonts/nicokaku_v2.ttf");
 }
 
 html, body{
 	margin: 0px; padding: 0px;
-	font-family: "Nicokaku-v2"; font-size: 1.0rem;
-	user-select:none;
+	font-family: "Noto-Regular"; font-size: 1.0rem;
+	/*user-select:none;*/
+}
+
+header{
+	font-family: "Nicokaku-v2";
 }
 
 header i{
@@ -89,13 +98,13 @@ footer a i{
 }
 
 /* Switch */
-
+/*
 .form-check-input{
 	clear: left;
 }
 
 .form-check-label{
-	font-size: 1.4rem;
+	font-size: 1.0rem;
 }
 
 .form-switch.form-switch-sm{
@@ -133,3 +142,4 @@ footer a i{
 	height: 2.5rem; width: calc(4rem + 0.75rem);
 	border-radius: 5rem;
 }
+*/

@@ -20,7 +20,7 @@ let tilePad, tileSize, tileCorner;
 let sX, sY, tiles, lockFlg;
 
 function preload(){
-	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
+	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
 	for(let file of FILES_IMG) ImgLoader.loadImg(file);
 }
 

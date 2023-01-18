@@ -77,86 +77,42 @@
 			</div>
 			<!-- Loading(End) -->
 
-			<!-- Timer(Start) -->
-			<div class="container text-center" v-if="mode==1">
-				<div class="row pt-4">
+			<!-- TextCounter(Start) -->
+			<div class="container" v-if="mode==1">
+				<div class="row pt-2">
 					<div class="col">
-						<h1 id="timer-logo-1">文字</h1>
-						<h1 id="timer-logo-2">カウンタ-</h1>
-					</div>
-				</div>
-				<div class="row pt-4">
-					<div class="col">
-						<div id="timer-hms">{{ getDisplayHMS }}</div>
-						<small id="timer-millis">{{ getDisplayMillis }}</small>
+						<label class="form-label" for="txt-counter">文字カウンター</label>
+						<textarea class="form-control" id="txt-counter" rows="5" 
+							placeholder="ここに文字を入力してください" v-model="txtData"></textarea>
 					</div>
 				</div>
 				<div class="row pt-2">
-					<div class="d-flex justify-content-center">
-						<table>
-							<tr>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickHours(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickMinutes(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickSeconds(1)">
-										<i class="bi-caret-up-fill m-3" role="img"></i>
-									</button>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickHours(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickMinutes(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-								<td>
-									<button class="btn btn-secondary btn-lg"
-										v-on:click="clickSeconds(-1)">
-										<i class="bi-caret-down-fill m-3" role="img"></i>
-									</button>
-								</td>
-							</tr>
-						</table>
+					<div class="col">
+						<!-- Switch(Start) -->
+						<div class="form-check form-switch m-1">
+							<input class="form-check-input" id="swHTML" type="checkbox">
+							<label class="form-check-label" for="swHTML">HTMLエスケープ</label>
+						</div>
+						<!-- Switch(End) -->
 					</div>
 				</div>
-				<div class="row pt-4 g-1">
-					<div class="col"></div>
-					<div class="col-5 col-sm-5 col-md-3 col-lg-2 d-grid">
-						<button class="btn btn-primary btn-lg my-2"
-							v-on:click="clickStart">
-							<i class="bi-play-fill btn-icon" role="img"></i>
-							<div>Start</div>
-						</button>
+				<div class="row pt-2">
+					<div class="col">
+						現在の文字数: {{ getLengthTotal() }}
 					</div>
-					<div class="col-5 col-sm-5 col-md-3 col-lg-2 d-grid">
-						<button class="btn btn-primary btn-lg my-2"
-							v-on:click="clickStop">
-							<i class="bi-pause-fill btn-icon" role="img"></i>
-							<div>Stop</div>
-						</button>
+				</div>
+				<div class="row pt-2">
+					<div class="col">
+						空白と改行を除いた文字数: {{ getLengthTrim() }}
 					</div>
-					<div class="col"></div>
+				</div>
+				<div class="row pt-2">
+					<div class="col">
+						行数: {{ getLines() }}
+					</div>
 				</div>
 			</div>
-			<!-- Timer(End) -->
+			<!-- TextCounter(End) -->
 
 		</main>
 		<!-- Main(End) -->
@@ -184,13 +140,6 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body">
-					<div class="form-check form-switch form-switch-lg d-flex align-items-center">
-						<input type="checkbox" class="form-check-input mx-2" 
-							id="switchSound" v-on:click="switchSound()">
-						<label class="form-check-label" for="switchSound">
-							サウンドOn/Off
-						</label>
-					</div>
 					<!-- <div class="overflow-hidden" id="im-xxx"></div> -->
 				</div>
 			</div>

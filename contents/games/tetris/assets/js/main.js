@@ -15,7 +15,7 @@ let tMng, rSize;
 let btnLeft, btnRight, btnDown, btnRoll;
 
 function preload(){
-	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
+	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
 	for(let file of FILES_IMG) ImgLoader.loadImg(file);
 }
 

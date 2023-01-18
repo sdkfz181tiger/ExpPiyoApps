@@ -15,7 +15,7 @@ let font, cX, cY;
 let gSize, mMng, tiles, msg;
 
 function preload(){
-	font = loadFont("./assets/fonts/nicokaku_v2.ttf");
+	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
 	for(let file of FILES_IMG) ImgLoader.loadImg(file);
 }
 

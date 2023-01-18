@@ -1,14 +1,23 @@
 /* CSS */
 
+@font-face {
+	font-family: "Noto-Regular";
+	src: url("../../../../assets/fonts/NotoSansJP-Regular.otf") format("opentype");
+}
+
 @font-face{
 	font-family: "Nicokaku-v2";
-	src: url("../fonts/nicokaku_v2.ttf");
+	src: url("../../../../assets/fonts/nicokaku_v2.ttf");
 }
 
 html, body{
 	margin: 0px; padding: 0px;
-	font-family: "Nicokaku-v2"; font-size: 1.0rem;
-	user-select:none;
+	font-family: "Noto-Regular"; font-size: 1.0rem;
+	/*user-select:none;*/
+}
+
+header{
+	font-family: "Nicokaku-v2";
 }
 
 header i{
@@ -76,12 +85,12 @@ footer a i{
 }
 
 #title-logo-1{
-	font-size: 4.0rem;
+	font-family: "Nicokaku-v2"; font-size: 4.0rem;
 	line-height: 0.8;
 }
 
 #title-logo-2{
-	font-size: 3.0rem;
+	font-family: "Nicokaku-v2"; font-size: 3.0rem;
 	line-height: 0.8;
 }
 
