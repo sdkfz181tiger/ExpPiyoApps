@@ -82,6 +82,7 @@ function draw(){
 }
 
 function mousePressed(){
+	if(FLG_MOBILE) return;// Important
 	btnLeft.press(mouseX, mouseY);
 	btnRight.press(mouseX, mouseY);
 	btnDown.press(mouseX, mouseY);
@@ -89,7 +90,6 @@ function mousePressed(){
 }
 
 function touchStarted(){
-	if(!FLG_MOBILE) return;// Important
 	btnLeft.press(mouseX, mouseY);
 	btnRight.press(mouseX, mouseY);
 	btnDown.press(mouseX, mouseY);
