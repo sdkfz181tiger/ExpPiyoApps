@@ -1,6 +1,5 @@
 console.log("main.js!!");
 
-const VERSION       = "v1.0.0";
 const KEY_STORAGE   = "quiz";
 
 const MODE_LOADING  = 0;
@@ -17,7 +16,6 @@ const myHowl        = new MyHowler();
 const PATH_FLAGS    = "./assets/images/flags/";
 
 const myData = {
-	version: VERSION,
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,

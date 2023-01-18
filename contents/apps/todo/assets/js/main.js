@@ -1,6 +1,5 @@
 console.log("main.js!!");
 
-const VERSION       = "v1.0.0";
 const KEY_STORAGE   = "todo";
 
 const MODE_LOADING  = 0;
@@ -10,7 +9,6 @@ const MODE_APPLE    = 3;
 const MODE_SETTINGS = 4;
 
 const myData = {
-	version: VERSION,
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
