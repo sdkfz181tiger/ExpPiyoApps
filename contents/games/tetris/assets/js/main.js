@@ -39,7 +39,7 @@ function setup(){
 	btnLeft = new Button("caret-l-b.png", cX-120, cY+190, 0.2, actionLeft);
 	btnRight = new Button("caret-r-b.png", cX-20, cY+190, 0.2, actionRight);
 	btnDown = new Button("caret-d-b.png", cX-70, cY+220, 0.2, actionDown);
-	btnRoll = new Button("arrow-roll-r-b.png", cX+95, cY+200, 0.2, actionRoll);
+	btnRoll = new Button("arrow-roll-r-b.png", cX+110, cY+200, 0.2, actionRoll);
 }
 
 function draw(){
@@ -89,6 +89,7 @@ function mousePressed(){
 }
 
 function touchStarted(){
+	if(!FLG_MOBILE) return;// Important
 	btnLeft.press(mouseX, mouseY);
 	btnRight.press(mouseX, mouseY);
 	btnDown.press(mouseX, mouseY);
