@@ -8,7 +8,7 @@ navigator.serviceWorker.register("./pwa_sw.js");
 // BeforeInstall
 window.addEventListener("beforeinstallprompt", (prompt)=>{
 	prompt.preventDefault();
-	const elem = document.getElementById("btnInstall");
+	const elem = document.getElementById("btn-install");
 	elem.classList.remove("invisible");
 	elem.addEventListener("click", (e)=>{
 		e.preventDefault();

@@ -74,6 +74,13 @@ footer a i{
 	line-height: 0.8;
 }
 
+#btn-install:hover{
+	outline: none !important;
+	box-shadow: none !important;
+	border-color: transparent !important;
+	background-color: transparent !important;
+}
+
 /* Privacy */
 
 #privacy-comments p{
