@@ -79,6 +79,10 @@ function draw(){
 	// Score
 	textSize(FONT_SIZE*0.8);
 	text("SCORE:" + tMng.getScore(), cX, 50);
+
+	// IsDevice?
+	textSize(FONT_SIZE*0.5);
+	text(FLG_MOBILE, cX, 90);
 }
 
 function mousePressed(){
