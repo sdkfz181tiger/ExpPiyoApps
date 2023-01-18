@@ -56,6 +56,7 @@ const app = Vue.createApp({
 			return this.txtData.replace(regex, "").length;
 		},
 		getLines(){
+			if(this.txtData.length <= 0) return 0;
 			const regex = /\r|\n|\r\n/g;
 			return this.txtData.split(regex).length;
 		},
