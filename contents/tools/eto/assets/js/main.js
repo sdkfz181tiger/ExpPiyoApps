@@ -79,7 +79,7 @@ const app = Vue.createApp({
 			return this.getTableData(this.fullYear-30, this.fullYear);
 		},
 		getTableRight(){
-			return this.getTableData(this.fullYear-60, this.fullYear-30);
+			return this.getTableData(this.fullYear-61, this.fullYear-31);
 		},
 		getTableData(from, to){
 			return this.tableData.filter(obj=> from<=obj.year && obj.year<=to);
