@@ -89,7 +89,7 @@
 								<p class="card-text">
 									<ul>
 										<li>1945年から、2023年までの干支を一覧で表示しています。</li>
-										<li>西暦、元号、干支を一緒に表示しています。</li>
+										<li>西暦、和暦、年齢、干支を表示しています。</li>
 									</ul>
 								</p>
 							</div>
@@ -108,23 +108,14 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th scope="row">1980年</th>
-									<td>昭和55年</td>
-									<td>43歳</td>
-									<td>申年</td>
-								</tr>
-								<tr>
-									<th scope="row">1981年</th>
-									<td>昭和56年</td>
-									<td>42歳</td>
-									<td>戌年</td>
-								</tr>
-								<tr>
-									<th scope="row">1982年</th>
-									<td>昭和57年</td>
-									<td>41歳</td>
-									<td>亥年</td>
+								<tr v-for="obj of getTableLeft()">
+									<th scope="row">{{ obj.year }}</th>
+									<td>{{ obj.wareki.name }}{{ obj.num }}</td>
+									<td>{{ obj.age }}歳</td>
+									<td>
+										<img v-bind:src="obj.eto.src">
+										{{ obj.eto.name }}({{ obj.eto.yomi }})
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -140,31 +131,17 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th scope="row">1980年</th>
-									<td>昭和55年</td>
-									<td>43歳</td>
-									<td>申年</td>
-								</tr>
-								<tr>
-									<th scope="row">1981年</th>
-									<td>昭和56年</td>
-									<td>42歳</td>
-									<td>戌年</td>
-								</tr>
-								<tr>
-									<th scope="row">1982年</th>
-									<td>昭和57年</td>
-									<td>41歳</td>
-									<td>亥年</td>
+								<tr v-for="obj of getTableRight()">
+									<th scope="row">{{ obj.year }}</th>
+									<td>{{ obj.wareki.name }}{{ obj.num }}</td>
+									<td>{{ obj.age }}歳</td>
+									<td>
+										<img v-bind:src="obj.eto.src">
+										{{ obj.eto.name }}({{ obj.eto.yomi }})
+									</td>
 								</tr>
 							</tbody>
 						</table>
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						---
 					</div>
 				</div>
 			</div>

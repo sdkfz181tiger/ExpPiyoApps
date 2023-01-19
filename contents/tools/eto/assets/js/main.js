@@ -10,7 +10,10 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	data: null
+	data: null,
+	tableYearFrom: 0,
+	tableYearTo: 0,
+	tableData: []
 }
 
 // Vue.js
@@ -32,6 +35,30 @@ const app = Vue.createApp({
 		// Axios
 		loadAxios("./assets/js/data.json", json=>{
 			this.data = json.data;
+			// Create data
+			const warekis = this.data.warekis;
+			const etos = this.data.etos;
+			const fullYear = new Date().getFullYear();
+			let counter = 0;// Counter
+			for(let w=0; w<warekis.length; w++){
+				this.yearFrom = warekis[w].from;
+				this.yearTo = warekis[w].to;
+				if(fullYear < this.yearTo) this.yearTo = fullYear;
+				let off = 1;
+				for(let y=this.yearFrom; y<=this.yearTo; y++){
+					const year = y;
+					const wareki = warekis[w];
+					const num = (off==1) ? "元":off;
+					const age = fullYear - y;
+					const eto = etos[counter%12];
+					console.log(year, wareki.name, num, age, eto.name);
+					this.tableData.push({year: y, wareki: wareki, num: num, age: age, eto: eto});
+					off++;
+					counter++;
+				}
+			}
+			this.tableData = this.tableData.reverse();// Reverse
+
 			setTimeout(()=>{
 				this.changeMode(MODE_MAIN);
 			}, 200);
@@ -46,6 +73,17 @@ const app = Vue.createApp({
 			for(let i=0; i<this.actives.length; i++){
 				this.actives[i] = this.mode == i;
 			}
+		},
+		getTableLeft(){
+			const fullYear = new Date().getFullYear();
+			return this.getTableData(fullYear-30, fullYear);
+		},
+		getTableRight(){
+			const fullYear = new Date().getFullYear();
+			return this.getTableData(fullYear-60, fullYear-30);
+		},
+		getTableData(from, to){
+			return this.tableData.filter(obj=> from<=obj.year && obj.year<=to);
 		},
 		showModal(){
 			console.log("showModal");
