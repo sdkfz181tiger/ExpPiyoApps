@@ -83,7 +83,7 @@
 					<div class="col">
 						<label class="form-label" for="txt-counter">文字カウンター</label>
 						<textarea class="form-control" id="txt-counter" rows="7" 
-							placeholder="ここに文字を入力してください" v-model="txtData"></textarea>
+							placeholder="文字数をカウントします" v-model="txtData"></textarea>
 					</div>
 				</div>
 				<div class="row pt-2">
@@ -98,8 +98,8 @@
 					<div class="col-3 text-end">
 						<button class="btn btn-primary btn-sm me-1" 
 							v-bind:class="{disabled: isEmpty()}" v-on:click="clearTxt">
-								<i class="bi-trash-fill me-1"></i>クリア
-							</button>
+							<i class="bi-trash-fill me-1"></i>クリア
+						</button>
 					</div>
 				</div>
 				<div class="row pt-2">
