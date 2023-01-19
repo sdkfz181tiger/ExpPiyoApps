@@ -10,9 +10,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	data: null,
-	txtData: "",
-	flgTag: false
+	data: null
 }
 
 // Vue.js
@@ -48,31 +46,6 @@ const app = Vue.createApp({
 			for(let i=0; i<this.actives.length; i++){
 				this.actives[i] = this.mode == i;
 			}
-		},
-		getLengthTotal(){
-			if(this.flgTag) return this.removeTags(this.txtData).length;
-			return this.txtData.length;
-		},
-		getLengthTrim(){
-			const regex = /\s+/g;
-			if(this.flgTag) return this.removeTags(this.txtData).replace(regex, "").length;
-			return this.txtData.replace(regex, "").length;
-		},
-		getLines(){
-			if(this.txtData.length <= 0) return 0;
-			const regex = /\r|\n|\r\n/g;
-			if(this.flgTag) return this.removeTags(this.txtData).split(regex).length;
-			return this.txtData.split(regex).length;
-		},
-		removeTags(str){
-			const regex = /<.*?>/g;
-			return str.replace(regex, "");
-		},
-		isEmpty(){
-			return this.txtData.length <= 0;
-		},
-		clearTxt(){
-			this.txtData = "";
 		},
 		showModal(){
 			console.log("showModal");
