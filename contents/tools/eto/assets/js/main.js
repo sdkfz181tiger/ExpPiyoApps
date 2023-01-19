@@ -11,6 +11,7 @@ const myData = {
 	myOffcanvas: null,
 	modalText: "",
 	data: null,
+	fullYear: 0,
 	tableYearFrom: 0,
 	tableYearTo: 0,
 	tableData: []
@@ -36,20 +37,20 @@ const app = Vue.createApp({
 		loadAxios("./assets/js/data.json", json=>{
 			this.data = json.data;
 			// Create data
+			this.fullYear = new Date().getFullYear();
 			const warekis = this.data.warekis;
 			const etos = this.data.etos;
-			const fullYear = new Date().getFullYear();
 			let counter = 0;// Counter
 			for(let w=0; w<warekis.length; w++){
 				this.yearFrom = warekis[w].from;
 				this.yearTo = warekis[w].to;
-				if(fullYear < this.yearTo) this.yearTo = fullYear;
+				if(this.fullYear < this.yearTo) this.yearTo = this.fullYear;
 				let off = 1;
 				for(let y=this.yearFrom; y<=this.yearTo; y++){
 					const year = y;
 					const wareki = warekis[w];
 					const num = (off==1) ? "元":off;
-					const age = fullYear - y;
+					const age = this.fullYear - y;
 					const eto = etos[counter%12];
 					console.log(year, wareki.name, num, age, eto.name);
 					this.tableData.push({year: y, wareki: wareki, num: num, age: age, eto: eto});
@@ -75,12 +76,10 @@ const app = Vue.createApp({
 			}
 		},
 		getTableLeft(){
-			const fullYear = new Date().getFullYear();
-			return this.getTableData(fullYear-30, fullYear);
+			return this.getTableData(this.fullYear-30, this.fullYear);
 		},
 		getTableRight(){
-			const fullYear = new Date().getFullYear();
-			return this.getTableData(fullYear-60, fullYear-30);
+			return this.getTableData(this.fullYear-60, this.fullYear-30);
 		},
 		getTableData(from, to){
 			return this.tableData.filter(obj=> from<=obj.year && obj.year<=to);
