@@ -82,7 +82,7 @@
 				<div class="row pt-2">
 					<div class="col">
 						<label class="form-label" for="txt-counter">文字カウンター</label>
-						<textarea class="form-control" id="txt-counter" rows="5" 
+						<textarea class="form-control" id="txt-counter" rows="7" 
 							placeholder="ここに文字を入力してください" v-model="txtData"></textarea>
 					</div>
 				</div>
@@ -95,8 +95,11 @@
 						</div>
 						<!-- Switch(End) -->
 					</div>
-					<div class="col-2 text-end">
-						<button class="btn btn-primary btn-sm me-1">Clear</button>
+					<div class="col-3 text-end">
+						<button class="btn btn-primary btn-sm me-1" 
+							v-bind:class="{disabled: isEmpty()}" v-on:click="clearTxt">
+								<i class="bi-trash-fill me-1"></i>クリア
+							</button>
 					</div>
 				</div>
 				<div class="row pt-2">
@@ -118,11 +121,16 @@
 					<div class="col">
 						<div class="card">
 							<div class="card-body">
-								<h5 class="card-title">Card title</h5>
-								<h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<a href="#" class="card-link">Card link</a>
-								<a href="#" class="card-link">Another link</a>
+								<h6 class="card-title">
+									<i class="bi-pen-fill me-1"></i>文字カウンターの使い方
+								</h6>
+								<p class="card-text">
+									<ul>
+										<li>文字数をカウントします。文章に文字数制限がある場合等にご利用ください。</li>
+										<li>HTMLタグを除いてカウントする事ができます。</li>
+										<li>クリアボタンで入力文字を削除する事ができます。</li>
+									</ul>
+								</p>
 							</div>
 						</div>
 					</div>

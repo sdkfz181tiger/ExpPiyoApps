@@ -68,6 +68,12 @@ const app = Vue.createApp({
 			const regex = /<.*?>/g;
 			return str.replace(regex, "");
 		},
+		isEmpty(){
+			return this.txtData.length <= 0;
+		},
+		clearTxt(){
+			this.txtData = "";
+		},
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
