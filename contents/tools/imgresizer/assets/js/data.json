@@ -1,0 +1,25 @@
+{
+	"data": {
+		"warekis": [
+			{"name": "明治", "yomi": "めいじ", "from": 1868, "to": 1911},
+			{"name": "大正", "yomi": "たいしょう", "from": 1912, "to": 1925},
+			{"name": "昭和", "yomi": "しょうわ", "from": 1926, "to": 1988},
+			{"name": "平成", "yomi": "へいせい", "from": 1989, "to": 2018},
+			{"name": "令和", "yomi": "れいわ", "from": 2019, "to": 9999}
+		],
+		"etos": [
+			{"name": "辰", "yomi": "たつ", "src": "./assets/images/eto_tatu.png"},
+			{"name": "巳", "yomi": "み", "src": "./assets/images/eto_mi.png"},
+			{"name": "午", "yomi": "うま", "src": "./assets/images/eto_uma.png"},
+			{"name": "未", "yomi": "ひつじ", "src": "./assets/images/eto_hituji.png"},
+			{"name": "申", "yomi": "さる", "src": "./assets/images/eto_saru.png"},
+			{"name": "酉", "yomi": "とり", "src": "./assets/images/eto_tori.png"},
+			{"name": "戌", "yomi": "いぬ", "src": "./assets/images/eto_inu.png"},
+			{"name": "亥", "yomi": "い", "src": "./assets/images/eto_i.png"},
+			{"name": "子", "yomi": "ね", "src": "./assets/images/eto_ne.png"},
+			{"name": "丑", "yomi": "うし", "src": "./assets/images/eto_ushi.png"},
+			{"name": "虎", "yomi": "とら", "src": "./assets/images/eto_tora.png"},
+			{"name": "兎", "yomi": "う", "src": "./assets/images/eto_u.png"}
+		]
+	}
+}

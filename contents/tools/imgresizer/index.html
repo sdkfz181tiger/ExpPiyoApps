@@ -8,16 +8,17 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="文字カウンター">
+	<meta name="apple-mobile-web-app-title" content="画像リサイズ">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
-	<title>文字カウンター</title>
+	<title>画像リサイズ</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
+	<link rel="stylesheet" href="./assets/libs/dropzone/dropzone.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="./assets/css/custom.css">
 </head>
@@ -35,7 +36,7 @@
 					</a>
 					<div>
 						<i class="bi-github text-white m-1"></i>
-						<a class="navbar-brand">文字カウンター</a>
+						<a class="navbar-brand">画像リサイズ</a>
 					</div>
 					<button class="navbar-toggler invisible" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
@@ -69,6 +70,9 @@
 		<!-- Main(Start) -->
 		<main>
 
+			<form class="dropzone" id="my-dropzone"
+							action="/file-upload"></form>
+
 			<!-- Loading(Start) -->
 			<div class="position-absolute top-50 start-50 translate-middle" v-if="mode==0">
 				<div class="spinner-border text-primary" role="status">
@@ -81,58 +85,32 @@
 			<div class="container" v-if="mode==1">
 				<div class="row pt-2">
 					<div class="col">
-						<label class="form-label" for="txt-counter">文字カウンター</label>
-						<textarea class="form-control" id="txt-counter" rows="7" 
-							placeholder="文字数をカウントします" v-model="txtData"></textarea>
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						<!-- Switch(Start) -->
-						<div class="form-check form-switch m-1">
-							<input class="form-check-input" id="swHTML" type="checkbox" v-model="flgTag">
-							<label class="form-check-label" for="swHTML">HTMLタグを含めない</label>
-						</div>
-						<!-- Switch(End) -->
-					</div>
-					<div class="col-4 text-end">
-						<button class="btn btn-primary btn-sm me-1" 
-							v-bind:class="{disabled: isEmpty()}" v-on:click="clearTxt">
-							<i class="bi-trash-fill me-1"></i>クリア
-						</button>
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						現在の文字数: {{ getLengthTotal() }}
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						空白と改行を除いた文字数: {{ getLengthTrim() }}
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						行数: {{ getLines() }}
-					</div>
-				</div>
-				<div class="row pt-4">
-					<div class="col">
 						<div class="card">
 							<div class="card-body">
 								<h6 class="card-title">
-									<i class="bi-pen-fill me-1"></i>文字カウンターの使い方
+									<i class="bi-pen-fill me-1"></i>画像リサイズ
 								</h6>
 								<p class="card-text">
 									<ul>
-										<li>文字数をカウントします。文章に文字数制限がある場合等にご利用ください。</li>
-										<li>HTMLタグを除いてカウントする事ができます。</li>
-										<li>クリアボタンで入力文字を削除する事ができます。</li>
+										<li>使い方1</li>
+										<li>使い方2</li>
 									</ul>
 								</p>
 							</div>
 						</div>
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="col">
+						Test
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="col">
+						Test
+					</div>
+					<div class="col">
+						Test
 					</div>
 				</div>
 			</div>
@@ -234,6 +212,7 @@
 	<script src="./assets/libs/axios/axios.min.js"></script>
 	<script src="./assets/libs/howler/howler.min.js"></script>
 	<script src="./assets/libs/pushjs/push.min.js"></script>
+	<script src="./assets/libs/dropzone/dropzone.min.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
 </body>

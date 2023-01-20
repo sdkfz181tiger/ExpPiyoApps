@@ -1,0 +1,149 @@
+/* CSS */
+
+@font-face {
+	font-family: "NotoSans";
+	src: url("../../../../assets/fonts/NotoSansJP-Medium.otf") format("opentype");
+}
+
+@font-face{
+	font-family: "Nicokaku-v2";
+	src: url("../../../../assets/fonts/nicokaku_v2.ttf");
+}
+
+html, body{
+	margin: 0px; padding: 0px;
+	font-family: "NotoSans"; font-size: 1.0rem;
+	/*user-select:none;*/
+}
+
+header{
+	font-family: "Nicokaku-v2";
+}
+
+header i{
+	font-size: 1.2rem;
+}
+
+header .active{
+	border-radius: 0px 0px 10px 10px !important;
+}
+
+main{
+	margin: 80px 0px 80px 0px !important;
+}
+
+main table img{
+	width: auto; height: 1.5rem;
+}
+
+footer{
+	pointer-events: none;
+}
+
+footer div{
+	pointer-events: auto;
+}
+
+footer a{
+	width: 4.2rem; height: 4.2rem;
+	position: relative;
+	pointer-events: auto;
+}
+
+footer a i{
+	position: absolute;
+	left: calc(50% - 1.0rem); top: 14%;
+	font-size: 2.0rem;
+}
+
+.navbar-brand{
+	margin-right: 0px !important; 
+}
+
+.navbar-toggler:focus{
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.toast-container{
+	position: fixed !important; 
+	pointer-events: none;
+	top: 0px; right: 0px;
+}
+
+.toast:not(.showing):not(.show){
+	display: none !important;
+}
+
+/* Timer */
+
+#timer-logo-1{
+	font-size: 4.0rem;
+	line-height: 0.8;
+}
+
+#timer-logo-2{
+	font-size: 3.0rem;
+	line-height: 0.8;
+}
+
+#timer-hms{
+	font-size: 3rem;
+	line-height: 1.0;
+}
+
+#timer-millis{
+	font-size: 1rem;
+	line-height: 0.5;
+}
+
+.btn-icon{
+	line-height: 0.5;
+}
+
+/* Switch */
+/*
+.form-check-input{
+	clear: left;
+}
+
+.form-check-label{
+	font-size: 1.0rem;
+}
+
+.form-switch.form-switch-sm{
+	margin-bottom: 0.5rem;
+}
+
+.form-switch.form-switch-sm .form-check-input{
+	height: 1rem; width: calc(1rem + 0.75rem);
+	border-radius: 2rem;
+}
+
+.form-switch.form-switch-md{
+	margin-bottom: 1rem;
+}
+
+.form-switch.form-switch-md .form-check-input{
+	height: 1.5rem; width: calc(2rem + 0.75rem);
+	border-radius: 3rem;
+}
+
+.form-switch.form-switch-lg{
+	margin-bottom: 1.5rem;
+}
+
+.form-switch.form-switch-lg .form-check-input{
+	height: 2rem; width: calc(3rem + 0.75rem);
+	border-radius: 4rem;
+}
+
+.form-switch.form-switch-xl{
+	margin-bottom: 2rem;
+}
+
+.form-switch.form-switch-xl .form-check-input{
+	height: 2.5rem; width: calc(4rem + 0.75rem);
+	border-radius: 5rem;
+}
+*/
