@@ -48,10 +48,6 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		readyFilepond(){
-			const elem = document.getElementById("my-filepond");
-			const pond = FilePond.create(elem);
-		},
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
@@ -78,9 +74,20 @@ app.component("filepond", {
 		}
 	},
 	mounted(){
-		console.log("Ready!?");
+		console.log("Component is mounted!!");
 		const elem = document.getElementById("my-filepond");
-		const pond = FilePond.create(elem);
+		const pond = FilePond.create(elem, {
+			maxFiles: 3,
+			allowBrowse: false
+		});
+		pond.on("addfile", (error, file)=>{
+			if(error){
+				console.log("Error:", error);
+				return;
+			}
+			console.log(file.origin);
+			console.log(file.file, file.file.name, file.file.type);
+		});
 	},
 	template: '<input id="my-filepond" type="file"/>'
 });
