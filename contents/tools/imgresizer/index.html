@@ -99,16 +99,13 @@
 					</div>
 				</div>
 				<div class="row pt-4">
-					<div class="col">
-						<filepond></filepond>
+					<div class="col" id="imgs">
+						<img class="m-2" v-bind:src="src" v-for="src of srcs">
 					</div>
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						Test
-					</div>
-					<div class="col">
-						Test
+						<filepond v-on:on-base64="readyBase64"></filepond>
 					</div>
 				</div>
 			</div>
@@ -119,10 +116,10 @@
 
 		<!-- Footer(Start) -->
 		<footer class="fixed-bottom text-end">
-			<a class="btn btn-primary rounded-circle shadow m-3" href="#"
+			<!-- <a class="btn btn-primary rounded-circle shadow m-3" href="#"
 				v-if="mode!=0" v-on:click="showModal()">
 				<i class="bi-balloon-fill" role="img"></i>
-			</a>
+			</a> -->
 			<!-- <div id="im-xxx"></div> -->
 		</footer>
 		<!-- Footer(End) -->
