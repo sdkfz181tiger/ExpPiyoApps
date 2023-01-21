@@ -8,13 +8,13 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="画像リサイズ">
+	<meta name="apple-mobile-web-app-title" content="画像はんてい">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
-	<title>画像リサイズ</title>
+	<title>画像はんてい</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
@@ -37,7 +37,7 @@
 					</a>
 					<div>
 						<i class="bi-github text-white m-1"></i>
-						<a class="navbar-brand">画像リサイズ</a>
+						<a class="navbar-brand">画像はんてい</a>
 					</div>
 					<button class="navbar-toggler invisible" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
@@ -86,7 +86,7 @@
 						<div class="card">
 							<div class="card-body">
 								<h6 class="card-title">
-									<i class="bi-pen-fill me-1"></i>画像リサイズ
+									<i class="bi-pen-fill me-1"></i>つかいかた
 								</h6>
 								<p class="card-text">
 									<ul>
@@ -98,8 +98,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="row pt-4">
-					<div class="col" id="imgs">
+				<div class="row pt-4" v-if="0<srcs.length">
+					<div class="col overflow-scroll" id="imgs">
 						<img class="m-2" v-bind:src="src" v-for="src of srcs">
 					</div>
 				</div>

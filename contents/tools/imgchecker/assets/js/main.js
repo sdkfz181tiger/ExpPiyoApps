@@ -82,7 +82,10 @@ app.component("filepond", {
 		FilePond.registerPlugin(FilePondPluginImagePreview);
 		FilePond.registerPlugin(FilePondPluginFileEncode);
 		const elem = document.getElementById("my-filepond");
-		const pond = FilePond.create(elem);
+		const pond = FilePond.create(elem, {
+			allowMultiple: false,
+			allowReplace: true
+		});
 		pond.on("addfile", (error, file)=>{
 			if(error){
 				console.log("Error:", error);
