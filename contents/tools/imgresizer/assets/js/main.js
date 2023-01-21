@@ -48,6 +48,10 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
+		readyFilepond(){
+			const elem = document.getElementById("my-filepond");
+			const pond = FilePond.create(elem);
+		},
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
@@ -56,7 +60,7 @@ const app = Vue.createApp({
 		},
 		doAnimate(id, anim){
 			console.log("doAnimate:", id, anim);
-			const elem = document.getElementById(id);
+			const elem = document.getElementById(id); 
 			elem.setAttribute("class", "animate__animated " + anim);
 			elem.addEventListener("animationend", ()=>{
 				elem.removeEventListener("animationend", this);
@@ -67,8 +71,18 @@ const app = Vue.createApp({
 });
 
 // Components
-app.component("greeting", {
-	template: "<p>Good morning!!</p>"
+app.component("filepond", {
+	data(){
+		return {
+			msg: "This is my Component!!"
+		}
+	},
+	mounted(){
+		console.log("Ready!?");
+		const elem = document.getElementById("my-filepond");
+		const pond = FilePond.create(elem);
+	},
+	template: '<input id="my-filepond" type="file"/>'
 });
 
 app.mount("#app");
