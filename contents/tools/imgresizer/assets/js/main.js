@@ -70,23 +70,26 @@ const app = Vue.createApp({
 app.component("filepond", {
 	data(){
 		return {
-			msg: "This is my Component!!"
+			msg: "This is my Component!!",
+			name: "",
+			type: "",
+			base64: ""
 		}
 	},
 	mounted(){
 		console.log("Component is mounted!!");
+		FilePond.registerPlugin(FilePondPluginImagePreview);
+		FilePond.registerPlugin(FilePondPluginFileEncode);
 		const elem = document.getElementById("my-filepond");
-		const pond = FilePond.create(elem, {
-			maxFiles: 3,
-			allowBrowse: false
-		});
+		const pond = FilePond.create(elem);
 		pond.on("addfile", (error, file)=>{
 			if(error){
 				console.log("Error:", error);
 				return;
 			}
-			console.log(file.origin);
-			console.log(file.file, file.file.name, file.file.type);
+			this.name = file.file.name;
+			this.type = file.file.type;
+			this.base64 = file.getFileEncodeBase64String();
 		});
 	},
 	template: '<input id="my-filepond" type="file"/>'
