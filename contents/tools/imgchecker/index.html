@@ -8,13 +8,13 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="画像はんてい">
+	<meta name="apple-mobile-web-app-title" content="画像判定">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
-	<title>画像はんてい</title>
+	<title>画像判定</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
@@ -37,7 +37,7 @@
 					</a>
 					<div>
 						<i class="bi-github text-white m-1"></i>
-						<a class="navbar-brand">画像はんてい</a>
+						<a class="navbar-brand">画像判定</a>
 					</div>
 					<button class="navbar-toggler invisible" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
@@ -98,9 +98,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="row pt-4" v-if="0<srcs.length">
-					<div class="col overflow-scroll" id="imgs">
-						<img class="m-2" v-bind:src="src" v-for="src of srcs">
+				<div class="row pt-4" v-if="0<photos.length">
+					<div class="col" id="imgs">
+						<img class="m-2" v-bind:src="photo.img.src" v-for="photo of photos">
 					</div>
 				</div>
 				<div class="row pt-4">
@@ -146,15 +146,15 @@
 		<!-- Modal(Start) -->
 		<div class="container mt-5 text-center">
 			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
-				aria-labelledby="modalLabel" aria-hidden="true">
+				aria-labelledby="modalTitle" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="modalLabel">***</h5>
+							<h5 class="modal-title" id="modalTitle">***</h5>
 							<button type="button" class="btn-close"
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
-						<div class="modal-body">
+						<div class="modal-body" id="modalBody">
 							<div class="container-fluid">
 								Hello, Modal!!
 							</div>
@@ -162,9 +162,9 @@
 						<div class="modal-footer">
 							<div class="container-fluid">
 								<button type="button" class="btn btn-primary float-end"
-									data-bs-dismiss="modal" v-on:click="clickTitle()">Submit</button>
-								<button type="button" class="btn btn-secondary me-2 float-end" 
-									data-bs-dismiss="modal">Cancel</button>
+									data-bs-dismiss="modal">Dismiss</button>
+								<!-- <button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button> -->
 							</div>
 						</div>
 					</div>
@@ -209,7 +209,9 @@
 	<script src="./assets/libs/pushjs/push.min.js"></script>
 	<script src="./assets/libs/filepond/filepond.min.js"></script>
 	<script src="./assets/libs/filepond-preview/filepond-plugin-image-preview.js"></script>
+	<script src="./assets/libs/filepond-validation/filepond-plugin-file-validate-type.js"></script>
 	<script src="./assets/libs/filepond-encode/filepond-plugin-file-encode.js"></script>
+	<script src="//unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
 </body>

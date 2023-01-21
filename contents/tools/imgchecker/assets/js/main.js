@@ -11,7 +11,7 @@ const myData = {
 	myOffcanvas: null,
 	modalText: "",
 	data: null,
-	srcs: []
+	photos: []
 }
 
 // Vue.js
@@ -50,12 +50,35 @@ const app = Vue.createApp({
 		},
 		readyBase64(base64){
 			console.log("readyBase64");
-			this.srcs.push("data:image/png;base64," + base64);
+			// Photo
+			const photo = {};
+			photo.img = new Image();
+			photo.img.src = "data:image/png;base64," + base64;
+			this.photos.push(photo);
+			this.startDetection(this.photos[this.photos.length-1]);
 		},
-		showModal(){
+		async startDetection(photo){
+			// Detector
+			const detector = await ml5.objectDetector("yolo", ()=>{
+				detector.detect(photo.img, (err, results)=>{
+					if(err){
+						showToast("Error", "0 min ago.", "Something went wrong...");
+						return;
+					}
+					photo.msgs = [];
+					for(let result of results){
+						const msg = result.label + ":" + Math.floor(result.confidence * 100);
+						photo.msgs.push(msg);
+						showToast("Success", "0 min ago.", msg);
+					}
+				});
+			});
+		},
+		showModal(title, body){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
-			elem.querySelector("#modalLabel").innerText = "Modal";
+			elem.querySelector("#modalTitle").innerText = title;
+			elem.querySelector("#modalBody").innerText = body;
 			bootstrap.Modal.getInstance(elem).show();
 		},
 		doAnimate(id, anim){
@@ -80,11 +103,13 @@ app.component("filepond", {
 	mounted(){
 		console.log("Component is mounted!!");
 		FilePond.registerPlugin(FilePondPluginImagePreview);
+		FilePond.registerPlugin(FilePondPluginFileValidateType);
 		FilePond.registerPlugin(FilePondPluginFileEncode);
 		const elem = document.getElementById("my-filepond");
 		const pond = FilePond.create(elem, {
 			allowMultiple: false,
-			allowReplace: true
+			allowReplace: true,
+			acceptedFileTypes: ["image/png", "image/jpeg", "image/webp"]
 		});
 		pond.on("addfile", (error, file)=>{
 			if(error){
