@@ -98,7 +98,28 @@
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						<webcam></webcam>
+						<webcam v-on:on-detected="onDetected"></webcam>
+					</div>
+					<div class="col">
+						Detected: {{ results.length }}
+						<table class="table">
+							<tr>
+								<th>label</th>
+								<th>%</th>
+								<th>x</th>
+								<th>y</th>
+								<th>w</th>
+								<th>h</th>
+							</tr>
+							<tr v-for="result of results">
+								<td>{{ result.label }}</td>
+								<td>{{ result.persent }}</td>
+								<td>{{ result.x }}</td>
+								<td>{{ result.y }}</td>
+								<td>{{ result.w }}</td>
+								<td>{{ result.h }}</td>
+							</tr>
+						</table>
 					</div>
 				</div>
 			</div>

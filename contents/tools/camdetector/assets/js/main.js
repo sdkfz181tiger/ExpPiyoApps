@@ -11,7 +11,7 @@ const myData = {
 	myOffcanvas: null,
 	modalText: "",
 	data: null,
-	photos: []
+	results: []
 }
 
 // Vue.js
@@ -47,6 +47,11 @@ const app = Vue.createApp({
 			for(let i=0; i<this.actives.length; i++){
 				this.actives[i] = this.mode == i;
 			}
+		},
+		onDetected(results){
+			//console.log("onDetected:", results);
+			if(!results || results.length <= 0) return;
+			this.results = results;
 		},
 		showModal(title, body){
 			console.log("showModal");
@@ -88,15 +93,44 @@ app.component("webcam", {
 	mounted(){
 		console.log("Component is mounted!!");
 		// Video
-		const video = document.getElementById("myVideo");
-		navigator.mediaDevices.getUserMedia({
-			video: true, audio: false,
-		}).then(stream=>{
-			video.srcObject = stream;
+		this.readyWebcam();
+	},
+	methods:{
+		async readyWebcam(){
+			console.log("readyWebcam");
+			// WebCam
+			const video = document.getElementById("myVideo");
+			const capture = await navigator.mediaDevices.getUserMedia({
+				video: true, audio: false,
+			});
+			video.srcObject = capture;
 			video.play();
-		}).catch(e => {
-		  console.log(e);
-		});
+			// Detector
+			const detector = await ml5.objectDetector("yoro", ()=>{
+				this.startDetection(video, detector);
+			});
+		},
+		startDetection(video, detector){
+			//console.log("startDetection");
+			detector.detect(video, (err, results)=>{
+				if(err){
+					console.log(err);
+					showToast("Error", "0 min ago.", err);
+					return;
+				}
+				results.map(result=>{
+					result.persent = Math.floor(result.confidence*100) + "%";
+					result.x = Math.floor(result.x);
+					result.y = Math.floor(result.y);
+					result.w = Math.floor(result.width);
+					result.h = Math.floor(result.height);
+				});
+				setTimeout(()=>{
+					this.startDetection(video, detector);
+					this.$emit("on-detected", results);// Emit
+				}, 1000);
+			});
+		}
 	},
 	template: '<video id="myVideo"></video>'
 });
