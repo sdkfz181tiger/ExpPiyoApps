@@ -98,13 +98,12 @@ app.component("webcam", {
 	methods:{
 		async readyWebcam(){
 			console.log("readyWebcam");
+			// Mobile
+			const isMobile = navigator.userAgentData.mobile;
+			const option = (isMobile) ? {video: {facingMode: {exact: "environment"}}}:{video: true};
 			// WebCam
 			const video = document.getElementById("myVideo");
-			const capture = await navigator.mediaDevices.getUserMedia({
-				video: {
-					facingMode: {exact: "environment"}
-				}, audio: false
-			});
+			const capture = await navigator.mediaDevices.getUserMedia(option);
 			video.srcObject = capture;
 			video.play();
 			// Detector
