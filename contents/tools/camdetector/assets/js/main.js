@@ -101,7 +101,7 @@ app.component("webcam", {
 			// WebCam
 			const video = document.getElementById("myVideo");
 			const capture = await navigator.mediaDevices.getUserMedia({
-				video: true, audio: false,
+				video: true, audio: false, facingMode: {exact: "environment"}
 			});
 			video.srcObject = capture;
 			video.play();
