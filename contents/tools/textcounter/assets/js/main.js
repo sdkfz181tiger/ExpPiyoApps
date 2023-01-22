@@ -93,8 +93,15 @@ const app = Vue.createApp({
 });
 
 // Components
-app.component("greeting", {
-	template: "<p>Good morning!!</p>"
+app.component("imobile", {
+	props: ["pid", "mid", "asid", "id"],
+	created(){
+		// Banner
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
+			pid: this.pid, mid: this.mid, asid: this.asid, 
+			type: "banner", display: "inline", elementid: this.id});
+	},
+	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
 });
 
 app.mount("#app");
