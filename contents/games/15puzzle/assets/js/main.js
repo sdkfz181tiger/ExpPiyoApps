@@ -22,6 +22,7 @@ function setup(){
 	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
 	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
 	const canvas = createCanvas(cW, cH);
+	canvas.parent("game");
 	textFont(font);
 	frameRate(60);
 	noSmooth();
