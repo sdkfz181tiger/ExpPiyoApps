@@ -102,8 +102,7 @@ app.component("webcam", {
 		async readyWebcam(){
 			console.log("readyWebcam");
 			// Mobile
-			const isMobile = navigator.userAgentData.mobile;
-			console.log("isMobile:", isMobile);
+			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
 			const optionMobile = {video: {facingMode: {exact: "environment"}}};
 			const option = (isMobile) ? optionMobile:optionPC;
