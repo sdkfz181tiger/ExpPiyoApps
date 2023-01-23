@@ -32,9 +32,19 @@ main{
 	margin: 80px 0px 80px 0px !important;
 }
 
-main #myVideo{
+main #webcam{
+	position: relative;
+}
+
+#webcam video{
 	width: 100%; height: auto;
-	background-color: pink;
+	position: absolute;
+	background-color: silver;
+}
+
+#webcam canvas{
+	width: 100%; height: auto;
+	position: absolute;
 }
 
 footer{

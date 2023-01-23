@@ -97,9 +97,6 @@
 					</div>
 				</div>
 				<div class="row pt-4">
-					<div class="col-4">
-						<webcam v-on:on-detected="onDetected"></webcam>
-					</div>
 					<div class="col">
 						Detected: {{ results.length }}
 						<table class="table">
@@ -121,6 +118,15 @@
 							</tr>
 						</table>
 					</div>
+				</div>
+				<div class="row pt-2">
+					<div class="col-3"></div>
+					<div class="col-6">
+						<div id="webcam">
+							<webcam v-on:on-detected="onDetected"></webcam>
+						</div>
+					</div>
+					<div class="col-3"></div>
 				</div>
 			</div>
 			<!-- TextCounter(End) -->

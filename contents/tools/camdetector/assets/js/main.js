@@ -87,7 +87,10 @@ app.component("imobile", {
 app.component("webcam", {
 	data(){
 		return {
-			msg: "This is my Component!!"
+			msg: "This is my Component!!",
+			videoWidth: 480,
+			videoHeight: 320,
+			ctx: null
 		}
 	},
 	mounted(){
@@ -100,11 +103,27 @@ app.component("webcam", {
 			console.log("readyWebcam");
 			// Mobile
 			const isMobile = navigator.userAgentData.mobile;
-			const option = (isMobile) ? {video: {facingMode: {exact: "environment"}}}:{video: true};
+			console.log("isMobile:", isMobile);
+			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			const option = (isMobile) ? optionMobile:optionPC;
 			// WebCam
-			const video = document.getElementById("myVideo");
+			const video = document.getElementsByTagName("video")[0];
 			const capture = await navigator.mediaDevices.getUserMedia(option);
 			video.srcObject = capture;
+			video.addEventListener("play", (e)=>{
+				// Overlay
+				const overlay = document.createElement("canvas");
+				overlay.width = this.videoWidth;
+				overlay.height = this.videoHeight;
+				video.after(overlay);
+				this.ctx = overlay.getContext("2d");
+				this.ctx.strokeStyle = "lime";
+				this.ctx.lineWidth = 4;
+				this.ctx.clearRect(0, 0, this.videoWidth, this.videoHeight);
+				this.ctx.strokeRect(0, 0, this.videoWidth, this.videoHeight);
+				this.ctx.fill();
+			});
 			video.play();
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
@@ -119,13 +138,16 @@ app.component("webcam", {
 					showToast("Error", "0 min ago.", err);
 					return;
 				}
+				this.ctx.clearRect(0, 0, this.videoWidth, this.videoHeight);
 				results.map(result=>{
 					result.persent = Math.floor(result.confidence*100) + "%";
 					result.x = Math.floor(result.x);
 					result.y = Math.floor(result.y);
 					result.w = Math.floor(result.width);
 					result.h = Math.floor(result.height);
+					this.ctx.strokeRect(result.x, result.y, result.w, result.h);
 				});
+				this.ctx.fill();
 				setTimeout(()=>{
 					this.startDetection(video, detector);
 					this.$emit("on-detected", results);// Emit
@@ -133,7 +155,7 @@ app.component("webcam", {
 			});
 		}
 	},
-	template: '<video id="myVideo"></video>'
+	template: '<video></video>'
 });
 
 app.mount("#app");
