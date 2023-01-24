@@ -141,6 +141,8 @@ app.component("webcam", {
 				// Context
 				const width = this.video.clientWidth;
 				const height = this.video.clientHeight;
+				const rate = width / this.video.videoWidth;
+
 				this.canvas.width = width;
 				this.canvas.height = height;
 				const ctx = this.canvas.getContext("2d");
@@ -150,10 +152,10 @@ app.component("webcam", {
 				ctx.strokeRect(0, 0, width, height);
 				results.map(result=>{
 					result.persent = Math.floor(result.confidence*100) + "%";
-					result.x = Math.floor(result.x);
-					result.y = Math.floor(result.y);
-					result.w = Math.floor(result.width);
-					result.h = Math.floor(result.height);
+					result.x = Math.floor(result.x * rate);
+					result.y = Math.floor(result.y * rate);
+					result.w = Math.floor(result.width * rate);
+					result.h = Math.floor(result.height * rate);
 					ctx.strokeRect(result.x, result.y, result.w, result.h);
 				});
 				ctx.fill();
