@@ -142,7 +142,6 @@ app.component("webcam", {
 				const width = this.video.clientWidth;
 				const height = this.video.clientHeight;
 				const rate = width / this.video.videoWidth;
-
 				this.canvas.width = width;
 				this.canvas.height = height;
 				const ctx = this.canvas.getContext("2d");
