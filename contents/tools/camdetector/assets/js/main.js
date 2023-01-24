@@ -98,7 +98,8 @@ app.component("webcam", {
 			msg: "This is my Component!!",
 			videoWidth: 480,
 			videoHeight: 320,
-			ctx: null
+			video: null,
+			canvas: null
 		}
 	},
 	mounted(){
@@ -115,26 +116,18 @@ app.component("webcam", {
 			const optionMobile = {video: {facingMode: {exact: "environment"}}};
 			const option = (isMobile) ? optionMobile:optionPC;
 			// WebCam
-			const video = document.getElementsByTagName("video")[0];
+			this.video = document.getElementsByTagName("video")[0];
 			const capture = await navigator.mediaDevices.getUserMedia(option);
-			video.srcObject = capture;
-			video.addEventListener("play", (e)=>{
+			this.video.srcObject = capture;
+			this.video.addEventListener("play", (e)=>{
 				// Overlay
-				const overlay = document.createElement("canvas");
-				overlay.width = this.videoWidth;
-				overlay.height = this.videoHeight;
-				video.after(overlay);
-				this.ctx = overlay.getContext("2d");
-				this.ctx.strokeStyle = "lime";
-				this.ctx.lineWidth = 4;
-				this.ctx.clearRect(0, 0, this.videoWidth, this.videoHeight);
-				this.ctx.strokeRect(0, 0, this.videoWidth, this.videoHeight);
-				this.ctx.fill();
+				this.canvas = document.createElement("canvas");
+				this.video.after(this.canvas);
 			});
-			video.play();
+			this.video.play();
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
-				this.startDetection(video, detector);
+				this.startDetection(this.video, detector);
 			});
 		},
 		startDetection(video, detector){
@@ -145,16 +138,25 @@ app.component("webcam", {
 					showToast("Error", "0 min ago.", err);
 					return;
 				}
-				this.ctx.clearRect(0, 0, this.videoWidth, this.videoHeight);
+				// Context
+				const width = this.video.clientWidth;
+				const height = this.video.clientHeight;
+				this.canvas.width = width;
+				this.canvas.height = height;
+				const ctx = this.canvas.getContext("2d");
+				ctx.strokeStyle = "lime";
+				ctx.lineWidth = 4;
+				ctx.clearRect(0, 0, width, height);
+				ctx.strokeRect(0, 0, width, height);
 				results.map(result=>{
 					result.persent = Math.floor(result.confidence*100) + "%";
 					result.x = Math.floor(result.x);
 					result.y = Math.floor(result.y);
 					result.w = Math.floor(result.width);
 					result.h = Math.floor(result.height);
-					this.ctx.strokeRect(result.x, result.y, result.w, result.h);
+					ctx.strokeRect(result.x, result.y, result.w, result.h);
 				});
-				this.ctx.fill();
+				ctx.fill();
 				setTimeout(()=>{
 					this.startDetection(video, detector);
 					this.$emit("on-detected", results);// Emit
