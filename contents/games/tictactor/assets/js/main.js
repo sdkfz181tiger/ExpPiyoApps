@@ -9,7 +9,13 @@ const FILES_IMG = [
 ];
 
 let font, cX, cY;
-let pad, size, corner;
+let gSize, sX, sY;
+
+const board  = [
+	[0, 0, 0],
+	[0, 0, 0],
+	[0, 0, 0]
+];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -23,21 +29,16 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(60);
+	frameRate(8);
 	noSmooth();
 
 	cX = Math.floor(width * 0.5);
 	cY = Math.floor(height * 0.5);
+	gSize = (width<height)?width/4:height/4;
+	sX = cX - (gSize * SIZE) * 0.5;
+	sY = cY - (gSize * SIZE) * 0.5;
 
-	// Padding, Size, Corner
-	if(width < height){
-		pad = width * 0.2;
-		size = pad * 0.95;
-	}else{
-		pad = height * 0.15;
-		size = pad * 0.95;
-	}
-	corner = size * 0.1;
+	if(turn == com) think(board);// Com
 }
 
 function draw(){
@@ -45,19 +46,84 @@ function draw(){
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
-	// Score
-	fill("#333333");
+	// Board
+	for(let r=0; r<SIZE; r++){
+		for(let c=0; c<SIZE; c++){
+			const x = sX + gSize*c;
+			const y = sY + gSize*r;
+			fill("silver");
+			noStroke();
+			square(x, y, gSize-2);
+			if(board[r][c] == MARK_O) drawCircle(x, y, gSize);
+			if(board[r][c] == MARK_X) drawCross(x, y, gSize);
+		}
+	}
+
+	// Text
+	fill("#333333"); noStroke();
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
 	text("oxゲーム", cX, FONT_SIZE * 0.5);
+
+	// You
+	if(player == MARK_O){
+		text("You:o", cX, FONT_SIZE*0.5 + 64);
+	}else{
+		text("You:x", cX, FONT_SIZE*0.5 + 64);
+	}
+
+	if(isWon(board, player)){
+		text("You win!!", cX, cY+gSize*2);
+		return;
+	}
+	if(isWon(board, com)){
+		text("You lose...", cX, cY+gSize*2);
+		return;
+	}
+	if(isFilled(board)){
+		text("Even", cX, cY+gSize*2);
+		return;
+	}
 }
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	btnAuto.press(mouseX, mouseY);
-	checkTiles();
+	touchBoard();
 }
 
 function touchStarted(){
-	btnAuto.press(mouseX, mouseY);
-	checkTiles();
+	touchBoard();
+}
+
+function touchBoard(){
+	const r = Math.floor((mouseY-sY) / gSize);
+	const c = Math.floor((mouseX-sX) / gSize);
+	if(r < 0 || SIZE-1<r) return;
+	if(c < 0 || SIZE-1<c) return;
+	// Player
+	if(turn != player) return;
+	if(board[r][c] != MARK_N) return;
+	if(isFinished(board)) return;// Finished
+	board[r][c] = player;// Put
+	console.log(r, c);
+	turn = nextTurn(player);// Next
+	if(!isFinished(board)) think(board);// Com
+}
+
+function drawCircle(x, y, r){
+	noFill();
+	stroke("darkred");
+	strokeWeight(10);
+	circle(x+r/2, y+r/2, r/2);
+}
+
+function drawCross(x, y, s){
+	noFill();
+	stroke("darkblue");
+	strokeWeight(10);
+	const cX = x + s/2;
+	const cY = y + s/2;
+	line(cX, cY, cX-s/4, cY-s/4);
+	line(cX, cY, cX+s/4, cY-s/4);
+	line(cX, cY, cX-s/4, cY+s/4);
+	line(cX, cY, cX+s/4, cY+s/4);
 }
