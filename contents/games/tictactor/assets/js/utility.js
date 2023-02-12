@@ -50,7 +50,7 @@ function think(board){
 			if(board[r][c] != MARK_N) continue;
 			board[r][c] = com;// Put
 			const next = nextTurn(com);// Next
-			const score = minmax(board, next, 0);
+			const score = alphabeta(board, next, 0, -Infinity, Infinity);
 			if(bestScore < score){
 				bestScore = score;
 				choise.r = r;
@@ -66,8 +66,8 @@ function think(board){
 	turn = nextTurn(com);// Next
 }
 
-function minmax(board, turn, depth){
-	const point = 10 - depth;// Point
+function alphabeta(board, turn, depth, alpha, beta){
+	const point = 100 - depth;// Point
 	// Win / Lose
 	if(isWon(board, MARK_O)){
 		return (MARK_O==com)?point:-point;
@@ -79,31 +79,31 @@ function minmax(board, turn, depth){
 
 	// COM / Player
 	if(turn == com){
-		let bestScore = Infinity * -1;
 		const next = nextTurn(turn);
 		for(let r=0; r<SIZE; r++){
 			for(let c=0; c<SIZE; c++){
 				if(board[r][c] != MARK_N) continue;
 				board[r][c] = turn;// COM
-				const score = minmax(board, next, depth+1);
-				bestScore = Math.max(bestScore, score);// Max
+				const score = alphabeta(board, next, depth+1, alpha, beta);
+				alpha = Math.max(alpha, score);// Max
 				board[r][c] = MARK_N;// Reset
+				if(beta <= alpha) break;// Beta cut!!
 			}
 		}
-		return bestScore;
+		return alpha;
 	}else{
-		let bestScore = Infinity;
 		const next = nextTurn(turn);
 		for(let r=0; r<SIZE; r++){
 			for(let c=0; c<SIZE; c++){
 				if(board[r][c] != MARK_N) continue;
 				board[r][c] = turn;// Player
-				const score = minmax(board, next, depth+1);
-				bestScore = Math.min(bestScore, score);// Min
+				const score = alphabeta(board, next, depth+1, alpha, beta);
+				beta = Math.min(beta, score);// Min
 				board[r][c] = MARK_N;// Reset
+				if(beta <= alpha) break;// Alpha cut!!
 			}
 		}
-		return bestScore;
+		return beta;
 	}
 }
 
