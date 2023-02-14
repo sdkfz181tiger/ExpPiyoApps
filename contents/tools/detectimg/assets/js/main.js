@@ -54,8 +54,10 @@ const app = Vue.createApp({
 			const photo = {};
 			photo.img = new Image();
 			photo.img.src = "data:image/png;base64," + base64;
+			photo.img.onload = (e)=>{
+				this.startDetection(this.photos[this.photos.length-1]);
+			}
 			this.photos.push(photo);
-			this.startDetection(this.photos[this.photos.length-1]);
 		},
 		async startDetection(photo){
 			// Detector
