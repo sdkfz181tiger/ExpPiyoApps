@@ -98,14 +98,14 @@
 						</div>
 					</div>
 				</div>
-				<div class="row pt-4" v-if="0<photos.length">
-					<div class="col" id="imgs">
-						<img class="m-2" v-bind:src="photo.img.src" v-for="photo of photos">
-					</div>
-				</div>
 				<div class="row pt-4">
 					<div class="col">
 						<filepond v-on:on-base64="readyBase64"></filepond>
+					</div>
+				</div>
+				<div class="row pt-4" v-if="0<photos.length">
+					<div class="col" id="imgs">
+						<img class="m-2" v-bind:src="photo.img.src" v-for="photo of photos">
 					</div>
 				</div>
 			</div>
