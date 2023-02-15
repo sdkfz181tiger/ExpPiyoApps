@@ -10,8 +10,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	data: null,
-	results: []
+	data: null
 }
 
 // Vue.js
@@ -48,10 +47,8 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		onDetected(results){
-			//console.log("onDetected:", results);
-			if(!results || results.length <= 0) return;
-			this.results = results;
+		onDetected(base64){
+			console.log("onDetected:", base64);
 		},
 		showModal(title, body){
 			console.log("showModal");
@@ -99,7 +96,7 @@ app.component("webcam", {
 			videoWidth: 480,
 			videoHeight: 320,
 			video: null,
-			canvas: null
+			overlay: null
 		}
 	},
 	mounted(){
@@ -121,26 +118,33 @@ app.component("webcam", {
 			this.video.srcObject = capture;
 			this.video.addEventListener("canplay", (e)=>{
 				// Overlay
-				this.canvas = document.createElement("canvas");
-				this.canvas.width = this.video.clientWidth;
-				this.canvas.height = this.video.clientHeight;
-				this.video.after(this.canvas);
+				this.overlay = document.createElement("canvas");
+				this.overlay.width = this.video.clientWidth;
+				this.overlay.height = this.video.clientHeight;
+				this.video.after(this.overlay);
+				this.drawGrid();
 				this.startDetection();// Detection
 			});
 			this.video.play();
 		},
 		startDetection(){
 			console.log("startDetection");
-			this.drawGrid();
+			const width = this.video.clientWidth;
+			const height = this.video.clientHeight;
+			const capture = document.getElementById("myCapture");
+			capture.width = width;
+			capture.height = height;
+			capture.getContext("2d").drawImage(this.video, 0, 0, width, height);
 
-
-			setTimeout(()=>{this.startDetection();}, 3000);
+			const base64 = "This is base64!!";
+			this.$emit("on-detected", base64);// Emit
+			setTimeout(()=>{this.startDetection();}, 5000);
 		},
 		drawGrid(){
 			const width = this.video.clientWidth;
 			const height = this.video.clientHeight;
 			const rate = width / this.video.videoWidth;
-			const ctx = this.canvas.getContext("2d");
+			const ctx = this.overlay.getContext("2d");
 			ctx.strokeStyle = "lime";
 			ctx.lineWidth = 2;
 			ctx.clearRect(0, 0, width, height);
