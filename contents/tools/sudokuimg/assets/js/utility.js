@@ -115,6 +115,7 @@ function scanImg(cvs, img, letters){
 	const gSize = img.width / SD_SIZE;
 	// Scan
 	for(let letter of letters){
+		if(letter.matches.length<=0) continue;
 		const n = letter.matches[0].letter;
 		if(n == "" | n == " " | n == "\t") continue;
 		const x = letter.x;
@@ -130,6 +131,7 @@ function scanImg(cvs, img, letters){
 		ctx.fillStyle = "orange";
 		ctx.fillRect(x, y, w, h);
 	}
+	if(letters.length <= 0) return;
 	solveSudoku(cvs, table, 0);// Solve
 }
 

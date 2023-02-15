@@ -123,7 +123,7 @@ app.component("webcam", {
 				this.overlay.height = this.video.clientHeight;
 				this.video.after(this.overlay);
 				this.drawGrid();
-				this.startDetection();// Detection
+				setTimeout(()=>{this.startDetection();}, 2000);
 			});
 			this.video.play();
 		},
@@ -131,11 +131,18 @@ app.component("webcam", {
 			console.log("startDetection");
 			const width = this.video.clientWidth;
 			const height = this.video.clientHeight;
+			const gNum = 9;
+			const gSize = ((width<height)?width:height) / gNum;
+			const sX = Math.floor(width / 2 - gSize*gNum / 2);
+			const sY = Math.floor(height / 2 - gSize*gNum / 2);
 			const capture = document.getElementById("myCapture");
-			capture.width = width;
-			capture.height = height;
-			capture.getContext("2d").drawImage(this.video, 0, 0, width, height);
-
+			capture.width = gSize * gNum;
+			capture.height = gSize * gNum;
+			capture.getContext("2d").drawImage(this.video, -sX, -sY, width, height);
+			// OCRAD
+			OCRAD(capture, {verbose: true, numeric: true}, (e)=>{
+				scanImg(capture, e.letters);
+			});
 			const base64 = "This is base64!!";
 			this.$emit("on-detected", base64);// Emit
 			setTimeout(()=>{this.startDetection();}, 5000);

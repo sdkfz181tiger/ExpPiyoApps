@@ -101,3 +101,37 @@ function createNotification(title, body, timeout=12000){
 		}
 	});
 }
+
+//==========
+// Sudoku
+
+const SD_SIZE = 9;// Sudoku_9x9
+const SD_MAX  = SD_SIZE * SD_SIZE;
+
+function scanImg(cvs, letters){
+	const ctx = cvs.getContext("2d");// Context
+	// Table(9x9)
+	const table = new Array(SD_MAX).fill(0);
+	const gSize = cvs.width / SD_SIZE;
+	// Scan
+	for(let letter of letters){
+		if(letter.matches.length<=0) continue;
+		const n = letter.matches[0].letter;
+		if(n == "" | n == " " | n == "\t") continue;
+		const x = letter.x;
+		const y = letter.y;
+		const w = letter.width;
+		const h = letter.height;
+		const cX = x + w/2;
+		const cY = y + h/2;
+		const r = Math.floor(cY / gSize);
+		const c = Math.floor(cX / gSize);
+		const i = r * SD_SIZE + c;
+		table[i] = parseInt(n);
+		ctx.fillStyle = "orange";
+		ctx.fillRect(x, y, w, h);
+	}
+	if(letters.length <= 0) return;
+	console.log(table, letters);
+	//solveSudoku(cvs, table, 0);// Solve
+}
