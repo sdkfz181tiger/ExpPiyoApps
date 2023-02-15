@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="theme-color" content="dodgerblue">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- PWA for iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
+	<meta name="apple-mobile-web-app-title" content="物体検知">
+	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
+	<!-- PWA for Android -->
+	<link rel="manifest" href="./pwa/manifest.json">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="./pwa/favicon.ico">
+	<title>数独カメラ</title>
+	<!-- CSS -->
+	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="./assets/css/custom.css">
+</head>
+<body>
+	<div id="app">
+		
+		<!-- Header(Start) -->
+		<header class="fixed-top" v-if="mode!=0">
+
+			<!-- Navigation(Start) -->
+			<nav class="navbar navbar-dark bg-primary">
+				<div class="container-fluid">
+					<a class="btn btn-primary btn-sm me-4" href="../../../">
+						<i class="bi-caret-left-fill" role="img"></i>
+					</a>
+					<div>
+						<i class="bi-github text-white m-1"></i>
+						<a class="navbar-brand">数独カメラ</a>
+					</div>
+					<button class="navbar-toggler" type="button"
+						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+				</div>
+			</nav>
+			<!-- <nav class="nav nav-pills nav-justified bg-light">
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(1)" v-bind:class="{active:actives[1]}">
+					<i class="bi-house-fill" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(2)" v-bind:class="{active:actives[2]}">
+					<i class="bi-google" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(3)" v-bind:class="{active:actives[3]}">
+					<i class="bi-apple" role="img"></i>
+				</a>
+				<a class="nav-link" href="#"
+					v-on:click="changeMode(4)" v-bind:class="{active:actives[4]}">
+					<i class="bi-gear-fill" role="img"></i>
+				</a>
+			</nav> -->
+			<!-- Navigation(End) -->
+
+		</header>
+		<!-- Header(End) -->
+
+		<!-- Main(Start) -->
+		<main>
+
+			<!-- Loading(Start) -->
+			<div class="position-absolute top-50 start-50 translate-middle" v-if="mode==0">
+				<div class="spinner-border text-primary" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+			</div>
+			<!-- Loading(End) -->
+
+			<!-- TextCounter(Start) -->
+			<div class="container" v-if="mode==1">
+				<div class="row pt-2">
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<h6 class="card-title">
+									<i class="bi-pen-fill me-1"></i>つかいかた
+								</h6>
+								<p class="card-text">
+									<ul>
+										<li>カメラに映った数独を解析します。</li>
+										<li>カメラに数独を映してみましょう。</li>
+									</ul>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pt-4">
+					<div class="col">
+						<div id="webcam">
+							<webcam v-on:on-detected="onDetected"></webcam>
+						</div>
+					</div>
+					<div class="col">
+						Right
+					</div>
+				</div>
+			</div>
+			<!-- TextCounter(End) -->
+
+		</main>
+		<!-- Main(End) -->
+
+		<!-- Footer(Start) -->
+		<footer class="fixed-bottom text-end">
+			<!-- <a class="btn btn-primary rounded-circle shadow m-3" href="#"
+				v-if="mode!=0" v-on:click="showModal()">
+				<i class="bi-balloon-fill" role="img"></i>
+			</a> -->
+			<imobile pid="26719" mid="556794" asid="1811250" 
+				id="im-eaf79126a17942438c85f526dece8cdc"></imobile>
+		</footer>
+		<!-- Footer(End) -->
+
+		<!-- Offcanvas(Start) -->
+		<div class="container mt-5">
+			<div class="offcanvas offcanvas-end" id="myOffcanvas">
+				<div class="offcanvas-header">
+					<!-- <a class="btn btn-primary" href="#"
+						v-on:click="showModal()">
+						<i class="bi-file-earmark-plus-fill" role="img"></i>
+					</a> -->
+					<h5>Settings</h5>
+					<button type="button" class="btn-close text-reset" 
+							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
+				</div>
+				<div class="offcanvas-body">
+					<imobile pid="26719" mid="556794" asid="1811310" 
+						id="im-b2bfa244d46f4421ae8c8f7d98fae5a9"></imobile>
+				</div>
+			</div>
+		</div>
+		<!-- Offcanvas(End) -->
+
+		<!-- Modal(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalTitle" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalTitle">***</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body" id="modalBody">
+							<div class="container-fluid">
+								Hello, Modal!!
+							</div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid">
+								<button type="button" class="btn btn-primary float-end"
+									data-bs-dismiss="modal">Dismiss</button>
+								<!-- <button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">Cancel</button> -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal(End) -->
+
+		<!-- Toast(Start) -->
+		<div class="toast-container position-absolute top-50 start-50 translate-middle mt-2">
+			<div class="toast d-none" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header">
+					<img src="./assets/images/logo.png" width="32" height="32" class="rounded me-2">
+					<strong class="me-auto">Toast</strong>
+					<small>** mins ago</small>
+					<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+				<div class="toast-body">***</div>
+			</div>
+		</div>
+		<!-- Toast(End) -->
+
+	</div>
+
+	<!-- JavaScript -->
+	<script src="./assets/libs/vue/vue.global.js"></script>
+	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
+	<script src="./assets/libs/axios/axios.min.js"></script>
+	<script src="./assets/libs/howler/howler.min.js"></script>
+	<script src="./assets/libs/pushjs/push.min.js"></script>
+	<script src="./assets/libs/ocrad-js/ocrad.js"></script>
+	<script src="./assets/js/utility.js"></script>
+	<script src="./assets/js/main.js"></script>
+</body>
+</html>
