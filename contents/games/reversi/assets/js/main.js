@@ -9,7 +9,7 @@ const FILES_IMG = [
 ];
 
 let font, cX, cY;
-let rManager;
+let rMng;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -34,7 +34,7 @@ function setup(){
 	const sY = cY - (gSize * ROWS) * 0.5;
 
 	// ReversiManager
-	rManager = new ReversiManager(sX, sY, gSize);
+	rMng = new ReversiManager(sX, sY, gSize);
 }
 
 function draw(){
@@ -43,7 +43,7 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
 	// ReversiManager
-	rManager.update();
+	rMng.update();
 
 	// Text
 	fill("#333333"); noStroke();
@@ -61,14 +61,7 @@ function touchStarted(){
 }
 
 function touchBoard(){
-	const sX = rManager.sX;
-	const sY = rManager.sY;
-	const gSize = rManager.gSize;
-	const r = Math.floor((mouseY-sY) / gSize);
-	const c = Math.floor((mouseX-sX) / gSize);
-	if(r < 0 || ROWS-1<r) return;
-	if(c < 0 || COLS-1<c) return;
-	console.log("touchBoard:", r, c);
+	rMng.thinkPlayer(mouseX, mouseY);// Player
 }
 
 function drawCircle(x, y, r){

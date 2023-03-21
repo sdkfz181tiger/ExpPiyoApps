@@ -90,7 +90,7 @@ class ReversiManager{
 			if(this._bdManager.isFinished(board)){
 				console.log("Finished!!");
 				const result = this._bdManager.judgeBoard(board);
-				this._msgResult = "Result:";
+				this._msgResult = "";
 				if(result == T_NONE){
 					this._msgResult += "Even...";
 				}else if(result == this._you){
@@ -225,10 +225,6 @@ class ReversiManager{
 		return (turn == T_WHITE) ? T_BLACK:T_WHITE;
 	}
 
-	get sX(){return this._bdManager.sX;}
-	get sY(){return this._bdManager.sY;}
-	get gSize(){return this._bdManager.gSize;}
-
 	update(){
 		this._bdManager.drawBoard(this._board);// Board
 		this._bdManager.drawAvailables(this._availables, (this._turn==this._you));// Availables
@@ -236,23 +232,20 @@ class ReversiManager{
 	}
 
 	drawMsg(){
-		/*
-		// Title
-		ctx.fillStyle = "white";
-		ctx.textAlign = "center";
-		ctx.font = "22px Arial";
-		ctx.fillText("Reversi6x6_D" + T_DEPTH, WIDTH/2, 28);
+
+		fill("#333333"); noStroke();
+		textSize(FONT_SIZE); textAlign(CENTER, TOP);
+		const gSize = this._bdManager.gSize;
+
 		// Turn
-		this._msgTurn = (this._turn == this._you) ? "Turn:you":"Turn:com";
-		ctx.textAlign = "left";
-		ctx.font = "16px Arial";
-		ctx.fillText(this._msgTurn, 24, HEIGHT - 20);
+		const msgTurn = (this._turn == this._you) ? "You":"Com";
+		textAlign(LEFT, TOP);
+		text(msgTurn, 10, cY+gSize*3+10);
+
 		// Result
-		const msgResult = "Result:***";
-		ctx.textAlign = "right";
-		ctx.font = "16px Arial";
-		ctx.fillText(this._msgResult, WIDTH-24, HEIGHT - 20);
-		*/
+		const msgResult = "***";
+		textAlign(RIGHT, TOP);
+		text(this._msgResult, width-10, cY+gSize*3+10);
 	}
 }
 
@@ -368,10 +361,6 @@ class BoardManager{
 		console.log(str);
 	}
 
-	get sX(){return this._sX;}
-	get sY(){return this._sY;}
-	get gSize(){return this._gSize;}
-
 	getRC(availables, x, y){
 		if(x < this._sX) return null;
 		if(y < this._sY) return null;
@@ -386,6 +375,10 @@ class BoardManager{
 		}
 		return null;
 	}
+
+	get sX(){return this._sX;}
+	get sY(){return this._sY;}
+	get gSize(){return this._gSize;}
 
 	drawBoard(board){
 		// Board
