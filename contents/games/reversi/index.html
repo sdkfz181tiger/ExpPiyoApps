@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="theme-color" content="dodgerblue">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- PWA for iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
+	<meta name="apple-mobile-web-app-title" content="oxゲーム">
+	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
+	<!-- PWA for Android -->
+	<link rel="manifest" href="./pwa/manifest.json">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="./pwa/favicon.ico">
+	<title>リバーシ6x6</title>
+	<!-- CSS -->
+	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="./assets/css/custom.css">
+</head>
+<body> 
+	<!-- Header(Start) -->
+	<header class="fixed-top" v-if="mode!=0">
+
+		<!-- Navigation(Start) -->
+		<nav class="navbar navbar-dark bg-primary">
+			<div class="container-fluid">
+				<a class="btn btn-primary btn-sm me-4" href="../../../">
+					<i class="bi-caret-left-fill" role="img"></i>
+				</a>
+				<div>
+					<i class="bi-github text-white m-1"></i><a class="navbar-brand">リバーシ6x6</a>
+				</div>
+			</div>
+		</nav>
+		<!-- Navigation(End) -->
+
+	</header>
+	<!-- Header(End) -->
+
+	<!-- Main(Start) -->
+	<main id="game"></main>
+	<!-- Main(Start) -->
+
+	<!-- Footer(Start) -->
+	<footer class="fixed-bottom text-center">
+		<div id="im-eaf79126a17942438c85f526dece8cdc"></div>
+	</footer>
+	<!-- Footer(Start) -->
+
+	<script>
+		// Banner_468x60
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
+			pid:26719, mid:556794, asid:1811250, type:"banner", display:"inline",
+			elementid:"im-eaf79126a17942438c85f526dece8cdc"});
+	</script>
+	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
+
+	<!-- JavaScript -->
+	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
+	<script src="./assets/libs/p5js/p5.min.js"></script>
+	<script src="./assets/libs/p5js/addons/p5.sound.min.js"></script>
+	<script src="./assets/libs/p5js/addons/p5.tween.min.js"></script>
+	<script src="./assets/js/sprite.js"></script>
+	<script src="./assets/js/utility.js"></script>
+	<script src="./assets/js/main.js"></script>
+</body>
+</html>
