@@ -133,7 +133,9 @@ class CalcManager{
 		if(this._state == ST_VAL1){
 			if(this.isNumeric(value)){// 数値の場合
 				this._val1 += value;
-				if(this._val1[0] == 0) this._val1 = this._val1.substr(1);
+				if(1 < this._val1.length && this._val1[0] == 0){
+					this._val1 = this._val1.substr(1);
+				}
 			}
 			if(this.isFlg(value)){// +-反転の場合
 				this._val1 = this.changeFlg(this._val1);// 符号反転
@@ -155,7 +157,9 @@ class CalcManager{
 		if(this._state == ST_VAL2){
 			if(this.isNumeric(value)){// 数値の場合
 				this._val2 += value;
-				if(this._val2[0] == 0) this._val2 = this._val2.substr(1);
+				if(1 < this._val2.length && this._val2[0] == 0){
+					this._val2 = this._val2.substr(1);
+				}
 			}
 			if(this.isFlg(value)){// +-反転の場合
 				if(this._val2.length <= 0){
