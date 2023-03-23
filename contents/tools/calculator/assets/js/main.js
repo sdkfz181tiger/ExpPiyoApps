@@ -10,11 +10,8 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	data: null,
-	fullYear: 0,
-	tableYearFrom: 0,
-	tableYearTo: 0,
-	tableData: []
+	cMng: null,
+	disp: "***"
 }
 
 // Vue.js
@@ -35,6 +32,9 @@ const app = Vue.createApp({
 		const modal = new bootstrap.Modal(elemModal);
 		setTimeout(()=>{
 			this.changeMode(MODE_MAIN);
+			// CalcManager
+			this.cMng = new CalcManager();
+			this.disp = this.cMng.put("C");// Clear
 		}, 200);
 	},
 	methods:{
@@ -45,14 +45,9 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		getTableLeft(){
-			return this.getTableData(this.fullYear-30, this.fullYear);
-		},
-		getTableRight(){
-			return this.getTableData(this.fullYear-61, this.fullYear-31);
-		},
-		getTableData(from, to){
-			return this.tableData.filter(obj=> from<=obj.year && obj.year<=to);
+		clickBtn(value){
+			console.log("clickBtn:", value);
+			this.disp = this.cMng.put(value);// CalcManager
 		},
 		showModal(){
 			console.log("showModal");

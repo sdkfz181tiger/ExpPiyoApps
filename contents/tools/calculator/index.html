@@ -96,38 +96,40 @@
 					</div>
 				</div>
 				<div class="row pt-4">
+					<div class="col-2"></div>
 					<div class="col">
 						<table>
 							<tr>
-								<td><button>C</button></td>
-								<td colspan="3" id="disp"></td>
+								<td><button v-on:click="clickBtn('C')">C</button></td>
+								<td colspan="3" class="p-2 text-end">{{ disp }}</td>
 							</tr>
 							<tr>
-								<td><button>7</button></td>
-								<td><button>8</button></td>
-								<td><button>9</button></td>
-								<td><button>+</button></td>
+								<td><button v-on:click="clickBtn('7')">7</button></td>
+								<td><button v-on:click="clickBtn('8')">8</button></td>
+								<td><button v-on:click="clickBtn('9')">9</button></td>
+								<td><button v-on:click="clickBtn('+')">+</button></td>
 							</tr>
 							<tr>
-								<td><button>4</button></td>
-								<td><button>5</button></td>
-								<td><button>6</button></td>
-								<td><button>-</button></td>
+								<td><button v-on:click="clickBtn('4')">4</button></td>
+								<td><button v-on:click="clickBtn('5')">5</button></td>
+								<td><button v-on:click="clickBtn('6')">6</button></td>
+								<td><button v-on:click="clickBtn('-')">-</button></td>
 							</tr>
 							<tr>
-								<td><button>1</button></td>
-								<td><button>2</button></td>
-								<td><button>3</button></td>
-								<td><button>*</button></td>
+								<td><button v-on:click="clickBtn('1')">1</button></td>
+								<td><button v-on:click="clickBtn('2')">2</button></td>
+								<td><button v-on:click="clickBtn('3')">3</button></td>
+								<td><button v-on:click="clickBtn('*')">*</button></td>
 							</tr>
 							<tr>
-								<td><button>0</button></td>
-								<td><button>+/-</button></td>
-								<td><button>=</button></td>
-								<td><button>/</button></td>
+								<td><button v-on:click="clickBtn('0')">0</button></td>
+								<td><button v-on:click="clickBtn('+/-')">+/-</button></td>
+								<td><button v-on:click="clickBtn('=')">=</button></td>
+								<td><button v-on:click="clickBtn('/')">/</button></td>
 							</tr>
 						</table>
 					</div>
+					<div class="col-2"></div>
 				</div>
 			</div>
 			<!-- TextCounter(End) -->
