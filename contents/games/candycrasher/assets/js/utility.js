@@ -121,6 +121,14 @@ class CandyManager{
 	}
 
 	touchTiles(tX, tY){
+		// Moving
+		for(let r=0; r<ROWS; r++){
+			for(let c=0; c<COLS; c++){
+				const tile = this._mtx[r][c];
+				if(tile == null) return;
+				if(tile.isMoving()) return;
+			}
+		}
 		// Search
 		this._chains = [];
 		for(let r=0; r<ROWS; r++){
@@ -182,42 +190,41 @@ class CandyManager{
 class Tile{
 
 	constructor(r, c, x, y, type){
-		this._r = r;
-		this._c = c;
-		this._x = x;
-		this._y = y;
+		this._r    = r;
+		this._c    = c;
+		this._pos  = {x: x, y: y - ROWS*T_SIZE};
 		this._type = type;
-
-		// Tween
-		this._pos = {x: x, y: y - ROWS*T_SIZE};
-		this.fall(r, c, x, y);
+		this._movingFlg = false;
+		this.fall(r, c, x, y);// Fall
 	}
 
 	fall(r, c, x, y, maxR=ROWS-1){
 		this._r = r;
 		this._c = c;
-		this._x = x;
-		this._y = y;
-		// Tween
+		this._movingFlg = true;
 		const delay = (maxR-this._r)*40 + Math.floor(Math.random()*20);
 		this._tween = new TWEEN.Tween(this._pos).to(
-			{x: x, y: y}, 200).delay(delay).easing(TWEEN.Easing.Quadratic.In).onUpdate(()=>{
-				//console.log(this._pos);
+			{x: x, y: y}, 200).delay(delay).easing(TWEEN.Easing.Quadratic.In).onComplete(()=>{
+				this._movingFlg = false;
 			}).start();
 	}
 
 	get r(){return this._r;}
 	get c(){return this._c;}
-	get x(){return this._x;}
-	get y(){return this._y;}
+	get x(){return this._pos.x;}
+	get y(){return this._pos.y;}
 	get type(){return this._type;}
 
 	isInside(tX, tY){
-		if(tX < this._x) return false;
-		if(tY < this._y) return false;
-		if(this._x+T_SIZE < tX) return false;
-		if(this._y+T_SIZE < tY) return false;
+		if(tX < this._pos.x) return false;
+		if(tY < this._pos.y) return false;
+		if(this._pos.x+T_SIZE < tX) return false;
+		if(this._pos.y+T_SIZE < tY) return false;
 		return true;
+	}
+
+	isMoving(){
+		return this._movingFlg;
 	}
 
 	update(){
