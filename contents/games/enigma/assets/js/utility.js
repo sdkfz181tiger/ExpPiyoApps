@@ -13,8 +13,9 @@ const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 class Button extends Sprite{
 
-	constructor(file, x, y, s, onPressed=null){
+	constructor(file, x, y, s, k, onPressed=null){
 		super(file, x, y, s);
+		this._key       = k;
 		this._onPressed = onPressed;
 		this._tween     = null;
 	}
@@ -22,7 +23,14 @@ class Button extends Sprite{
 	press(x, y){
 		if(!this.visible) return;
 		if(!this.contains(x, y)) return;
-		if(this._onPressed) this._onPressed();// Callback
+		if(this._onPressed) this._onPressed(this._key);// Callback
+	}
+
+	update(){
+		super.update();
+		fill("#ffffff"); noStroke();
+		textSize(FONT_SIZE); textAlign(CENTER);
+		text(this._key, this._x, this._y+FONT_SIZE * 0.25);
 	}
 }
 
