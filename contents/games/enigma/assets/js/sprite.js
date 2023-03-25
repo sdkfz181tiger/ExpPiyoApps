@@ -1,4 +1,4 @@
-console.log("utility.js!!");
+console.log("sprite.js!!");
 
 //==========
 // ImgLoader

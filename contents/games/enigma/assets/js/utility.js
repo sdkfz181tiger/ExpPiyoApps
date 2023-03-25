@@ -35,7 +35,38 @@ class Button extends Sprite{
 }
 
 //==========
-// Enigma
+// Enigma(UI)
+
+// 
+class MyCircle{
+
+	constructor(x, y, radius, roter){
+		console.log("Circle");
+		this._x      = x;
+		this._y      = y;
+		this._radiud = radius;
+		this._roter  = roter;
+		this._pad    = Math.PI*2 / roter.ptn.length;
+		console.log(roter.index, roter.ptn, this._pad);
+	}
+
+	update(){
+		noFill(); stroke("#cccccc"); strokeWeight(1);
+		circle(this._x, this._y, this._radiud*2);
+		fill("#333333"); noStroke();
+		textSize(FONT_SIZE*0.3); textAlign(CENTER);
+		for(let i=0; i<this._roter.ptn.length; i++){
+			const r = this._pad*i-Math.PI*0.5;
+			const x = this._x + this._radiud * Math.cos(r);
+			const y = this._y + this._radiud * Math.sin(r);
+			const c = alphabets[this._roter.ptn[i]];
+			text(c, x, y);
+		}
+	}
+}
+
+//==========
+// Enigma(Logic)
 
 const alphabets = "abcdefghijklmnopqrstuvwxyz";
 const ROT_1 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
@@ -63,6 +94,10 @@ class Enigma{
 			console.log(this.getInfo());
 		}
 		return result;
+	}
+
+	getRoters(){
+		return this._scrambler.getRoters();
 	}
 
 	getInfo(){
@@ -104,6 +139,10 @@ class Scrambler{
 			const roter = this._roters[i];
 			if(!roter.rotate()) return;
 		}
+	}
+
+	getRoters(){
+		return this._roters;
 	}
 
 	getInfo(){
@@ -178,5 +217,9 @@ class Roter{
 
 	get index(){
 		return this._index;
+	}
+
+	get ptn(){
+		return this._ptn;
 	}
 }

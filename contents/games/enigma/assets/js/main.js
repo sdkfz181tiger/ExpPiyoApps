@@ -9,7 +9,7 @@ const FILES_IMG = [
 ];
 
 let font, cX, cY;
-let enigma, btns;
+let enigma, btns, circles;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -43,20 +43,33 @@ function setup(){
 		["s", "t", "u", "v", "w", "x"],
 		["y", "z",null,null,null, "C"]
 	];
-	const pad = 36;
-	const sX = cX - pad * (keys[0].length-1) * 0.5;
-	const sY = 290;
+	const padB = 36;
+	const sBX = cX - padB * (keys[0].length-1) * 0.5;
+	const sBY = 290;
 	for(let r=0; r<keys.length; r++){
 		for(let c=0; c<keys[0].length; c++){
 			if(keys[r][c] == null) continue;
-			const x = sX + pad * c;
-			const y = sY + pad * r;
+			const x = sBX + padB * c;
+			const y = sBY + padB * r;
 			const btn = new Button("btn_keyboard.png", 
 				x, y, 1, keys[r][c], (key)=>{
 				console.log("key:", key);
 			});
 			btns.push(btn);
 		}
+	}
+
+	// Circles
+	circles = [];
+	const roters = enigma.getRoters();
+	const padC = width * 0.32;
+	const sCX = cX - padC * (roters.length-1) * 0.5;
+	const sCY = 150;
+	for(let i=0; i<roters.length; i++){
+		const x = sCX + padC * i;
+		const y = sCY;
+		const circle = new MyCircle(x, y, 45, roters[i]);
+		circles.push(circle);
 	}
 }
 
@@ -65,8 +78,9 @@ function draw(){
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 
-	// Buttons
+	// Buttons, Circles
 	for(let btn of btns) btn.update();
+	for(let circle of circles) circle.update();
 
 	// Text
 	fill("#333333"); noStroke();
