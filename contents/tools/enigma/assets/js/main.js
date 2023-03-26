@@ -23,7 +23,7 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(2);
+	frameRate(8);
 	noSmooth();
 
 	cX = Math.floor(width * 0.5);
