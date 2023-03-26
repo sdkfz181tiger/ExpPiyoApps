@@ -37,7 +37,7 @@ class Button extends Sprite{
 //==========
 // Enigma(UI)
 
-// 
+// MyCircle
 class MyCircle{
 
 	constructor(x, y, radius, roter){
@@ -59,19 +59,29 @@ class MyCircle{
 	}
 
 	update(){
-		noFill(); stroke("#cccccc"); strokeWeight(1);
-		circle(this._x, this._y, this._radius*2);
+		noFill(); stroke("#aaaaaa"); strokeWeight(1);
+		//circle(this._x, this._y, this._radius*2);
+		for(let i=0; i<this._roter.ptn.length; i++){
+			const from = this._padR*i-Math.PI*0.5;
+			const fX   = this._x + this._radius * Math.cos(from);
+			const fY   = this._y + this._radius * Math.sin(from);
+			const o    = (this._roter.index + i) % this._roter.ptn.length;
+			const to   = this._padR*this._roter.ptn[o]-Math.PI*0.5;
+			const tX   = this._x + this._radius * Math.cos(to);
+			const tY   = this._y + this._radius * Math.sin(to);
+			line(fX, fY, tX, tY);
+		}
 		fill("#333333"); noStroke();
 		circle(this._x, this._y-this._radius*1.3, 5);
 		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
 		text(this._roter.index, this._x, this._y);
-		textSize(FONT_SIZE*0.4);
-		for(let i=0; i<this._roter.ptn.length; i++){
-			const r = this._padR*i-Math.PI*0.5 - this._padR*this._roter.index;
+		textSize(FONT_SIZE*0.3);
+		for(let i=0; i<alphabets.length; i++){
+			const r = this._padR*i-Math.PI*0.5;
 			const x = this._x + this._radius * Math.cos(r);
 			const y = this._y + this._radius * Math.sin(r);
-			const c = alphabets[this._roter.ptn[i]];
-			text(c, x, y);
+			const c = alphabets[i];
+			text(c, x, y-FONT_SIZE*0.1);
 		}
 	}
 }
@@ -80,9 +90,9 @@ class MyCircle{
 // Enigma(Logic)
 
 const alphabets = "abcdefghijklmnopqrstuvwxyz";
-const ROT_1 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
-const ROT_2 = [20,21,22,23,24,25,11,12,13,14,15,16,17,18,19,0,1,2,3,4,5,6,7,8,9,10];
-const ROT_3 = [22,23,24,25,6,7,8,9,10,11,12,13,14,15,16,17,0,1,2,3,4,5,18,19,20,21];
+const ROT_1 = [12,2,3,15,22,19,13,23,16,17,0,1,24,25,6,7,8,9,10,11,4,5,18,14,20,21];
+const ROT_2 = [20,2,3,21,15,16,17,11,12,18,19,0,1,4,23,24,5,6,7,8,22,25,9,10,13,14];
+const ROT_3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 
 // Enigma
 class Enigma{

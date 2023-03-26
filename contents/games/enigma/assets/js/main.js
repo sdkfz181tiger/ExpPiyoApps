@@ -68,7 +68,7 @@ function setup(){
 	}
 
 	function reset(){
-		enigma.init(0, 0, 0);// Reset
+		enigma.init(1, 2, 3);// Reset
 		// Circles
 		circles = [];
 		const roters = enigma.getRoters();
