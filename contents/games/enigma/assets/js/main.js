@@ -68,7 +68,7 @@ function setup(){
 	}
 
 	function reset(){
-		enigma.init(1, 2, 3);// Reset
+		enigma.init(0, 0, 0);// Reset
 		// Circles
 		circles = [];
 		const roters = enigma.getRoters();
@@ -116,8 +116,9 @@ function touchStarted(){
 
 function touchBoard(){
 	//console.log("mouse:", mouseX, mouseY);
-	// Buttons
+	// Buttons, Circles
 	for(let btn of btns) btn.press(mouseX, mouseY);
+	for(let circle of circles) circle.press(mouseX, mouseY);
 }
 
 function drawCircle(x, y, r){

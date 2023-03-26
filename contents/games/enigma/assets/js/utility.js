@@ -50,6 +50,14 @@ class MyCircle{
 		console.log(roter.index, roter.ptn, this._padR);
 	}
 
+	press(x, y){
+		const dX = this._x - x;
+		const dY = this._y - y;
+		const dist = Math.sqrt(dX**2 + dY**2);
+		if(this._radius < dist) return;
+		this._roter.rotate();// Rotate
+	}
+
 	update(){
 		noFill(); stroke("#cccccc"); strokeWeight(1);
 		circle(this._x, this._y, this._radius*2);
