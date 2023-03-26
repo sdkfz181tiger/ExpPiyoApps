@@ -44,21 +44,24 @@ class MyCircle{
 		console.log("Circle");
 		this._x      = x;
 		this._y      = y;
-		this._radiud = radius;
+		this._radius = radius;
 		this._roter  = roter;
-		this._pad    = Math.PI*2 / roter.ptn.length;
-		console.log(roter.index, roter.ptn, this._pad);
+		this._padR   = Math.PI*2 / roter.ptn.length;
+		console.log(roter.index, roter.ptn, this._padR);
 	}
 
 	update(){
 		noFill(); stroke("#cccccc"); strokeWeight(1);
-		circle(this._x, this._y, this._radiud*2);
+		circle(this._x, this._y, this._radius*2);
 		fill("#333333"); noStroke();
-		textSize(FONT_SIZE*0.3); textAlign(CENTER);
+		circle(this._x, this._y-this._radius*1.3, 5);
+		textSize(FONT_SIZE*0.8); textAlign(CENTER, CENTER);
+		text(this._roter.index, this._x, this._y);
+		textSize(FONT_SIZE*0.4);
 		for(let i=0; i<this._roter.ptn.length; i++){
-			const r = this._pad*i-Math.PI*0.5;
-			const x = this._x + this._radiud * Math.cos(r);
-			const y = this._y + this._radiud * Math.sin(r);
+			const r = this._padR*i-Math.PI*0.5 - this._padR*this._roter.index;
+			const x = this._x + this._radius * Math.cos(r);
+			const y = this._y + this._radius * Math.sin(r);
 			const c = alphabets[this._roter.ptn[i]];
 			text(c, x, y);
 		}

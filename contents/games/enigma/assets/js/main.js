@@ -31,7 +31,7 @@ function setup(){
 
 	// Enigma
 	enigma = new Enigma();
-	enigma.init(1, 2, 3);
+	reset();
 	console.log(enigma.getInfo());
 
 	// Buttons
@@ -53,23 +53,31 @@ function setup(){
 			const y = sBY + padB * r;
 			const btn = new Button("btn_keyboard.png", 
 				x, y, 1, keys[r][c], (key)=>{
-				console.log("key:", key);
+				if(key == "C"){
+					reset();
+					return;
+				}
+				const decoded = enigma.decode(key);
+				console.log("key:", key, "->", decoded);
 			});
 			btns.push(btn);
 		}
 	}
 
-	// Circles
-	circles = [];
-	const roters = enigma.getRoters();
-	const padC = width * 0.32;
-	const sCX = cX - padC * (roters.length-1) * 0.5;
-	const sCY = 150;
-	for(let i=0; i<roters.length; i++){
-		const x = sCX + padC * i;
-		const y = sCY;
-		const circle = new MyCircle(x, y, 45, roters[i]);
-		circles.push(circle);
+	function reset(){
+		enigma.init(1, 2, 3);// Reset
+		// Circles
+		circles = [];
+		const roters = enigma.getRoters();
+		const padC = width * 0.32;
+		const sCX = cX - padC * (roters.length-1) * 0.5;
+		const sCY = 160;
+		for(let i=0; i<roters.length; i++){
+			const x = sCX + padC * i;
+			const y = sCY;
+			const circle = new MyCircle(x, y, 45, roters[i]);
+			circles.push(circle);
+		}
 	}
 }
 
