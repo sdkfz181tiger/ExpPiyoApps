@@ -72,10 +72,9 @@ class MyCircle{
 			line(fX, fY, tX, tY);
 		}
 		fill("#333333"); noStroke();
-		circle(this._x, this._y-this._radius*1.3, 5);
 		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
 		text(this._roter.index, this._x, this._y);
-		textSize(FONT_SIZE*0.3);
+		textSize(FONT_SIZE*0.4);
 		for(let i=0; i<alphabets.length; i++){
 			const r = this._padR*i-Math.PI*0.5;
 			const x = this._x + this._radius * Math.cos(r);
@@ -90,8 +89,8 @@ class MyCircle{
 // Enigma(Logic)
 
 const alphabets = "abcdefghijklmnopqrstuvwxyz";
-const ROT_1 = [12,2,3,15,22,19,13,23,16,17,0,1,24,25,6,7,8,9,10,11,4,5,18,14,20,21];
-const ROT_2 = [20,2,3,21,15,16,17,11,12,18,19,0,1,4,23,24,5,6,7,8,22,25,9,10,13,14];
+const ROT_1 = [14,20,12,2,22,19,13,23,16,6,0,7,17,1,24,10,5,25,3,9,18,21,11,4,15,8];
+const ROT_2 = [20,2,21,15,3,17,11,19,0,1,4,23,5,24,6,8,22,25,9,10,13,16,7,14,12,18];
 const ROT_3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 
 // Enigma
@@ -107,14 +106,9 @@ class Enigma{
 		this._scrambler = new Scrambler(n1, n2, n3);
 	}
 
-	decode(str){
-		let result = "";
-		for(let c of str){
-			result += this._scrambler.decode(c);// Decode
-			this._scrambler.rotate();// Rotate
-			console.log(this.getInfo());
-		}
-		return result;
+	decode(c){
+		this._scrambler.rotate();// Rotate
+		return this._scrambler.decode(c);// Decode
 	}
 
 	getRoters(){
@@ -143,15 +137,20 @@ class Scrambler{
 	}
 
 	decode(c){
+		const history = [c];
 		const size = this._roters.length;
 		for(let i=0; i<size; i++){// Forward
 			c = this._roters[i].forward(c);
+			history.push(c);
 		}
 		c = this._roters[size-1].reflect(c);// Reflect
+		history.push(c);
 		for(let i=size-1; 0<=i; i--){// Backward
 			c = this._roters[i].backward(c);
+			history.push(c);
 		}
-		return c;
+		console.log("history:", history);
+		return history;
 	}
 
 	rotate(){

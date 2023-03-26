@@ -9,8 +9,7 @@ const FILES_IMG = [
 ];
 
 let font, cX, cY;
-let enigma, btns, circles;
-let strKey, strDecoded;
+let enigma, btns, circles, history;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -32,6 +31,8 @@ function setup(){
 
 	// Enigma
 	enigma = new Enigma();
+	circles = [];
+	history = [];
 	reset();
 	console.log(enigma.getInfo());
 
@@ -58,10 +59,8 @@ function setup(){
 					reset();
 					return;
 				}
-				const decoded = enigma.decode(key);
-				strKey = key;
-				strDecoded = decoded;
-				console.log("key:", key, "->", decoded);
+				history = enigma.decode(key);
+				console.log("history:", history);
 			});
 			btns.push(btn);
 		}
@@ -69,8 +68,9 @@ function setup(){
 
 	function reset(){
 		enigma.init(1, 2, 3);// Reset
-		// Circles
 		circles = [];
+		history = [];
+		// Circles
 		const roters = enigma.getRoters();
 		const padC = width * 0.32;
 		const sCX = cX - padC * (roters.length-1) * 0.5;
@@ -81,9 +81,6 @@ function setup(){
 			const circle = new MyCircle(x, y, 45, roters[i]);
 			circles.push(circle);
 		}
-		// Str
-		strKey = "_";
-		strDecoded = "_";
 	}
 }
 
@@ -96,8 +93,12 @@ function draw(){
 	for(let btn of btns) btn.update();
 	for(let circle of circles) circle.update();
 
-	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
-	text(strKey + " -> " + strDecoded, cX, cY);
+	if(0 < history.length){
+		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
+		text(history.join("->"), cX, cY-10);
+		textSize(FONT_SIZE);
+		text(history[0]+"->"+history[history.length-1], cX, cY+10);
+	}
 
 	// Text
 	fill("#333333"); noStroke();
