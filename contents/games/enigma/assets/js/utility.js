@@ -55,7 +55,7 @@ class MyCircle{
 		circle(this._x, this._y, this._radius*2);
 		fill("#333333"); noStroke();
 		circle(this._x, this._y-this._radius*1.3, 5);
-		textSize(FONT_SIZE*0.8); textAlign(CENTER, CENTER);
+		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
 		text(this._roter.index, this._x, this._y);
 		textSize(FONT_SIZE*0.4);
 		for(let i=0; i<this._roter.ptn.length; i++){

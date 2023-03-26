@@ -10,6 +10,7 @@ const FILES_IMG = [
 
 let font, cX, cY;
 let enigma, btns, circles;
+let strKey, strDecoded;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -58,6 +59,8 @@ function setup(){
 					return;
 				}
 				const decoded = enigma.decode(key);
+				strKey = key;
+				strDecoded = decoded;
 				console.log("key:", key, "->", decoded);
 			});
 			btns.push(btn);
@@ -78,6 +81,9 @@ function setup(){
 			const circle = new MyCircle(x, y, 45, roters[i]);
 			circles.push(circle);
 		}
+		// Str
+		strKey = "_";
+		strDecoded = "_";
 	}
 }
 
@@ -89,6 +95,9 @@ function draw(){
 	// Buttons, Circles
 	for(let btn of btns) btn.update();
 	for(let circle of circles) circle.update();
+
+	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
+	text(strKey + " -> " + strDecoded, cX, cY);
 
 	// Text
 	fill("#333333"); noStroke();
