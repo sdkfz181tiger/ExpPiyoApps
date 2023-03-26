@@ -95,9 +95,14 @@ function draw(){
 
 	if(0 < history.length){
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
-		text(history.join("->"), cX, cY-10);
+		text(history.join("->"), cX, 80);
 		textSize(FONT_SIZE);
-		text(history[0]+"->"+history[history.length-1], cX, cY+10);
+		text(history[0]+"->"+history[history.length-1], cX, cY);
+	}else{
+		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
+		text("...", cX, 80);
+		textSize(FONT_SIZE);
+		text("_->_", cX, cY);
 	}
 
 	// Text
