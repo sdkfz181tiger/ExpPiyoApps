@@ -58,6 +58,20 @@ class MyCircle{
 		this._roter.rotate();// Rotate
 	}
 
+	getCharPos(c){
+		let index = -1;
+		for(let i=0; i<alphabets.length; i++){
+			if(alphabets[i] != c) continue;
+			index = i;
+			break;
+		}
+		const p = Math.PI*2 / alphabets.length;
+		const r = index*p - Math.PI*0.5;
+		const x = this._x + this._radius * Math.cos(r);
+		const y = this._y + this._radius * Math.sin(r);
+		return {x: x, y: y};
+	}
+
 	update(){
 		noFill(); stroke("#aaaaaa"); strokeWeight(1);
 		//circle(this._x, this._y, this._radius*2);

@@ -23,7 +23,7 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(8);
+	frameRate(2);
 	noSmooth();
 
 	cX = Math.floor(width * 0.5);
@@ -94,10 +94,52 @@ function draw(){
 	for(let circle of circles) circle.update();
 
 	if(0 < history.length){
+		// History
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
 		text(history.join("->"), cX, 80);
 		textSize(FONT_SIZE);
 		text(history[0]+"->"+history[history.length-1], cX, cY);
+		// Route
+		strokeWeight(2);
+		for(let i=0; i<circles.length; i++){
+			if(i == 0){
+				const forA = circles[i].getCharPos(history[0]);
+				const forB = circles[i].getCharPos(history[1]);
+				stroke("#ff3333");
+				line(forA.x, forA.y, forB.x, forB.y);
+				const backA = circles[i].getCharPos(history[6]);
+				const backB = circles[i].getCharPos(history[7]);
+				stroke("#3333ff");
+				line(backA.x, backA.y, backB.x, backB.y);
+				continue;
+			}
+			if(i == 1){
+				const forA = circles[i].getCharPos(history[1]);
+				const forB = circles[i].getCharPos(history[2]);
+				stroke("#ff3333");
+				line(forA.x, forA.y, forB.x, forB.y);
+				const backA = circles[i].getCharPos(history[5]);
+				const backB = circles[i].getCharPos(history[6]);
+				stroke("#3333ff");
+				line(backA.x, backA.y, backB.x, backB.y);
+				continue;
+			}
+			if(i == 2){
+				const forwardA = circles[i].getCharPos(history[2]);
+				const forwardB = circles[i].getCharPos(history[3]);
+				stroke("#ff3333");
+				line(forwardA.x, forwardA.y, forwardB.x, forwardB.y);
+				const backA = circles[i].getCharPos(history[3]);
+				const backB = circles[i].getCharPos(history[4]);
+				stroke("#33ff33");
+				line(backA.x, backA.y, backB.x, backB.y);
+				const backC = circles[i].getCharPos(history[4]);
+				const backD = circles[i].getCharPos(history[5]);
+				stroke("#3333ff");
+				line(backC.x, backC.y, backD.x, backD.y);
+				continue;
+			}
+		}
 	}else{
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
 		text("...", cX, 80);
