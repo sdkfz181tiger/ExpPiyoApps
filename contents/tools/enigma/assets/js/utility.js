@@ -163,7 +163,6 @@ class Scrambler{
 			c = this._roters[i].backward(c);
 			history.push(c);
 		}
-		console.log("history:", history);
 		return history;
 	}
 

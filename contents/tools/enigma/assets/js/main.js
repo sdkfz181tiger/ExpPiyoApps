@@ -99,47 +99,8 @@ function draw(){
 		text(history.join("->"), cX, 80);
 		textSize(FONT_SIZE);
 		text(history[0]+"->"+history[history.length-1], cX, cY);
-		// Route
-		strokeWeight(2);
-		for(let i=0; i<circles.length; i++){
-			if(i == 0){
-				const forA = circles[i].getCharPos(history[0]);
-				const forB = circles[i].getCharPos(history[1]);
-				stroke("#ff3333");
-				line(forA.x, forA.y, forB.x, forB.y);
-				const backA = circles[i].getCharPos(history[6]);
-				const backB = circles[i].getCharPos(history[7]);
-				stroke("#3333ff");
-				line(backA.x, backA.y, backB.x, backB.y);
-				continue;
-			}
-			if(i == 1){
-				const forA = circles[i].getCharPos(history[1]);
-				const forB = circles[i].getCharPos(history[2]);
-				stroke("#ff3333");
-				line(forA.x, forA.y, forB.x, forB.y);
-				const backA = circles[i].getCharPos(history[5]);
-				const backB = circles[i].getCharPos(history[6]);
-				stroke("#3333ff");
-				line(backA.x, backA.y, backB.x, backB.y);
-				continue;
-			}
-			if(i == 2){
-				const forwardA = circles[i].getCharPos(history[2]);
-				const forwardB = circles[i].getCharPos(history[3]);
-				stroke("#ff3333");
-				line(forwardA.x, forwardA.y, forwardB.x, forwardB.y);
-				const backA = circles[i].getCharPos(history[3]);
-				const backB = circles[i].getCharPos(history[4]);
-				stroke("#33ff33");
-				line(backA.x, backA.y, backB.x, backB.y);
-				const backC = circles[i].getCharPos(history[4]);
-				const backD = circles[i].getCharPos(history[5]);
-				stroke("#3333ff");
-				line(backC.x, backC.y, backD.x, backD.y);
-				continue;
-			}
-		}
+		// Path
+		drawPath();
 	}else{
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
 		text("...", cX, 80);
@@ -169,21 +130,54 @@ function touchBoard(){
 	for(let circle of circles) circle.press(mouseX, mouseY);
 }
 
-function drawCircle(x, y, r){
-	noFill();
-	stroke("darkred");
-	strokeWeight(10);
-	circle(x+r/2, y+r/2, r/2);
-}
-
-function drawCross(x, y, s){
-	noFill();
-	stroke("darkblue");
-	strokeWeight(10);
-	const cX = x + s/2;
-	const cY = y + s/2;
-	line(cX, cY, cX-s/4, cY-s/4);
-	line(cX, cY, cX+s/4, cY-s/4);
-	line(cX, cY, cX-s/4, cY+s/4);
-	line(cX, cY, cX+s/4, cY+s/4);
+function drawPath(){
+	// Route
+	strokeWeight(2);
+	for(let i=0; i<circles.length; i++){
+		if(i == 0){
+			const forA = circles[i].getCharPos(history[0]);
+			const forB = circles[i].getCharPos(history[1]);
+			const forC = circles[i+1].getCharPos(history[1]);
+			stroke("#ff3333");
+			line(forA.x, forA.y, forB.x, forB.y);
+			line(forB.x, forB.y, forC.x, forC.y);
+			const backA = circles[i].getCharPos(history[6]);
+			const backB = circles[i].getCharPos(history[7]);
+			stroke("#3333ff");
+			line(backA.x, backA.y, backB.x, backB.y);
+			continue;
+		}
+		if(i == 1){
+			const forA = circles[i].getCharPos(history[1]);
+			const forB = circles[i].getCharPos(history[2]);
+			const forC = circles[i+1].getCharPos(history[2]);
+			stroke("#ff3333");
+			line(forA.x, forA.y, forB.x, forB.y);
+			line(forB.x, forB.y, forC.x, forC.y);
+			const backA = circles[i].getCharPos(history[5]);
+			const backB = circles[i].getCharPos(history[6]);
+			const backC = circles[i-1].getCharPos(history[6]);
+			stroke("#3333ff");
+			line(backA.x, backA.y, backB.x, backB.y);
+			line(backB.x, backB.y, backC.x, backC.y);
+			continue;
+		}
+		if(i == 2){
+			const forwardA = circles[i].getCharPos(history[2]);
+			const forwardB = circles[i].getCharPos(history[3]);
+			stroke("#ff3333");
+			line(forwardA.x, forwardA.y, forwardB.x, forwardB.y);
+			const refA = circles[i].getCharPos(history[3]);
+			const refB = circles[i].getCharPos(history[4]);
+			stroke("#33ff33");
+			line(refA.x, refA.y, refB.x, refB.y);
+			const backA = circles[i].getCharPos(history[4]);
+			const backB = circles[i].getCharPos(history[5]);
+			const backC = circles[i-1].getCharPos(history[5]);
+			stroke("#3333ff");
+			line(backA.x, backA.y, backB.x, backB.y);
+			line(backB.x, backB.y, backC.x, backC.y);
+			continue;
+		}
+	}
 }
