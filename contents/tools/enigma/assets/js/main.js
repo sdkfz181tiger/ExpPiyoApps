@@ -43,7 +43,7 @@ function setup(){
 		["G", "H", "I", "J", "K", "L"],
 		["M", "N", "O", "P", "Q", "R"],
 		["S", "T", "U", "V", "W", "X"],
-		["Y", "Z",null,null,null, "Cl"]
+		["Y", "Z",null,null,null,"Cl"]
 	];
 	const padB = 36;
 	const sBX = cX - padB * (keys[0].length-1) * 0.5;
