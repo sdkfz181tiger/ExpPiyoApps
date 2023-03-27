@@ -39,11 +39,11 @@ function setup(){
 	// Buttons
 	btns = [];
 	const keys = [
-		["a", "b", "c", "d", "e", "f"],
-		["g", "h", "i", "j", "k", "l"],
-		["m", "n", "o", "p", "q", "r"],
-		["s", "t", "u", "v", "w", "x"],
-		["y", "z",null,null,null, "C"]
+		["A", "B", "C", "D", "E", "F"],
+		["G", "H", "I", "J", "K", "L"],
+		["M", "N", "O", "P", "Q", "R"],
+		["S", "T", "U", "V", "W", "X"],
+		["Y", "Z",null,null,null, "Cl"]
 	];
 	const padB = 36;
 	const sBX = cX - padB * (keys[0].length-1) * 0.5;
@@ -55,7 +55,7 @@ function setup(){
 			const y = sBY + padB * r;
 			const btn = new Button("btn_keyboard.png", 
 				x, y, 1, keys[r][c], (key)=>{
-				if(key == "C"){
+				if(key == "Cl"){
 					reset();
 					return;
 				}

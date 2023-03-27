@@ -102,7 +102,7 @@ class MyCircle{
 //==========
 // Enigma(Logic)
 
-const alphabets = "abcdefghijklmnopqrstuvwxyz";
+const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const ROT_1 = [14,20,12,2,22,19,13,23,16,6,0,7,17,1,24,10,5,25,3,9,18,21,11,4,15,8];
 const ROT_2 = [20,2,21,15,3,17,11,19,0,1,4,23,5,24,6,8,22,25,9,10,13,16,7,14,12,18];
 const ROT_3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
