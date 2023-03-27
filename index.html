@@ -59,15 +59,25 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container text-center" v-if="mode==1">
-				<div class="row pt-2">
-					<!--<div class="col">
-						<h1 id="title-logo-1">ぴよ</h1>
-						<h1 id="title-logo-2">Land</h1>
-						<small>プログラムでつくろう!!</small>
-					</div>-->
+			<div class="container" v-if="mode==1">
+				<div class="row pt-2 pb-2">
+					<div class="col">
+						<div class="card">
+							<div class="card-body">
+								<h6 class="card-title">
+									<i class="bi-pen-fill me-1"></i>説明
+								</h6>
+								<p class="card-text">
+									<ul>
+										<li>JavaScriptで作ったサンプルです</li>
+										<li>ツール系やゲームまで様々なものを作る事ができます</li>
+									</ul>
+								</p>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="row pt-2">
+				<div class="row pt-2 text-center">
 					<div class="d-flex justify-content-center">
 						<table id="timer-controller">
 							<tr>
@@ -95,6 +105,7 @@
 									</a><br>
 									<small>TODO</small>
 								</td>
+								<td class="pb-1"></td>
 							</tr>
 							<tr>
 								<td class="pb-1">
@@ -107,7 +118,7 @@
 									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/textcounter">
 										<i class="bi-card-text" role="img"></i>
 									</a><br>
-									<small>文字カウンタ</small>
+									<small>文字カウ..</small>
 								</td>
 								<td class="pb-1">
 									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/detectimg">
@@ -121,13 +132,13 @@
 									</a><br>
 									<small>物体検知</small>
 								</td>
-							<tr>
 								<td class="pb-1">
 									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/sudokuimg">
 										<i class="bi-card-image" role="img"></i>
 									</a><br>
 									<small>数独ソルバ</small>
 								</td>
+							<tr>
 								<td class="pb-1">
 									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/calculator">
 										<i class="bi-calculator-fill" role="img"></i>
@@ -140,9 +151,8 @@
 									</a><br>
 									<small>エニグマ</small>
 								</td>
-								<td class="pb-1">
-
-								</td>
+								<td class="pb-1"></td>
+								<td class="pb-1"></td>
 							</tr>
 							<tr>
 								<td class="pb-1">
@@ -169,14 +179,14 @@
 									</a><br>
 									<small>マインス..</small>
 								</td>
-							</tr>
-							<tr>
 								<td class="pb-1">
 									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/flappy">
 										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>Flappy</small>
 								</td>
+							</tr>
+							<tr>
 								<td class="pb-1">
 									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/tictactor">
 										<i class="bi-puzzle-fill" role="img"></i>
@@ -195,6 +205,8 @@
 									</a><br>
 									<small>キャンディ</small>
 								</td>
+								<td class="pb-1"></td>
+								<td class="pb-1"></td>
 							</tr>
 						</table>
 					</div>
