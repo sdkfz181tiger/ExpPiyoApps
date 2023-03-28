@@ -45,9 +45,9 @@ function setup(){
 		["S", "T", "U", "V", "W", "X"],
 		["Y", "Z",null,null,null,"Cl"]
 	];
-	const padB = 36;
+	const padB = 40;
 	const sBX = cX - padB * (keys[0].length-1) * 0.5;
-	const sBY = 290;
+	const sBY = 295;
 	for(let r=0; r<keys.length; r++){
 		for(let c=0; c<keys[0].length; c++){
 			if(keys[r][c] == null) continue;
@@ -112,10 +112,10 @@ function draw(){
 		drawPath();
 	}else{
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
-		text("...", cX, 80);
+		text("---", cX, 80);
 		textSize(FONT_SIZE*0.8);
-		text("...", cX, cY - 12);
-		text("...", cX, cY + 12);
+		text("---", cX, cY - 12);
+		text("---", cX, cY + 12);
 	}
 
 	// Text
