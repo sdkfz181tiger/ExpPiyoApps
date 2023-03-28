@@ -92,6 +92,8 @@ class MyCircle{
 		fill("#333333"); noStroke();
 		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
 		text(alphabets[this._roter.index], this._x, this._y);
+		text("^", this._x, this._y - FONT_SIZE*0.4);
+		text("v", this._x, this._y + FONT_SIZE*0.5);
 		textSize(FONT_SIZE*0.4);
 		for(let i=0; i<alphabets.length; i++){
 			const r = this._padR*i-Math.PI*0.5;
@@ -175,7 +177,7 @@ class Scrambler{
 		// 右のローターを回転(1周すると次のローターも回転)
 		for(let i=this._roters.length-1; 0<=i; i--){
 			const roter = this._roters[i];
-			if(!roter.rotate()) return;
+			if(!roter.rotate(1)) return;
 		}
 	}
 

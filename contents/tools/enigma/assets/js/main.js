@@ -11,7 +11,7 @@ const FILES_IMG = [
 let font, cX, cY;
 let enigma, btns
 let circles, history;
-let strFrom, strTo, strResult;
+let strFrom, strTo;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -65,8 +65,7 @@ function setup(){
 				// Result
 				strFrom += history[0];
 				strTo += history[history.length-1];
-				strResult = strFrom + "->" + strTo;
-				console.log("Result:", strResult);
+				console.log("Result:", strFrom, "->", strTo);
 			});
 			btns.push(btn);
 		}
@@ -78,7 +77,6 @@ function setup(){
 		history = [];
 		strFrom = "";
 		strTo   = "";
-		strResult = "";
 		// Circles
 		const roters = enigma.getRoters();
 		const padC = width * 0.32;
@@ -107,15 +105,17 @@ function draw(){
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
 		text(history.join("->"), cX, 80);
 		// Result
-		textSize(FONT_SIZE);
-		text(strResult, cX, cY);
+		textSize(FONT_SIZE*0.8);
+		text(strFrom, cX, cY - 12);
+		text(strTo, cX, cY + 12);
 		// Path
 		drawPath();
 	}else{
 		textSize(FONT_SIZE*0.5); textAlign(CENTER, CENTER);
 		text("...", cX, 80);
-		textSize(FONT_SIZE);
-		text("_->_", cX, cY);
+		textSize(FONT_SIZE*0.8);
+		text("...", cX, cY - 12);
+		text("...", cX, cY + 12);
 	}
 
 	// Text
