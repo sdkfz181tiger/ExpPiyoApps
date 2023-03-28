@@ -55,7 +55,11 @@ class MyCircle{
 		const dY = this._y - y;
 		const dist = Math.sqrt(dX**2 + dY**2);
 		if(this._radius < dist) return;
-		this._roter.rotate();// Rotate
+		if(y < this._y){
+			this._roter.rotate(1);// RotateUp
+		}else{
+			this._roter.rotate(-1);// RotateUp
+		}
 	}
 
 	getCharPos(c){
@@ -87,7 +91,7 @@ class MyCircle{
 		}
 		fill("#333333"); noStroke();
 		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
-		text(this._roter.index, this._x, this._y);
+		text(alphabets[this._roter.index], this._x, this._y);
 		textSize(FONT_SIZE*0.4);
 		for(let i=0; i<alphabets.length; i++){
 			const r = this._padR*i-Math.PI*0.5;
@@ -112,6 +116,7 @@ class Enigma{
 
 	constructor(){
 		console.log("Enigma");
+		this.init(0, 0, 0);
 	}
 
 	init(n1, n2, n3){
@@ -237,13 +242,21 @@ class Roter{
 		return -1;
 	}
 
-	rotate(){
-		this._index++;
-		if(this._ptn.length-1 < this._index){
-			this._index = 0;
-			this.init();// Init
-			return true;
-		}
+	rotate(off=0){
+		if(off == 0) return;
+		if(off < 0){
+			this._index--;
+			if(this._index < 0){
+				this._index = this._ptn.length-1;
+			}
+		}else{
+			this._index++;
+			if(this._ptn.length-1 < this._index){
+				this._index = 0;
+				this.init();// Init
+				return true;
+			}
+		}		
 		this.init();// Init
 		return false;
 	}
