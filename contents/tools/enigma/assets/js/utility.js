@@ -37,6 +37,8 @@ class Button extends Sprite{
 //==========
 // Enigma(UI)
 
+const CODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 // MyCircle
 class MyCircle{
 
@@ -64,12 +66,12 @@ class MyCircle{
 
 	getCharPos(c){
 		let index = -1;
-		for(let i=0; i<alphabets.length; i++){
-			if(alphabets[i] != c) continue;
+		for(let i=0; i<CODES.length; i++){
+			if(CODES[i] != c) continue;
 			index = i;
 			break;
 		}
-		const p = Math.PI*2 / alphabets.length;
+		const p = Math.PI*2 / CODES.length;
 		const r = index*p - Math.PI*0.5;
 		const x = this._x + this._radius * Math.cos(r);
 		const y = this._y + this._radius * Math.sin(r);
@@ -91,15 +93,15 @@ class MyCircle{
 		}
 		fill("#333333"); noStroke();
 		textSize(FONT_SIZE*0.6); textAlign(CENTER, CENTER);
-		text(alphabets[this._roter.index], this._x, this._y);
+		text(CODES[this._roter.index], this._x, this._y);
 		text("^", this._x, this._y - FONT_SIZE*0.4);
 		text("v", this._x, this._y + FONT_SIZE*0.5);
 		textSize(FONT_SIZE*0.4);
-		for(let i=0; i<alphabets.length; i++){
+		for(let i=0; i<CODES.length; i++){
 			const r = this._padR*i-Math.PI*0.5;
 			const x = this._x + this._radius * Math.cos(r);
 			const y = this._y + this._radius * Math.sin(r);
-			const c = alphabets[i];
+			const c = CODES[i];
 			text(c, x, y-FONT_SIZE*0.1);
 		}
 	}
@@ -108,7 +110,6 @@ class MyCircle{
 //==========
 // Enigma(Logic)
 
-const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const ROT_1 = [14,20,12,2,22,19,13,23,16,6,0,7,17,1,24,10,5,25,3,9,18,21,11,4,15,8];
 const ROT_2 = [20,2,21,15,3,17,11,19,0,1,4,23,5,24,6,8,22,25,9,10,13,16,7,14,12,18];
 const ROT_3 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
@@ -220,26 +221,26 @@ class Roter{
 		const i = this.getIndex(c);
 		const f = this._forward[i];
 		//console.log("forward:", i, "->", f);
-		return alphabets[f];
+		return CODES[f];
 	}
 
 	backward(c){
 		const i = this.getIndex(c);
 		const b = this._backward[i];
 		//console.log("backward:", i, "->", b);
-		return alphabets[b];
+		return CODES[b];
 	}
 
 	reflect(c){
 		const i = this.getIndex(c);
 		const r = this._ptn.length-1 - i;
 		//console.log("reflect:", i, "->", r);
-		return alphabets[r];
+		return CODES[r];
 	}
 
 	getIndex(c){
-		for(let i=0; i<alphabets.length; i++){
-			if(alphabets[i] == c) return i;
+		for(let i=0; i<CODES.length; i++){
+			if(CODES[i] == c) return i;
 		}
 		return -1;
 	}
