@@ -106,7 +106,9 @@ function draw(){
 		text(history.join("->"), cX, 80);
 		// Result
 		textSize(FONT_SIZE*0.8);
+		fill("#ff3333");
 		text(strFrom, cX, cY - 12);
+		fill("#3333ff");
 		text(strTo, cX, cY + 12);
 		// Path
 		drawPath();
