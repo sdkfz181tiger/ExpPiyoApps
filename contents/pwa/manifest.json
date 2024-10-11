@@ -1,6 +1,6 @@
 {
-	"name":"ぴよLand",
-	"short_name":"ぴよLand",
+	"name":"ぴよApps",
+	"short_name":"ぴよApps",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
