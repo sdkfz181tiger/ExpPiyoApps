@@ -1,6 +1,6 @@
 {
-	"name":"物体検知",
-	"short_name":"物体検知",
+	"name":"数独カメラ",
+	"short_name":"数独カメラ",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",

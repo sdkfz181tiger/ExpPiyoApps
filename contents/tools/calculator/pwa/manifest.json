@@ -1,6 +1,6 @@
 {
-	"name":"干支一覧表",
-	"short_name":"干支一覧表",
+	"name":"電卓",
+	"short_name":"電卓",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
