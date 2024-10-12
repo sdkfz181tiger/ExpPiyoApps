@@ -153,7 +153,7 @@ app.component("webcam", {
 			this.ctx.stroke();
 		}
 	},
-	template: '<div class="row pb-4"><div class="col">{{ msg }}</div></div><div><canvas></canvas></div>'
+	template: '<div class="row pb-4 text-center">{{ msg }}</div><div><canvas></canvas></div>'
 });
 
 app.mount("#app");
