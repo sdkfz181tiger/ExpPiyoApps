@@ -49,7 +49,10 @@ const app = Vue.createApp({
 		},
 		isValidURL(){
 			// TODO: URLフォーマットチェック
-			return false;
+			const regex = new RegExp('^(https?:\\/\\/)?'+
+				'(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}'+
+				'(\\/[-a-z\\d%_.~+]*)*', 'i');
+			return regex.test(this.str);
 		},
 		clickBtn(value){
 			console.log("clickBtn:", value);
@@ -131,7 +134,7 @@ app.component("webcam", {
 		},
 		startTick(){
 			if(this.video.readyState === this.video.HAVE_ENOUGH_DATA){
-				// Aspect Racio
+				// Aspect
 				this.canvas.style.aspectRatio = this.video.videoWidth / this.video.videoHeight;
 				// Draw
 				this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
@@ -153,7 +156,7 @@ app.component("webcam", {
 			this.drawLine(location.bottomLeftCorner,  location.topLeftCorner);
 		},
 		drawLine(begin, end){
-			this.ctx.lineWidth = 4;
+			this.ctx.lineWidth = 2;
 			this.ctx.strokeStyle = "#FF3B58";
 			this.ctx.beginPath();
 			this.ctx.moveTo(begin.x, begin.y);
