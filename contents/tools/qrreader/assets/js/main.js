@@ -88,11 +88,12 @@ app.component("imobile", {
 app.component("webcam", {
 	data(){
 		return {
-			msg: "This is my Component!!",
+			msg: "***",
 			videoWidth: 480,
 			videoHeight: 320,
 			video: null,
-			canvas: null
+			canvas: null,
+			ctx: null
 		}
 	},
 	mounted(){
@@ -115,50 +116,41 @@ app.component("webcam", {
 			this.video.addEventListener("play", (e)=>{
 				// Overlay
 				this.canvas = document.createElement("canvas");
-				this.video.after(this.canvas);
-				this.startTick();// Start
+				this.ctx = this.canvas.getContext("2d");
 			});
 			this.video.play();
 
-			// jsQR
-			//const video  = document.createElement("video");
-			//const canvas = document.getElementById("canvas");
-			//const ctx    = canvas.getContext("2d");
-			//const msg    = document.getElementById("msg");
-
-			// const userMedia = {video: {facingMode: "environment"}};
-			// navigator.mediaDevices.getUserMedia(userMedia).then((stream)=>{
-			// 	video.srcObject = stream;
-			// 	video.setAttribute("playsinline", true);
-			// 	video.play();
-			// 	startTick();
-			// });
-
-			// function startTick(){
-			// 	msg.innerText = "Loading video...";
-			// 	if(video.readyState === video.HAVE_ENOUGH_DATA){
-			// 		canvas.height = video.videoHeight;
-			// 		canvas.width = video.videoWidth;
-			// 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-			// 		// このタイミングでQRコードを判定します
-			// 	}
-			// 	setTimeout(startTick, 250);
-			// }
+			this.startTick();// Start
 		},
 		startTick(){
 			if(this.video.readyState === this.video.HAVE_ENOUGH_DATA){
-				const ctx = this.canvas.getContext("2d");
-				const img = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+				// Draw
+				this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
+				const img = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
 				const code = jsQR(img.data, img.width, img.height, {inversionAttempts: "dontInvert"});
 				if(code){
-					console.log("Found:", code.location);
-					this.msg = "Found:" + code.location;
+					this.drawRect(code.location);// Draw
+					this.msg = "Found:" + code.data;
 				}else{
-					console.log("Not found...");
 					this.msg = "Not found...";
 				}
 			}
 			setTimeout(this.startTick, 250);
+		},
+		drawRect(location){
+			this.drawLine(location.topLeftCorner,     location.topRightCorner);
+			this.drawLine(location.topRightCorner,    location.bottomRightCorner);
+			this.drawLine(location.bottomRightCorner, location.bottomLeftCorner);
+			this.drawLine(location.bottomLeftCorner,  location.topLeftCorner);
+		},
+		drawLine(begin, end){
+			console.log(begin.x, begin.y);
+			this.ctx.lineWidth = 4;
+			this.ctx.strokeStyle = "#FF3B58";
+			this.ctx.beginPath();
+			this.ctx.moveTo(begin.x, begin.y);
+			this.ctx.lineTo(end.x, end.y);
+			this.ctx.stroke();
 		}
 	},
 	template: '<div class="row pb-4"><div class="col">msg:{{ msg }}</div></div><div><video></video></div>'
