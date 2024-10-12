@@ -9,7 +9,8 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	modalText: ""
+	modalText: "",
+	str: "***"
 }
 
 // Vue.js
@@ -40,7 +41,14 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		isFoundURL(){
+		onQRDetected(str){
+			this.str = str;
+		},
+		onQRLosted(str){
+			this.str = str;
+		},
+		isValidURL(){
+			// TODO: URLフォーマットチェック
 			return false;
 		},
 		clickBtn(value){
@@ -88,7 +96,7 @@ app.component("imobile", {
 app.component("webcam", {
 	data(){
 		return {
-			msg: "***",
+			msg: "This is my Component!!",
 			videoWidth: 480,
 			videoHeight: 320,
 			video: null,
@@ -131,9 +139,9 @@ app.component("webcam", {
 				const code = jsQR(img.data, img.width, img.height, {inversionAttempts: "dontInvert"});
 				if(code){
 					this.drawRect(code.location);// Draw
-					this.msg = "Found:" + code.data;
+					this.$emit("on-qr-detected", code.data);// Emit
 				}else{
-					this.msg = "Not found...";
+					this.$emit("on-qr-losted", "Losted...");// Emit
 				}
 			}
 			setTimeout(this.startTick, 120);
@@ -153,7 +161,7 @@ app.component("webcam", {
 			this.ctx.stroke();
 		}
 	},
-	template: '<div class="row pb-4 text-center">{{ msg }}</div><div><canvas></canvas></div>'
+	template: '<div><canvas></canvas></div>'
 });
 
 app.mount("#app");

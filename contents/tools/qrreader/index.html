@@ -99,7 +99,7 @@
 					<div class="col-2"></div>
 					<div class="col-8">
 						<div id="webcam">
-							<webcam></webcam>
+							<webcam v-on:on-qr-detected="onQRDetected" v-on:on-qr-losted="onQRLosted"></webcam>
 						</div>
 					</div>
 					<div class="col-2"></div>
@@ -108,9 +108,16 @@
 					<div class="col-2"></div>
 					<div class="col-8 text-center">
 						<button class="btn btn-secondary me-1" 
-							v-bind:class="{disabled: !isFoundURL()}" v-on:click="clickBtn">
+							v-bind:class="{disabled: !isValidURL()}" v-on:click="clickBtn">
 							<i class="bi-link me-1"></i>Access
 						</button>
+					</div>
+					<div class="col-2"></div>
+				</div>
+				<div class="row pt-4">
+					<div class="col-2"></div>
+					<div class="col-8 text-center">
+						{{ str }}
 					</div>
 					<div class="col-2"></div>
 				</div>
