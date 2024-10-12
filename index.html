@@ -30,16 +30,17 @@
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
-					<a class="btn btn-primary btn-sm me-4 invisible" href="./">
-						<i class="bi-caret-left-fill" role="img"></i>
+					<a class="btn btn-primary btn-sm ms-4 invisible" id="btn-install" href="./">
+						<i class="bi-plus-square-fill" role="img"></i>
 					</a>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
 						<a class="navbar-brand">ぴよApps</a>
 					</div>
-					<a class="btn btn-primary btn-sm ms-4 invisible" id="btn-install" href="./">
-						<i class="bi-plus-square-fill" role="img"></i>
-					</a>
+					<button class="navbar-toggler" type="button"
+						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 				</div>
 			</nav>
 			<!-- Navigation(End) -->
@@ -60,46 +61,46 @@
 
 			<!-- Home(Start) -->
 			<div class="container" v-if="mode==1">
-				<div class="row pt-2 pb-2">
+				<div class="row pt-2 pb-4">
 					<div class="col">
 						<div class="card">
 							<div class="card-body">
 								<h6 class="card-title">
-									<i class="bi-pen-fill me-1"></i>JavaScriptサンプル
+									<i class="bi-pen-fill me-1"></i>つかいかた
 								</h6>
 								<p class="card-text">
-									<ul>
-										<li>ツールやゲームまで様々なものを作る事ができます</li>
-									</ul>
+									HTML/CSS/JSで作ったサンプル集です。<br/>
+									作品づくりの参考にしてください。
 								</p>
 							</div>
 						</div>
 					</div>
 				</div>
+				<h2>ツール系</h2>
 				<div class="row pt-2 text-center">
 					<div class="d-flex justify-content-center">
 						<table id="timer-controller">
 							<tr>
 								<td class="pb-1">
-									<a class="btn btn-info btn-lg mx-2" href="./contents/apps/timer">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/apps/timer">
 										<i class="bi-stopwatch-fill" role="img"></i>
 									</a><br>
 									<small>タイマー</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-info btn-lg mx-2" href="./contents/apps/weather">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/apps/weather">
 										<i class="bi-sun-fill" role="img"></i>
 									</a><br>
 									<small>天気</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-info btn-lg mx-2" href="./contents/apps/quiz">
-										<i class="bi-quora" role="img"></i>
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/tools/calculator">
+										<i class="bi-calculator-fill" role="img"></i>
 									</a><br>
-									<small>クイズ</small>
+									<small>簡易電卓</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-info btn-lg mx-2" href="./contents/apps/todo">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/apps/todo">
 										<i class="bi-ui-checks" role="img"></i>
 									</a><br>
 									<small>TODO</small>
@@ -107,102 +108,133 @@
 							</tr>
 							<tr>
 								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/etochecker">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/tools/etochecker">
 										<i class="bi-person-fill" role="img"></i>
 									</a><br>
 									<small>干支一覧表</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/textcounter">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/tools/textcounter">
 										<i class="bi-card-text" role="img"></i>
 									</a><br>
 									<small>文字カウ..</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/detectimg">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/tools/detectimg">
 										<i class="bi-card-image" role="img"></i>
 									</a><br>
 									<small>画像検知</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/detectcam">
+									<a class="btn btn-primary btn-lg mx-2" href="./contents/tools/detectcam">
 										<i class="bi-camera-fill" role="img"></i>
 									</a><br>
 									<small>物体検知</small>
 								</td>
-							<tr>
-								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/sudokuimg">
-										<i class="bi-card-image" role="img"></i>
-									</a><br>
-									<small>数独ソルバ</small>
-								</td>
-								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/calculator">
-										<i class="bi-calculator-fill" role="img"></i>
-									</a><br>
-									<small>簡易電卓</small>
-								</td>
-								<td class="pb-1">
-									<a class="btn btn-success btn-lg mx-2" href="./contents/tools/enigma">
-										<i class="bi-calculator-fill" role="img"></i>
-									</a><br>
-									<small>エニグマ</small>
-								</td>
-								<td class="pb-1"></td>
 							</tr>
+						</table>
+					</div>
+				</div>
+				<h2>ゲーム系</h2>
+				<div class="row pt-2 text-center">
+					<div class="d-flex justify-content-center">
+						<table id="timer-controller">
 							<tr>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/flappy">
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/flappy">
 										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>Flappy</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/15puzzle">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/15puzzle">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>15パズル</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/2048">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/2048">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>2048</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/tetris">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/tetris">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>テトリス</small>
 								</td>
 							</tr>
 							<tr>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/minesweeper">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/minesweeper">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>マインス..</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/tictactor">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/tictactor">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>oxゲーム</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/reversi">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/reversi">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>リバーシ</small>
 								</td>
 								<td class="pb-1">
-									<a class="btn btn-primary btn-lg mx-2" href="./contents/games/candycrasher">
-										<i class="bi-puzzle-fill" role="img"></i>
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/candycrasher">
+										<i class="bi-joystick" role="img"></i>
 									</a><br>
 									<small>キャンディ</small>
 								</td>
+							</tr>
+							<tr>
+								<td class="pb-1">
+									<a class="btn btn-info btn-lg mx-2" href="./contents/games/quiz">
+										<i class="bi-joystick" role="img"></i>
+									</a><br>
+									<small>クイズ</small>
+								</td>
 								<td class="pb-1"></td>
+								<td class="pb-1"></td>
+								<td class="pb-1"></td>
+								<td class="pb-1"></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<h2>その他</h2>
+				<div class="row pt-2 text-center">
+					<div class="d-flex justify-content-center">
+						<table id="timer-controller">
+							<tr>
+								<td class="pb-1">
+									<a class="btn btn-success btn-lg mx-2" href="./contents/other/sudokuimg">
+										<i class="bi-card-image" role="img"></i>
+									</a><br>
+									<small>数独ソルバ</small>
+								</td>
+								<td class="pb-1">
+									<a class="btn btn-success btn-lg mx-2" href="./contents/other/enigma">
+										<i class="bi-calculator-fill" role="img"></i>
+									</a><br>
+									<small>エニグマ</small>
+								</td>
+								<td class="pb-1">
+									<a class="btn btn-light btn-lg mx-2" href="#">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>-</small>
+								</td>
+								<td class="pb-1">
+									<a class="btn btn-light btn-lg mx-2" href="#">
+										<i class="bi-github" role="img"></i>
+									</a><br>
+									<small>-</small>
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -224,10 +256,33 @@
 				<small>｜</small>
 				<small><a href="./privacy/index.html">Privacy</a></small>
 			</div>
-			<imobile pid="26719" mid="556794" asid="1811250" 
-				id="im-eaf79126a17942438c85f526dece8cdc"></imobile>
+			<!--<imobile pid="26719" mid="556794" asid="1811250" 
+				id="im-eaf79126a17942438c85f526dece8cdc"></imobile>-->
 		</footer>
 		<!-- Footer(End) -->
+
+		<!-- Offcanvas(Start) -->
+		<div class="container mt-5">
+			<div class="offcanvas offcanvas-end" id="myOffcanvas">
+				<div class="offcanvas-header">
+					<!-- <a class="btn btn-primary" href="#"
+						v-on:click="showModal()">
+						<i class="bi-file-earmark-plus-fill" role="img"></i>
+					</a> -->
+					<h5>Settings</h5>
+					<button type="button" class="btn-close text-reset" 
+							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
+				</div>
+				<div class="offcanvas-body">
+					<!--<imobile pid="26719" mid="556794" asid="1811310" 
+						id="im-b2bfa244d46f4421ae8c8f7d98fae5a9"></imobile>-->
+					<div class="form-check form-switch form-switch-lg d-flex align-items-center mt-4">
+						Hello, Offcanvas!!
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Offcanvas(End) -->
 
 		<!-- Modal(Start) -->
 		<div class="container mt-5 text-center">

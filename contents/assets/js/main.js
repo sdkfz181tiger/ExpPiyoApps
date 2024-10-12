@@ -43,7 +43,7 @@ app.component("imobile", {
 		const imobile = document.createElement("script");
 		imobile.src = "//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104";
 		imobile.setAttribute("async", "true");
-		//elem.after(imobile);// TODO: Waiting...
+		elem.after(imobile);
 	},
 	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
 });
