@@ -116,6 +116,7 @@ app.component("webcam", {
 				// Overlay
 				this.canvas = document.createElement("canvas");
 				this.video.after(this.canvas);
+				this.startTick();// Start
 			});
 			this.video.play();
 
@@ -143,6 +144,19 @@ app.component("webcam", {
 			// 	}
 			// 	setTimeout(startTick, 250);
 			// }
+		},
+		startTick(){
+			if(this.video.readyState === this.video.HAVE_ENOUGH_DATA){
+				const ctx = this.canvas.getContext("2d");
+				const img = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+				const code = jsQR(img.data, img.width, img.height, {inversionAttempts: "dontInvert"});
+				if(code){
+					console.log("Found:", code.location);
+				}else{
+					console.log("Not found...");
+				}
+			}
+			setTimeout(this.startTick, 250);
 		}
 	},
 	template: '<video></video>'
