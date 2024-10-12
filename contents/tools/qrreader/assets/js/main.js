@@ -111,19 +111,20 @@ app.component("webcam", {
 			const option = (isMobile) ? optionMobile:optionPC;
 			// WebCam
 			const capture = await navigator.mediaDevices.getUserMedia(option);
-			this.video = document.getElementsByTagName("video")[0];
+			this.video = document.createElement("video");
 			this.video.srcObject = capture;
 			this.video.addEventListener("play", (e)=>{
 				// Overlay
-				this.canvas = document.createElement("canvas");
+				this.canvas = document.getElementsByTagName("canvas")[0];
 				this.ctx = this.canvas.getContext("2d");
+				this.startTick();// Start
 			});
 			this.video.play();
-
-			this.startTick();// Start
 		},
 		startTick(){
 			if(this.video.readyState === this.video.HAVE_ENOUGH_DATA){
+				// Aspect Racio
+				this.canvas.style.aspectRatio = this.video.videoWidth / this.video.videoHeight;
 				// Draw
 				this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 				const img = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -144,7 +145,6 @@ app.component("webcam", {
 			this.drawLine(location.bottomLeftCorner,  location.topLeftCorner);
 		},
 		drawLine(begin, end){
-			console.log(begin.x, begin.y);
 			this.ctx.lineWidth = 4;
 			this.ctx.strokeStyle = "#FF3B58";
 			this.ctx.beginPath();
@@ -153,7 +153,7 @@ app.component("webcam", {
 			this.ctx.stroke();
 		}
 	},
-	template: '<div class="row pb-4"><div class="col">msg:{{ msg }}</div></div><div><video></video></div>'
+	template: '<div class="row pb-4"><div class="col">{{ msg }}</div></div><div><canvas></canvas></div>'
 });
 
 app.mount("#app");
