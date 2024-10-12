@@ -32,9 +32,6 @@ const app = Vue.createApp({
 		const modal = new bootstrap.Modal(elemModal);
 		setTimeout(()=>{
 			this.changeMode(MODE_MAIN);
-			// CalcManager
-			this.cMng = new CalcManager();
-			this.disp = this.cMng.put("C");// Clear
 		}, 200);
 	},
 	methods:{
@@ -85,6 +82,70 @@ app.component("imobile", {
 		elem.after(imobile);
 	},
 	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
+});
+
+// Compoonents(jsQR)
+app.component("webcam", {
+	data(){
+		return {
+			msg: "This is my Component!!",
+			videoWidth: 480,
+			videoHeight: 320,
+			video: null,
+			canvas: null
+		}
+	},
+	mounted(){
+		console.log("Component is mounted!!");
+		// WebCam
+		this.readyWebCam();
+	},
+	methods:{
+		async readyWebCam(){
+			console.log("readyWebCam");
+			// Mobile
+			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
+			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			const option = (isMobile) ? optionMobile:optionPC;
+			// WebCam
+			const capture = await navigator.mediaDevices.getUserMedia(option);
+			this.video = document.getElementsByTagName("video")[0];
+			this.video.srcObject = capture;
+			this.video.addEventListener("play", (e)=>{
+				// Overlay
+				this.canvas = document.createElement("canvas");
+				this.video.after(this.canvas);
+			});
+			this.video.play();
+
+			// jsQR
+			//const video  = document.createElement("video");
+			//const canvas = document.getElementById("canvas");
+			//const ctx    = canvas.getContext("2d");
+			//const msg    = document.getElementById("msg");
+
+			// const userMedia = {video: {facingMode: "environment"}};
+			// navigator.mediaDevices.getUserMedia(userMedia).then((stream)=>{
+			// 	video.srcObject = stream;
+			// 	video.setAttribute("playsinline", true);
+			// 	video.play();
+			// 	startTick();
+			// });
+
+			// function startTick(){
+			// 	msg.innerText = "Loading video...";
+			// 	if(video.readyState === video.HAVE_ENOUGH_DATA){
+			// 		canvas.height = video.videoHeight;
+			// 		canvas.width = video.videoWidth;
+			// 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			// 		// このタイミングでQRコードを判定します
+			// 	}
+			// 	setTimeout(startTick, 250);
+			// }
+		}
+	},
+	template: '<video></video>'
 });
 
 app.mount("#app");

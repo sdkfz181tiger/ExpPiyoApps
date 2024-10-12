@@ -75,42 +75,19 @@ footer a i{
 	display: none !important;
 }
 
-/* Timer */
+/* jsQR */
 
-#timer-logo-1{
-	font-size: 4.0rem;
-	line-height: 0.8;
+main #webcam{
+	position: relative;
 }
 
-#timer-logo-2{
-	font-size: 3.0rem;
-	line-height: 0.8;
-}
-
-#timer-hms{
-	font-size: 3rem;
-	line-height: 1.0;
-}
-
-#timer-millis{
-	font-size: 1rem;
-	line-height: 0.5;
-}
-
-.btn-icon{
-	line-height: 0.5;
-}
-
-table{
+#webcam video{
 	width: 100%; height: auto;
+	position: absolute;
 	background-color: silver;
 }
 
-table td{
-	width: 25%; height: auto;
-}
-
-table td button{
-	width: 100%; aspect-ratio: 1;
-	margin: 0px; padding: 16px 0px;
+#webcam canvas{
+	width: 100%; height: auto;
+	position: absolute;
 }
