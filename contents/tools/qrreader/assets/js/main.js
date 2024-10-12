@@ -40,6 +40,9 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
+		isFoundURL(){
+			return false;
+		},
 		clickBtn(value){
 			console.log("clickBtn:", value);
 		},
