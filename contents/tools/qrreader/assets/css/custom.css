@@ -83,6 +83,6 @@ main #webcam{
 
 #webcam canvas{
 	width: 100%; height: auto;
-	position: absolute;
+	position: relative;
 	background-color: silver;
 }

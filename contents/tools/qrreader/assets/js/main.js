@@ -9,9 +9,7 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	modalText: "",
-	cMng: null,
-	disp: "***"
+	modalText: ""
 }
 
 // Vue.js
@@ -44,7 +42,6 @@ const app = Vue.createApp({
 		},
 		clickBtn(value){
 			console.log("clickBtn:", value);
-			this.disp = this.cMng.put(value);// CalcManager
 		},
 		showModal(){
 			console.log("showModal");
