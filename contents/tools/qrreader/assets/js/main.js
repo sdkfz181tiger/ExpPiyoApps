@@ -136,7 +136,7 @@ app.component("webcam", {
 					this.msg = "Not found...";
 				}
 			}
-			setTimeout(this.startTick, 250);
+			setTimeout(this.startTick, 120);
 		},
 		drawRect(location){
 			this.drawLine(location.topLeftCorner,     location.topRightCorner);
