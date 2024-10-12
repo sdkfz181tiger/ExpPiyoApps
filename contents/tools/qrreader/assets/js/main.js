@@ -44,7 +44,7 @@ const app = Vue.createApp({
 		onQRDetected(str){
 			this.str = str;
 		},
-		onQRLosted(str){
+		onQRLost(str){
 			this.str = str;
 		},
 		isValidURL(){
@@ -143,7 +143,7 @@ app.component("webcam", {
 					this.drawRect(code.location);// Draw
 					this.$emit("on-qr-detected", code.data);// Emit
 				}else{
-					this.$emit("on-qr-losted", "Losted...");// Emit
+					this.$emit("on-qr-lost", "Lost...");// Emit
 				}
 			}
 			setTimeout(this.startTick, 120);
