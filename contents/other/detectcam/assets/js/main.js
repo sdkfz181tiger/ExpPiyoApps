@@ -105,19 +105,19 @@ app.component("webcam", {
 	mounted(){
 		console.log("Component is mounted!!");
 		// WebCam
-		this.readyWebcam();
+		this.readyWebCam();
 	},
 	methods:{
-		async readyWebcam(){
-			console.log("readyWebcam");
+		async readyWebCam(){
+			console.log("readyWebCam");
 			// Mobile
 			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
 			const optionMobile = {video: {facingMode: {exact: "environment"}}};
 			const option = (isMobile) ? optionMobile:optionPC;
 			// WebCam
-			this.video = document.getElementsByTagName("video")[0];
 			const capture = await navigator.mediaDevices.getUserMedia(option);
+			this.video = document.getElementsByTagName("video")[0];
 			this.video.srcObject = capture;
 			this.video.addEventListener("play", (e)=>{
 				// Overlay
