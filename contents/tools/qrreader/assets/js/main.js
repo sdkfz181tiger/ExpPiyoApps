@@ -48,7 +48,6 @@ const app = Vue.createApp({
 			this.str = str;
 		},
 		isValidURL(){
-			// TODO: URLフォーマットチェック
 			const regex = new RegExp('^(https?:\\/\\/)?'+
 				'(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}'+
 				'(\\/[-a-z\\d%_.~+]*)*', 'i');

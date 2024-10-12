@@ -107,8 +107,10 @@
 				<div class="row pt-4">
 					<div class="col-2"></div>
 					<div class="col-8 text-center">
-						<button class="btn btn-secondary me-1" 
-							v-bind:class="{disabled: !isValidURL()}" v-on:click="clickBtn">
+						<button v-if="isValidURL()" class="btn btn-primary me-1" v-on:click="clickBtn">
+							<i class="bi-link me-1"></i>Access
+						</button>
+						<button v-else class="btn btn-secondary disabled me-1" v-on:click="clickBtn">
 							<i class="bi-link me-1"></i>Access
 						</button>
 					</div>
