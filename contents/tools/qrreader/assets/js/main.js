@@ -161,7 +161,7 @@ app.component("webcam", {
 			setTimeout(this.startTick, 250);
 		}
 	},
-	template: '<div>msg:{{ msg }}</div><hr/><video></video>'
+	template: '<div class="row pb-4"><div class="col">msg:{{ msg }}</div></div><div><video></video></div>'
 });
 
 app.mount("#app");
