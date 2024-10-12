@@ -152,14 +152,16 @@ app.component("webcam", {
 				const code = jsQR(img.data, img.width, img.height, {inversionAttempts: "dontInvert"});
 				if(code){
 					console.log("Found:", code.location);
+					this.msg = "Found:" + code.location;
 				}else{
 					console.log("Not found...");
+					this.msg = "Not found...";
 				}
 			}
 			setTimeout(this.startTick, 250);
 		}
 	},
-	template: '<video></video>'
+	template: '<div>msg:{{ msg }}</div><hr/><video></video>'
 });
 
 app.mount("#app");

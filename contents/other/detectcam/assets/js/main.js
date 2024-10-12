@@ -92,6 +92,7 @@ app.component("imobile", {
 	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
 });
 
+// Components(WebCam)
 app.component("webcam", {
 	data(){
 		return {
