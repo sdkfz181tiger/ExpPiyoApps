@@ -46,7 +46,7 @@ const app = Vue.createApp({
 				showToast("未入力エラー", "Error", "文字を入力してください");
 				return;
 			}
-			this.$refs.child.makeCode(this.str);
+			this.$refs.child.makeCode(this.str);// Component
 		},
 		showModal(){
 			console.log("showModal");
