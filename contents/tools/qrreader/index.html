@@ -118,7 +118,10 @@
 				</div>
 				<div class="row pt-4">
 					<div class="col-2"></div>
-					<div class="col-8 text-center">
+					<div v-if="isValidURL()" class="col-8 text-center">
+						<a v-bind:href="str">{{ str }}</a>
+					</div>
+					<div v-else class="col-8 text-center">
 						{{ str }}
 					</div>
 					<div class="col-2"></div>
