@@ -55,7 +55,7 @@ const app = Vue.createApp({
 		},
 		clickBtn(value){
 			if(!this.isValidURL()) return;
-			window.location.href(this.str);
+			window.location.href = this.str;
 		},
 		showModal(){
 			console.log("showModal");
