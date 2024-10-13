@@ -74,7 +74,3 @@ footer a i{
 .toast:not(.showing):not(.show){
 	display: none !important;
 }
-
-#qrcode img{
-	margin: 0px auto; padding: 0px;
-}

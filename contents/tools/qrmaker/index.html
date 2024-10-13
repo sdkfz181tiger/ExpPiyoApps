@@ -97,20 +97,18 @@
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						<qrcode ref="child"></qrcode>
+						<input v-model="str" @input="onChange" class="form-control" type="text" placeholder="文字を入力してください">
+					</div>
+					<div class="col-auto">
+						<button class="btn btn-primary" v-on:click="clickBtn">
+							Clear
+						</button>
 					</div>
 				</div>
 				<div class="row pt-4">
-					<div class="col-1"></div>
-					<div class="col-8">
-						<input v-model="str" class="form-control" type="text" placeholder="文字を入力してください">
+					<div class="col">
+						<qrcode ref="child"></qrcode>
 					</div>
-					<div class="col-2">
-						<button class="btn btn-primary" v-on:click="clickBtn">
-							Make
-						</button>
-					</div>
-					<div class="col-1"></div>
 				</div>
 			</div>
 			<!-- TextCounter(End) -->

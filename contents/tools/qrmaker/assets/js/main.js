@@ -41,12 +41,12 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		clickBtn(){
-			if(this.str.length <= 0){
-				showToast("未入力エラー", "Error", "文字を入力してください");
-				return;
-			}
+		onChange(){
+			if(this.str.length <= 0) return;
 			this.$refs.child.makeCode(this.str);// Component
+		},
+		clickBtn(){
+			this.str = "";// Clear
 		},
 		showModal(){
 			console.log("showModal");
@@ -119,7 +119,7 @@ app.component("qrcode", {
 			this.qrcode.makeCode(str);
 		}
 	},
-	template: '<div id="qrcode"></div>'
+	template: '<div class="text-center" id="qrcode"></div>'
 });
 
 app.mount("#app");
