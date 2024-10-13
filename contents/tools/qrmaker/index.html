@@ -97,7 +97,7 @@
 				</div>
 				<div class="row pt-4">
 					<div class="col">
-						<input v-model="str" @input="onChange" class="form-control" type="text" placeholder="文字を入力してください">
+						<input v-model="str" v-on:input="onChange" class="form-control" type="text" placeholder="文字を入力してください">
 					</div>
 					<div class="col-auto">
 						<button class="btn btn-primary" v-on:click="clickBtn">
