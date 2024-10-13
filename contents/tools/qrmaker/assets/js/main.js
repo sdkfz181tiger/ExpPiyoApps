@@ -41,21 +41,9 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		onQRDetected(str){
-			this.str = str;
-		},
-		onQRLost(str){
-			this.str = str;
-		},
-		isValidURL(){
-			const regex = new RegExp('^(https?:\\/\\/)?'+
-				'(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}'+
-				'(\\/[-a-z\\d%_.~+]*)*', 'i');
-			return regex.test(this.str);
-		},
-		clickBtn(value){
-			if(!this.isValidURL()) return;
-			window.location.href = this.str;
+		clickBtn(){
+			console.log("Clicked!!");
+			this.$refs.child.makeCode(this.str);
 		},
 		showModal(){
 			console.log("showModal");
@@ -96,15 +84,13 @@ app.component("imobile", {
 });
 
 // Compoonents(jsQR)
-app.component("webcam", {
+app.component("qrcode", {
 	data(){
 		return {
 			msg: "This is my Component!!",
 			videoWidth: 480,
 			videoHeight: 320,
-			video: null,
-			canvas: null,
-			ctx: null
+			qrcode: null
 		}
 	},
 	mounted(){
@@ -115,56 +101,22 @@ app.component("webcam", {
 	methods:{
 		async readyQR(){
 			console.log("readyQR");
-			// Mobile
-			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
-			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
-			const optionMobile = {video: {facingMode: {exact: "environment"}}};
-			const option = (isMobile) ? optionMobile:optionPC;
-			// WebCam
-			const capture = await navigator.mediaDevices.getUserMedia(option);
-			this.video = document.createElement("video");
-			this.video.srcObject = capture;
-			this.video.addEventListener("play", (e)=>{
-				// Overlay
-				this.canvas = document.getElementsByTagName("canvas")[0];
-				this.ctx = this.canvas.getContext("2d");
-				this.startTick();// Start
+			// QR
+			this.qrcode = new QRCode("qrcode", {
+				text: "Hello, QR!!",
+				width: 256, height: 256,
+				colorDark: "#000000",
+				colorLight: "#ffffff",
+				correctLevel: QRCode.CorrectLevel.H
 			});
-			this.video.play();
 		},
-		startTick(){
-			if(this.video.readyState === this.video.HAVE_ENOUGH_DATA){
-				// Aspect
-				this.canvas.style.aspectRatio = this.video.videoWidth / this.video.videoHeight;
-				// Draw
-				this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
-				const img = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-				const code = jsQR(img.data, img.width, img.height, {inversionAttempts: "dontInvert"});
-				if(code){
-					this.drawRect(code.location);// Draw
-					this.$emit("on-qr-detected", code.data);// Emit
-				}else{
-					this.$emit("on-qr-lost", "Lost...");// Emit
-				}
-			}
-			setTimeout(this.startTick, 120);
-		},
-		drawRect(location){
-			this.drawLine(location.topLeftCorner,     location.topRightCorner);
-			this.drawLine(location.topRightCorner,    location.bottomRightCorner);
-			this.drawLine(location.bottomRightCorner, location.bottomLeftCorner);
-			this.drawLine(location.bottomLeftCorner,  location.topLeftCorner);
-		},
-		drawLine(begin, end){
-			this.ctx.lineWidth = 2;
-			this.ctx.strokeStyle = "#FF3B58";
-			this.ctx.beginPath();
-			this.ctx.moveTo(begin.x, begin.y);
-			this.ctx.lineTo(end.x, end.y);
-			this.ctx.stroke();
+		makeCode(str){
+			console.log("makeCode");
+			this.qrcode.clear();
+			this.qrcode.makeCode(str);
 		}
 	},
-	template: '<div><canvas></canvas></div>'
+	template: '<div id="qrcode"></div>'
 });
 
 app.mount("#app");
