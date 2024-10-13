@@ -54,7 +54,8 @@ const app = Vue.createApp({
 			return regex.test(this.str);
 		},
 		clickBtn(value){
-			console.log("clickBtn:", value);
+			if(!this.isValidURL()) return;
+			window.location.href(this.str);
 		},
 		showModal(){
 			console.log("showModal");
