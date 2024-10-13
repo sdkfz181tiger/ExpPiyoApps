@@ -10,7 +10,7 @@ const myData = {
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
 	modalText: "",
-	str: "***"
+	str: ""
 }
 
 // Vue.js
@@ -42,7 +42,10 @@ const app = Vue.createApp({
 			}
 		},
 		clickBtn(){
-			console.log("Clicked!!");
+			if(this.str.length <= 0){
+				showToast("未入力エラー", "Error", "文字を入力してください");
+				return;
+			}
 			this.$refs.child.makeCode(this.str);
 		},
 		showModal(){
@@ -103,7 +106,7 @@ app.component("qrcode", {
 			console.log("readyQR");
 			// QR
 			this.qrcode = new QRCode("qrcode", {
-				text: "Hello, QR!!",
+				text: "Hello World!!",
 				width: 256, height: 256,
 				colorDark: "#000000",
 				colorLight: "#ffffff",
