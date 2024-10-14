@@ -147,6 +147,7 @@ app.component("filepond", {
 			this.$emit("on-base64", base64);// Emit
 		});
 	},
+	emits: ["on-base64"],// Important
 	template: '<input id="my-filepond" type="file"/>'
 });
 

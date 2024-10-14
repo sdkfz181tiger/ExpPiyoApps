@@ -107,6 +107,7 @@ app.component("webcam", {
 		console.log("Component is mounted!!");
 		this.init();// init
 	},
+	emits: ["on-detected"],// Important
 	methods:{
 		async init(){
 			console.log("init");

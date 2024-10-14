@@ -111,6 +111,7 @@ app.component("webcam", {
 		console.log("Component is mounted!!");
 		this.init();// init
 	},
+	emits: ["on-qr-detected", "on-qr-lost"],// Important
 	methods:{
 		async init(){
 			console.log("init");

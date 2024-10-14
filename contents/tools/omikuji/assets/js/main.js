@@ -9,7 +9,8 @@ const myData = {
 	mode: MODE_LOADING,
 	actives: [false, false, false, false, false],
 	myOffcanvas: null,
-	modalText: ""
+	modalText: "",
+	url_kaisetsu: ""
 }
 
 // Vue.js
@@ -54,6 +55,10 @@ const app = Vue.createApp({
 				elem.removeEventListener("animationend", this);
 				elem.removeAttribute("class");
 			});
+		},
+		onUrakuji(url){
+			console.log("onUrakuji:", url);
+			this.url_kaisetsu = url;// 解説URL
 		}
 	}
 });
@@ -86,13 +91,16 @@ app.component("omikuji", {
 			infos: [],
 			om_src: "./assets/images/om_default.png",
 			om_choice: "",
-			om_choices: ["大吉", "中吉", "吉", "小吉", "末吉", "凶", "大凶"]
+			om_choices: ["大吉", "中吉", "吉", "小吉", "末吉", "凶", "大凶"],
+			url_csv: "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php",
+			url_kaisetsu: "",
 		}
 	},
 	mounted(){
 		console.log("Component is mounted!!");
 		this.init();// init
 	},
+	emits: ["on-urakuji"],// Important
 	methods:{
 		async init(){
 			console.log("init");
@@ -118,11 +126,9 @@ app.component("omikuji", {
 			console.log("drawUrakuji:", tokurei, q);
 			// Urakuji
 			this.infos.push("うらくじを引きます.");
-			// URL
-			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
 			const option = {responseType: "blob"};
-			axios.get(url, option).then(res=>{
+			axios.get(this.url_csv, option).then(res=>{
 				// CSV
 				res.data.text().then(str=>{
 					// Data
@@ -135,6 +141,7 @@ app.component("omikuji", {
 						return;
 					}
 					this.infos.push("データが見つかりました.");
+					this.$emit("on-urakuji", result[8]);// Emit
 				});
 			}).catch(err=>{
 				console.log(err);
