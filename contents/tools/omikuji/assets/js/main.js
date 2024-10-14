@@ -86,7 +86,7 @@ app.component("omikuji", {
 	data(){
 		return {
 			msg: "This is my Component!!",
-			csv: "***"
+			infos: []
 		}
 	},
 	mounted(){
@@ -105,31 +105,56 @@ app.component("omikuji", {
 				this.drawOmikuji();// Omikuji
 				return;
 			}
-			this.drawUrakuji(tokurei, q);// Urakuji
+			this.drawUrakuji(tokurei.replace("/", ""), q.replace("/", ""));// Urakuji
 		},
 		drawOmikuji(){
 			console.log("drawOmikuji!!");
-			this.msg = "おみくじをひきませう...";
+			this.infos.push("おみくじを引きます.");
 		},
 		drawUrakuji(tokurei, q){
 			console.log("drawUrakuji:", tokurei, q);
-			this.msg = "うらくじをひきませう...";
+			this.infos.push("うらくじを引きます.");
 			// URL
 			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
 			const option = {responseType: "blob"};
 			axios.get(url, option).then(res=>{
-
+				// CSV
 				res.data.text().then(str=>{
-					console.log(str);
-					this.csv = str;
+					// Data
+					const arr = this.csv2Arr(str);
+					console.log(arr);
+					this.infos.push(arr.length + "件のデータを取得しました.");
+					this.infos.push("データを検索しています.");
+					// Search
+					const result = this.searchArr(arr, tokurei, q);
+					if(result == null){
+						this.infos.push("データが見つかりませんでした...");
+						return;
+					}
+					this.infos.push("データが見つかりました.");
+
 				});
 			}).catch(err=>{
 				console.log(err);
 			});
+		},
+		csv2Arr(csv){
+			const arr = [];
+			const rows = csv.split("\n");
+			for(const row of rows) arr.push(row.split(","));
+			return arr;
+		},
+		searchArr(arr, tokurei, q){
+			for(const row of arr){
+				if(row[0] != tokurei) continue;
+				if(row[1] != q) continue;
+				return row;
+			}
+			return null;
 		}
 	},
-	template: '<div>{{ msg }}</div>'
+	template: '<div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
 });
 
 app.mount("#app");
