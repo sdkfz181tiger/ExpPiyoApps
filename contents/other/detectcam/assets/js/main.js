@@ -125,7 +125,7 @@ app.component("webcam", {
 				return;
 			}
 
-			showToast("Webカメラ", "Yahoo", "Webカメラを取得できた!!");
+			showToast("Webカメラ", "Yahoo", "Webカメラを取得しました");
 
 			// Mobile
 			// const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
