@@ -164,12 +164,12 @@ app.component("webcam", {
 
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
-				showToast("検知開始", "Yoro", "物体検知を開始します");
 				this.startDetection(detector);
 			});
 		},
 		startDetection(detector){
 			//console.log("startDetection");
+			showToast("検知開始", "Yoro", "物体検知を開始します");
 			detector.detect(this.video, (err, results)=>{
 				if(err){
 					console.log(err);
