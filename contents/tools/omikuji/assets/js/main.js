@@ -58,7 +58,17 @@ const app = Vue.createApp({
 		},
 		onUrakuji(url){
 			console.log("onUrakuji:", url);
+			if(!this.isValidURL) return;
 			this.url_kaisetsu = url;// 解説URL
+			setTimeout(()=>{
+				window.location.href = this.url_kaisetsu;// Redirect
+			}, 200);
+		},
+		isValidURL(){
+			const regex = new RegExp('^(https?:\\/\\/)?'+
+				'(([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}'+
+				'(\\/[-a-z\\d%_.~+]*)*', 'i');
+			return regex.test(this.str);
 		}
 	}
 });
