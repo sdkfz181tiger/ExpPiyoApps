@@ -145,8 +145,11 @@ app.component("webcam", {
 				return;
 			}
 			showToast("Yahoo", "Yahoo", "カメラいけるかも!?");
-			const constraints = {audio: false, video:{width: this.videoWidth, height: this.videoHeight}};
-			navigator.mediaDevices.getUserMedia(constraints).then(stream=>{
+
+			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			const option = (isMobile) ? optionMobile:optionPC;
+			navigator.mediaDevices.getUserMedia(option).then(stream=>{
 				this.video = document.createElement("video");
 				this.video.srcObject = stream;
 				this.video.onloadedmetadata = event=>{
