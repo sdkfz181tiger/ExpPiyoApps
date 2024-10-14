@@ -85,7 +85,8 @@ app.component("imobile", {
 app.component("omikuji", {
 	data(){
 		return {
-			msg: "This is my Component!!"
+			msg: "This is my Component!!",
+			csv: "***"
 		}
 	},
 	mounted(){
@@ -96,12 +97,26 @@ app.component("omikuji", {
 	methods:{
 		async init(){
 			console.log("init");
+
+			// URL
+			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
+			// Axios
+			const option = {responseType: "blob"};
+			axios.get(url, option).then(res=>{
+
+				res.data.text().then(str=>{
+					console.log(str);
+					this.csv = str;
+				});
+			}).catch(err=>{
+				console.log(err);
+			});
 		},
 		drawOmikuji(){
 			console.log("drawOmikuji!!");
 		}
 	},
-	template: '<div>Enjoy Omikuji!!</div>'
+	template: '<div>{{ csv }}</div>'
 });
 
 app.mount("#app");
