@@ -162,7 +162,7 @@ app.component("webcam", {
 				};
 			}).catch(err=>{
 				console.log(err.name + ":" + err.message);
-				showToast("エラー", err.name, err.message);
+				showToast(err.name, "Error", err.message);
 			});
 		},
 		startTick(){
