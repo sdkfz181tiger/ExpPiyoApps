@@ -84,9 +84,9 @@ app.component("omikuji", {
 		return {
 			msg: "This is my Component!!",
 			infos: [],
-			src: "./assets/images/om_default.png",
-			choice: "",
-			choices: ["大吉", "中吉", "吉", "小吉", "末吉", "凶", "大凶"]
+			om_src: "./assets/images/om_default.png",
+			om_choice: "",
+			om_choices: ["大吉", "中吉", "吉", "小吉", "末吉", "凶", "大凶"]
 		}
 	},
 	mounted(){
@@ -101,24 +101,21 @@ app.component("omikuji", {
 			const tokurei = params.get("tokurei");
 			const q = params.get("q");
 			if(tokurei==null || q==null){
-				this.drawOmikuji();// Omikuji
+				this.drawOmikuji(7);// Omikuji
 				return;
 			}
+			this.drawOmikuji(4);// Omikuji
 			this.drawUrakuji(tokurei.replace("/", ""), q.replace("/", ""));// Urakuji
 		},
-		drawOmikuji(){
+		drawOmikuji(max){
 			console.log("drawOmikuji!!");
 			// Omikuji
-			const rdm = Math.floor(Math.random() * 7);
-			this.src = "./assets/images/om_" + rdm + ".png";
-			this.choice = "今日は" + this.choices[rdm] + "です.";
+			const rdm = Math.floor(Math.random() * max);
+			this.om_src = "./assets/images/om_" + rdm + ".png";
+			this.om_choice = "今日は" + this.om_choices[rdm] + "です.";
 		},
 		drawUrakuji(tokurei, q){
 			console.log("drawUrakuji:", tokurei, q);
-			// Omikuji
-			const rdm = Math.floor(Math.random() * 4);
-			this.src = "./assets/images/om_" + rdm + ".png";
-			this.choice = "今日は" + this.choices[rdm] + "です.";
 			// Urakuji
 			this.infos.push("うらくじを引きます.");
 			// URL
@@ -141,6 +138,7 @@ app.component("omikuji", {
 				});
 			}).catch(err=>{
 				console.log(err);
+				showToast("通信エラー", "Error", "通信時にエラーが発生しました");
 			});
 		},
 		csv2Arr(csv){
@@ -158,7 +156,7 @@ app.component("omikuji", {
 			return null;
 		}
 	},
-	template: '<div class="mb-2 text-center" id="omikuji">{{ choice }}<br/><img v-bind:src="src" v-on:click="drawOmikuji()"></div><div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
+	template: '<div class="mb-2 text-center" id="omikuji">{{ om_choice }}<br/><img v-bind:src="om_src" v-on:click="drawOmikuji()"></div><div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
 });
 
 app.mount("#app");
