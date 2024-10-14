@@ -91,8 +91,7 @@ app.component("omikuji", {
 	},
 	mounted(){
 		console.log("Component is mounted!!");
-		// QR
-		this.init();
+		this.init();// init
 	},
 	methods:{
 		async init(){

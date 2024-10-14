@@ -69,7 +69,7 @@ const app = Vue.createApp({
 	}
 });
 
-// Components
+// Components(imobile)
 app.component("imobile", {
 	props: ["pid", "mid", "asid", "id"],
 	created(){
@@ -89,6 +89,7 @@ app.component("imobile", {
 	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
 });
 
+// Components(webcam)
 app.component("webcam", {
 	data(){
 		return {
@@ -101,12 +102,11 @@ app.component("webcam", {
 	},
 	mounted(){
 		console.log("Component is mounted!!");
-		// WebCam
-		this.readyWebcam();
+		this.init();// init
 	},
 	methods:{
-		async readyWebcam(){
-			console.log("readyWebcam");
+		async init(){
+			console.log("init");
 			// Mobile
 			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};

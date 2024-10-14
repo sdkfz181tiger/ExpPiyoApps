@@ -97,7 +97,7 @@ const app = Vue.createApp({
 	}
 });
 
-// Components
+// Components(imobile)
 app.component("imobile", {
 	props: ["pid", "mid", "asid", "id"],
 	created(){
@@ -117,6 +117,7 @@ app.component("imobile", {
 	template: '<div class="overflow-hidden" v-bind:id="id"></div>'
 });
 
+// Components(filepond)
 app.component("filepond", {
 	data(){
 		return {

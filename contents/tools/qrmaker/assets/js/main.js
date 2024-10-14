@@ -98,12 +98,11 @@ app.component("qrcode", {
 	},
 	mounted(){
 		console.log("Component is mounted!!");
-		// QR
-		this.readyQR();
+		this.init();// init
 	},
 	methods:{
-		async readyQR(){
-			console.log("readyQR");
+		async init(){
+			console.log("init");
 			// QR
 			this.qrcode = new QRCode("qrcode", {
 				text: "Hello World!!",
@@ -119,7 +118,7 @@ app.component("qrcode", {
 			this.qrcode.makeCode(str);
 		}
 	},
-	template: '<div class="text-center" id="qrcode"></div>'
+	template: '<div id="qrcode"></div>'
 });
 
 app.mount("#app");

@@ -102,7 +102,7 @@ const app = Vue.createApp({
 	}
 });
 
-// Components
+// Components(imobile)
 app.component("imobile", {
 	props: ["pid", "mid", "asid", "id"],
 	created(){

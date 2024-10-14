@@ -109,12 +109,11 @@ app.component("webcam", {
 	},
 	mounted(){
 		console.log("Component is mounted!!");
-		// QR
-		this.readyQR();
+		this.init();// init
 	},
 	methods:{
-		async readyQR(){
-			console.log("readyQR");
+		async init(){
+			console.log("init");
 			// Mobile
 			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
