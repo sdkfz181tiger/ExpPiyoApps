@@ -97,7 +97,23 @@ app.component("omikuji", {
 	methods:{
 		async init(){
 			console.log("init");
-
+			// Params
+			const params = new URLSearchParams(window.location.search);
+			const tokurei = params.get("tokurei");
+			const q = params.get("q");
+			if(tokurei==null || q==null){
+				this.drawOmikuji();// Omikuji
+				return;
+			}
+			this.drawUrakuji(tokurei, q);// Urakuji
+		},
+		drawOmikuji(){
+			console.log("drawOmikuji!!");
+			this.msg = "おみくじをひきませう...";
+		},
+		drawUrakuji(tokurei, q){
+			console.log("drawUrakuji:", tokurei, q);
+			this.msg = "うらくじをひきませう...";
 			// URL
 			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
@@ -111,12 +127,9 @@ app.component("omikuji", {
 			}).catch(err=>{
 				console.log(err);
 			});
-		},
-		drawOmikuji(){
-			console.log("drawOmikuji!!");
 		}
 	},
-	template: '<div>{{ csv }}</div>'
+	template: '<div>{{ msg }}</div>'
 });
 
 app.mount("#app");
