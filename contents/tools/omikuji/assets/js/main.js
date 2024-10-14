@@ -40,9 +40,6 @@ const app = Vue.createApp({
 				this.actives[i] = this.mode == i;
 			}
 		},
-		clickBtn(){
-			this.$refs.child.drawOmikuji();
-		},
 		showModal(){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
@@ -87,7 +84,9 @@ app.component("omikuji", {
 		return {
 			msg: "This is my Component!!",
 			infos: [],
-			src: "./assets/images/om_default.png"
+			src: "./assets/images/om_default.png",
+			choice: "",
+			choices: ["大吉", "中吉", "吉", "小吉", "末吉", "凶", "大凶"]
 		}
 	},
 	mounted(){
@@ -110,11 +109,17 @@ app.component("omikuji", {
 		},
 		drawOmikuji(){
 			console.log("drawOmikuji!!");
-			this.infos.push("今日はまずまず末吉です.");
+			// Omikuji
+			const rdm = Math.floor(Math.random() * 7);
+			this.src = "./assets/images/om_" + rdm + ".png";
+			this.choice = "今日は" + this.choices[rdm] + "です.";
 		},
 		drawUrakuji(tokurei, q){
 			console.log("drawUrakuji:", tokurei, q);
-			this.infos.push("今日は大吉です!!");
+			// Omikuji
+			const rdm = Math.floor(Math.random() * 4);
+			this.src = "./assets/images/om_" + rdm + ".png";
+			this.choice = "今日は" + this.choices[rdm] + "です.";
 			// URL
 			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
@@ -133,7 +138,6 @@ app.component("omikuji", {
 						return;
 					}
 					this.infos.push("データが見つかりました.");
-
 				});
 			}).catch(err=>{
 				console.log(err);
@@ -154,7 +158,7 @@ app.component("omikuji", {
 			return null;
 		}
 	},
-	template: '<div class="text-center" id="omikuji"><img v-bind:src="src"></div><div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
+	template: '<div class="mb-2 text-center" id="omikuji">{{ choice }}<br/><img v-bind:src="src" v-on:click="drawOmikuji()"></div><div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
 });
 
 app.mount("#app");
