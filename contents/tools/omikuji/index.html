@@ -8,13 +8,13 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="文字カウント">
+	<meta name="apple-mobile-web-app-title" content="おみくじ">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
-	<title>文字カウント</title>
+	<title>おみくじ</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/libs/animate/animate.min.css">
@@ -35,7 +35,7 @@
 					</a>
 					<div>
 						<i class="bi-github text-white m-1"></i>
-						<a class="navbar-brand">文字カウント</a>
+						<a class="navbar-brand">おみくじ</a>
 					</div>
 					<button class="navbar-toggler" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
@@ -88,51 +88,28 @@
 								</h6>
 								<p class="card-text">
 									<ul>
-										<li>文字数をカウントします。文字数に制限がある場合等にご利用ください。</li>
-										<li>HTMLタグを除いてカウントする事ができます。</li>
+										<li>シンプルなおみくじアプリです(現在調整中です)</li>
 									</ul>
 								</p>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="row pt-2">
-					<div class="col">
-						<label class="form-label" for="txt-counter">文字カウンター</label>
-						<textarea class="form-control" id="txt-counter" rows="7" 
-							placeholder="ここに文字を入力してください" v-model="txtData"></textarea>
+				<div class="row pt-4">
+					<div class="col-2"></div>
+					<div class="col-8">
+						<omikuji ref="child"></omikuji>
 					</div>
+					<div class="col-2"></div>
 				</div>
-				<div class="row pt-2">
-					<div class="col">
-						<!-- Switch(Start) -->
-						<div class="form-check form-switch m-1">
-							<input class="form-check-input" id="swHTML" type="checkbox" v-model="flgTag">
-							<label class="form-check-label" for="swHTML">HTMLタグを含めない</label>
-						</div>
-						<!-- Switch(End) -->
-					</div>
-					<div class="col-4 text-end">
-						<button class="btn btn-primary btn-sm me-1" 
-							v-bind:class="{disabled: isEmpty()}" v-on:click="clearTxt">
-							<i class="bi-trash-fill me-1"></i>クリア
+				<div class="row pt-4">
+					<div class="col-2"></div>
+					<div class="col-8 text-center">
+						<button class="btn btn-primary me-1" v-on:click="clickBtn">
+							Omikuji
 						</button>
 					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						現在の文字数: {{ getLengthTotal() }}
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						空白と改行を除いた文字数: {{ getLengthTrim() }}
-					</div>
-				</div>
-				<div class="row pt-2">
-					<div class="col">
-						行数: {{ getLines() }}
-					</div>
+					<div class="col-2"></div>
 				</div>
 			</div>
 			<!-- TextCounter(End) -->
@@ -223,6 +200,7 @@
 	<script src="./assets/libs/axios/axios.min.js"></script>
 	<script src="./assets/libs/howler/howler.min.js"></script>
 	<script src="./assets/libs/pushjs/push.min.js"></script>
+	<script src="./assets/libs/jsqr/jsQR.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
 </body>

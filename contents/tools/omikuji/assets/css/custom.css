@@ -1,0 +1,76 @@
+/* CSS */
+
+@font-face {
+	font-family: "NotoSans";
+	src: url("../../../../assets/fonts/NotoSansJP-Medium.otf") format("opentype");
+}
+
+@font-face{
+	font-family: "Nicokaku-v2";
+	src: url("../../../../assets/fonts/nicokaku_v2.ttf");
+}
+
+html, body{
+	margin: 0px; padding: 0px;
+	font-family: "NotoSans"; font-size: 1.0rem;
+	/*user-select:none;*/
+}
+
+header{
+	font-family: "Nicokaku-v2";
+}
+
+header i{
+	font-size: 1.2rem;
+}
+
+header .active{
+	border-radius: 0px 0px 10px 10px !important;
+}
+
+main{
+	margin: 80px 0px 80px 0px !important;
+}
+
+main table img{
+	width: auto; height: 1.5rem;
+}
+
+footer{
+	pointer-events: none;
+}
+
+footer div{
+	pointer-events: auto;
+}
+
+footer a{
+	width: 4.2rem; height: 4.2rem;
+	position: relative;
+	pointer-events: auto;
+}
+
+footer a i{
+	position: absolute;
+	left: calc(50% - 1.0rem); top: 14%;
+	font-size: 2.0rem;
+}
+
+.navbar-brand{
+	margin-right: 0px !important; 
+}
+
+.navbar-toggler:focus{
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+.toast-container{
+	position: fixed !important; 
+	pointer-events: none;
+	top: 0px; right: 0px;
+}
+
+.toast:not(.showing):not(.show){
+	display: none !important;
+}

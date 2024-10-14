@@ -1,6 +1,6 @@
 {
-	"name":"文字カウント",
-	"short_name":"文字カウント",
+	"name":"おみくじ",
+	"short_name":"おみくじ",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
