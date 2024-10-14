@@ -101,13 +101,13 @@ app.component("omikuji", {
 			const tokurei = params.get("tokurei");
 			const q = params.get("q");
 			if(tokurei==null || q==null){
-				this.drawOmikuji(7);// Omikuji
+				this.drawOmikuji();// Omikuji
 				return;
 			}
 			this.drawOmikuji(4);// Omikuji
 			this.drawUrakuji(tokurei.replace("/", ""), q.replace("/", ""));// Urakuji
 		},
-		drawOmikuji(max){
+		drawOmikuji(max=7){
 			console.log("drawOmikuji!!");
 			// Omikuji
 			const rdm = Math.floor(Math.random() * max);
