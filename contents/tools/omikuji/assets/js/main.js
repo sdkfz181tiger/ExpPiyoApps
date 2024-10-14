@@ -120,6 +120,8 @@ app.component("omikuji", {
 			const rdm = Math.floor(Math.random() * 4);
 			this.src = "./assets/images/om_" + rdm + ".png";
 			this.choice = "今日は" + this.choices[rdm] + "です.";
+			// Urakuji
+			this.infos.push("うらくじを引きます.");
 			// URL
 			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
@@ -129,7 +131,6 @@ app.component("omikuji", {
 				res.data.text().then(str=>{
 					// Data
 					const arr = this.csv2Arr(str);
-					console.log(arr);
 					this.infos.push(arr.length + "件のデータを検索します.");
 					// Search
 					const result = this.searchArr(arr, tokurei, q);
