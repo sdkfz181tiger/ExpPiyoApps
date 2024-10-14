@@ -110,21 +110,56 @@ app.component("webcam", {
 	methods:{
 		async init(){
 			console.log("init");
-			// Mobile
-			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
-			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
-			const optionMobile = {video: {facingMode: {exact: "environment"}}};
-			const option = (isMobile) ? optionMobile:optionPC;
+
 			// WebCam
-			const capture = await navigator.mediaDevices.getUserMedia(option);
-			this.video = document.getElementsByTagName("video")[0];
-			this.video.srcObject = capture;
-			this.video.addEventListener("play", (e)=>{
-				// Overlay
-				this.canvas = document.createElement("canvas");
-				this.video.after(this.canvas);
+			navigator.mediaDevices = navigator.mediaDevices || (
+				(navigator.mozGetUserMedia || navigator.webkitGetUserMedia)?{
+					getUserMedia: function(c){
+						return new Promise(function(y, n){
+							(navigator.mozGetUserMedia || navigator.webkitGetUserMedia).call(navigator, c, y, n);
+						});
+					}
+				} : null);
+			if(!navigator.mediaDevices){
+				showToast("エラー", "Error", "Webカメラを取得できません");
+				return;
+			}
+
+			// Mobile
+			// const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
+			// const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			// const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			// const option = (isMobile) ? optionMobile:optionPC;
+
+			// WebCam
+			// const capture = await navigator.mediaDevices.getUserMedia(option);
+			// this.video = document.getElementsByTagName("video")[0];
+			// this.video.srcObject = capture;
+			// this.video.addEventListener("play", (e)=>{
+			// 	// Overlay
+			// 	this.canvas = document.createElement("canvas");
+			// 	this.video.after(this.canvas);
+			// });
+			// this.video.play();
+
+			// Mobile or PC
+			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
+			const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			const option = (isMobile) ? optionMobile:optionPC;
+			navigator.mediaDevices.getUserMedia(option).then(stream=>{
+				this.video = document.getElementsByTagName("video")[0];
+				this.video.srcObject = stream;
+				this.video.onloadedmetadata = event=>{
+					this.canvas = document.createElement("canvas");
+					this.video.after(this.canvas);
+					this.video.play();// Play
+				};
+			}).catch(err=>{
+				console.log(err.name + ":" + err.message);
+				showToast(err.name, "Error", err.message);
 			});
-			this.video.play();
+
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
 				this.startDetection(this.video, detector);
