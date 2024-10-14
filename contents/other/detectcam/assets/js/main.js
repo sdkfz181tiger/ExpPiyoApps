@@ -125,6 +125,8 @@ app.component("webcam", {
 				return;
 			}
 
+			showToast("Webカメラ", "Yahoo", "Webカメラを取得できた!!");
+
 			// Mobile
 			// const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			// const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
@@ -162,6 +164,7 @@ app.component("webcam", {
 
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
+				showToast("検知開始", "Yoro", "物体検知を開始します");
 				this.startDetection(this.video, detector);
 			});
 		},
