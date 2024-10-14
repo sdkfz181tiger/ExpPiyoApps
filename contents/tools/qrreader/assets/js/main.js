@@ -146,8 +146,10 @@ app.component("webcam", {
 			}
 			showToast("Yahoo", "Yahoo", "カメラいけるかも!?");
 
-			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
+			// Mobile or PC
+			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionMobile = {video: {facingMode: {exact: "environment"}}};
+			const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
 			const option = (isMobile) ? optionMobile:optionPC;
 			navigator.mediaDevices.getUserMedia(option).then(stream=>{
 				this.video = document.createElement("video");
