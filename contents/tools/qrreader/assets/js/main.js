@@ -149,13 +149,13 @@ app.component("webcam", {
 			navigator.mediaDevices.getUserMedia(constraints).then(stream=>{
 				this.video = document.createElement("video");
 				this.video.srcObject = stream;
-				this.video.onloadedmetadata = e=>{
+				this.video.onloadedmetadata = event=>{
 					this.canvas = document.getElementsByTagName("canvas")[0];
 					this.ctx = this.canvas.getContext("2d");
-					this.video.play();
+					this.video.play();// Play
 					this.startTick();// Start
 				};
-			}).catch(function(err){
+			}).catch(err=>{
 				console.log(err.name + ":" + err.message);
 				showToast("エラー", err.name, err.message);
 			});
