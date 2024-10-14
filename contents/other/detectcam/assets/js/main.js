@@ -165,12 +165,12 @@ app.component("webcam", {
 			// Detector
 			const detector = await ml5.objectDetector("yoro", ()=>{
 				showToast("検知開始", "Yoro", "物体検知を開始します");
-				this.startDetection(this.video, detector);
+				this.startDetection(detector);
 			});
 		},
-		startDetection(video, detector){
+		startDetection(detector){
 			//console.log("startDetection");
-			detector.detect(video, (err, results)=>{
+			detector.detect(this.video, (err, results)=>{
 				if(err){
 					console.log(err);
 					showToast("Error", "0 min ago.", err);
@@ -197,7 +197,7 @@ app.component("webcam", {
 				});
 				ctx.fill();
 				setTimeout(()=>{
-					this.startDetection(video, detector);
+					this.startDetection(detector);
 					this.$emit("on-detected", results);// Emit
 				}, 1000);
 			});
