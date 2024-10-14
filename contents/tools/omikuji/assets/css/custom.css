@@ -74,3 +74,7 @@ footer a i{
 .toast:not(.showing):not(.show){
 	display: none !important;
 }
+
+#omikuji img{
+	width: 50%; height: auto;
+}

@@ -86,7 +86,8 @@ app.component("omikuji", {
 	data(){
 		return {
 			msg: "This is my Component!!",
-			infos: []
+			infos: [],
+			src: "./assets/images/om_default.png"
 		}
 	},
 	mounted(){
@@ -109,11 +110,11 @@ app.component("omikuji", {
 		},
 		drawOmikuji(){
 			console.log("drawOmikuji!!");
-			this.infos.push("おみくじを引きます.");
+			this.infos.push("今日はまずまず末吉です.");
 		},
 		drawUrakuji(tokurei, q){
 			console.log("drawUrakuji:", tokurei, q);
-			this.infos.push("うらくじを引きます.");
+			this.infos.push("今日は大吉です!!");
 			// URL
 			const url = "https://ozateck.sakura.ne.jp/nichibi/tokurei/data.php";
 			// Axios
@@ -124,8 +125,7 @@ app.component("omikuji", {
 					// Data
 					const arr = this.csv2Arr(str);
 					console.log(arr);
-					this.infos.push(arr.length + "件のデータを取得しました.");
-					this.infos.push("データを検索しています.");
+					this.infos.push(arr.length + "件のデータを検索します.");
 					// Search
 					const result = this.searchArr(arr, tokurei, q);
 					if(result == null){
@@ -154,7 +154,7 @@ app.component("omikuji", {
 			return null;
 		}
 	},
-	template: '<div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
+	template: '<div class="text-center" id="omikuji"><img v-bind:src="src"></div><div><ul v-for="info in infos"><li>{{ info }}</li></ul></div>'
 });
 
 app.mount("#app");
