@@ -128,23 +128,6 @@ app.component("webcam", {
 
 			showToast("Webカメラ", "Yahoo", "Webカメラを取得しました");
 
-			// Mobile
-			// const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
-			// const optionPC = {video: {width: this.videoWidth, height: this.videoHeight}};
-			// const optionMobile = {video: {facingMode: {exact: "environment"}}};
-			// const option = (isMobile) ? optionMobile:optionPC;
-
-			// WebCam
-			// const capture = await navigator.mediaDevices.getUserMedia(option);
-			// this.video = document.getElementsByTagName("video")[0];
-			// this.video.srcObject = capture;
-			// this.video.addEventListener("play", (e)=>{
-			// 	// Overlay
-			// 	this.canvas = document.createElement("canvas");
-			// 	this.video.after(this.canvas);
-			// });
-			// this.video.play();
-
 			// Mobile or PC
 			const isMobile = (navigator.userAgent.match(/iPhone|Android.+Mobile/)) ? true:false;
 			const optionMobile = {video: {facingMode: {exact: "environment"}}};
