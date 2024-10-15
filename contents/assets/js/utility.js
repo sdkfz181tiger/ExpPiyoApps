@@ -68,3 +68,16 @@ function popToast(title, sub, msg, autohide=true){
 	const toast = new bootstrap.Toast(clone, {autohide: autohide});
 	toast.show();
 }
+
+//==========
+// Axios
+function loadAxios(url, onSuccess, onError){
+	const option = {responseType: "blob"};
+	axios.get(url, option).then(res=>{
+		res.data.text().then(str=>{
+			onSuccess(JSON.parse(str));
+		});
+	}).catch(err=>{
+		onError(err);
+	});
+}
