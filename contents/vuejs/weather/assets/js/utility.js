@@ -46,6 +46,19 @@ function popToast(title, sub, msg, autohide=true){
 }
 
 //==========
+// Axios
+function loadAxios(url, onSuccess, onError){
+	const option = {responseType: "blob"};
+	axios.get(url, option).then(res=>{
+		res.data.text().then(str=>{
+			onSuccess(JSON.parse(str));
+		});
+	}).catch(err=>{
+		onError(err);
+	});
+}
+
+//==========
 // GeoLocation, Weather
 const API_REV     = "https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress";
 const API_AREA    = "https://www.jma.go.jp/bosai/common/const/area.json";
