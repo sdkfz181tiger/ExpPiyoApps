@@ -46,30 +46,23 @@
 
 	<!-- Footer(Start) -->
 	<footer class="fixed-bottom text-center">
-		<div id="im-eaf79126a17942438c85f526dece8cdc"></div>
-		<div id="im-91b691271d80427fadb59913529a481f"></div>
+		<div id="home_bottom"></div>
 	</footer>
 	<!-- Footer(Start) -->
 
-	<script>
-		// Banner_PC
-		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:26719, mid:556794, asid:1811250, type:"banner", display:"inline",
-			elementid:"im-eaf79126a17942438c85f526dece8cdc"});
-		// Banner_SP
-		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:26719, mid:576923, asid:1875517, type:"banner", display:"inline",
-			elementid:"im-91b691271d80427fadb59913529a481f"});
-	</script>
-	<script src="//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104" async></script>
-
 	<!-- JavaScript -->
 	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
+	<script src="./assets/libs/axios/axios.min.js"></script>
 	<script src="./assets/libs/p5js/p5.min.js"></script>
 	<script src="./assets/libs/p5js/addons/p5.sound.min.js"></script>
 	<script src="./assets/libs/p5js/addons/p5.tween.min.js"></script>
 	<script src="./assets/js/sprite.js"></script>
 	<script src="./assets/js/utility.js"></script>
 	<script src="./assets/js/main.js"></script>
+
+	<!-- imobile -->
+	<script>
+		loadImobile("../../assets/imobile.json", "banner", "home_bottom");
+	</script>
 </body>
 </html>

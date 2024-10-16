@@ -27,6 +27,40 @@ class Button extends Sprite{
 }
 
 //==========
+// Axios
+function loadAxios(url, onSuccess, onError){
+	const option = {responseType: "blob"};
+	axios.get(url, option).then(res=>{
+		res.data.text().then(str=>{
+			onSuccess(JSON.parse(str));
+		});
+	}).catch(err=>{
+		onError(err);
+	});
+}
+
+//==========
+// imobile
+function loadImobile(path, ad, id){
+	// Axios
+	loadAxios(path, json=>{
+		const type = (navigator.userAgent.match(/iPhone|Android.+Mobile/))?"sp":"pc";
+		const params = json[ad][type];
+		console.log(params);
+		(window.adsbyimobile=window.adsbyimobile||[]).push({
+			pid:params["pid"], mid:params["mid"], asid:params["asid"], type:"banner", display:"inline",
+			elementid:id});
+		const elem = document.getElementById(id);
+		const imobile = document.createElement("script");
+		imobile.src = "//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104";
+		imobile.setAttribute("async", "true");
+		elem.after(imobile);
+	}, (err)=>{
+		showToast("Error", "0 min ago", "通信エラーです");
+	});
+}
+
+//==========
 // CandyCrasher
 
 const ROWS   = 11;
