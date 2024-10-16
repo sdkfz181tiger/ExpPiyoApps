@@ -213,7 +213,7 @@ app.component("imobile", {
 	},
 	mounted(){
 		// Axios
-		loadAxios("./assets/imobile.json", json=>{
+		loadAxios("../../assets/imobile.json", json=>{
 			const type = (this.isMobile())?"sp":"pc";
 			const params = json[this.ad][type];
 			this.loadBanner(params["pid"], params["mid"], params["asid"]);
