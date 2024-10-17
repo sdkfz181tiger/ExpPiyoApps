@@ -48,8 +48,8 @@ function loadImobile(path, ad, id){
 		const params = json[ad][type];
 		console.log(params);
 		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:params["pid"], mid:params["mid"], asid:params["asid"], type:"banner", display:"inline",
-			elementid:id});
+			pid:params["pid"], mid:params["mid"], asid:params["asid"], 
+			type:"banner", display:"inline", elementid:id});
 		const elem = document.getElementById(id);
 		const imobile = document.createElement("script");
 		imobile.src = "//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104";
@@ -59,6 +59,23 @@ function loadImobile(path, ad, id){
 		showToast("Error", "0 min ago", "通信エラーです");
 	});
 }
+
+//==========
+// Reset
+const btnReset = document.getElementById("btn_reset");
+btnReset.addEventListener("click", ()=>{
+	xdialog.open({title: "RESET?",
+		buttons: {
+			ok: {text: "RESET", style: "border-radius: 8px; background: orange;"},
+			cancel: {text: "CANCEL", style: "border-radius: 8px; background: orange;"}
+		},
+		body: '<p>リセットしますか?</p>',
+		style: "min-width: 80%; height: auto;",
+		onok: ()=>{
+			location.reload();// Reload
+		}
+	});
+});
 
 //==========
 // Tile
