@@ -61,15 +61,15 @@ function loadImobile(path, ad, id){
 }
 
 //==========
-// Reset
-const btnReset = document.getElementById("btn_reset");
-btnReset.addEventListener("click", ()=>{
-	xdialog.open({title: "RESET?",
+// Retry
+const btnRetry = document.getElementById("btn_retry");
+btnRetry.addEventListener("click", ()=>{
+	xdialog.open({title: "RETRY?",
 		buttons: {
-			ok: {text: "RESET", style: "border-radius: 8px; background: orange;"},
+			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"},
 			cancel: {text: "CANCEL", style: "border-radius: 8px; background: orange;"}
 		},
-		body: "<p>リセットしますか?</p>",
+		body: "<p>リトライしますか?</p>",
 		style: "max-width: 80%; height: auto;",
 		onok: ()=>{
 			location.reload();// Reload
