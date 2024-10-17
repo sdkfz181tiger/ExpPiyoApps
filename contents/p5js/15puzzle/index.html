@@ -18,7 +18,6 @@
 	<!-- CSS -->
 	<link rel="stylesheet" href="./assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="./assets/libs/xdialog/xdialog.css">
 	<link rel="stylesheet" href="./assets/css/custom.css">
 </head>
 <body> 
@@ -36,7 +35,7 @@
 					<div>
 						<i class="bi-github text-white m-1"></i><a class="navbar-brand">15パズル</a>
 					</div>
-					<a class="btn btn-primary btn-sm" id="btn_retry" href="#">
+					<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
 						<i class="bi-arrow-counterclockwise" role="img"></i>
 					</a>
 				</div>
@@ -58,7 +57,7 @@
 		</footer>
 		<!-- Footer(Start) -->
 
-		<!-- ModalTag(Start) -->
+		<!-- Modal(Start) -->
 		<div class="container mt-5 text-center">
 			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
 				aria-labelledby="modalLabel" aria-hidden="true">
@@ -70,22 +69,27 @@
 								data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
+							リトライしますか?
 							<div id="ad_rectangle"></div>
 						</div>
 						<div class="modal-footer">
-							footer
+							<div class="container-fluid">
+								<button type="button" class="btn btn-primary float-end" id="btn_retry"
+									data-bs-dismiss="modal">RETRY</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">CANCEL</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- ModalTag(End) -->
+		<!-- Modal(End) -->
 	</div>
 
 	<!-- JavaScript -->
 	<script src="./assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
 	<script src="./assets/libs/axios/axios.min.js"></script>
-	<script src="./assets/libs/xdialog/xdialog.js"></script>
 	<script src="./assets/libs/p5js/p5.min.js"></script>
 	<script src="./assets/libs/p5js/addons/p5.sound.min.js"></script>
 	<script src="./assets/libs/p5js/addons/p5.tween.min.js"></script>

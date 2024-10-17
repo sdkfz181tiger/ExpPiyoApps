@@ -67,30 +67,21 @@ function loadImobile(path){
 }
 
 //==========
-// Retry
-const btnRetry = document.getElementById("btn_retry");
-btnRetry.addEventListener("click", ()=>{
-	/*
-	xdialog.open({title: "RETRY?",
-		buttons: {
-			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"}
-		},
-		body: "<p>リトライしますか?</p>",
-		style: "max-width: 80%; height: auto;",
-		onok: ()=>{
-			location.reload();// Reload
-		}
-	});
-	*/
-
+// Modal
+const btnModal = document.getElementById("btn_modal");
+btnModal.addEventListener("click", ()=>{
 	const elem = document.getElementById("myModal");
 	const modal = new bootstrap.Modal(elem);
 	bootstrap.Modal.getInstance(elem).show();
 });
 
+const btnRetry = document.getElementById("btn_retry");
+btnRetry.addEventListener("click", ()=>{
+	location.reload();// Reload
+});
+
 //==========
 // Tile
-
 const T_COLORS = [
 	"#FFFFFF", "#F44336", "#E91E63", "#9C27B0", "#673Ab7", "#3F51B5", 
 	"#2196F3", "#03A9f4", "#00BCD4", "#009688", "#4CAF50", "#8BC34A", 
