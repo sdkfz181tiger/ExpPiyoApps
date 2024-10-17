@@ -10,7 +10,6 @@ const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 //==========
 // Button
-
 class Button extends Sprite{
 
 	constructor(file, x, y, s, onPressed=null){
@@ -61,8 +60,23 @@ function loadImobile(path, ad, id){
 }
 
 //==========
-// Reversi
+// Retry
+const btnRetry = document.getElementById("btn_retry");
+btnRetry.addEventListener("click", ()=>{
+	xdialog.open({title: "RETRY?",
+		buttons: {
+			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"}
+		},
+		body: "<p>リトライしますか?</p>",
+		style: "max-width: 80%; height: auto;",
+		onok: ()=>{
+			location.reload();// Reload
+		}
+	});
+});
 
+//==========
+// Reversi
 const ROWS    = 6;
 const COLS    = ROWS;
 
