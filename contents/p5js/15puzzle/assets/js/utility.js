@@ -69,7 +69,7 @@ btnReset.addEventListener("click", ()=>{
 			ok: {text: "RESET", style: "border-radius: 8px; background: orange;"},
 			cancel: {text: "CANCEL", style: "border-radius: 8px; background: orange;"}
 		},
-		body: '<p>リセットしますか?</p>',
+		body: '<p>ダイアログテスト中!!</p>',
 		style: "width: auto; height: auto;",
 		onok: ()=>{
 			location.reload();// Reload
