@@ -66,11 +66,11 @@ const btnReset = document.getElementById("btn_reset");
 btnReset.addEventListener("click", ()=>{
 	xdialog.open({title: "RESET?",
 		buttons: {
-			ok: {text: "RESET", style: "border-radius: 8px; background: orange;"},
-			cancel: {text: "CANCEL", style: "border-radius: 8px; background: orange;"}
+			ok: {text: "RESET", style: "border-radius: 8px; margin:5% auto; background: orange;"},
+			cancel: {text: "CANCEL", style: "border-radius: 8px; margin: 5% auto; background: orange;"}
 		},
 		body: '<p>ダイアログテスト中!!</p>',
-		style: "width: auto; height: auto;",
+		style: "width: 80%; height: auto;",
 		onok: ()=>{
 			location.reload();// Reload
 		}
