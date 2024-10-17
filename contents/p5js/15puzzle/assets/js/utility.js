@@ -66,8 +66,7 @@ const btnRetry = document.getElementById("btn_retry");
 btnRetry.addEventListener("click", ()=>{
 	xdialog.open({title: "RETRY?",
 		buttons: {
-			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"},
-			cancel: {text: "CANCEL", style: "border-radius: 8px; background: orange;"}
+			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"}
 		},
 		body: "<p>リトライしますか?</p>",
 		style: "max-width: 80%; height: auto;",
