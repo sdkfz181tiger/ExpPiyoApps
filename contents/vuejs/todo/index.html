@@ -157,7 +157,7 @@
 				v-if="mode!=0" v-on:click="showModalCreateTodo()">
 				<i class="bi-plus-lg" role="img"></i>
 			</a>
-			<imobile ad="banner" id="home_bottom"></imobile>
+			<imobile ad="banner" id="ad_banner"></imobile>
 		</footer>
 		<!-- Footer(End) -->
 
@@ -174,9 +174,9 @@
 							data-bs-dismiss="offcanvas" arial-label="Close"></button> 
 				</div>
 				<div class="offcanvas-body" id="myStblTags">
-					<imobile ad="rectangle" id="offcanvas_top"></imobile>
+					<imobile ad="rectangle" id="ad_rectangle"></imobile>
 					<hr/>
-					<imobile ad="bigbanner" id="offcanvas_bottom"></imobile>
+					<imobile ad="bigbanner" id="ad_bigbanner"></imobile>
 					<div class="children mt-2" v-for="tag of tags" v-bind:id="tag.id">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">

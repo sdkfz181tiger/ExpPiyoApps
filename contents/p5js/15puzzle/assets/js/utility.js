@@ -41,20 +41,26 @@ function loadAxios(url, onSuccess, onError){
 
 //==========
 // imobile
-function loadImobile(path, ad, id){
+function loadImobile(path){
 	// Axios
 	loadAxios(path, json=>{
 		const type = (navigator.userAgent.match(/iPhone|Android.+Mobile/))?"sp":"pc";
-		const params = json[ad][type];
-		console.log(params);
-		(window.adsbyimobile=window.adsbyimobile||[]).push({
-			pid:params["pid"], mid:params["mid"], asid:params["asid"], 
-			type:"banner", display:"inline", elementid:id});
-		const elem = document.getElementById(id);
+		const places = [
+			{"ad": "banner", "id": "ad_banner"},
+			{"ad": "rectangle", "id": "ad_rectangle"}];
+		for(place of places){
+			const ad = place["ad"];
+			const id = place["id"];
+			const params = json[ad][type];
+			(window.adsbyimobile=window.adsbyimobile||[]).push({
+				pid:params["pid"], mid:params["mid"], asid:params["asid"], 
+				type:"banner", display:"inline", elementid:id});
+		}
+		const elem = document.getElementsByTagName("body")[0];
 		const imobile = document.createElement("script");
 		imobile.src = "//imp-adedge.i-mobile.co.jp/script/v1/spot.js?20220104";
 		imobile.setAttribute("async", "true");
-		elem.after(imobile);
+		elem.appendChild(imobile);
 	}, (err)=>{
 		showToast("Error", "0 min ago", "通信エラーです");
 	});
@@ -64,6 +70,7 @@ function loadImobile(path, ad, id){
 // Retry
 const btnRetry = document.getElementById("btn_retry");
 btnRetry.addEventListener("click", ()=>{
+	/*
 	xdialog.open({title: "RETRY?",
 		buttons: {
 			ok: {text: "RETRY", style: "border-radius: 8px; background: orange;"}
@@ -74,6 +81,11 @@ btnRetry.addEventListener("click", ()=>{
 			location.reload();// Reload
 		}
 	});
+	*/
+
+	const elem = document.getElementById("myModal");
+	const modal = new bootstrap.Modal(elem);
+	bootstrap.Modal.getInstance(elem).show();
 });
 
 //==========
