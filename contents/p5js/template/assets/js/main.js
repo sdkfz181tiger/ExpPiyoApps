@@ -1,15 +1,14 @@
 console.log("main.js!!");
 
 const FONT_SIZE = 28;
-const CANVAS_W  = -1;// 320
-const CANVAS_H  = -1;// 480
+const GAME_W = 320;
+const GAME_H = 480;
 
 const FILES_IMG = [
 	"caret-l-b.png", "caret-r-b.png"
 ];
 
-let font, cX, cY;
-let gSize, sX, sY;
+let font, cX, cY, sX, sY;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -17,20 +16,25 @@ function preload(){
 }
 
 function setup(){
-
-	const cW = (CANVAS_W < 0) ? window.innerWidth:CANVAS_W;
-	const cH = (CANVAS_H < 0) ? window.innerHeight:CANVAS_H;
+	const cW = window.innerWidth;
+	const cH = window.innerHeight;
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
 	frameRate(8);
 	noSmooth();
+
+	cX = cW / 2;
+	cY = cH / 2;
+	sX = cX - GAME_W / 2;
+	sY = cY - GAME_H / 2;
 }
 
 function draw(){
 	background("#333366");
 	noStroke(); fill("#333333");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
+	rect(sX, sY, GAME_W, GAME_H);
 }
 
 function mousePressed(){
