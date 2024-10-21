@@ -5,11 +5,12 @@ const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
 
 const FILES_IMG = [
-	"caret-l-b.png", "caret-r-b.png"
+	"caret-l-w.png", "caret-r-w.png"
 ];
 
 let font, cW, cH, cX, cY;
 let gSize, rows, cols;
+let btnL, btnR;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -31,6 +32,15 @@ function setup(){
 	textFont(font);
 	frameRate(8);
 	noSmooth();
+
+	// Test
+	btnL = new Button("caret-l-w.png", cX-gSize*3, cY, 0.2, ()=>{
+		console.log("Left!!");
+	});
+
+	btnR = new Button("caret-r-w.png", cX+gSize*3, cY, 0.2, ()=>{
+		console.log("Right!!");
+	});
 }
 
 function draw(){
@@ -38,11 +48,15 @@ function draw(){
 	noStroke(); fill("#cccccc");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
 	drawGrids();// Grids
+	btnL.draw();// Button
+	btnR.draw();// Button
 }
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
 	console.log("mousePressed!!");
+	btnL.press(mouseX, mouseY);
+	btnR.press(mouseX, mouseY);
 }
 
 function touchStarted(){
