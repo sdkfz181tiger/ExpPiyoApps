@@ -25,10 +25,15 @@ body{
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background: black;
 }
 
 header i{
 	font-size: 1.2rem;
+}
+
+main #game{
+	width: auto; height: 100%;
 }
 
 canvas{
