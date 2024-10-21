@@ -37,7 +37,7 @@ function draw(){
 	background("#333333");
 	noStroke(); fill("#cccccc");
 	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
-	drawGrids();// Grid
+	drawGrids();// Grids
 }
 
 function mousePressed(){
@@ -50,7 +50,7 @@ function touchStarted(){
 }
 
 function drawGrids(){
-	stroke("silver"); strokeWeight(1);
+	stroke("gray"); strokeWeight(1);
 	for(let r=0; r<rows+1; r++){
 		const y = r * gSize;
 		line(0, y, cW, y);
