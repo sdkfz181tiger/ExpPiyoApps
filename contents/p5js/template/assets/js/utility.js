@@ -84,7 +84,8 @@ btnRetry.addEventListener("click", ()=>{
 class Countdown{
 
 	constructor(x, y, size=28, onFinished=null){
-		this._mil = 10000;
+		this._max = 4000;
+		this._mil = this._max;
 		this._x = x;
 		this._y = y;
 		this._size = size;
@@ -104,21 +105,34 @@ class Countdown{
 	}
 
 	tick(){
-		if(this._mil <= 0) return;
+		if(this._mil <= 0){
+			if(this._onFinished) this._onFinished();
+			return;
+		}
 		this._mil -= 10;
 		this.timeoutID = setTimeout(()=>{this.tick();}, 8);
 	}
 
 	update(){
 		fill("white");
-		textSize(this._size); 
+		if(this._mil <= 0) return;
+		textSize(this._size*0.4); 
 		textAlign(CENTER, BOTTOM);
+		if(this._max <= this._mil){
+			text("TAP TO START", this._x, this._y);
+			return;
+		}
+		if(this._mil <= 1000){
+			text("START", this._x, this._y);
+			return;
+		}
 		const sec = floor(this._mil/1000);
 		const mil = this._mil % 1000;
+		textSize(this._size*0.6); 
+		textAlign(CENTER, BOTTOM);
 		text(sec, this._x, this._y);
-		textSize(this._size/4);
+		textSize(this._size*0.2);
 		textAlign(CENTER, TOP);
 		text(mil, this._x, this._y);
-
 	}
 }

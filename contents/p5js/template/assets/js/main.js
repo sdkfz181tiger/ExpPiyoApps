@@ -46,7 +46,7 @@ function setup(){
 		cntDown.stop();
 	});
 
-	cntDown = new Countdown(cX, cY, gSize*5, ()=>{
+	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
 		console.log("onFinished!!");
 	});
 }
