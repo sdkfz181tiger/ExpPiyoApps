@@ -10,7 +10,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let gSize, rows, cols;
-let btnL, btnR;
+let btnL, btnR, cntDown;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -30,26 +30,35 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(8);
+	frameRate(16);
 	noSmooth();
 
 	// Test
-	btnL = new Button("caret-l-w.png", cX-gSize*3, cY, 0.2, ()=>{
+	btnL = new Button("caret-l-w.png", 
+		cX-gSize*3, cH-gSize*4, 0.2, ()=>{
 		console.log("Left!!");
+		cntDown.start();
 	});
 
-	btnR = new Button("caret-r-w.png", cX+gSize*3, cY, 0.2, ()=>{
+	btnR = new Button("caret-r-w.png", 
+		cX+gSize*3, cH-gSize*4, 0.2, ()=>{
 		console.log("Right!!");
+		cntDown.stop();
+	});
+
+	cntDown = new Countdown(cX, cY, gSize*5, ()=>{
+		console.log("onFinished!!");
 	});
 }
 
 function draw(){
 	background("#333333");
 	noStroke(); fill("#cccccc");
-	textSize(FONT_SIZE); textAlign(RIGHT, BASELINE);
+	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 	btnL.draw();// Button
 	btnR.draw();// Button
+	cntDown.update();// Countdown
 }
 
 function mousePressed(){

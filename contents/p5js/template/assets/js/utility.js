@@ -78,3 +78,47 @@ const btnRetry = document.getElementById("btn_retry");
 btnRetry.addEventListener("click", ()=>{
 	location.reload();// Reload
 });
+
+//==========
+// Countdown
+class Countdown{
+
+	constructor(x, y, size=28, onFinished=null){
+		this._mil = 10000;
+		this._x = x;
+		this._y = y;
+		this._size = size;
+		this._onFinished = onFinished;
+		this._timeoutID = 0;
+	}
+
+	start(){
+		if(this._mil <= 0) return;
+		this.tick();
+	}
+
+	stop(){
+		if(this.timeoutID <= 0) return;
+		clearTimeout(this.timeoutID);
+		this.timeoutID = 0;
+	}
+
+	tick(){
+		if(this._mil <= 0) return;
+		this._mil -= 10;
+		this.timeoutID = setTimeout(()=>{this.tick();}, 8);
+	}
+
+	update(){
+		fill("white");
+		textSize(this._size); 
+		textAlign(CENTER, BOTTOM);
+		const sec = floor(this._mil/1000);
+		const mil = this._mil % 1000;
+		text(sec, this._x, this._y);
+		textSize(this._size/4);
+		textAlign(CENTER, TOP);
+		text(mil, this._x, this._y);
+
+	}
+}
