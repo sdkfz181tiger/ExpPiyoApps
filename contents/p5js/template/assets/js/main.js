@@ -70,6 +70,8 @@ function mousePressed(){
 
 function touchStarted(){
 	console.log("touchStarted!!");
+	btnL.press(mouseX, mouseY);
+	btnR.press(mouseX, mouseY);
 }
 
 function drawGrids(){
