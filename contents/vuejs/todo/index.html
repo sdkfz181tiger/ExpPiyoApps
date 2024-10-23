@@ -87,6 +87,9 @@
 
 			<!-- Home(Start) -->
 			<div class="container" id="myStblTodos" v-if="mode==1">
+				<div class="row">
+					<imobile ad="bigbanner" id="ad_bigbanner"></imobile>
+				</div>
 				<div class="children" v-for="(todo, index) of todos" v-bind:order="index">
 					<div class="d-flex align-items-center mb-2">
 						<div v-on:click="toggleTodo(todo.id)">
@@ -176,7 +179,6 @@
 				<div class="offcanvas-body" id="myStblTags">
 					<imobile ad="rectangle" id="ad_rectangle"></imobile>
 					<hr/>
-					<imobile ad="bigbanner" id="ad_bigbanner"></imobile>
 					<div class="children mt-2" v-for="tag of tags" v-bind:id="tag.id">
 						<div class="d-flex align-items-center mb-2">
 							<div class="flex-grow-1 text-truncate">
