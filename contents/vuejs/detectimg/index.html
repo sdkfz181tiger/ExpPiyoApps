@@ -103,6 +103,9 @@
 						<filepond v-on:on-base64="readyBase64"></filepond>
 					</div>
 				</div>
+				<div class="row py-1">
+					<imobile ad="bigbanner" id="ad_bigbanner"></imobile>
+				</div>
 				<div class="row pt-4" v-if="0<photos.length">
 					<div class="col" id="imgs">
 						<img class="m-2" v-bind:src="photo.img.src" v-for="photo of photos">
@@ -139,7 +142,6 @@
 				<div class="offcanvas-body">
 					<imobile ad="rectangle" id="ad_rectangle"></imobile>
 					<hr/>
-					<imobile ad="bigbanner" id="ad_bigbanner"></imobile>
 				</div>
 			</div>
 		</div>
