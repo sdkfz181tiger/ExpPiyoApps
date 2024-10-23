@@ -60,7 +60,6 @@ function loadAxios(url, onSuccess, onError){
 
 //==========
 // Notification
-
 function sendNotification(title, body, timeout=12000){
 	console.log("sendNotification:", title);
 	if(!Push.Permission.has()){
@@ -104,7 +103,6 @@ function createNotification(title, body, timeout=12000){
 
 //==========
 // Howler
-
 window.addEventListener("blur", e=>{
 	console.log("blur");
 	if(myHowl) myHowl.pauseBGM();

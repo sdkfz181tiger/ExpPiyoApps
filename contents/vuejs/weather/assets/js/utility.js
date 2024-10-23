@@ -111,7 +111,6 @@ function convertText(res){
 
 //==========
 // JSON
-
 function getDailyData(data, kanjis, icons){
 	// Daily
 	const areas = {};// Areas

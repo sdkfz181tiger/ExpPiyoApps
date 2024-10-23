@@ -139,7 +139,6 @@ class FlickManager{
 
 //==========
 // 2048
-
 class Tile{
 
 	constructor(n, x, y, c){

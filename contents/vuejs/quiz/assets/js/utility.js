@@ -73,7 +73,6 @@ function preloadImages(flags){
 
 //==========
 // Howler
-
 window.addEventListener("blur", e=>{
 	console.log("blur");
 	if(myHowl) myHowl.pauseBGM();

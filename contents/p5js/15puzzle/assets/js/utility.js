@@ -10,7 +10,6 @@ const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 //==========
 // Button
-
 class Button extends Sprite{
 
 	constructor(file, x, y, s, onPressed=null){
@@ -159,7 +158,6 @@ class Tile{
 
 //==========
 // FpzManager
-
 const D_LEFT  = 0;
 const D_RIGHT = 1;
 const D_UP    = 2;

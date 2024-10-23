@@ -60,7 +60,6 @@ function loadAxios(url, onSuccess, onError){
 
 //==========
 // Notification
-
 function sendNotification(title, body, timeout=12000){
 	console.log("sendNotification:", title);
 	if(!Push.Permission.has()){
@@ -104,7 +103,6 @@ function createNotification(title, body, timeout=12000){
 
 //==========
 // Calculator
-
 const ST_VAL1 = 1;// 値1状態
 const ST_VAL2 = 2;// 値2状態
 
