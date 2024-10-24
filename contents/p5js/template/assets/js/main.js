@@ -10,7 +10,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let gSize, rows, cols;
-let btnL, btnR, cntDown;
+let cntDown, btnL, btnR;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -33,21 +33,20 @@ function setup(){
 	frameRate(16);
 	noSmooth();
 
-	// Test
+	// Countdown
+	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
+		console.log("onFinished!!");
+	});
+
+	// Button
 	btnL = new Button("caret-l-w.png", 
 		cX-gSize*3, cH-gSize*4, 0.2, ()=>{
 		console.log("Left!!");
-		cntDown.start();
 	});
 
 	btnR = new Button("caret-r-w.png", 
 		cX+gSize*3, cH-gSize*4, 0.2, ()=>{
 		console.log("Right!!");
-		cntDown.stop();
-	});
-
-	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
-		console.log("onFinished!!");
 	});
 }
 
@@ -63,12 +62,16 @@ function draw(){
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
+	if(cntDown.isReady()) cntDown.start();
+	if(cntDown.isCounting()) return;
 	console.log("mousePressed!!");
 	btnL.press(mouseX, mouseY);
 	btnR.press(mouseX, mouseY);
 }
 
 function touchStarted(){
+	if(cntDown.isReady()) cntDown.start();
+	if(cntDown.isCounting()) return;
 	console.log("touchStarted!!");
 	btnL.press(mouseX, mouseY);
 	btnR.press(mouseX, mouseY);

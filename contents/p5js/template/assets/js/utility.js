@@ -93,15 +93,17 @@ class Countdown{
 		this._timeoutID = 0;
 	}
 
+	isReady(){
+		return this._max == this._mil;
+	}
+
+	isCounting(){
+		return 0 < this._mil;
+	}
+
 	start(){
 		if(this._mil <= 0) return;
 		this.tick();
-	}
-
-	stop(){
-		if(this.timeoutID <= 0) return;
-		clearTimeout(this.timeoutID);
-		this.timeoutID = 0;
 	}
 
 	tick(){
@@ -114,8 +116,8 @@ class Countdown{
 	}
 
 	update(){
-		fill("white");
 		if(this._mil <= 0) return;
+		fill("white");
 		textSize(this._size*0.4); 
 		textAlign(CENTER, BOTTOM);
 		if(this._max <= this._mil){
