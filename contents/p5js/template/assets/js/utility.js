@@ -138,3 +138,55 @@ class Countdown{
 		text(mil, this._x, this._y);
 	}
 }
+
+//==========
+// Tile
+class Tile{
+
+	constructor(x, y, size, num=88, color="gray"){
+		this._pos   = {x: x, y: y};
+		this._size  = size;
+		this._num   = num;
+		this._color = color;
+		this._movingFlg = false;
+	}
+
+	// fall(r, c, x, y, maxR=ROWS-1){
+	// 	this._r = r;
+	// 	this._c = c;
+	// 	this._movingFlg = true;
+	// 	const delay = (maxR-this._r)*40 + Math.floor(Math.random()*20);
+	// 	this._tween = new TWEEN.Tween(this._pos).to(
+	// 		{x: x, y: y}, 200).delay(delay).easing(TWEEN.Easing.Quadratic.In).onComplete(()=>{
+	// 			this._movingFlg = false;
+	// 		}).start();
+	// }
+
+	get x(){return this._pos.x;}
+	get y(){return this._pos.y;}
+	get size(){return this._size;}
+	get num(){return this._num;}
+
+	isInside(tX, tY){
+		if(tX < this._pos.x-this._size/2) return false;
+		if(tY < this._pos.y-this._size/2) return false;
+		if(this._pos.x+this._size/2 < tX) return false;
+		if(this._pos.y+this._size/2 < tY) return false;
+		return true;
+	}
+
+	isMoving(){
+		return this._movingFlg;
+	}
+
+	update(){
+		fill(this._color);
+		noStroke();
+		rectMode(CENTER, CENTER);
+		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
+
+		fill("white"); noStroke();
+		textSize(this._size*0.5); textAlign(CENTER, CENTER);
+		text(this._num, this._pos.x, this._pos.y-this._size*0.04);
+	}
+}

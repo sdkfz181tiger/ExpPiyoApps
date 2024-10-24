@@ -11,6 +11,7 @@ const FILES_IMG = [
 let font, cW, cH, cX, cY;
 let gSize, rows, cols;
 let cntDown, btnL, btnR;
+let tileA;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -48,6 +49,9 @@ function setup(){
 		cX+gSize*3, cH-gSize*4, 0.2, ()=>{
 		console.log("Right!!");
 	});
+
+	// Tile
+	tileA = new Tile(cX, gSize*5, gSize*3);
 }
 
 function draw(){
@@ -58,6 +62,7 @@ function draw(){
 	btnL.draw();// Button
 	btnR.draw();// Button
 	cntDown.update();// Countdown
+	tileA.update();
 }
 
 function mousePressed(){
