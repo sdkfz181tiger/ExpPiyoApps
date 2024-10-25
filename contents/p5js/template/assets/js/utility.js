@@ -144,11 +144,12 @@ class Countdown{
 class Tile{
 
 	constructor(x, y, size, num, color="gray"){
-		this._pos   = {x: x, y: y};
-		this._size  = size;
-		this._num   = num;
-		this._color = color;
+		this._pos       = {x: x, y: y};
+		this._size      = size - 2;
+		this._num       = num;
+		this._color     = color;
 		this._movingFlg = false;
+		this._deadFlg   = false;
 	}
 
 	get x(){return this._pos.x;}
@@ -164,9 +165,9 @@ class Tile{
 		return true;
 	}
 
-	isMoving(){
-		return this._movingFlg;
-	}
+	isMoving(){return this._movingFlg;}
+
+	isDead(){return this._deadFlg;}
 
 	touch(tX, tY){
 		if(!this.isInside(tX, tY)) return;
@@ -175,7 +176,7 @@ class Tile{
 		console.log("touch: ", this._num);
 
 		// Tween
-		const jumpY = this._pos.y - gSize*3;
+		const jumpY = this._pos.y - gSize*2;
 		const defY  = this._pos.y;
 		const delay = 200;
 		const tween1 = new TWEEN.Tween(this._pos)
@@ -183,8 +184,11 @@ class Tile{
 			.easing(TWEEN.Easing.Quadratic.In);
 		const tween2 = new TWEEN.Tween(this._pos)
 			.to({x: this._pos.x, y: defY}, delay)
-			.easing(TWEEN.Easing.Quadratic.In)
-			.onComplete(()=>{this._movingFlg = false;});
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+				this._deadFlg = true;
+			});
 		tween1.chain(tween2);// Chain
 		tween1.start();
 	}

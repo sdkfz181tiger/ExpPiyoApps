@@ -10,11 +10,11 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let cntDown, btnL, btnR;
+let cntDown;
 
-const tRows = 3;
+const tRows = 5;
 const tCols = 5;
-let tiles;
+let tiles = [];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -40,33 +40,8 @@ function setup(){
 	// Countdown
 	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
 		console.log("onFinished!!");
+		readyTiles();// Tiles
 	});
-
-	// Button
-	btnL = new Button("caret-l-w.png", 
-		cX-gSize*3, cH-gSize*4, 0.2, ()=>{
-		console.log("Left!!");
-	});
-
-	btnR = new Button("caret-r-w.png", 
-		cX+gSize*3, cH-gSize*4, 0.2, ()=>{
-		console.log("Right!!");
-	});
-
-	// Tiles
-	const tSize = gSize * 2;
-	const sX = cX - (tCols*tSize)/2 + tSize/2;
-	const sY = tSize * 2;
-	tiles = [];
-	for(let r=0; r<tRows; r++){
-		for(let c=0; c<tCols; c++){
-			const x = sX + tSize * c;
-			const y = sY + tSize * r;
-			const num = r*tCols + c + 1;
-			const tile = new Tile(x, y, tSize, num);
-			tiles.push(tile);
-		}
-	}
 }
 
 function draw(){
@@ -74,10 +49,18 @@ function draw(){
 	noStroke(); fill("#cccccc");
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
-	btnL.draw();// Button
-	btnR.draw();// Button
+
 	cntDown.update();// Countdown
-	for(const tile of tiles) tile.update();
+
+	// Tiles
+	for(let i=tiles.length-1; 0<=i; i--){
+		const tile = tiles[i];
+		if(tile.isDead()){
+			tiles.splice(i, 1);
+			continue;
+		}
+		tile.update();
+	}
 
 	TWEEN.update();// Tween
 }
@@ -87,8 +70,6 @@ function mousePressed(){
 	if(cntDown.isReady()) cntDown.start();
 	if(cntDown.isCounting()) return;
 	console.log("mousePressed!!");
-	btnL.press(mouseX, mouseY);
-	btnR.press(mouseX, mouseY);
 	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
@@ -96,8 +77,6 @@ function touchStarted(){
 	if(cntDown.isReady()) cntDown.start();
 	if(cntDown.isCounting()) return;
 	console.log("touchStarted!!");
-	btnL.press(mouseX, mouseY);
-	btnR.press(mouseX, mouseY);
 	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
@@ -109,6 +88,22 @@ function drawGrids(){
 		for(let c=0; c<gCols+1; c++){
 			const x = c * gSize;
 			line(x, 0, x, cH);
+		}
+	}
+}
+
+function readyTiles(){
+	// Tiles
+	const tSize = gSize * 3;
+	const sX = cX - (tCols*tSize)/2 + tSize/2;
+	const sY = cY - (tRows*tSize)/2;
+	for(let r=0; r<tRows; r++){
+		for(let c=0; c<tCols; c++){
+			const x = sX + tSize * c;
+			const y = sY + tSize * r;
+			const num = r*tCols + c + 1;
+			const tile = new Tile(x, y, tSize, num);
+			tiles.push(tile);
 		}
 	}
 }
