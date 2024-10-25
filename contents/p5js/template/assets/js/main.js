@@ -78,6 +78,8 @@ function draw(){
 	btnR.draw();// Button
 	cntDown.update();// Countdown
 	for(const tile of tiles) tile.update();
+
+	TWEEN.update();// Tween
 }
 
 function mousePressed(){

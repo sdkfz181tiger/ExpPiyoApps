@@ -144,35 +144,23 @@ class Countdown{
 class Tile{
 
 	constructor(x, y, size, num, color="gray"){
-		this._x = x;
-		this._y = y;
+		this._pos   = {x: x, y: y};
 		this._size  = size;
 		this._num   = num;
 		this._color = color;
 		this._movingFlg = false;
 	}
 
-	// fall(r, c, x, y, maxR=ROWS-1){
-	// 	this._r = r;
-	// 	this._c = c;
-	// 	this._movingFlg = true;
-	// 	const delay = (maxR-this._r)*40 + Math.floor(Math.random()*20);
-	// 	this._tween = new TWEEN.Tween(this._pos).to(
-	// 		{x: x, y: y}, 200).delay(delay).easing(TWEEN.Easing.Quadratic.In).onComplete(()=>{
-	// 			this._movingFlg = false;
-	// 		}).start();
-	// }
-
-	get x(){return this._x;}
-	get y(){return this._y;}
+	get x(){return this._pos.x;}
+	get y(){return this._pos.y;}
 	get size(){return this._size;}
 	get num(){return this._num;}
 
 	isInside(tX, tY){
-		if(tX < this._x-this._size/2) return false;
-		if(tY < this._y-this._size/2) return false;
-		if(this._x+this._size/2 < tX) return false;
-		if(this._y+this._size/2 < tY) return false;
+		if(tX < this._pos.x-this._size/2) return false;
+		if(tY < this._pos.y-this._size/2) return false;
+		if(this._pos.x+this._size/2 < tX) return false;
+		if(this._pos.y+this._size/2 < tY) return false;
 		return true;
 	}
 
@@ -185,28 +173,30 @@ class Tile{
 		if(this.isMoving()) return;
 		this._movingFlg = true;
 		console.log("touch: ", this._num);
-		// Tween
-		// this._tween = new TWEEN.Tween(this._pos).to(
-		// 	{x: x, y: y}, 200).delay(delay).easing(
-		// 		TWEEN.Easing.Quadratic.In).onComplete(()=>{
-		// 		this._movingFlg = false;}).start();
 
-		p5.tween.manager.addTween(this, "tween1")
-		.onLoop(tween=>{
-			console.log("onLoop!!");
-		}).addMotions([
-			{key: "_x", "target": 10}, 
-			{key: "_y", "target": 10}], 1000).startLoop();
+		// Tween
+		const jumpY = this._pos.y - gSize*3;
+		const defY  = this._pos.y;
+		const delay = 200;
+		const tween1 = new TWEEN.Tween(this._pos)
+			.to({x: this._pos.x, y: jumpY}, delay)
+			.easing(TWEEN.Easing.Quadratic.In);
+		const tween2 = new TWEEN.Tween(this._pos)
+			.to({x: this._pos.x, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.In)
+			.onComplete(()=>{this._movingFlg = false;});
+		tween1.chain(tween2);// Chain
+		tween1.start();
 	}
 
 	update(){
 		fill(this._color);
 		noStroke();
 		rectMode(CENTER, CENTER);
-		square(this._x, this._y, this._size, this._size*0.1);
+		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
 
 		fill("white"); noStroke();
 		textSize(this._size*0.5); textAlign(CENTER, CENTER);
-		text(this._num, this._x, this._y-this._size*0.04);
+		text(this._num, this._pos.x, this._pos.y-this._size*0.04);
 	}
 }
