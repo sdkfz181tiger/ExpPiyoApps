@@ -34,7 +34,7 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(32);
+	frameRate(48);
 	noSmooth();
 
 	// Countdown
