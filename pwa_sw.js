@@ -3,7 +3,7 @@
 console.log("Hello ServiceWorker!!");
 
 const CACHE_VERSION = "cache_1.0.0";
-const CACHE_FILES = [];
+const CACHE_FILES = ["./contents/assets/images/logo.png"];
 
 // Place files that need to be executed offline 
 // in the offline cache area.
