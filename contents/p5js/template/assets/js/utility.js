@@ -173,8 +173,25 @@ class Tile{
 		if(!this.isInside(tX, tY)) return;
 		if(this.isMoving()) return;
 		this._movingFlg = true;
-		console.log("touch: ", this._num);
+		this.jump();
+	}
 
+	ready(delay){
+		// Tween
+		const toX   = this._pos.x;
+		const toY   = this._pos.y;
+		this._pos.x = this._pos.x;
+		this._pos.y = this._pos.y - gSize*20;
+		const tween = new TWEEN.Tween(this._pos)
+			.to({x: toX, y: toY}, 200).delay(delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+			});
+		tween.start();
+	}
+
+	jump(){
 		// Tween
 		const jumpY = this._pos.y - gSize*2;
 		const defY  = this._pos.y;

@@ -8,6 +8,10 @@ const FILES_IMG = [
 	"caret-l-w.png", "caret-r-w.png"
 ];
 
+const TILE_COLORS = [
+	"slateblue", "royalblue", "darkblue", "skyblue", "lightblue"
+];
+
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
 let cntDown;
@@ -40,7 +44,6 @@ function setup(){
 	// Countdown
 	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
 		console.log("onFinished!!");
-		readyTiles();// Tiles
 	});
 }
 
@@ -49,8 +52,6 @@ function draw(){
 	noStroke(); fill("#cccccc");
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
-
-	cntDown.update();// Countdown
 
 	// Tiles
 	for(let i=tiles.length-1; 0<=i; i--){
@@ -62,26 +63,33 @@ function draw(){
 		tile.update();
 	}
 
+	cntDown.update();// Countdown
 	TWEEN.update();// Tween
 }
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	if(cntDown.isReady()) cntDown.start();
+	if(cntDown.isReady()){
+		cntDown.start();
+		readyTiles();// Tiles
+	}
 	if(cntDown.isCounting()) return;
 	console.log("mousePressed!!");
 	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
 function touchStarted(){
-	if(cntDown.isReady()) cntDown.start();
+	if(cntDown.isReady()){
+		cntDown.start();
+		readyTiles();// Tiles
+	}
 	if(cntDown.isCounting()) return;
 	console.log("touchStarted!!");
 	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
 function drawGrids(){
-	stroke("gray"); strokeWeight(1);
+	stroke("#111111"); strokeWeight(1);
 	for(let r=0; r<gRows+1; r++){
 		const y = r * gSize;
 		line(0, y, cW, y);
@@ -97,12 +105,15 @@ function readyTiles(){
 	const tSize = gSize * 3;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2;
+	const total = tRows * tCols;
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
 			const x = sX + tSize * c;
 			const y = sY + tSize * r;
 			const num = r*tCols + c + 1;
-			const tile = new Tile(x, y, tSize, num);
+			const color = TILE_COLORS[num%TILE_COLORS.length]
+			const tile = new Tile(x, y, tSize, num, color);
+			tile.ready((total-num) * 30);
 			tiles.push(tile);
 		}
 	}
