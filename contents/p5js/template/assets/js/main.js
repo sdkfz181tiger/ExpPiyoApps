@@ -9,9 +9,12 @@ const FILES_IMG = [
 ];
 
 let font, cW, cH, cX, cY;
-let gSize, rows, cols;
+let gSize, gRows, gCols;
 let cntDown, btnL, btnR;
-let tileA;
+
+const tRows = 3;
+const tCols = 5;
+let tiles;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -25,8 +28,8 @@ function setup(){
 	cX = cW / 2;
 	cY = cH / 2;
 	gSize = floor(cW / 20);
-	rows = floor(cH / gSize);
-	cols = floor(cW / gSize);
+	gRows = floor(cH / gSize);
+	gCols = floor(cW / gSize);
 
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
@@ -50,8 +53,20 @@ function setup(){
 		console.log("Right!!");
 	});
 
-	// Tile
-	tileA = new Tile(cX, gSize*5, gSize*3);
+	// Tiles
+	const tSize = gSize * 2;
+	const sX = cX - (tCols*tSize)/2 + tSize/2;
+	const sY = tSize * 2;
+	tiles = [];
+	for(let r=0; r<tRows; r++){
+		for(let c=0; c<tCols; c++){
+			const x = sX + tSize * c;
+			const y = sY + tSize * r;
+			const num = r*tCols + c + 1;
+			const tile = new Tile(x, y, tSize, num);
+			tiles.push(tile);
+		}
+	}
 }
 
 function draw(){
@@ -62,7 +77,7 @@ function draw(){
 	btnL.draw();// Button
 	btnR.draw();// Button
 	cntDown.update();// Countdown
-	tileA.update();
+	for(const tile of tiles) tile.update();
 }
 
 function mousePressed(){
@@ -72,6 +87,7 @@ function mousePressed(){
 	console.log("mousePressed!!");
 	btnL.press(mouseX, mouseY);
 	btnR.press(mouseX, mouseY);
+	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
 function touchStarted(){
@@ -80,14 +96,15 @@ function touchStarted(){
 	console.log("touchStarted!!");
 	btnL.press(mouseX, mouseY);
 	btnR.press(mouseX, mouseY);
+	for(const tile of tiles) tile.touch(mouseX, mouseY);
 }
 
 function drawGrids(){
 	stroke("gray"); strokeWeight(1);
-	for(let r=0; r<rows+1; r++){
+	for(let r=0; r<gRows+1; r++){
 		const y = r * gSize;
 		line(0, y, cW, y);
-		for(let c=0; c<cols+1; c++){
+		for(let c=0; c<gCols+1; c++){
 			const x = c * gSize;
 			line(x, 0, x, cH);
 		}

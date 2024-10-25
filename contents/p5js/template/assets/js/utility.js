@@ -143,8 +143,9 @@ class Countdown{
 // Tile
 class Tile{
 
-	constructor(x, y, size, num=88, color="gray"){
-		this._pos   = {x: x, y: y};
+	constructor(x, y, size, num, color="gray"){
+		this._x = x;
+		this._y = y;
 		this._size  = size;
 		this._num   = num;
 		this._color = color;
@@ -162,16 +163,16 @@ class Tile{
 	// 		}).start();
 	// }
 
-	get x(){return this._pos.x;}
-	get y(){return this._pos.y;}
+	get x(){return this._x;}
+	get y(){return this._y;}
 	get size(){return this._size;}
 	get num(){return this._num;}
 
 	isInside(tX, tY){
-		if(tX < this._pos.x-this._size/2) return false;
-		if(tY < this._pos.y-this._size/2) return false;
-		if(this._pos.x+this._size/2 < tX) return false;
-		if(this._pos.y+this._size/2 < tY) return false;
+		if(tX < this._x-this._size/2) return false;
+		if(tY < this._y-this._size/2) return false;
+		if(this._x+this._size/2 < tX) return false;
+		if(this._y+this._size/2 < tY) return false;
 		return true;
 	}
 
@@ -179,14 +180,33 @@ class Tile{
 		return this._movingFlg;
 	}
 
+	touch(tX, tY){
+		if(!this.isInside(tX, tY)) return;
+		if(this.isMoving()) return;
+		this._movingFlg = true;
+		console.log("touch: ", this._num);
+		// Tween
+		// this._tween = new TWEEN.Tween(this._pos).to(
+		// 	{x: x, y: y}, 200).delay(delay).easing(
+		// 		TWEEN.Easing.Quadratic.In).onComplete(()=>{
+		// 		this._movingFlg = false;}).start();
+
+		p5.tween.manager.addTween(this, "tween1")
+		.onLoop(tween=>{
+			console.log("onLoop!!");
+		}).addMotions([
+			{key: "_x", "target": 10}, 
+			{key: "_y", "target": 10}], 1000).startLoop();
+	}
+
 	update(){
 		fill(this._color);
 		noStroke();
 		rectMode(CENTER, CENTER);
-		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
+		square(this._x, this._y, this._size, this._size*0.1);
 
 		fill("white"); noStroke();
 		textSize(this._size*0.5); textAlign(CENTER, CENTER);
-		text(this._num, this._pos.x, this._pos.y-this._size*0.04);
+		text(this._num, this._x, this._y-this._size*0.04);
 	}
 }
