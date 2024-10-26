@@ -70,7 +70,10 @@ function draw(){
 	}
 	cntDown.update();// Countdown
 
-	drawMsgNext();// Next
+	drawMsgNext(gSize*2, cY - gSize*11);// Next
+	drawMsgTime(cW-gSize*2, cY - gSize*11);// Time
+	drawMsgHigh(cW-gSize*2, cY - gSize*9.5);// High
+	drawMsgClear(cX, cY + gSize*12);// Game Clear
 
 	TWEEN.update();// Tween
 }
@@ -90,6 +93,7 @@ function touchStarted(){
 	console.log("touchStarted!!");
 	for(const tile of tiles){
 		if(tile.touch(mouseX, mouseY, num)){
+			if(tRows*tCols <= num) return;
 			num++;
 		}
 	}
@@ -107,11 +111,32 @@ function drawGrids(){
 	}
 }
 
-function drawMsgNext(){
+function drawMsgNext(x, y){
 	fill("#ffffff");
 	textSize(gSize * 1.6); 
 	textAlign(LEFT, CENTER);
-	text("Next:"+num, gSize*2, cY - gSize*11);
+	text("NEXT:"+num, x, y);
+}
+
+function drawMsgTime(x, y){
+	fill("#ffffff");
+	textSize(gSize * 1.6); 
+	textAlign(RIGHT, CENTER);
+	text("60.0", x, y);
+}
+
+function drawMsgHigh(x, y){
+	fill("#ff9999");
+	textSize(gSize * 0.8); 
+	textAlign(RIGHT, CENTER);
+	text("HIGH:32.2", x, y);
+}
+
+function drawMsgClear(x, y){
+	fill("#ff9999");
+	textSize(gSize * 1.6); 
+	textAlign(CENTER, BOTTOM);
+	text("GAME CLEAR!!", x, y);
 }
 
 function createShadows(){
