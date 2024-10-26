@@ -44,7 +44,8 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	// tSize    = gSize * 3.4;// TileSize
+	tSize    = gSize * 3.4;// TileSize
+	
 	// num      = 1;// Number
 	// clearFlg = false;// Clear
 	// cntTime  = 0;
@@ -52,7 +53,7 @@ function setup(){
 	// // Countdown
 	// cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
 	// 	()=>{console.log("onFinished!!");});
-	
+
 	createShadows();// Shadows
 }
 
@@ -64,6 +65,7 @@ function draw(){
 
 	// Shadows
 	for(const shadow of shadows) shadow.update();
+
 	/*
 	// Tiles
 	for(let i=tiles.length-1; 0<=i; i--){
@@ -170,6 +172,7 @@ function createShadows(){
 		for(let c=0; c<tCols; c++){
 			const x = sX + tSize * c;
 			const y = sY + tSize * r;
+			console.log(x, y, tSize);
 			const shadow = new Shadow(x, y, tSize);
 			shadows.push(shadow);
 		}
