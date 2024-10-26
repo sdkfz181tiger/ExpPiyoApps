@@ -18,6 +18,7 @@ let cntDown;
 
 const tRows = 5;
 const tCols = 5;
+let shadows = [];
 let tiles = [];
 
 function preload(){
@@ -41,8 +42,10 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
+	createShadows();// Shadows
+
 	// Countdown
-	cntDown = new Countdown(cX, cY, gSize*4, ()=>{
+	cntDown = new Countdown(cX, cY+gSize*9, gSize*4, ()=>{
 		console.log("onFinished!!");
 	});
 }
@@ -53,6 +56,8 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
+	// Shadows
+	for(const shadow of shadows) shadow.update();
 	// Tiles
 	for(let i=tiles.length-1; 0<=i; i--){
 		const tile = tiles[i];
@@ -70,8 +75,8 @@ function draw(){
 function mousePressed(){
 	if(FLG_MOBILE) return;
 	if(cntDown.isReady()){
-		cntDown.start();
-		readyTiles();// Tiles
+		cntDown.start();// Countdown
+		createTiles();// Tiles
 	}
 	if(cntDown.isCounting()) return;
 	console.log("mousePressed!!");
@@ -100,7 +105,23 @@ function drawGrids(){
 	}
 }
 
-function readyTiles(){
+function createShadows(){
+	// Shadows
+	const tSize = gSize * 3;
+	const sX = cX - (tCols*tSize)/2 + tSize/2;
+	const sY = cY - (tRows*tSize)/2;
+	const total = tRows * tCols;
+	for(let r=0; r<tRows; r++){
+		for(let c=0; c<tCols; c++){
+			const x = sX + tSize * c;
+			const y = sY + tSize * r;
+			const shadow = new Shadow(x, y, tSize);
+			shadows.push(shadow);
+		}
+	}
+}
+
+function createTiles(){
 	// Tiles
 	const tSize = gSize * 3;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
