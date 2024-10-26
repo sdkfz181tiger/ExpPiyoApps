@@ -54,7 +54,7 @@ function setup(){
 	// cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
 	// 	()=>{console.log("onFinished!!");});
 
-	createShadows();// Shadows
+	//createShadows();// Shadows
 }
 
 function draw(){
@@ -63,12 +63,12 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	// Shadows
-	for(const shadow of shadows) shadow.update();
-	
-	fill("white");
+	fill("orange");
 	noStroke();
 	square(100, 100, 100);
+
+	// Shadows
+	//for(const shadow of shadows) shadow.update();
 
 	/*
 	// Tiles
