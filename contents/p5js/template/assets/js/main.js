@@ -44,7 +44,7 @@ function setup(){
 	noSmooth();
 
 	// Countdown
-	cntDown = new Countdown(cX, cY+gSize*9, gSize*4, ()=>{
+	cntDown = new Countdown(cX, cY+gSize*12.5, gSize*4, ()=>{
 		console.log("onFinished!!");
 	});
 	num = 1;// Number
@@ -74,7 +74,7 @@ function draw(){
 	fill("#ffffff");
 	textSize(gSize * 2); 
 	textAlign(CENTER, BOTTOM);
-	text(num, cX, cY - gSize*10);
+	text(num, cX, cY - gSize*11);
 
 	TWEEN.update();// Tween
 }
@@ -114,7 +114,7 @@ function createShadows(){
 	// Shadows
 	const tSize = gSize * 4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
-	const sY = cY - (tRows*tSize)/2 + tSize*2;
+	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
@@ -130,7 +130,7 @@ function createTiles(){
 	// Tiles
 	const tSize = gSize * 4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
-	const sY = cY - (tRows*tSize)/2 + tSize*2;
+	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
