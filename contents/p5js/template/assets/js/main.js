@@ -63,7 +63,6 @@ function draw(){
 
 	// Shadows
 	for(const shadow of shadows) shadow.update();
-	/*
 	// Tiles
 	for(let i=tiles.length-1; 0<=i; i--){
 		const tile = tiles[i];
@@ -86,7 +85,6 @@ function draw(){
 	drawMsgClear(cX, cY + gSize*12);// Game Clear
 
 	TWEEN.update();// Tween
-	*/
 }
 
 function mousePressed(){
@@ -209,5 +207,5 @@ function loadHighScore(){
 function saveHighScore(){
 	if(cntHigh < cntTime) return;
 	cntHigh = cntTime;
-	localStorage.setItem("touchthenumber", cntHigh);
+	localStorage.setItem("touchthenumber", cntTime);
 }
