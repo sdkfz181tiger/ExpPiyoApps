@@ -14,7 +14,7 @@ const TILE_COLORS = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let cntDown, num;
+let tSize, num, cntDown;
 
 const tRows = 5;
 const tCols = 5;
@@ -43,11 +43,11 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	// Countdown
-	cntDown = new Countdown(cX, cY+gSize*12.5, gSize*4, ()=>{
-		console.log("onFinished!!");
-	});
+	tSize = gSize * 3.4;// TileSize
 	num = 1;// Number
+	// Countdown
+	cntDown = new Countdown(cX, cY+gSize*11.5, 
+		gSize*4, ()=>{console.log("onFinished!!");});
 	createShadows();// Shadows
 }
 
@@ -70,11 +70,7 @@ function draw(){
 	}
 	cntDown.update();// Countdown
 
-	// Num
-	fill("#ffffff");
-	textSize(gSize * 2); 
-	textAlign(CENTER, BOTTOM);
-	text(num, cX, cY - gSize*11);
+	drawMsg1();// Msg1
 
 	TWEEN.update();// Tween
 }
@@ -85,6 +81,8 @@ function mousePressed(){
 }
 
 function touchStarted(){
+	if(mouseX < 0 || mouseY < 0) return;
+	if(cW < mouseX || cH < mouseY) return;
 	if(cntDown.isReady()){
 		cntDown.start();
 		createTiles();// Tiles
@@ -110,9 +108,16 @@ function drawGrids(){
 	}
 }
 
+function drawMsg1(){
+	// Num
+	fill("#ffffff");
+	textSize(gSize * 2); 
+	textAlign(CENTER, CENTER);
+	text("Next:"+num, cX, cY - gSize*11);
+}
+
 function createShadows(){
 	// Shadows
-	const tSize = gSize * 3.4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
@@ -128,7 +133,6 @@ function createShadows(){
 
 function createTiles(){
 	// Tiles
-	const tSize = gSize * 3.4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
