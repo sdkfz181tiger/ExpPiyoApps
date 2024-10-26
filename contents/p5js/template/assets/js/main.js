@@ -14,7 +14,7 @@ const TILE_COLORS = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let cntDown;
+let cntDown, num;
 
 const tRows = 5;
 const tCols = 5;
@@ -36,18 +36,19 @@ function setup(){
 	gRows = floor(cH / gSize);
 	gCols = floor(cW / gSize);
 
+	// Canvas
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
 	frameRate(48);
 	noSmooth();
 
-	createShadows();// Shadows
-
 	// Countdown
 	cntDown = new Countdown(cX, cY+gSize*9, gSize*4, ()=>{
 		console.log("onFinished!!");
 	});
+	num = 0;// Number
+	createShadows();// Shadows
 }
 
 function draw(){

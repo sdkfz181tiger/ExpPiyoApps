@@ -111,7 +111,7 @@ class Countdown{
 			if(this._onFinished) this._onFinished();
 			return;
 		}
-		this._mil -= 10;
+		this._mil -= 20;
 		this.timeoutID = setTimeout(()=>{this.tick();}, 8);
 	}
 
