@@ -207,7 +207,7 @@ class Tile{
 		const toX   = this._pos.x;
 		const toY   = this._pos.y;
 		this._pos.x = this._pos.x;
-		this._pos.y = this._pos.y - gSize*20;
+		this._pos.y = this._pos.y - this._size * 10;
 		const tween = new TWEEN.Tween(this._pos)
 			.to({x: toX, y: toY}, 200).delay(delay)
 			.easing(TWEEN.Easing.Quadratic.Out)
