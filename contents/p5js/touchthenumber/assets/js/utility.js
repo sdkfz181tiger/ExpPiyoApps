@@ -147,17 +147,15 @@ class Countdown{
 // TapTheNumber
 class Shadow{
 
-	constructor(x, y, size, num, color="#222222"){
+	constructor(x, y, size, color="#222222"){
 		this._pos   = {x: x, y: y};
 		this._size  = size - 2;
-		this._num   = num;
 		this._color = color;
 	}
 
 	get x(){return this._pos.x;}
 	get y(){return this._pos.y;}
 	get size(){return this._size;}
-	get num(){return this._num;}
 
 	update(){
 		fill(this._color);
