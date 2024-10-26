@@ -65,6 +65,10 @@ function draw(){
 
 	// Shadows
 	for(const shadow of shadows) shadow.update();
+	
+	fill("white");
+	noStroke();
+	square(100, 100, 100);
 
 	/*
 	// Tiles
