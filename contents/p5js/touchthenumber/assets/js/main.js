@@ -199,7 +199,7 @@ function createTiles(){
 }
 
 function loadHighScore(){
-	const num = localStorage.getItem("tn_2024");
+	const num = localStorage.getItem("touchthenumber");
 	if(num == null) return 99999;
 	return num;
 }
@@ -207,5 +207,5 @@ function loadHighScore(){
 function saveHighScore(){
 	if(cntHigh < cntTime) return;
 	cntHigh = cntTime;
-	localStorage.setItem("tn_2024", cntTime);
+	localStorage.setItem("touchthenumber", cntTime);
 }
