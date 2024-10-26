@@ -1,6 +1,6 @@
 {
-	"name":"TouchTheNumber",
-	"short_name":"TouchTheNumber",
+	"name":"タッチザナンバー",
+	"short_name":"タッチザナンバー",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
