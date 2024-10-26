@@ -44,15 +44,15 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	tSize    = gSize * 3.4;// TileSize
-	num      = 1;// Number
-	clearFlg = false;// Clear
-	cntTime  = 0;
-	cntHigh  = loadHighScore();
-	// Countdown
-	cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
-		()=>{console.log("onFinished!!");});
-	createShadows();// Shadows
+	// tSize    = gSize * 3.4;// TileSize
+	// num      = 1;// Number
+	// clearFlg = false;// Clear
+	// cntTime  = 0;
+	// cntHigh  = loadHighScore();
+	// // Countdown
+	// cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
+	// 	()=>{console.log("onFinished!!");});
+	// createShadows();// Shadows
 }
 
 function draw(){
