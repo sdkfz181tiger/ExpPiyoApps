@@ -112,7 +112,7 @@ function drawGrids(){
 
 function createShadows(){
 	// Shadows
-	const tSize = gSize * 4;
+	const tSize = gSize * 3.4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
@@ -128,7 +128,7 @@ function createShadows(){
 
 function createTiles(){
 	// Tiles
-	const tSize = gSize * 4;
+	const tSize = gSize * 3.4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
@@ -146,7 +146,7 @@ function createTiles(){
 			const num = nums[i];
 			const color = TILE_COLORS[num%TILE_COLORS.length]
 			const tile = new Tile(x, y, tSize, num, color);
-			tile.ready((total-num) * 30);
+			tile.ready((total-i) * 30);
 			tiles.push(tile);
 		}
 	}
