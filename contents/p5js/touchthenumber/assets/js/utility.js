@@ -163,7 +163,7 @@ class Shadow{
 		rectMode(CENTER, CENTER);
 		square(this._pos.x, this._pos.y, this._size);
 		fill("blue");
-		square(this._pos.x, this._pos.y, this._size, 10);
+		rect(this._pos.x, this._pos.y, this._size, this._size, this._size*0.1);
 	}
 }
 
