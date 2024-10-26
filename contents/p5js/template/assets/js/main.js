@@ -70,7 +70,7 @@ function draw(){
 	}
 	cntDown.update();// Countdown
 
-	drawMsg1();// Msg1
+	drawMsgNext();// Next
 
 	TWEEN.update();// Tween
 }
@@ -108,12 +108,11 @@ function drawGrids(){
 	}
 }
 
-function drawMsg1(){
-	// Num
+function drawMsgNext(){
 	fill("#ffffff");
-	textSize(gSize * 2); 
-	textAlign(CENTER, CENTER);
-	text("Next:"+num, cX, cY - gSize*11);
+	textSize(gSize * 1.6); 
+	textAlign(LEFT, CENTER);
+	text("Next:"+num, gSize*2, cY - gSize*11);
 }
 
 function createShadows(){
