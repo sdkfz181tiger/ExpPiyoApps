@@ -101,6 +101,10 @@ class Countdown{
 		return 0 < this._mil;
 	}
 
+	isPlaying(){
+		return this._mil <= 0;
+	}
+
 	start(){
 		if(this._mil <= 0) return;
 		this.tick();
@@ -191,14 +195,11 @@ class Tile{
 
 	isDead(){return this._deadFlg;}
 
-	touch(tX, tY, num){
+	isCorrect(num){return this._num == num;}
+
+	touch(tX, tY){
 		if(!this.isInside(tX, tY)) return false;
 		if(this.isMoving()) return false;
-		if(this._num != num){
-			this.shake();// Shake
-			return false;
-		}
-		this.jump();// Jump
 		return true;
 	}
 

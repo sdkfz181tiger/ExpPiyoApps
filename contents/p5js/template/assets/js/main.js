@@ -14,7 +14,8 @@ const TILE_COLORS = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let tSize, num, clearFlg, cntDown;
+let tSize, num, clearFlg;
+let cntTime, cntHigh, cntDown;
 
 const tRows = 5;
 const tCols = 5;
@@ -43,12 +44,14 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	tSize = gSize * 3.4;// TileSize
-	num = 1;// Number
+	tSize    = gSize * 3.4;// TileSize
+	num      = 1;// Number
 	clearFlg = false;// Clear
+	cntTime  = 0;
+	cntHigh  = loadHighScore();
 	// Countdown
-	cntDown = new Countdown(cX, cY+gSize*11, 
-		gSize*4, ()=>{console.log("onFinished!!");});
+	cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
+		()=>{console.log("onFinished!!");});
 	createShadows();// Shadows
 }
 
@@ -69,7 +72,12 @@ function draw(){
 		}
 		tile.update();
 	}
-	cntDown.update();// Countdown
+	// Time
+	if(cntDown.isPlaying() && !clearFlg){
+		cntTime += floor(100 / frameRate());
+	}
+	// Countdown
+	cntDown.update();
 
 	drawMsgNext(gSize*2, cY - gSize*11);// Next
 	drawMsgTime(cW-gSize*2, cY - gSize*11);// Time
@@ -92,13 +100,20 @@ function touchStarted(){
 	}
 	if(cntDown.isCounting()) return;
 	for(const tile of tiles){
-		if(tile.touch(mouseX, mouseY, num)){
+		if(!tile.touch(mouseX, mouseY)) continue;
+		if(tile.isCorrect(num)){
+			tile.jump();// Correct
 			if(tRows*tCols <= num){
-				clearFlg = true;
+				clearFlg = true;// Clear
+				saveHighScore();// Save
 				return;
 			}
-			num++;
+			num++;// Next
+			return;
 		}
+		tile.shake();// Incorrect
+		cntTime += 50;// Penalty
+		return;
 	}
 }
 
@@ -125,14 +140,14 @@ function drawMsgTime(x, y){
 	fill("#ffffff");
 	textSize(gSize * 1.6); 
 	textAlign(RIGHT, CENTER);
-	text("60.0", x, y);
+	text((cntTime/100).toFixed(2), x, y);
 }
 
 function drawMsgHigh(x, y){
 	fill("#ff9999");
 	textSize(gSize * 0.8); 
 	textAlign(RIGHT, CENTER);
-	text("HIGH:32.2", x, y);
+	text("HIGH:"+(cntHigh/100).toFixed(2), x, y);
 }
 
 function drawMsgClear(x, y){
@@ -181,4 +196,16 @@ function createTiles(){
 			tiles.push(tile);
 		}
 	}
+}
+
+function loadHighScore(){
+	const num = localStorage.getItem("tn_2024");
+	if(num == null) return 99999;
+	return num;
+}
+
+function saveHighScore(){
+	if(cntHigh < cntTime) return;
+	cntHigh = cntTime;
+	localStorage.setItem("tn_2024", cntTime);
 }
