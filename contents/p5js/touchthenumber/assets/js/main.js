@@ -45,7 +45,7 @@ function setup(){
 	noSmooth();
 
 	tSize    = gSize * 3.4;// TileSize
-	
+
 	// num      = 1;// Number
 	// clearFlg = false;// Clear
 	// cntTime  = 0;
@@ -94,32 +94,32 @@ function draw(){
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	touchStarted();
+	//touchStarted();
 }
 
 function touchStarted(){
-	if(mouseY < 0) return;
-	if(cntDown.isReady()){
-		cntDown.start();
-		createTiles();// Tiles
-	}
-	if(cntDown.isCounting()) return;
-	for(const tile of tiles){
-		if(!tile.touch(mouseX, mouseY)) continue;
-		if(tile.isCorrect(num)){
-			tile.jump();// Correct
-			if(tRows*tCols <= num){
-				clearFlg = true;// Clear
-				saveHighScore();// Save
-				return;
-			}
-			num++;// Next
-			return;
-		}
-		tile.shake();// Incorrect
-		cntTime += 50;// Penalty
-		return;
-	}
+	// if(mouseY < 0) return;
+	// if(cntDown.isReady()){
+	// 	cntDown.start();
+	// 	createTiles();// Tiles
+	// }
+	// if(cntDown.isCounting()) return;
+	// for(const tile of tiles){
+	// 	if(!tile.touch(mouseX, mouseY)) continue;
+	// 	if(tile.isCorrect(num)){
+	// 		tile.jump();// Correct
+	// 		if(tRows*tCols <= num){
+	// 			clearFlg = true;// Clear
+	// 			saveHighScore();// Save
+	// 			return;
+	// 		}
+	// 		num++;// Next
+	// 		return;
+	// 	}
+	// 	tile.shake();// Incorrect
+	// 	cntTime += 50;// Penalty
+	// 	return;
+	// }
 }
 
 function drawGrids(){
@@ -172,7 +172,6 @@ function createShadows(){
 		for(let c=0; c<tCols; c++){
 			const x = sX + tSize * c;
 			const y = sY + tSize * r;
-			console.log(x, y, tSize);
 			const shadow = new Shadow(x, y, tSize);
 			shadows.push(shadow);
 		}

@@ -148,10 +148,10 @@ class Countdown{
 class Shadow{
 
 	constructor(x, y, size, num, color="#222222"){
-		this._pos       = {x: x, y: y};
-		this._size      = size - 2;
-		this._num       = num;
-		this._color     = color;
+		this._pos   = {x: x, y: y};
+		this._size  = size - 2;
+		this._num   = num;
+		this._color = color;
 	}
 
 	get x(){return this._pos.x;}
