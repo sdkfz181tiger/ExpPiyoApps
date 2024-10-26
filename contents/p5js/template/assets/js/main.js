@@ -112,9 +112,9 @@ function drawGrids(){
 
 function createShadows(){
 	// Shadows
-	const tSize = gSize * 3;
+	const tSize = gSize * 4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
-	const sY = cY - (tRows*tSize)/2;
+	const sY = cY - (tRows*tSize)/2 + tSize*2;
 	const total = tRows * tCols;
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
@@ -128,9 +128,9 @@ function createShadows(){
 
 function createTiles(){
 	// Tiles
-	const tSize = gSize * 3;
+	const tSize = gSize * 4;
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
-	const sY = cY - (tRows*tSize)/2;
+	const sY = cY - (tRows*tSize)/2 + tSize*2;
 	const total = tRows * tCols;
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
