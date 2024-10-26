@@ -84,7 +84,7 @@ btnRetry.addEventListener("click", ()=>{
 class Countdown{
 
 	constructor(x, y, size=28, onFinished=null){
-		this._max = 4000;
+		this._max = 3000;
 		this._mil = this._max;
 		this._x = x;
 		this._y = y;
@@ -115,8 +115,8 @@ class Countdown{
 			if(this._onFinished) this._onFinished();
 			return;
 		}
-		this._mil -= 20;
-		this.timeoutID = setTimeout(()=>{this.tick();}, 8);
+		this._mil -= 10;
+		this.timeoutID = setTimeout(()=>{this.tick();}, 10);
 	}
 
 	update(){
