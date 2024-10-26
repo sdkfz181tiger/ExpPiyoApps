@@ -52,7 +52,8 @@ function setup(){
 	// // Countdown
 	// cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
 	// 	()=>{console.log("onFinished!!");});
-	// createShadows();// Shadows
+	
+	createShadows();// Shadows
 }
 
 function draw(){
