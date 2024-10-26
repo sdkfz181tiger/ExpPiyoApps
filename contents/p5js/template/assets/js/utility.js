@@ -191,11 +191,15 @@ class Tile{
 
 	isDead(){return this._deadFlg;}
 
-	touch(tX, tY){
-		if(!this.isInside(tX, tY)) return;
-		if(this.isMoving()) return;
-		this._movingFlg = true;
-		this.jump();
+	touch(tX, tY, num){
+		if(!this.isInside(tX, tY)) return false;
+		if(this.isMoving()) return false;
+		if(this._num != num){
+			this.shake();// Shake
+			return false;
+		}
+		this.jump();// Jump
+		return true;
 	}
 
 	ready(delay){
@@ -214,21 +218,53 @@ class Tile{
 	}
 
 	jump(){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
 		// Tween
-		const jumpY = this._pos.y - gSize*2;
-		const defY  = this._pos.y;
-		const delay = 100;
+		const jumpY  = this._pos.y - gSize*2;
+		const defX   = this._pos.x;
+		const defY   = this._pos.y;
+		const delay  = 100;
 		const tween1 = new TWEEN.Tween(this._pos)
-			.to({x: this._pos.x, y: jumpY}, delay)
+			.to({x: defX, y: jumpY}, delay)
 			.easing(TWEEN.Easing.Quadratic.In);
 		const tween2 = new TWEEN.Tween(this._pos)
-			.to({x: this._pos.x, y: defY}, delay)
+			.to({x: defX, y: defY}, delay)
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
 				this._deadFlg = true;
 			});
 		tween1.chain(tween2);// Chain
+		tween1.start();
+	}
+
+	shake(){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
+		// Shake
+		const shakeX = gSize;
+		const defX   = this._pos.x;
+		const defY   = this._pos.y;
+		const delay  = 50;
+		const tween1 = new TWEEN.Tween(this._pos)
+			.to({x: defX-shakeX, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.In);
+		const tween2 = new TWEEN.Tween(this._pos)
+			.to({x: defX, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out);
+		const tween3 = new TWEEN.Tween(this._pos)
+			.to({x: defX+shakeX, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.In);
+		const tween4 = new TWEEN.Tween(this._pos)
+			.to({x: defX, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+			});
+		tween1.chain(tween2);// Chain
+		tween2.chain(tween3);
+		tween3.chain(tween4);
 		tween1.start();
 	}
 

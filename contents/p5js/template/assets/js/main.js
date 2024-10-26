@@ -47,7 +47,7 @@ function setup(){
 	cntDown = new Countdown(cX, cY+gSize*9, gSize*4, ()=>{
 		console.log("onFinished!!");
 	});
-	num = 0;// Number
+	num = 1;// Number
 	createShadows();// Shadows
 }
 
@@ -68,30 +68,34 @@ function draw(){
 		}
 		tile.update();
 	}
-
 	cntDown.update();// Countdown
+
+	// Num
+	fill("#ffffff");
+	textSize(gSize * 2); 
+	textAlign(CENTER, BOTTOM);
+	text(num, cX, cY - gSize*10);
+
 	TWEEN.update();// Tween
 }
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	if(cntDown.isReady()){
-		cntDown.start();// Countdown
-		createTiles();// Tiles
-	}
-	if(cntDown.isCounting()) return;
-	console.log("mousePressed!!");
-	for(const tile of tiles) tile.touch(mouseX, mouseY);
+	touchStarted();
 }
 
 function touchStarted(){
 	if(cntDown.isReady()){
 		cntDown.start();
-		readyTiles();// Tiles
+		createTiles();// Tiles
 	}
 	if(cntDown.isCounting()) return;
 	console.log("touchStarted!!");
-	for(const tile of tiles) tile.touch(mouseX, mouseY);
+	for(const tile of tiles){
+		if(tile.touch(mouseX, mouseY, num)){
+			num++;
+		}
+	}
 }
 
 function drawGrids(){
