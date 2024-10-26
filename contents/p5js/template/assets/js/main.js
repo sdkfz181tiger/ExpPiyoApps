@@ -9,7 +9,7 @@ const FILES_IMG = [
 ];
 
 const TILE_COLORS = [
-	"slateblue", "royalblue", "darkblue", "skyblue", "lightblue"
+	"#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#6a4c93"
 ];
 
 let font, cW, cH, cX, cY;
