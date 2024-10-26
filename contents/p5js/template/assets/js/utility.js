@@ -119,7 +119,7 @@ class Countdown{
 		if(this._mil <= 0) return;
 		fill("white");
 		textSize(this._size*0.4); 
-		textAlign(CENTER, BOTTOM);
+		textAlign(CENTER, CENTER);
 		if(this._max <= this._mil){
 			text("TAP TO START", this._x, this._y);
 			return;
@@ -131,11 +131,11 @@ class Countdown{
 		const sec = floor(this._mil/1000);
 		const mil = this._mil % 1000;
 		textSize(this._size*0.6); 
-		textAlign(CENTER, BOTTOM);
+		textAlign(CENTER, CENTER);
 		text(sec, this._x, this._y);
 		textSize(this._size*0.2);
 		textAlign(CENTER, TOP);
-		text(mil, this._x, this._y);
+		text(mil, this._x, this._y + this._size*0.3);
 	}
 }
 

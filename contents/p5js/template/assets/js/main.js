@@ -14,7 +14,7 @@ const TILE_COLORS = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let tSize, num, cntDown;
+let tSize, num, clearFlg, cntDown;
 
 const tRows = 5;
 const tCols = 5;
@@ -45,8 +45,9 @@ function setup(){
 
 	tSize = gSize * 3.4;// TileSize
 	num = 1;// Number
+	clearFlg = false;// Clear
 	// Countdown
-	cntDown = new Countdown(cX, cY+gSize*11.5, 
+	cntDown = new Countdown(cX, cY+gSize*11, 
 		gSize*4, ()=>{console.log("onFinished!!");});
 	createShadows();// Shadows
 }
@@ -90,10 +91,12 @@ function touchStarted(){
 		createTiles();// Tiles
 	}
 	if(cntDown.isCounting()) return;
-	console.log("touchStarted!!");
 	for(const tile of tiles){
 		if(tile.touch(mouseX, mouseY, num)){
-			if(tRows*tCols <= num) return;
+			if(tRows*tCols <= num){
+				clearFlg = true;
+				return;
+			}
 			num++;
 		}
 	}
@@ -133,6 +136,7 @@ function drawMsgHigh(x, y){
 }
 
 function drawMsgClear(x, y){
+	if(!clearFlg) return;
 	fill("#ff9999");
 	textSize(gSize * 1.6); 
 	textAlign(CENTER, BOTTOM);
