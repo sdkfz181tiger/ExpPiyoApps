@@ -1,6 +1,6 @@
 {
-	"name":"Template",
-	"short_name":"Template",
+	"name":"TouchTheNumber",
+	"short_name":"TouchTheNumber",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
