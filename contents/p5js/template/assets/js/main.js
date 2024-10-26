@@ -132,11 +132,18 @@ function createTiles(){
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
 	const sY = cY - (tRows*tSize)/2 + gSize*2;
 	const total = tRows * tCols;
+	const nums = [];
+	for(let i=0; i<tRows*tCols; i++) nums.push(i+1);
+	for(let i=nums.length-1; 0<=i; i--){
+		const rdm = floor(random(i));
+		[nums[i], nums[rdm]] = [nums[rdm], nums[i]];
+	}
 	for(let r=0; r<tRows; r++){
 		for(let c=0; c<tCols; c++){
 			const x = sX + tSize * c;
 			const y = sY + tSize * r;
-			const num = r*tCols + c + 1;
+			const i = r * tCols + c;
+			const num = nums[i];
 			const color = TILE_COLORS[num%TILE_COLORS.length]
 			const tile = new Tile(x, y, tSize, num, color);
 			tile.ready((total-num) * 30);
