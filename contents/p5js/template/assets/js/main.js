@@ -81,8 +81,7 @@ function mousePressed(){
 }
 
 function touchStarted(){
-	if(mouseX < 0 || mouseY < 0) return;
-	if(cW < mouseX || cH < mouseY) return;
+	if(mouseY < 0) return;
 	if(cntDown.isReady()){
 		cntDown.start();
 		createTiles();// Tiles
