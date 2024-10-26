@@ -161,7 +161,8 @@ class Shadow{
 		fill(this._color);
 		noStroke();
 		rectMode(CENTER, CENTER);
-		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
+		//square(this._pos.x, this._pos.y, this._size, this._size*0.1);
+		square(this._pos.x, this._pos.y, this._size);
 	}
 }
 
