@@ -14,7 +14,7 @@ const TILE_COLORS = [
 ];
 
 let font, cW, cH, cX, cY;
-let cntTap;
+let egg, cntTap;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -38,6 +38,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
+	egg = new Egg(cX, cY, gSize*5, 99, "slateblue");// Egg
 	cntTap = loadCounter();// Counter
 }
 
@@ -47,7 +48,8 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgCounter(cX, cY-gSize*10);
+	egg.update();// Egg
+	drawMsgCounter(cX, cY-gSize*10);// Counter
 
 	TWEEN.update();// Tween
 }
@@ -59,7 +61,8 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
-
+	// Egg
+	if(egg.touch(mouseX, mouseY)) egg.shake();
 }
 
 function drawGrids(){

@@ -80,92 +80,8 @@ btnRetry.addEventListener("click", ()=>{
 });
 
 //==========
-// Countdown
-class Countdown{
-
-	constructor(x, y, size=28, onFinished=null){
-		this._max = 3000;
-		this._mil = this._max;
-		this._x = x;
-		this._y = y;
-		this._size = size;
-		this._onFinished = onFinished;
-		this._timeoutID = 0;
-	}
-
-	isReady(){
-		return this._max == this._mil;
-	}
-
-	isCounting(){
-		return 0 < this._mil;
-	}
-
-	isPlaying(){
-		return this._mil <= 0;
-	}
-
-	start(){
-		if(this._mil <= 0) return;
-		this.tick();
-	}
-
-	tick(){
-		if(this._mil <= 0){
-			if(this._onFinished) this._onFinished();
-			return;
-		}
-		this._mil -= 10;
-		this.timeoutID = setTimeout(()=>{this.tick();}, 10);
-	}
-
-	update(){
-		if(this._mil <= 0) return;
-		fill("white");
-		textSize(this._size*0.4); 
-		textAlign(CENTER, CENTER);
-		if(this._max <= this._mil){
-			text("TAP TO START", this._x, this._y);
-			return;
-		}
-		if(this._mil <= 1000){
-			text("START", this._x, this._y);
-			return;
-		}
-		const sec = floor(this._mil/1000);
-		const mil = this._mil % 1000;
-		textSize(this._size*0.6); 
-		textAlign(CENTER, CENTER);
-		text(sec, this._x, this._y);
-		textSize(this._size*0.2);
-		textAlign(CENTER, TOP);
-		text(mil, this._x, this._y + this._size*0.3);
-	}
-}
-
-//==========
-// TapTheNumber
-class Shadow{
-
-	constructor(x, y, size, color="#222222"){
-		this._pos   = {x: x, y: y};
-		this._size  = size - 2;
-		this._color = color;
-	}
-
-	get x(){return this._pos.x;}
-	get y(){return this._pos.y;}
-	get size(){return this._size;}
-
-	update(){
-		fill(this._color);
-		noStroke();
-		rectMode(CENTER, CENTER);
-		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
-	}
-}
-
-class Tile{
+// 1MllionEgg
+class Egg{
 
 	constructor(x, y, size, num, color="#444444"){
 		this._pos       = {x: x, y: y};
@@ -173,7 +89,6 @@ class Tile{
 		this._num       = num;
 		this._color     = color;
 		this._movingFlg = false;
-		this._deadFlg   = false;
 	}
 
 	get x(){return this._pos.x;}
@@ -190,8 +105,6 @@ class Tile{
 	}
 
 	isMoving(){return this._movingFlg;}
-
-	isDead(){return this._deadFlg;}
 
 	isCorrect(num){return this._num == num;}
 
@@ -232,7 +145,6 @@ class Tile{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
-				this._deadFlg = true;
 			});
 		tween1.chain(tween2);// Chain
 		tween1.start();
