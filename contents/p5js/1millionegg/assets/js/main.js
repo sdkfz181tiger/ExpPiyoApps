@@ -102,6 +102,7 @@ function saveCounter(){
 function randomDialog(){
 	if(1 < random(1000)) return; 
 	const elem = document.getElementById("myModal");
+	if(elem.classList.contains("show")) return;
 	const modal = new bootstrap.Modal(elem);
 	bootstrap.Modal.getInstance(elem).show();
 }

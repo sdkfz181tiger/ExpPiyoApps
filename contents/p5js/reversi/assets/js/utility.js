@@ -70,6 +70,7 @@ function loadImobile(path){
 const btnModal = document.getElementById("btn_modal");
 btnModal.addEventListener("click", ()=>{
 	const elem = document.getElementById("myModal");
+	if(elem.classList.contains("show")) return;
 	const modal = new bootstrap.Modal(elem);
 	bootstrap.Modal.getInstance(elem).show();
 });
