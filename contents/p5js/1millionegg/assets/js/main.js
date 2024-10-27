@@ -100,7 +100,7 @@ function saveCounter(){
 }
 
 function randomAlert(){
-	if(2 < random(100)) return; 
+	if(5 < random(1000)) return; 
 	const elem = document.getElementById("myModal");
 	const modal = new bootstrap.Modal(elem);
 	bootstrap.Modal.getInstance(elem).show();
