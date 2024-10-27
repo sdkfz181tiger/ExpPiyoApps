@@ -3,6 +3,7 @@ console.log("main.js!!");
 const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
+const KEY_HIGH  = "touchthenumber";
 
 const FILES_IMG = [
 	"caret-l-w.png", "caret-r-w.png"
@@ -14,7 +15,7 @@ const TILE_COLORS = [
 
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
-let tSize, num, clearFlg;
+let tSize, num, clearFlg, highFlg;
 let cntTime, cntHigh, cntDown;
 
 const tRows = 5;
@@ -44,16 +45,16 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
+	// Init
 	tSize    = gSize * 3.4;// TileSize
-
-	// num      = 1;// Number
-	// clearFlg = false;// Clear
-	// cntTime  = 0;
-	// cntHigh  = loadHighScore();
-	// // Countdown
-	// cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
-	// 	()=>{console.log("onFinished!!");});
-
+	num      = 1;// Number
+	clearFlg = false;// Clear
+	highFlg  = false;// High
+	cntTime  = 0;// Time
+	cntHigh  = loadHighScore();// HighScore
+	// Countdown
+	cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
+		()=>{console.log("onFinished!!");});
 	createShadows();// Shadows
 }
 
@@ -63,14 +64,9 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	fill("orange");
-	noStroke();
-	square(100, 100, 100);
-
 	// Shadows
 	for(const shadow of shadows) shadow.update();
 
-	/*
 	// Tiles
 	for(let i=tiles.length-1; 0<=i; i--){
 		const tile = tiles[i];
@@ -91,39 +87,39 @@ function draw(){
 	drawMsgTime(cW-gSize*2, cY - gSize*11);// Time
 	drawMsgHigh(cW-gSize*2, cY - gSize*9.5);// High
 	drawMsgClear(cX, cY + gSize*12);// Game Clear
+	drawMsgHighScore(cX, cY + gSize*14);// High Score
 
 	TWEEN.update();// Tween
-	*/
 }
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	//touchStarted();
+	touchStarted();
 }
 
 function touchStarted(){
-	// if(mouseY < 0) return;
-	// if(cntDown.isReady()){
-	// 	cntDown.start();
-	// 	createTiles();// Tiles
-	// }
-	// if(cntDown.isCounting()) return;
-	// for(const tile of tiles){
-	// 	if(!tile.touch(mouseX, mouseY)) continue;
-	// 	if(tile.isCorrect(num)){
-	// 		tile.jump();// Correct
-	// 		if(tRows*tCols <= num){
-	// 			clearFlg = true;// Clear
-	// 			saveHighScore();// Save
-	// 			return;
-	// 		}
-	// 		num++;// Next
-	// 		return;
-	// 	}
-	// 	tile.shake();// Incorrect
-	// 	cntTime += 50;// Penalty
-	// 	return;
-	// }
+	if(mouseY < 0) return;
+	if(cntDown.isReady()){
+		cntDown.start();
+		createTiles();// Tiles
+	}
+	if(cntDown.isCounting()) return;
+	for(const tile of tiles){
+		if(!tile.touch(mouseX, mouseY)) continue;
+		if(tile.isCorrect(num)){
+			tile.jump();// Correct
+			if(tRows*tCols <= num){
+				clearFlg = true;// Clear
+				saveHighScore();// Save
+				return;
+			}
+			num++;// Next
+			return;
+		}
+		tile.shake();// Incorrect
+		cntTime += 50;// Penalty
+		return;
+	}
 }
 
 function drawGrids(){
@@ -167,6 +163,14 @@ function drawMsgClear(x, y){
 	text("GAME CLEAR!!", x, y);
 }
 
+function drawMsgHighScore(x, y){
+	if(!clearFlg || !highFlg) return;
+	fill("#ff9999");
+	textSize(gSize * 1.2);
+	textAlign(CENTER, BOTTOM);
+	text("HIGH SCORE!!", x, y);
+}
+
 function createShadows(){
 	// Shadows
 	const sX = cX - (tCols*tSize)/2 + tSize/2;
@@ -208,7 +212,7 @@ function createTiles(){
 }
 
 function loadHighScore(){
-	const num = localStorage.getItem("touchthenumber");
+	const num = localStorage.getItem(KEY_HIGH);
 	if(num == null) return 99999;
 	return num;
 }
@@ -216,5 +220,6 @@ function loadHighScore(){
 function saveHighScore(){
 	if(cntHigh < cntTime) return;
 	cntHigh = cntTime;
-	localStorage.setItem("touchthenumber", cntHigh);
+	highFlg = true;
+	localStorage.setItem(KEY_HIGH, cntHigh);
 }

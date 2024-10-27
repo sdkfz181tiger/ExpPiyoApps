@@ -147,7 +147,7 @@ class Countdown{
 // TapTheNumber
 class Shadow{
 
-	constructor(x, y, size, color="#cc2222"){
+	constructor(x, y, size, color="#222222"){
 		this._pos   = {x: x, y: y};
 		this._size  = size - 2;
 		this._color = color;
@@ -161,9 +161,7 @@ class Shadow{
 		fill(this._color);
 		noStroke();
 		rectMode(CENTER, CENTER);
-		square(this._pos.x, this._pos.y, this._size);
-		fill("blue");
-		square(this._pos.x, this._pos.y, this._size, this._size*0.2);
+		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
 	}
 }
 
