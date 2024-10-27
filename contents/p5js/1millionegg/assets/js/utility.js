@@ -84,65 +84,18 @@ btnRetry.addEventListener("click", ()=>{
 
 class EggMan extends Sprite{
 
-	constructor(file, x, y, size, a=255, r=0){
-		super(file, x, y, size, a, r);
-	}
-}
-
-
-class Egg{
-
-	constructor(x, y, size, num, color="#444444"){
-		this._pos       = {x: x, y: y};
-		this._size      = size - 2;
-		this._num       = num;
-		this._color     = color;
+	constructor(file, x, y, size, alpha=255, rotation=0){
+		super(file, x, y, size, alpha, rotation);
 		this._movingFlg = false;
-	}
-
-	get x(){return this._pos.x;}
-	get y(){return this._pos.y;}
-	get size(){return this._size;}
-	get num(){return this._num;}
-
-	isInside(tX, tY){
-		if(tX < this._pos.x-this._size/2) return false;
-		if(tY < this._pos.y-this._size/2) return false;
-		if(this._pos.x+this._size/2 < tX) return false;
-		if(this._pos.y+this._size/2 < tY) return false;
-		return true;
 	}
 
 	isMoving(){return this._movingFlg;}
 
-	isCorrect(num){return this._num == num;}
-
-	touch(tX, tY){
-		if(!this.isInside(tX, tY)) return false;
-		if(this.isMoving()) return false;
-		return true;
-	}
-
-	ready(delay){
-		// Tween
-		const toX   = this._pos.x;
-		const toY   = this._pos.y;
-		this._pos.x = this._pos.x;
-		this._pos.y = this._pos.y - this._size * 10;
-		const tween = new TWEEN.Tween(this._pos)
-			.to({x: toX, y: toY}, 200).delay(delay)
-			.easing(TWEEN.Easing.Quadratic.Out)
-			.onComplete(()=>{
-				this._movingFlg = false;
-			});
-		tween.start();
-	}
-
-	jump(){
+	jump(jumpH){
 		if(this._movingFlg) return;
 		this._movingFlg = true;
 		// Tween
-		const jumpY  = this._pos.y - gSize*2;
+		const jumpY  = this._pos.y - jumpH;
 		const defX   = this._pos.x;
 		const defY   = this._pos.y;
 		const delay  = 100;
@@ -159,11 +112,11 @@ class Egg{
 		tween1.start();
 	}
 
-	shake(){
+	shake(shakeW){
 		if(this._movingFlg) return;
 		this._movingFlg = true;
 		// Shake
-		const shakeX = gSize;
+		const shakeX = (random()<0.5)?shakeW:-shakeW;
 		const defX   = this._pos.x;
 		const defY   = this._pos.y;
 		const delay  = 50;
@@ -186,16 +139,5 @@ class Egg{
 		tween2.chain(tween3);
 		tween3.chain(tween4);
 		tween1.start();
-	}
-
-	update(){
-		fill(this._color);
-		noStroke();
-		rectMode(CENTER, CENTER);
-		square(this._pos.x, this._pos.y, this._size, this._size*0.1);
-
-		fill("white"); noStroke();
-		textSize(this._size*0.5); textAlign(CENTER, CENTER);
-		text(this._num, this._pos.x, this._pos.y-this._size*0.04);
 	}
 }

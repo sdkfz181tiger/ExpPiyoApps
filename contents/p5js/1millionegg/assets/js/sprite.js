@@ -22,19 +22,17 @@ class ImgLoader{
 
 class Sprite{
 
-	constructor(file, x, y, size, a=255, r=0){
+	constructor(file, x, y, size, alpha=255, rotation=0){
 		this._img      = ImgLoader.getImg(file);
 		this._pos      = {x: x, y: y};
 		this._scale    = size / this._img.width;
-		this._alpha    = a;
-		this._rotation = r;
+		this._alpha    = alpha;
+		this._rotation = rotation;
 		this._visible  = true;
 		this._w        = this._img.width * this._scale;
 		this._h        = this._img.height * this._scale;
 		this._hw       = this._w / 2;
 		this._hh       = this._h / 2;
-		this._vFlg     = false;
-		this._vel      = {x: 0, y: 0};
 	}
 
 	get img(){return this._img;}
@@ -71,27 +69,10 @@ class Sprite{
 	get hw(){return this._hw;}
 	get hh(){return this._hh;}
 
-	get vFlg(){return this._vFlg;}
-	set vFlg(n){this._vFlg = n;}
-	get vX(){return this._vel.x;}
-	set vX(n){this._vel.x = n;}
-	get vY(){return this._vel.y;}
-	set vY(n){this._vel.y = n;}
-
 	get l(){return this._pos.x-this._hw;}
 	get r(){return this._pos.x+this._hw;}
 	get t(){return this._pos.y-this._hh;}
 	get b(){return this._pos.y+this._hh;}
-
-	startMove(x, y){
-		this._vFlg = true;
-		this._vel.x = x;
-		this._vel.y = y;
-	}
-
-	stopMove(){
-		this._vFlg = false;
-	}
 
 	contains(x, y){
 		if(!this._visible) return false;
@@ -112,14 +93,6 @@ class Sprite{
 	}
 
 	update(){
-		if(this._vFlg){
-			this._pos.x += this._vel.x;
-			this._pos.y += this._vel.y;
-		}
-		this.draw();
-	}
-
-	draw(){
 		if(!this._visible) return;
 		tint(255, this._alpha);
 		if(this._rotation == 0){

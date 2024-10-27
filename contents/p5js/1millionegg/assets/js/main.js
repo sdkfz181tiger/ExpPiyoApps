@@ -38,8 +38,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	eggMan = new EggMan("egg_01.png", cX, cY, gSize*5);// EggMan
-
+	eggMan = new EggMan("egg_01.png", cX, cY, gSize*12);// EggMan
 	cntTap = loadCounter();// Counter
 }
 
@@ -62,6 +61,12 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
+	// Shake
+	if(eggMan.contains(mouseX, mouseY)){
+		eggMan.shake(gSize/2);
+		cntTap++;
+		saveCounter();
+	}
 }
 
 function drawGrids(){
@@ -80,7 +85,7 @@ function drawMsgCounter(x, y){
 	fill("#ffffff");
 	textSize(gSize * 1.2); 
 	textAlign(CENTER, CENTER);
-	text("COUNTER:"+cntTap, x, y);
+	text(cntTap, x, y);
 }
 
 function loadCounter(){
