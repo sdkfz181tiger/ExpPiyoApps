@@ -6,7 +6,7 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "1millionegg";
 
 const FILES_IMG = [
-	"caret-l-w.png", "caret-r-w.png"
+	"egg_01.png"
 ];
 
 const TILE_COLORS = [
@@ -14,7 +14,7 @@ const TILE_COLORS = [
 ];
 
 let font, cW, cH, cX, cY;
-let egg, cntTap;
+let eggMan, cntTap;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -38,7 +38,8 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	egg = new Egg(cX, cY, gSize*5, 99, "slateblue");// Egg
+	eggMan = new EggMan("egg_01.png", cX, cY, gSize*5);// EggMan
+
 	cntTap = loadCounter();// Counter
 }
 
@@ -48,7 +49,7 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	egg.update();// Egg
+	eggMan.update();// EggMan
 	drawMsgCounter(cX, cY-gSize*10);// Counter
 
 	TWEEN.update();// Tween
@@ -61,8 +62,6 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
-	// Egg
-	if(egg.touch(mouseX, mouseY)) egg.shake();
 }
 
 function drawGrids(){

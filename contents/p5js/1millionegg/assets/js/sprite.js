@@ -22,29 +22,27 @@ class ImgLoader{
 
 class Sprite{
 
-	constructor(file, x, y, s=1.0, a=255, r=0){
+	constructor(file, x, y, size, a=255, r=0){
 		this._img      = ImgLoader.getImg(file);
-		this._x        = x;
-		this._y        = y;
-		this._scale    = s;
+		this._pos      = {x: x, y: y};
+		this._scale    = size / this._img.width;
 		this._alpha    = a;
 		this._rotation = r;
 		this._visible  = true;
-		this._w        = this._img.width * s;
-		this._h        = this._img.height * s;
+		this._w        = this._img.width * this._scale;
+		this._h        = this._img.height * this._scale;
 		this._hw       = this._w / 2;
 		this._hh       = this._h / 2;
 		this._vFlg     = false;
-		this._vX       = 0;
-		this._vY       = 0;
+		this._vel      = {x: 0, y: 0};
 	}
 
 	get img(){return this._img;}
 	set img(n){this._img = n;}
-	get x(){return this._x;}
-	set x(n){this._x = n;}
-	get y(){return this._y;}
-	set y(n){this._y = n;}
+	get x(){return this._pos.x;}
+	set x(n){this._pos.x = n;}
+	get y(){return this._pos.y;}
+	set y(n){this._pos.y = n;}
 
 	get scale(){return this._scale;}
 	set scale(n){
@@ -75,20 +73,20 @@ class Sprite{
 
 	get vFlg(){return this._vFlg;}
 	set vFlg(n){this._vFlg = n;}
-	get vX(){return this._vX;}
-	set vX(n){this._vX = n;}
-	get vY(){return this._vY;}
-	set vY(n){this._vY = n;}
+	get vX(){return this._vel.x;}
+	set vX(n){this._vel.x = n;}
+	get vY(){return this._vel.y;}
+	set vY(n){this._vel.y = n;}
 
-	get l(){return this._x-this._hw;}
-	get r(){return this._x+this._hw;}
-	get t(){return this._y-this._hh;}
-	get b(){return this._y+this._hh;}
+	get l(){return this._pos.x-this._hw;}
+	get r(){return this._pos.x+this._hw;}
+	get t(){return this._pos.y-this._hh;}
+	get b(){return this._pos.y+this._hh;}
 
-	startMove(vX, vY){
+	startMove(x, y){
 		this._vFlg = true;
-		this._vX = vX;
-		this._vY = vY;
+		this._vel.x = x;
+		this._vel.y = y;
 	}
 
 	stopMove(){
@@ -115,8 +113,8 @@ class Sprite{
 
 	update(){
 		if(this._vFlg){
-			this.x += this._vX;
-			this.y += this._vY;
+			this._pos.x += this._vel.x;
+			this._pos.y += this._vel.y;
 		}
 		this.draw();
 	}
@@ -128,7 +126,7 @@ class Sprite{
 			image(this._img, this.l, this.t, this.w, this.h);
 		}else{
 			push();
-			translate(this.x, this.y);
+			translate(this._pos.x, this._pos.y);
 			rotate(this._rotation * PI/180);
 			image(this._img, -this.hw, -this.hh, this.w, this.h);
 			pop();
