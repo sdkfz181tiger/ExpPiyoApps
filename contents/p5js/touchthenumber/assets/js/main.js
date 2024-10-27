@@ -56,7 +56,7 @@ function setup(){
 	cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
 		()=>{console.log("onFinished!!");});
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cH-gSize*2.2, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", false, ()=>{
 			const elem = document.getElementById("myModal");
 			const modal = new bootstrap.Modal(elem);
