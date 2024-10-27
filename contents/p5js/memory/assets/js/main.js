@@ -6,7 +6,7 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "memory";
 
 const FILES_IMG = [
-	"egg_01.png"
+	"card_back_01.png", "card_back_02.png", "card_back_03.png", "card_back_04.png"
 ];
 
 const TILE_COLORS = [
@@ -14,7 +14,7 @@ const TILE_COLORS = [
 ];
 
 let font, cW, cH, cX, cY;
-let eggMan, cntTap;
+let card, cntTap;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -38,7 +38,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	eggMan = new EggMan("egg_01.png", cX, cY+gSize*2, gSize*16);// EggMan
+	card = new Card("card_back_01.png", cX, cY, gSize*4);// Card
 	cntTap = loadCounter();// Counter
 }
 
@@ -48,7 +48,7 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	eggMan.update();// EggMan
+	card.update();// Card
 	drawMsgCounter(cX, cY-gSize*10);// Counter
 
 	TWEEN.update();// Tween
@@ -62,8 +62,8 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 	// Shake
-	if(eggMan.contains(mouseX, mouseY)){
-		eggMan.shake(gSize/2);
+	if(card.contains(mouseX, mouseY)){
+		card.shake(gSize/2);
 		cntTap++;
 		saveCounter();
 		randomDialog();

@@ -111,8 +111,8 @@ btnRetry.addEventListener("click", ()=>{
 });
 
 //==========
-// EggMan
-class EggMan extends Sprite{
+// Card
+class Card extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
 		super(file, x, y, size, alpha, rotation);
