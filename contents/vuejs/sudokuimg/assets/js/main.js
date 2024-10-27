@@ -81,6 +81,7 @@ const app = Vue.createApp({
 		showModal(title, body){
 			console.log("showModal");
 			const elem = document.getElementById("myModal");
+			if(elem.classList.contains("show")) return;
 			elem.querySelector("#modalTitle").innerText = title;
 			elem.querySelector("#modalBody").innerText = body;
 			bootstrap.Modal.getInstance(elem).show();
