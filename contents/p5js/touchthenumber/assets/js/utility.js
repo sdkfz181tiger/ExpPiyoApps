@@ -129,11 +129,11 @@ class Countdown{
 	}
 
 	isCounting(){
-		return 0 < this._mil;
+		return 1000 < this._mil;
 	}
 
 	isPlaying(){
-		return this._mil <= 0;
+		return this._mil <= 1000;
 	}
 
 	start(){
