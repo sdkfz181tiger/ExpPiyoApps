@@ -38,7 +38,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	eggMan = new EggMan("egg_01.png", cX, cY, gSize*12);// EggMan
+	eggMan = new EggMan("egg_01.png", cX, cY+gSize*2, gSize*16);// EggMan
 	cntTap = loadCounter();// Counter
 }
 
@@ -83,7 +83,7 @@ function drawGrids(){
 
 function drawMsgCounter(x, y){
 	fill("#ffffff");
-	textSize(gSize * 1.2); 
+	textSize(gSize * 2.0); 
 	textAlign(CENTER, CENTER);
 	text(cntTap, x, y);
 }
