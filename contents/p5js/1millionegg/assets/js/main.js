@@ -66,7 +66,7 @@ function touchStarted(){
 		eggMan.shake(gSize/2);
 		cntTap++;
 		saveCounter();
-		randomAlert();
+		randomDialog();
 	}
 }
 
@@ -99,7 +99,7 @@ function saveCounter(){
 	localStorage.setItem(KEY_HIGH, cntTap);
 }
 
-function randomAlert(){
+function randomDialog(){
 	if(5 < random(1000)) return; 
 	const elem = document.getElementById("myModal");
 	const modal = new bootstrap.Modal(elem);

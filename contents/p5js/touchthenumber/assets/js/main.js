@@ -6,7 +6,7 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "touchthenumber";
 
 const FILES_IMG = [
-	"caret-l-w.png", "caret-r-w.png"
+	"egg_01.png"
 ];
 
 const TILE_COLORS = [
@@ -16,7 +16,7 @@ const TILE_COLORS = [
 let font, cW, cH, cX, cY;
 let gSize, gRows, gCols;
 let tSize, num, clearFlg, highFlg;
-let cntTime, cntHigh, cntDown;
+let cntTime, cntHigh, cntDown, btnRetryDialog;
 
 const tRows = 5;
 const tCols = 5;
@@ -55,6 +55,13 @@ function setup(){
 	// Countdown
 	cntDown = new Countdown(cX, cY+gSize*11, gSize*4, 
 		()=>{console.log("onFinished!!");});
+	// RetryDialog
+	btnRetryDialog = new Button(cX, cH-gSize*2.2, gSize*6, gSize*2.2, 
+		"RETRY", "#ff595e", false, ()=>{
+			const elem = document.getElementById("myModal");
+			const modal = new bootstrap.Modal(elem);
+			bootstrap.Modal.getInstance(elem).show();
+		});
 	createShadows();// Shadows
 }
 
@@ -82,12 +89,14 @@ function draw(){
 	}
 	// Countdown
 	cntDown.update();
+	// RetryDialog
+	btnRetryDialog.update();
 
 	drawMsgNext(gSize*2, cY - gSize*11);// Next
 	drawMsgTime(cW-gSize*2, cY - gSize*11);// Time
 	drawMsgHigh(cW-gSize*2, cY - gSize*9.5);// High
-	drawMsgClear(cX, cY + gSize*12);// Game Clear
-	drawMsgHighScore(cX, cY + gSize*14);// High Score
+	drawMsgClear(cX, cY);// Game Clear
+	drawMsgHighScore(cX, cY + gSize*2);// High Score
 
 	TWEEN.update();// Tween
 }
@@ -104,12 +113,16 @@ function touchStarted(){
 		createTiles();// Tiles
 	}
 	if(cntDown.isCounting()) return;
+
+	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	// Tiles
 	for(const tile of tiles){
 		if(!tile.touch(mouseX, mouseY)) continue;
 		if(tile.isCorrect(num)){
 			tile.jump();// Correct
 			if(tRows*tCols <= num){
 				clearFlg = true;// Clear
+				btnRetryDialog.show();// RetryDialog
 				saveHighScore();// Save
 				return;
 			}
@@ -157,7 +170,7 @@ function drawMsgHigh(x, y){
 
 function drawMsgClear(x, y){
 	if(!clearFlg) return;
-	fill("#ff9999");
+	fill("#ffffff");
 	textSize(gSize * 1.6); 
 	textAlign(CENTER, BOTTOM);
 	text("GAME CLEAR!!", x, y);
