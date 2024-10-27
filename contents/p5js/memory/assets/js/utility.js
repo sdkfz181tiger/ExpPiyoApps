@@ -111,8 +111,7 @@ btnRetry.addEventListener("click", ()=>{
 });
 
 //==========
-// 1MllionEgg
-
+// EggMan
 class EggMan extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
