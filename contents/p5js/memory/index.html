@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="theme-color" content="dodgerblue">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- PWA for iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
+	<meta name="apple-mobile-web-app-title" content="神経衰弱">
+	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
+	<!-- PWA for Android -->
+	<link rel="manifest" href="./pwa/manifest.json">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="./pwa/favicon.ico">
+	<title>神経衰弱</title>
+	<!-- CSS -->
+	<link rel="stylesheet" href="../../assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="./assets/css/custom.css">
+</head>
+<body>
+	<div class="container gx-0 h-100">
+		<!-- Header(Start) -->
+		<header class="fixed-top" v-if="mode!=0">
+
+			<!-- Navigation(Start) -->
+			<nav class="navbar navbar-dark bg-primary">
+				<div class="container-fluid">
+					<a class="btn btn-primary btn-sm" href="../../../">
+						<i class="bi-caret-left-fill" role="img"></i>
+					</a>
+					<div>
+						<i class="bi-github text-white m-1"></i><a class="navbar-brand">神経衰弱</a>
+					</div>
+					<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
+						<i class="bi-arrow-counterclockwise" role="img"></i>
+					</a>
+				</div>
+			</nav>
+			<!-- Navigation(End) -->
+
+		</header>
+		<!-- Header(End) -->
+
+		<!-- Main(Start) -->
+		<main class="h-100 text-center">
+			<div id="game"></div>
+		</main>
+		<!-- Main(Start) -->
+
+		<!-- Footer(Start) -->
+		<footer class="fixed-bottom text-center">
+			<div id="ad_banner"></div>
+		</footer>
+		<!-- Footer(Start) -->
+
+		<!-- Modal(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">RETRY?</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							リトライしますか?
+							<div id="ad_rectangle"></div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid">
+								<button type="button" class="btn btn-primary float-end" id="btn_retry"
+									data-bs-dismiss="modal">RETRY</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">CANCEL</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal(End) -->
+	</div>
+
+	<!-- JavaScript -->
+	<script src="../../assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
+	<script src="../../assets/libs/axios/axios.min.js"></script>
+	<script src="../../assets/libs/p5js_2023/p5.min.js"></script>
+	<script src="../../assets/libs/p5js_2023/addons/p5.sound.min.js"></script>
+	<script src="../../assets/libs/p5js_2023/addons/p5.tween.min.js"></script>
+	<script src="../../assets/libs/tween/Tween.min.js"></script>
+	<script src="./assets/js/sprite.js"></script>
+	<script src="./assets/js/utility.js"></script>
+	<script src="./assets/js/main.js"></script>
+
+	<!-- imobile -->
+	<script>
+		loadImobile("../../assets/imobile.json");
+	</script>
+</body>
+</html>
