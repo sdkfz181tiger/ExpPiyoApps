@@ -66,6 +66,7 @@ function touchStarted(){
 		eggMan.shake(gSize/2);
 		cntTap++;
 		saveCounter();
+		randomAlert();
 	}
 }
 
@@ -96,4 +97,11 @@ function loadCounter(){
 
 function saveCounter(){
 	localStorage.setItem(KEY_HIGH, cntTap);
+}
+
+function randomAlert(){
+	if(2 < random(100)) return; 
+	const elem = document.getElementById("myModal");
+	const modal = new bootstrap.Modal(elem);
+	bootstrap.Modal.getInstance(elem).show();
 }
