@@ -51,7 +51,8 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	card = new Card("card_heart_11.png", cX, cY, gSize*5);// Card
+	// Card
+	card = new Card("card_back_01.png", "card_spade_13.png", cX, cY, gSize*5);
 	cntTap = loadCounter();// Counter
 }
 
@@ -76,7 +77,7 @@ function touchStarted(){
 	if(mouseY < 0) return;
 	// Shake
 	if(card.contains(mouseX, mouseY)){
-		card.shake(gSize/2);
+		card.toggle(gSize*2, gSize*1);// Toggle
 		cntTap++;
 		saveCounter();
 	}

@@ -116,7 +116,52 @@ class Button{
 
 //==========
 // Card
-class Card extends Sprite{
+class Card{
+
+	constructor(fileClose, fileOpen, x, y, size){
+		this._pageClose = new OnePage(fileClose, x, y, size);
+		this._pageOpen = new OnePage(fileOpen, x, y, size);
+		this._pageCurrent = this._pageOpen;
+	}
+
+	contains(x, y){return this._pageCurrent.contains(x, y);}
+
+	isClosed(){return this._pageCurrent == this._pageClose;}
+
+	isOpened(){return this._pageCurrent == this._pageOpen;}
+
+	open(jumpH){
+		if(this.isOpened()) return;
+		this._pageCurrent.jump(jumpH, ()=>{
+			this._pageCurrent = this._pageOpen;
+		});
+	}
+
+	close(shakeW){
+		if(this.isClosed()) return;
+		this._pageCurrent.shake(shakeW, ()=>{
+			this._pageCurrent = this._pageClose;
+		});
+	}
+
+	toggle(jumpH, shakeW){
+		if(this.isClosed()){
+			this.open(jumpH);
+			return;
+		}
+		if(this.isOpened()){
+			this.close(shakeW);
+			return;
+		}
+	}
+
+	update(){
+		this._pageCurrent.update();
+	}
+}
+
+
+class OnePage extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
 		super(file, x, y, size, alpha, rotation);
@@ -125,7 +170,7 @@ class Card extends Sprite{
 
 	isMoving(){return this._movingFlg;}
 
-	jump(jumpH){
+	jump(jumpH, onFinished=null){
 		if(this._movingFlg) return;
 		this._movingFlg = true;
 		// Tween
@@ -141,12 +186,13 @@ class Card extends Sprite{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
+				if(onFinished) onFinished();// Callback
 			});
 		tween1.chain(tween2);// Chain
 		tween1.start();
 	}
 
-	shake(shakeW){
+	shake(shakeW, onFinished=null){
 		if(this._movingFlg) return;
 		this._movingFlg = true;
 		// Shake
@@ -168,6 +214,7 @@ class Card extends Sprite{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
+				if(onFinished) onFinished();// Callback
 			});
 		tween1.chain(tween2);// Chain
 		tween2.chain(tween3);
