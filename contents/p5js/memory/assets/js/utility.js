@@ -52,7 +52,7 @@ function loadImobile(path){
 // Modal
 const btnModal = document.getElementById("btn_modal");
 btnModal.addEventListener("click", ()=>{
-	showModalRetry();
+	showRetryDialog();
 });
 
 const btnRetry = document.getElementById("btn_retry");
@@ -60,7 +60,7 @@ btnRetry.addEventListener("click", ()=>{
 	location.reload();// Reload
 });
 
-function showModalRetry(){
+function showRetryDialog(){
 	const elem = document.getElementById("myModal");
 	if(elem.classList.contains("show")) return;
 	const modal = new bootstrap.Modal(elem);

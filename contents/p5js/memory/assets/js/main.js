@@ -27,7 +27,7 @@ const TILE_COLORS = [
 ];
 
 let font, cW, cH, cX, cY;
-let cntTap;
+let cntTap, btnRetryDialog;
 
 const cards = [];
 
@@ -54,7 +54,9 @@ function setup(){
 	noSmooth();
 
 	cntTap = loadCounter();// Counter
-
+	// RetryDialog
+	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
+		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 	// Card
 	const rows = 3;
 	const cols = 4;
@@ -80,9 +82,9 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	for(const card of cards) card.update();// Cards
-
 	drawMsgCounter(cX, cY-gSize*11);// Counter
+	btnRetryDialog.update();// RetyDialog
+	for(const card of cards) card.update();// Cards
 
 	TWEEN.update();// Tween
 }
@@ -94,6 +96,8 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
+
+	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 	// Cards
 	for(const card of cards){
 		if(card.contains(mouseX, mouseY)){
