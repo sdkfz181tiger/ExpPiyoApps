@@ -80,9 +80,9 @@ class Button{
 
 	isInside(tX, tY){
 		if(tX < this._pos.x-this._w/2) return false;
-		if(tY < this._pos.y-this._y/2) return false;
+		if(tY < this._pos.y-this._h/2) return false;
 		if(this._pos.x+this._w/2 < tX) return false;
-		if(this._pos.y+this._y/2 < tY) return false;
+		if(this._pos.y+this._h/2 < tY) return false;
 		return true;
 	}
 
