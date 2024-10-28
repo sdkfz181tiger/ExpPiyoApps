@@ -121,7 +121,7 @@ class Card{
 	constructor(fileClose, fileOpen, x, y, size){
 		this._pageClose = new OnePage(fileClose, x, y, size);
 		this._pageOpen = new OnePage(fileOpen, x, y, size);
-		this._pageCurrent = this._pageOpen;
+		this._pageCurrent = this._pageClose;
 	}
 
 	contains(x, y){return this._pageCurrent.contains(x, y);}

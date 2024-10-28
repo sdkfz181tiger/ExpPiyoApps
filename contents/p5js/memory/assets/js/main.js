@@ -27,7 +27,9 @@ const TILE_COLORS = [
 ];
 
 let font, cW, cH, cX, cY;
-let card, cntTap;
+let cntTap;
+
+const cards = [];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -51,9 +53,25 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	// Card
-	card = new Card("card_back_01.png", "card_spade_13.png", cX, cY, gSize*5);
 	cntTap = loadCounter();// Counter
+
+	// Card
+	const rows = 3;
+	const cols = 4;
+	const padW = gSize * 4.5;
+	const padH = gSize * 6;
+	const sX = cX - padW * (cols-1)/2;
+	const sY = cY - padH * (rows-1)/2;
+	for(let r=0; r<rows; r++){
+		for(let c=0; c<cols; c++){
+			const x = sX + padW * c;
+			const y = sY + padH * r;
+			const num = String(floor(random(1, 13))).padStart(2, "0");
+			const file = "card_spade_" + num + ".png";
+			const card = new Card("card_back_01.png", file, x, y, gSize*4);
+			cards.push(card);
+		}
+	}
 }
 
 function draw(){
@@ -62,8 +80,9 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	card.update();// Card
-	drawMsgCounter(cX, cY-gSize*10);// Counter
+	for(const card of cards) card.update();// Cards
+
+	drawMsgCounter(cX, cY-gSize*11);// Counter
 
 	TWEEN.update();// Tween
 }
@@ -75,11 +94,13 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
-	// Shake
-	if(card.contains(mouseX, mouseY)){
-		card.toggle(gSize*2, gSize*1);// Toggle
-		cntTap++;
-		saveCounter();
+	// Cards
+	for(const card of cards){
+		if(card.contains(mouseX, mouseY)){
+			card.toggle(gSize*2, gSize*1);// Toggle
+			cntTap++;
+			saveCounter();
+		}
 	}
 }
 
