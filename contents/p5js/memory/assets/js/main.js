@@ -68,7 +68,7 @@ function setup(){
 			const y = sY + padH * r;
 			const num = String(floor(random(1, 13))).padStart(2, "0");
 			const file = "card_spade_" + num + ".png";
-			const card = new Card("card_back_01.png", file, x, y, gSize*4);
+			const card = new Card("card_back_03.png", file, x, y, gSize*4);
 			cards.push(card);
 		}
 	}
