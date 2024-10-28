@@ -2,7 +2,6 @@ console.log("utility.js!!");
 
 //==========
 // ImgLoader
-
 class ImgLoader{
 
 	static dir = "./assets/images/";
@@ -19,7 +18,6 @@ class ImgLoader{
 
 //==========
 // Sprite
-
 class Sprite{
 
 	constructor(file, x, y, s=1.0, a=255, r=0){

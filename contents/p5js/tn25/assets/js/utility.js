@@ -9,53 +9,6 @@ navigator.serviceWorker.register("./pwa_sw.js");
 const FLG_MOBILE = "ontouchstart" in window || 0<navigator.maxTouchPoints;
 
 //==========
-// Button
-class Button{
-
-	constructor(x, y, w, h, str="HELLO", 
-		color="#444444", visible=false, onPressed=null){
-		this._pos       = {x: x, y: y};
-		this._w         = w;
-		this._h         = h;
-		this._str       = str;
-		this._color     = color;
-		this._visible   = visible;
-		this._onPressed = onPressed;
-	}
-
-	isInside(tX, tY){
-		if(tX < this._pos.x-this._w/2) return false;
-		if(tY < this._pos.y-this._y/2) return false;
-		if(this._pos.x+this._w/2 < tX) return false;
-		if(this._pos.y+this._y/2 < tY) return false;
-		return true;
-	}
-
-	touch(tX, tY){
-		if(!this.isInside(tX, tY)) return false;
-		if(!this._visible) return false;
-		if(this._onPressed) this._onPressed();
-		return true;
-	}
-
-	show(){
-		if(this._visible) return;
-		this._visible = true;
-	}
-
-	update(){
-		if(!this._visible) return false;
-		fill(this._color);
-		noStroke();
-		rectMode(CENTER, CENTER);
-		rect(this._pos.x, this._pos.y, this._w, this._h, this._h*0.1);
-		fill("white"); noStroke();
-		textSize(this._h*0.5); textAlign(CENTER, CENTER);
-		text(this._str, this._pos.x, this._pos.y-this._h*0.04);
-	}
-}
-
-//==========
 // Axios
 function loadAxios(url, onSuccess, onError){
 	const option = {responseType: "blob"};
@@ -109,6 +62,53 @@ const btnRetry = document.getElementById("btn_retry");
 btnRetry.addEventListener("click", ()=>{
 	location.reload();// Reload
 });
+
+//==========
+// Button
+class Button{
+
+	constructor(x, y, w, h, str="HELLO", 
+		color="#444444", visible=true, onPressed=null){
+		this._pos       = {x: x, y: y};
+		this._w         = w;
+		this._h         = h;
+		this._str       = str;
+		this._color     = color;
+		this._visible   = visible;
+		this._onPressed = onPressed;
+	}
+
+	isInside(tX, tY){
+		if(tX < this._pos.x-this._w/2) return false;
+		if(tY < this._pos.y-this._y/2) return false;
+		if(this._pos.x+this._w/2 < tX) return false;
+		if(this._pos.y+this._y/2 < tY) return false;
+		return true;
+	}
+
+	touch(tX, tY){
+		if(!this.isInside(tX, tY)) return false;
+		if(!this._visible) return false;
+		if(this._onPressed) this._onPressed();
+		return true;
+	}
+
+	show(){
+		if(this._visible) return;
+		this._visible = true;
+	}
+
+	update(){
+		if(!this._visible) return false;
+		fill(this._color);
+		noStroke();
+		rectMode(CENTER, CENTER);
+		rect(this._pos.x, this._pos.y, this._w, this._h, this._h*0.1);
+		fill("white"); noStroke();
+		textSize(this._h*0.5); textAlign(CENTER, CENTER);
+		text(this._str, this._pos.x, this._pos.y-this._h*0.04);
+	}
+}
 
 //==========
 // Countdown
