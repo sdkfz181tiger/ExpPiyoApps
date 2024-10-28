@@ -168,11 +168,11 @@ function updateOver(){
 
 function mousePressed(){
 	if(FLG_MOBILE) return;
-	if(mode == MODE_READY) startGame();
-	actionJump();// Jump
+	touchstarted();
 }
 
 function touchStarted(){
+	if(mouseY < 0) return;
 	if(mode == MODE_READY) startGame();
 	actionJump();// Jump
 }
