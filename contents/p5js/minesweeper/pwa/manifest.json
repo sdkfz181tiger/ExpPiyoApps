@@ -1,6 +1,6 @@
 {
-	"name":"マインスイーパ",
-	"short_name":"マインスイーパ",
+	"name":"マイン探し",
+	"short_name":"マイン探し",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",

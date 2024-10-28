@@ -1,6 +1,6 @@
 {
-	"name":"Flappy",
-	"short_name":"Flappy",
+	"name":"Flappyの鳥",
+	"short_name":"Flappyの鳥",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",

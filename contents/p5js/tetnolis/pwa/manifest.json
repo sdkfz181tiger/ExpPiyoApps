@@ -1,6 +1,6 @@
 {
-	"name":"テトリス",
-	"short_name":"テトリス",
+	"name":"テトのリス",
+	"short_name":"テトのリス",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
