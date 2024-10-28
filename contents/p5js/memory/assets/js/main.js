@@ -27,6 +27,7 @@ const SUITS = ["spade", "heart", "diamond", "club"];
 let font, cW, cH, cX, cY;
 let cntTap, btnRetryDialog;
 
+const trump = [];
 const cards = [];
 
 function preload(){
@@ -48,33 +49,47 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(48);
+	frameRate(32);
 	noSmooth();
 
 	cntTap = loadCounter();// Counter
-	
+
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
-	// Cards
+	// Trump(13 x 4)
 	for(let i=0; i<13; i++){
-		const line = [];
+		for(let s=SUITS.length-1; 0<=s; s--){
+			const rdm = floor(random(s));
+			[SUITS[s], SUITS[rdm]] = [SUITS[rdm], SUITS[s]];
+		}
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
-			const card = new Card("card_back_03.png", file, -gSize*5, -gSize*5, gSize*4);
-			line.push(card);
+			const card = new Card("card_back_03.png", file, -gSize, -gSize, gSize*4);
+			trump.push(card);
 		}
-		for(let i=line.length-1; 0<=i; i--){
-			const rdm = floor(random(i));
-			[line[i], line[rdm]] = [line[rdm], line[i]];
-		}
-		cards.push(line);
 	}
 
-	// Card
+	// Shuffle with 2 pairs
+	for(let i=24; 0<=i; i--){
+		const rdm = floor(random(i));
+		[trump[i*2], trump[rdm*2]] = [trump[rdm*2], trump[i*2]];
+		[trump[i*2+1], trump[rdm*2+1]] = [trump[rdm*2+1], trump[i*2+1]];
+	}
+
+	// Pickup cards and shuffle them
 	const rows = 3;
 	const cols = 4;
+	for(let i=0; i<rows*cols; i++){
+		cards.push(trump[i]);
+	}
+	for(let i=cards.length-1; 0<=i; i--){
+		const rdm = floor(random(i));
+		[cards[i], cards[rdm]] = [cards[rdm], cards[i]];
+	}
+
+	// Set positions
 	const padW = gSize * 4.5;
 	const padH = gSize * 6;
 	const sX = cX - padW * (cols-1)/2;
@@ -83,7 +98,10 @@ function setup(){
 		for(let c=0; c<cols; c++){
 			const x = sX + padW * c;
 			const y = sY + padH * r;
-			cards[r][c].setPosition(x, y);
+			const i = r * cols + c;
+			const card = cards[i];
+			card.setPosition(x, y);
+			cards.push(card);// Trump -> Cards
 		}
 	}
 }
@@ -96,10 +114,8 @@ function draw(){
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
 	btnRetryDialog.update();// RetyDialog
-	for(const line of cards){
-		for(const card of line){
-			 card.update();// Cards
-		}
+	for(const card of cards){
+		card.update();// Cards
 	}
 
 	TWEEN.update();// Tween
@@ -115,13 +131,11 @@ function touchStarted(){
 
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 	// Cards
-	for(const line of cards){
-		for(const card of line){
-			 if(card.contains(mouseX, mouseY)){
-				card.toggle(gSize*2, gSize*1);// Toggle
-				cntTap++;
-				saveCounter();
-			}
+	for(const card of cards){
+		 if(card.contains(mouseX, mouseY)){
+			card.toggle(gSize*2, gSize*1);// Toggle
+			cntTap++;
+			saveCounter();
 		}
 	}
 }

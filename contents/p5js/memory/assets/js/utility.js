@@ -124,6 +124,9 @@ class Card{
 		this._pageCurrent = this._pageClose;
 	}
 
+	get x(){return this._pageCurrent.x;}
+	get y(){return this._pageCurrent.y;}
+
 	contains(x, y){return this._pageCurrent.contains(x, y);}
 
 	setPosition(x, y){
