@@ -6,7 +6,20 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "memory";
 
 const FILES_IMG = [
-	"card_back_01.png", "card_back_02.png", "card_back_03.png", "card_back_04.png"
+	"card_back_01.png", "card_back_02.png", "card_back_03.png", "card_back_04.png",
+	"card_spade_01.png", "card_heart_01.png", "card_club_01.png", "card_diamond_01.png",
+	"card_spade_02.png", "card_heart_02.png", "card_club_02.png", "card_diamond_02.png",
+	"card_spade_03.png", "card_heart_03.png", "card_club_03.png", "card_diamond_03.png",
+	"card_spade_04.png", "card_heart_04.png", "card_club_04.png", "card_diamond_04.png",
+	"card_spade_05.png", "card_heart_05.png", "card_club_05.png", "card_diamond_05.png",
+	"card_spade_06.png", "card_heart_06.png", "card_club_06.png", "card_diamond_06.png",
+	"card_spade_07.png", "card_heart_07.png", "card_club_07.png", "card_diamond_07.png",
+	"card_spade_08.png", "card_heart_08.png", "card_club_08.png", "card_diamond_08.png",
+	"card_spade_09.png", "card_heart_09.png", "card_club_09.png", "card_diamond_09.png",
+	"card_spade_10.png", "card_heart_10.png", "card_club_10.png", "card_diamond_10.png",
+	"card_spade_11.png", "card_heart_11.png", "card_club_11.png", "card_diamond_11.png",
+	"card_spade_12.png", "card_heart_12.png", "card_club_12.png", "card_diamond_12.png",
+	"card_spade_13.png", "card_heart_13.png", "card_club_13.png", "card_diamond_13.png"
 ];
 
 const TILE_COLORS = [
@@ -38,7 +51,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	card = new Card("card_back_01.png", cX, cY, gSize*4);// Card
+	card = new Card("card_heart_11.png", cX, cY, gSize*5);// Card
 	cntTap = loadCounter();// Counter
 }
 
