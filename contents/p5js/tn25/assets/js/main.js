@@ -3,7 +3,7 @@ console.log("main.js!!");
 const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
-const KEY_HIGH  = "touchthenumber";
+const KEY_HIGH  = "tn25";
 
 const FILES_IMG = [
 	"egg_01.png"
