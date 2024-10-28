@@ -6,25 +6,23 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "memory";
 
 const FILES_IMG = [
-	"card_back_01.png", "card_back_02.png", "card_back_03.png", "card_back_04.png",
-	"card_spade_01.png", "card_heart_01.png", "card_club_01.png", "card_diamond_01.png",
-	"card_spade_02.png", "card_heart_02.png", "card_club_02.png", "card_diamond_02.png",
-	"card_spade_03.png", "card_heart_03.png", "card_club_03.png", "card_diamond_03.png",
-	"card_spade_04.png", "card_heart_04.png", "card_club_04.png", "card_diamond_04.png",
-	"card_spade_05.png", "card_heart_05.png", "card_club_05.png", "card_diamond_05.png",
-	"card_spade_06.png", "card_heart_06.png", "card_club_06.png", "card_diamond_06.png",
-	"card_spade_07.png", "card_heart_07.png", "card_club_07.png", "card_diamond_07.png",
-	"card_spade_08.png", "card_heart_08.png", "card_club_08.png", "card_diamond_08.png",
-	"card_spade_09.png", "card_heart_09.png", "card_club_09.png", "card_diamond_09.png",
-	"card_spade_10.png", "card_heart_10.png", "card_club_10.png", "card_diamond_10.png",
-	"card_spade_11.png", "card_heart_11.png", "card_club_11.png", "card_diamond_11.png",
-	"card_spade_12.png", "card_heart_12.png", "card_club_12.png", "card_diamond_12.png",
-	"card_spade_13.png", "card_heart_13.png", "card_club_13.png", "card_diamond_13.png"
+	"card_back_01.png",  "card_back_02.png",  "card_back_04.png",    "card_back_03.png",
+	"card_spade_01.png", "card_heart_01.png", "card_diamond_01.png", "card_club_01.png",
+	"card_spade_02.png", "card_heart_02.png", "card_diamond_02.png", "card_club_02.png",
+	"card_spade_03.png", "card_heart_03.png", "card_diamond_03.png", "card_club_03.png",
+	"card_spade_04.png", "card_heart_04.png", "card_diamond_04.png", "card_club_04.png",
+	"card_spade_05.png", "card_heart_05.png", "card_diamond_05.png", "card_club_05.png",
+	"card_spade_06.png", "card_heart_06.png", "card_diamond_06.png", "card_club_06.png",
+	"card_spade_07.png", "card_heart_07.png", "card_diamond_07.png", "card_club_07.png",
+	"card_spade_08.png", "card_heart_08.png", "card_diamond_08.png", "card_club_08.png",
+	"card_spade_09.png", "card_heart_09.png", "card_diamond_09.png", "card_club_09.png",
+	"card_spade_10.png", "card_heart_10.png", "card_diamond_10.png", "card_club_10.png",
+	"card_spade_11.png", "card_heart_11.png", "card_diamond_11.png", "card_club_11.png",
+	"card_spade_12.png", "card_heart_12.png", "card_diamond_12.png", "card_club_12.png",
+	"card_spade_13.png", "card_heart_13.png", "card_diamond_13.png", "card_club_13.png"
 ];
 
-const TILE_COLORS = [
-	"#ff595e", "#ffca3a", "#8ac926", "#1982c4", "#6a4c93"
-];
+const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
 let cntTap, btnRetryDialog;
@@ -57,6 +55,20 @@ function setup(){
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
+
+	// Cards
+	for(let suit of SUITS){
+		for(let i=0; i<13; i++){
+			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
+			const card = new Card("card_back_03.png", file, -gSize*5, -gSize*5, gSize*4);
+			cards.push(card);
+		}
+	}
+	for(let i=cards.length-1; 0<=i; i--){
+		const rdm = floor(random(i));
+		[cards[i], cards[rdm]] = [cards[rdm], cards[i]];
+	}
+
 	// Card
 	const rows = 3;
 	const cols = 4;
@@ -68,10 +80,8 @@ function setup(){
 		for(let c=0; c<cols; c++){
 			const x = sX + padW * c;
 			const y = sY + padH * r;
-			const num = String(floor(random(1, 13))).padStart(2, "0");
-			const file = "card_spade_" + num + ".png";
-			const card = new Card("card_back_03.png", file, x, y, gSize*4);
-			cards.push(card);
+			const i = r * cols + c;
+			cards[i].setPosition(x, y);
 		}
 	}
 }

@@ -126,6 +126,13 @@ class Card{
 
 	contains(x, y){return this._pageCurrent.contains(x, y);}
 
+	setPosition(x, y){
+		this._pageClose.x = x;
+		this._pageClose.y = y;
+		this._pageOpen.x = x;
+		this._pageOpen.y = y;
+	}
+
 	isClosed(){return this._pageCurrent == this._pageClose;}
 
 	isOpened(){return this._pageCurrent == this._pageOpen;}
