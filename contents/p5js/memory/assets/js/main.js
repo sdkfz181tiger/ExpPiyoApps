@@ -66,7 +66,7 @@ function setup(){
 		}
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
-			const card = new Card("card_back_03.png", file, -gSize, -gSize, gSize*4);
+			const card = new Card("card_back_03.png", file, -gSize, -gSize, gSize*3);
 			trump.push(card);
 		}
 	}
@@ -79,8 +79,8 @@ function setup(){
 	}
 
 	// Pickup cards and shuffle them
-	const rows = 3;
-	const cols = 4;
+	const rows = 4;
+	const cols = 5;
 	for(let i=0; i<rows*cols; i++){
 		cards.push(trump[i]);
 	}
@@ -90,8 +90,8 @@ function setup(){
 	}
 
 	// Set positions
-	const padW = gSize * 4.5;
-	const padH = gSize * 6;
+	const padW = gSize * 3.5;
+	const padH = gSize * 4.5;
 	const sX = cX - padW * (cols-1)/2;
 	const sY = cY - padH * (rows-1)/2;
 	for(let r=0; r<rows; r++){
