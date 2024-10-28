@@ -25,7 +25,7 @@ const FILES_IMG = [
 const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
-let cntTap, btnRetryDialog;
+let cntTap, cntSelected, btnRetryDialog;
 
 const trump = [];
 const cards = [];
@@ -53,6 +53,7 @@ function setup(){
 	noSmooth();
 
 	cntTap = loadCounter();// Counter
+	cntSelected = 0;// Selected
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -66,7 +67,7 @@ function setup(){
 		}
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
-			const card = new Card("card_back_03.png", file, -gSize, -gSize, gSize*3);
+			const card = new Card("card_back_03.png", file, -gSize, -gSize, gSize*4);
 			trump.push(card);
 		}
 	}
@@ -79,8 +80,8 @@ function setup(){
 	}
 
 	// Pickup cards and shuffle them
-	const rows = 4;
-	const cols = 5;
+	const rows = 3;
+	const cols = 4;
 	for(let i=0; i<rows*cols; i++){
 		cards.push(trump[i]);
 	}
@@ -90,8 +91,8 @@ function setup(){
 	}
 
 	// Set positions
-	const padW = gSize * 3.5;
-	const padH = gSize * 4.5;
+	const padW = gSize * 4.5;
+	const padH = gSize * 6.0;
 	const sX = cX - padW * (cols-1)/2;
 	const sY = cY - padH * (rows-1)/2;
 	for(let r=0; r<rows; r++){
@@ -101,7 +102,6 @@ function setup(){
 			const i = r * cols + c;
 			const card = cards[i];
 			card.setPosition(x, y);
-			cards.push(card);// Trump -> Cards
 		}
 	}
 }
@@ -133,8 +133,9 @@ function touchStarted(){
 	// Cards
 	for(const card of cards){
 		 if(card.contains(mouseX, mouseY)){
-			card.toggle(gSize*2, gSize*1);// Toggle
+			card.open(gSize*2);// Open
 			cntTap++;
+			cntSelected++;
 			saveCounter();
 		}
 	}

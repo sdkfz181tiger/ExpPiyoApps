@@ -170,7 +170,6 @@ class Card{
 	}
 }
 
-
 class OnePage extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
