@@ -57,12 +57,7 @@ function setup(){
 		()=>{console.log("onFinished!!");});
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
-		"RETRY", "#ff595e", false, ()=>{
-			const elem = document.getElementById("myModal");
-			if(elem.classList.contains("show")) return;
-			const modal = new bootstrap.Modal(elem);
-			bootstrap.Modal.getInstance(elem).show();
-		});
+		"RETRY", "#ff595e", false, ()=>{showRetryDialog();});
 	createShadows();// Shadows
 }
 
