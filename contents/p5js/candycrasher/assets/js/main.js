@@ -58,7 +58,7 @@ function draw(){
 	// Text
 	fill("#333333"); noStroke();
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("キャンディクラッシャー", cX, FONT_SIZE * 0.5);
+	text("キャンディ壊し", cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){

@@ -76,7 +76,7 @@ function draw(){
 	// Title
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("テトリス", cX, FONT_SIZE * 0.5);
+	text("テトのリス", cX, FONT_SIZE * 0.5);
 	// Score
 	textSize(FONT_SIZE*0.8);
 	text("SCORE:" + tMng.getScore(), cX, 50);

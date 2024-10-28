@@ -74,7 +74,7 @@ function draw(){
 	// Score
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("15パズル", cX, FONT_SIZE * 0.5);
+	text("15のパズル", cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){

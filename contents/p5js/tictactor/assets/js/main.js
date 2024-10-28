@@ -62,7 +62,7 @@ function draw(){
 	// Text
 	fill("#333333"); noStroke();
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("oxゲーム", cX, FONT_SIZE * 0.5);
+	text("oxのゲーム", cX, FONT_SIZE * 0.5);
 
 	// You
 	if(player == MARK_O){
