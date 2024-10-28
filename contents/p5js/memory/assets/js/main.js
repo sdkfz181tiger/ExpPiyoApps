@@ -52,21 +52,24 @@ function setup(){
 	noSmooth();
 
 	cntTap = loadCounter();// Counter
+	
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
 	// Cards
-	for(let suit of SUITS){
-		for(let i=0; i<13; i++){
+	for(let i=0; i<13; i++){
+		const line = [];
+		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
 			const card = new Card("card_back_03.png", file, -gSize*5, -gSize*5, gSize*4);
-			cards.push(card);
+			line.push(card);
 		}
-	}
-	for(let i=cards.length-1; 0<=i; i--){
-		const rdm = floor(random(i));
-		[cards[i], cards[rdm]] = [cards[rdm], cards[i]];
+		for(let i=line.length-1; 0<=i; i--){
+			const rdm = floor(random(i));
+			[line[i], line[rdm]] = [line[rdm], line[i]];
+		}
+		cards.push(line);
 	}
 
 	// Card
@@ -80,8 +83,7 @@ function setup(){
 		for(let c=0; c<cols; c++){
 			const x = sX + padW * c;
 			const y = sY + padH * r;
-			const i = r * cols + c;
-			cards[i].setPosition(x, y);
+			cards[r][c].setPosition(x, y);
 		}
 	}
 }
@@ -94,7 +96,11 @@ function draw(){
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
 	btnRetryDialog.update();// RetyDialog
-	for(const card of cards) card.update();// Cards
+	for(const line of cards){
+		for(const card of line){
+			 card.update();// Cards
+		}
+	}
 
 	TWEEN.update();// Tween
 }
@@ -109,11 +115,13 @@ function touchStarted(){
 
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 	// Cards
-	for(const card of cards){
-		if(card.contains(mouseX, mouseY)){
-			card.toggle(gSize*2, gSize*1);// Toggle
-			cntTap++;
-			saveCounter();
+	for(const line of cards){
+		for(const card of line){
+			 if(card.contains(mouseX, mouseY)){
+				card.toggle(gSize*2, gSize*1);// Toggle
+				cntTap++;
+				saveCounter();
+			}
 		}
 	}
 }
