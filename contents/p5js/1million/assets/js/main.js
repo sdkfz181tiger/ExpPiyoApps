@@ -38,7 +38,7 @@ function setup(){
 	frameRate(48);
 	noSmooth();
 
-	eggMan = new EggMan("egg_01.png", cX, cY+gSize*2, gSize*16);// EggMan
+	eggMan = new EggMan("egg_01.png", cX, cY+gSize, gSize*16);// EggMan
 	cntTap = loadCounter();// Counter
 }
 
@@ -50,6 +50,7 @@ function draw(){
 
 	eggMan.update();// EggMan
 	drawMsgCounter(cX, cY-gSize*10);// Counter
+	drawMsgInfo(cX, cY+gSize*11);// Message
 
 	TWEEN.update();// Tween
 }
@@ -86,6 +87,13 @@ function drawMsgCounter(x, y){
 	textSize(gSize * 2.0); 
 	textAlign(CENTER, CENTER);
 	text(cntTap, x, y);
+}
+
+function drawMsgInfo(x, y){
+	fill("#ffffff");
+	textSize(gSize * 1.0); 
+	textAlign(CENTER, CENTER);
+	text("100万回タップすると何かがおきる...!?", x, y);
 }
 
 function loadCounter(){
