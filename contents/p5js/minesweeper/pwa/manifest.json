@@ -1,6 +1,6 @@
 {
-	"name":"マイン探し",
-	"short_name":"マイン探し",
+	"name":"マインを探して",
+	"short_name":"マインを探して",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",

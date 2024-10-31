@@ -1,6 +1,6 @@
 {
-	"name":"2048",
-	"short_name":"2048",
+	"name":"20の48",
+	"short_name":"20の48",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
