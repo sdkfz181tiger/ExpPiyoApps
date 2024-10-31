@@ -142,6 +142,7 @@ function touchStarted(){
 			saveCounter();
 		}
 	}
+	// Judge
 	if(1 < selected.length){
 		// Finish
 		if(selected[0].num == selected[1].num){
