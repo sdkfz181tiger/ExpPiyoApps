@@ -122,10 +122,13 @@ class Card{
 		this._pageClose = new OnePage(fileClose, x, y, size);
 		this._pageOpen = new OnePage(fileOpen, x, y, size);
 		this._pageCurrent = this._pageClose;
+		this._finishFlg = false;
+		this._num = Number(fileOpen.split("_")[2].split(".")[0]);
 	}
 
 	get x(){return this._pageCurrent.x;}
 	get y(){return this._pageCurrent.y;}
+	get num(){return this._num;}
 
 	contains(x, y){return this._pageCurrent.contains(x, y);}
 
@@ -136,9 +139,11 @@ class Card{
 		this._pageOpen.y = y;
 	}
 
+	isOpened(){return this._pageCurrent == this._pageOpen;}
+
 	isClosed(){return this._pageCurrent == this._pageClose;}
 
-	isOpened(){return this._pageCurrent == this._pageOpen;}
+	isFinished(){return this._finishFlg;}
 
 	open(jumpH){
 		if(this.isOpened()) return;
@@ -152,6 +157,11 @@ class Card{
 		this._pageCurrent.shake(shakeW, ()=>{
 			this._pageCurrent = this._pageClose;
 		});
+	}
+
+	finish(){
+		if(this._finishFlg) return;
+		this._finishFlg = true;
 	}
 
 	toggle(jumpH, shakeW){

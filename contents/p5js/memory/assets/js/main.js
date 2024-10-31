@@ -25,7 +25,7 @@ const FILES_IMG = [
 const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
-let cntTap, cntSelected, btnRetryDialog;
+let cntTap, selectedNum, btnRetryDialog;
 
 const trump = [];
 const cards = [];
@@ -53,7 +53,7 @@ function setup(){
 	noSmooth();
 
 	cntTap = loadCounter();// Counter
-	cntSelected = 0;// Selected
+	selected = [];// Selected
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -132,15 +132,30 @@ function touchStarted(){
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 
 	// Cards
-	if(1 < cntSelected) return;
+	if(1 < selected.length) return;
 	for(const card of cards){
-		// TODO: yeah
 		if(card.contains(mouseX, mouseY)){
+			if(card.isOpened() || card.isFinished()) continue;
 			card.open(gSize*2);// Open
 			cntTap++;
-			cntSelected++;
+			selected.push(card);// Selected
 			saveCounter();
 		}
+	}
+	if(1 < selected.length){
+		// Finish
+		if(selected[0].num == selected[1].num){
+			selected[0].finish();
+			selected[1].finish();
+		}
+		// Close
+		setTimeout(()=>{
+			for(const card of cards){
+				if(card.isFinished()) continue;
+				card.close(gSize);// Close
+			}
+			selected = [];
+		}, 1200);
 	}
 }
 
