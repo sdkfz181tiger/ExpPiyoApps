@@ -130,9 +130,12 @@ function touchStarted(){
 	if(mouseY < 0) return;
 
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+
 	// Cards
+	if(1 < cntSelected) return;
 	for(const card of cards){
-		 if(card.contains(mouseX, mouseY)){
+		// TODO: yeah
+		if(card.contains(mouseX, mouseY)){
 			card.open(gSize*2);// Open
 			cntTap++;
 			cntSelected++;
