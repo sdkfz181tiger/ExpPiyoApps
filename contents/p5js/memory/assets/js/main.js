@@ -135,7 +135,8 @@ function touchStarted(){
 	if(1 < selected.length) return;
 	for(const card of cards){
 		if(card.contains(mouseX, mouseY)){
-			if(card.isOpened() || card.isFinished()) continue;
+			if(card.isOpened()) continue;
+			if(card.isFinished()) continue;
 			card.open(gSize*2);// Open
 			cntTap++;
 			selected.push(card);// Selected
@@ -144,20 +145,20 @@ function touchStarted(){
 	}
 	// Judge
 	if(1 < selected.length){
-		// Finish
 		if(selected[0].num == selected[1].num){
 			selected[0].finish();
 			selected[1].finish();
 		}
-		// Close
-		setTimeout(()=>{
-			for(const card of cards){
-				if(card.isFinished()) continue;
-				card.close(gSize);// Close
-			}
-			selected = [];
-		}, 1200);
+		selected = [];
 	}
+
+	// Close
+	setTimeout(()=>{
+		for(const card of cards){
+			if(card.isFinished()) continue;
+			card.close(gSize);// Close
+		}
+	}, 1200);
 }
 
 function drawGrids(){
