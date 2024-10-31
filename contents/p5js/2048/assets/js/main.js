@@ -87,7 +87,7 @@ function draw(){
 	// Title
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("2048", cX, FONT_SIZE * 0.5);
+	text("20の48", cX, FONT_SIZE * 0.5);
 	// Score
 	textSize(FONT_SIZE*0.8);
 	text("SCORE:"+my2048.getScore(), width*0.5, 70);

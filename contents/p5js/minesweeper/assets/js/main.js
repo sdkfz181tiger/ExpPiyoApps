@@ -66,7 +66,7 @@ function draw(){
 	// Title
 	fill("#333333");
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("マイン探し", cX, FONT_SIZE * 0.5);
+	text("マインを探して", cX, FONT_SIZE * 0.5);
 
 	// Mine
 	textSize(FONT_SIZE*0.8);

@@ -48,7 +48,7 @@ function draw(){
 	// Text
 	fill("#333333"); noStroke();
 	textSize(FONT_SIZE); textAlign(CENTER, TOP);
-	text("リバーシ6x6", cX, FONT_SIZE * 0.5);
+	text("リバーのシ", cX, FONT_SIZE * 0.5);
 }
 
 function mousePressed(){
