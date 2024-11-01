@@ -183,7 +183,7 @@ function drawMsgCounter(x, y){
 	fill("#ffffff");
 	textSize(gSize * 2.0); 
 	textAlign(CENTER, CENTER);
-	text(cardSelected.length, x, y);
+	text(cntTap, x, y);
 }
 
 function loadCounter(){
