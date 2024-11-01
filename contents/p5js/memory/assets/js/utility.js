@@ -147,15 +147,17 @@ class Card{
 
 	open(jumpH){
 		if(this.isOpened()) return;
+		this._pageCurrent = this._pageOpen;
 		this._pageCurrent.jump(jumpH, ()=>{
-			this._pageCurrent = this._pageOpen;
+			console.log("opened:", this._num);
 		});
 	}
 
 	close(shakeW){
 		if(this.isClosed()) return;
+		this._pageCurrent = this._pageClose;
 		this._pageCurrent.shake(shakeW, ()=>{
-			this._pageCurrent = this._pageClose;
+			console.log("closed:", this._num);
 		});
 	}
 
