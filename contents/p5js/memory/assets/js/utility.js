@@ -164,6 +164,7 @@ class Card{
 	finish(){
 		if(this._finishFlg) return;
 		this._finishFlg = true;
+		this._pageCurrent.alpha = 100;// Alpha
 	}
 
 	toggle(jumpH, shakeW){
