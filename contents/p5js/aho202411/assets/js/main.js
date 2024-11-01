@@ -9,10 +9,8 @@ const FILES_IMG = [
 	"reimu_good_01.png"
 ];
 
-const SUITS = ["spade", "heart", "diamond", "club"];
-
 let font, cW, cH, cX, cY;
-let cntTap, hero;
+let cntTap, reimu;
 let btnRetryDialog;
 
 function preload(){
@@ -40,8 +38,8 @@ function setup(){
 	// Counter
 	cntTap = loadCounter();
 
-	// Hero
-	hero = new Hero("reimu_good_01.png", cX, cY, gSize*3);
+	// Reimu
+	reimu = new Hero("reimu_good_01.png", cX, cY, gSize*5);
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -56,7 +54,7 @@ function draw(){
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
 
-	hero.update();// Hero
+	reimu.update();// Hero
 	btnRetryDialog.update();// RetyDialog
 
 	TWEEN.update();// Tween
@@ -73,8 +71,8 @@ function touchStarted(){
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 
 	// Shake
-	if(hero.contains(mouseX, mouseY)){
-		hero.shake(gSize/2);
+	if(reimu.contains(mouseX, mouseY)){
+		reimu.shake(gSize/2);
 		cntTap++;
 		saveCounter();
 	}
