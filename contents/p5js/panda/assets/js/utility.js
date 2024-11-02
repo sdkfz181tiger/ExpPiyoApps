@@ -162,12 +162,6 @@ class Animal{
 		});
 	}
 
-	finish(){
-		if(this._finishFlg) return;
-		this._finishFlg = true;
-		this._pageCurrent.alpha = 100;// Alpha
-	}
-
 	toggle(jumpH, shakeW){
 		if(this.isClosed()){
 			this.open(jumpH);
@@ -186,11 +180,13 @@ class Animal{
 		});
 	}
 
-	byebyeTo(x, y, delay, onFinished){
-		this._pageCurrent.moveTo(x, y, delay, (pos)=>{
+	openAndByebye(jumpH, x, y, delay, onFinished=null){
+		if(this.isOpened()) return;
+		this._pageCurrent = this._pageOpen;
+		this._pageCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			this._byebyeFlg = true;// Byebye
-			onFinished(pos);
+			if(onFinished) onFinished(pos);
 		});
 	}
 
@@ -285,5 +281,32 @@ class Actor extends Sprite{
 				if(onFinished) onFinished(this._pos);// Callback
 			});
 		tween.start();
+	}
+
+	jumpAndMoveTo(jumpH, x, y, delay, onFinished=null){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
+		// Tween
+		const jumpY  = this._pos.y - jumpH;
+		const defX   = this._pos.x;
+		const defY   = this._pos.y;
+		const tween1 = new TWEEN.Tween(this._pos)
+			.to({x: defX, y: jumpY}, delay)
+			.easing(TWEEN.Easing.Quadratic.In);
+		const tween2 = new TWEEN.Tween(this._pos)
+			.to({x: defX, y: defY}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out);
+		const tween3 = new TWEEN.Tween(this._pos)
+			.delay(delay*2.2)
+			.to({x: x, y: y}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+				console.log(onFinished);
+				if(onFinished) onFinished(this._pos);// Callback
+			});
+		tween1.chain(tween2);// Chain
+		tween2.chain(tween3);
+		tween1.start();
 	}
 }

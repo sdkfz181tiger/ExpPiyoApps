@@ -11,7 +11,7 @@ const FILES_IMG = [
 ];
 
 let font, cW, cH, cX, cY;
-let cntTap, animals;
+let cntScore, animals;
 let btnNext;
 let btnRetryDialog;
 
@@ -37,22 +37,23 @@ function setup(){
 	frameRate(32);
 	noSmooth();
 
-	// Counter
-	cntTap = loadCounter();
+	// Score
+	cntScore = loadScore();
 
 	// Animals
 	animals = [];
 	for(let i=0; i<10; i++){
 		const x = random(cW);
-		const y = random(cH);
+		const y = random(0, cH-gSize*10);
+		const size = random(gSize*4, gSize*5);
 		const animal = new Animal(
 			"reimu_good_01.png", "reimu_bad_01.png",
-			x, y, gSize*5);
+			x, y, size);
 		animals.push(animal);
 	}
 
 	// Next
-	btnNext = new Button(cX, cY+gSize*6, gSize*6, gSize*2.2, 
+	btnNext = new Button(cX, cY+gSize*8, gSize*6, gSize*2.2, 
 		"NEXT", "#5e59ff", true, ()=>{nextAnimal();});
 
 	// RetryDialog
@@ -66,7 +67,7 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgCounter(cX, cY-gSize*11);// Counter
+	drawMsgScore(cX, cY-gSize*11);// Score
 	btnNext.update();// Next
 	btnRetryDialog.update();// RetyDialog
 
@@ -96,7 +97,10 @@ function touchStarted(){
 	// Animals
 	for(const animal of animals){
 		if(animal.contains(mouseX, mouseY)){
-			animal.toggle(gSize*2, gSize);
+			cntScore++;// Score
+			const x = animal.x;
+			const y = 0;
+			animal.openAndByebye(gSize*2, x, y, 120);
 			return;
 		}
 	}
@@ -107,14 +111,6 @@ function touchStarted(){
 
 function nextAnimal(){
 	console.log("nextAnimal!!");
-
-	const rdm = floor(random(animals.length));
-	const animal = animals[rdm];
-	const x = random(cW);
-	const y = random(cH);
-	animal.byebyeTo(x, y, 100, (pos)=>{
-		console.log("byebye!!");
-	});
 }
 
 function drawGrids(){
@@ -129,19 +125,19 @@ function drawGrids(){
 	}
 }
 
-function drawMsgCounter(x, y){
+function drawMsgScore(x, y){
 	fill("#ffffff");
 	textSize(gSize * 2.0); 
 	textAlign(CENTER, CENTER);
-	text(cntTap, x, y);
+	text(cntScore, x, y);
 }
 
-function loadCounter(){
+function loadScore(){
 	const num = localStorage.getItem(KEY_HIGH);
 	if(num == null) return 0;
 	return num;
 }
 
-function saveCounter(){
+function saveScore(){
 	localStorage.setItem(KEY_HIGH, cntTap);
 }
