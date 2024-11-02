@@ -174,13 +174,6 @@ class Animal{
 		}
 	}
 
-	moveTo(x, y, delay, onFinished){
-		this._actorCurrent.moveTo(x, y, delay, (pos)=>{
-			this.setPosition(pos.x, pos.y);
-			onFinished(pos);
-		});
-	}
-
 	openAndByebye(jumpH, x, y, delay, onFinished=null){
 		if(this.isOpened()) return;
 		this._actorCurrent = this._actorBear;
@@ -277,22 +270,6 @@ class Actor extends Sprite{
 		tween1.start();
 	}
 
-	moveTo(x, y, delay, onFinished){
-		if(this._movingFlg) return;
-		this._movingFlg = true;
-		// Move
-		const defX   = this._pos.x;
-		const defY   = this._pos.y;
-		const tween = new TWEEN.Tween(this._pos)
-			.to({x: x, y: y}, delay)
-			.easing(TWEEN.Easing.Quadratic.Out)
-			.onComplete(()=>{
-				this._movingFlg = false;
-				if(onFinished) onFinished(this._pos);// Callback
-			});
-		tween.start();
-	}
-
 	jumpAndMoveTo(jumpH, x, y, delay, onFinished=null){
 		if(this._movingFlg) return;
 		this._movingFlg = true;
@@ -312,7 +289,6 @@ class Actor extends Sprite{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
-				console.log(onFinished);
 				if(onFinished) onFinished(this._pos);// Callback
 			});
 		tween1.chain(tween2);// Chain

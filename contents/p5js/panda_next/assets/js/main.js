@@ -72,7 +72,6 @@ function draw(){
 		btnBear.update();// Bear
 	}else{
 		btnRetryDialog.update();// RetyDialog
-		drawMsgGameOver(cX, cH-gSize*6);// GameOver
 	}
 
 	animal.update();
@@ -160,20 +159,6 @@ function drawMsgScore(x, y){
 	textSize(gSize * 1.4); 
 	textAlign(RIGHT, CENTER);
 	text("スコア:"+cntScore, x, y);
-}
-
-function drawMsgGameOver(x, y){
-	fill("#ffffff");
-	textSize(gSize * 1.4); 
-	textAlign(CENTER, CENTER);
-	text("ゲームオーバー", x, y);
-}
-
-function drawMsgHowto(x, y, str){
-	fill("#ffffff");
-	textSize(gSize * 0.8); 
-	textAlign(LEFT, CENTER);
-	text(str, x, y);
 }
 
 function loadScore(){
