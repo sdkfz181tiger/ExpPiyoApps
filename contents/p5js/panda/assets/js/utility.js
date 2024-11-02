@@ -142,7 +142,7 @@ class Animal{
 
 	isClosed(){return this._pageCurrent == this._pageClose;}
 
-	isByebyed(){return this._byebyeFlg;}
+	isByebye(){return this._byebyeFlg;}
 
 	open(jumpH){
 		if(this.isOpened()) return;

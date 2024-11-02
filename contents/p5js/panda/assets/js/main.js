@@ -11,7 +11,7 @@ const FILES_IMG = [
 ];
 
 let font, cW, cH, cX, cY;
-let cntTap, animal;
+let cntTap, animals;
 let btnNext;
 let btnRetryDialog;
 
@@ -40,10 +40,16 @@ function setup(){
 	// Counter
 	cntTap = loadCounter();
 
-	// Animal
-	animal = new Animal(
-		"reimu_good_01.png", "reimu_bad_01.png",
-		cX, cY, gSize*5);
+	// Animals
+	animals = [];
+	for(let i=0; i<10; i++){
+		const x = random(cW);
+		const y = random(cH);
+		const animal = new Animal(
+			"reimu_good_01.png", "reimu_bad_01.png",
+			x, y, gSize*5);
+		animals.push(animal);
+	}
 
 	// Next
 	btnNext = new Button(cX, cY+gSize*6, gSize*6, gSize*2.2, 
@@ -61,10 +67,20 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
-
-	animal.update();// Animal
 	btnNext.update();// Next
 	btnRetryDialog.update();// RetyDialog
+
+	// Animals
+	if(0 < animals.length){
+		for(let i=animals.length-1; 0<=i; i--){
+			const animal = animals[i];
+			if(animal.isByebye()){// Delete
+				animals.splice(i, 1);
+				continue;
+			}
+			animal.update();// Update
+		}
+	}
 
 	TWEEN.update();// Tween
 }
@@ -77,20 +93,27 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
+	// Animals
+	for(const animal of animals){
+		if(animal.contains(mouseX, mouseY)){
+			animal.toggle(gSize*2, gSize);
+			return;
+		}
+	}
+
 	btnNext.touch(mouseX, mouseY);// Next
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
-
-	if(animal.contains(mouseX, mouseY)){
-		animal.toggle(gSize*2, gSize);
-	}
 }
 
 function nextAnimal(){
 	console.log("nextAnimal!!");
+
+	const rdm = floor(random(animals.length));
+	const animal = animals[rdm];
 	const x = random(cW);
 	const y = random(cH);
-	animal.moveTo(x, y, 100, (pos)=>{
-		console.log("moved:", pos);
+	animal.byebyeTo(x, y, 100, (pos)=>{
+		console.log("byebye!!");
 	});
 }
 
