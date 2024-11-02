@@ -6,12 +6,14 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "panda";
 
 const FILES_IMG = [
-	"reimu_good_01.png", 
-	"reimu_bad_01.png"
+	"a_panda.png", 
+	"a_bear.png"
 ];
 
+const TOTAL = 30;
+
 let font, cW, cH, cX, cY;
-let cntScore, animals;
+let cntScore, animals, padY;
 let btnPanda, btnBear;
 let btnRetryDialog;
 
@@ -42,23 +44,26 @@ function setup(){
 
 	// Animals
 	animals = [];
-	for(let i=0; i<10; i++){
-		const x = cX;
-		const y = random(0, cH-gSize*10);
-		const size = random(gSize*2, gSize*6);
+
+	padY = gSize * 3;
+	const sY = cH - gSize * 10 - padY * TOTAL;
+	for(let i=0; i<TOTAL; i++){
+		const x = cX + random(-gSize*2, gSize*2);
+		const y = sY + padY * i;
+		const size = random(gSize*4, gSize*6);
 		const animal = new Animal(
-			"reimu_good_01.png", "reimu_bad_01.png",
+			"a_panda.png", "a_bear.png",
 			x, y, size);
 		animals.push(animal);
 	}
 
 	// Panda
 	btnPanda = new Button(cX-gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
-		"PANDA", "#5e59ff", true, ()=>{actionPanda();});
+		"パンダに!", "#5e59ff", true, ()=>{actionPanda();});
 
 	// Bear
 	btnBear = new Button(cX+gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
-		"BEAR", "#5e59ff", true, ()=>{actionBear();});
+		"シロクマに!", "#5e59ff", true, ()=>{actionBear();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -71,13 +76,13 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgScore(cX, cY-gSize*11);// Score
+	drawMsgScore(gSize, gSize*2);// Score
 
 	btnPanda.update();// Panda
 	btnBear.update();// Bear
 	btnRetryDialog.update();// RetyDialog
 
-	// Animals
+	// Clean
 	if(0 < animals.length){
 		for(let i=animals.length-1; 0<=i; i--){
 			const animal = animals[i];
@@ -85,8 +90,13 @@ function draw(){
 				animals.splice(i, 1);
 				continue;
 			}
-			animal.update();// Update
 		}
+	}
+
+	// Draw
+	for(const animal of animals){
+		//if(animal.y < 0) continue;
+		animal.update();// Update
 	}
 
 	TWEEN.update();// Tween
@@ -100,17 +110,6 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	// Animals
-	for(const animal of animals){
-		if(animal.contains(mouseX, mouseY)){
-			cntScore++;// Score
-			const x = animal.x;
-			const y = 0;
-			animal.openAndByebye(gSize*2, x, y, 120);
-			return;
-		}
-	}
-
 	btnPanda.touch(mouseX, mouseY);// Panda
 	btnBear.touch(mouseX, mouseY);// Bear
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
@@ -118,10 +117,32 @@ function touchStarted(){
 
 function actionPanda(){
 	console.log("actionPanda!!");
+	if(animals.length <= 0) return;
+	const animal = animals[animals.length-1];
+	const x = 0;
+	const y = animal.y;
+	animal.openAndByebye(gSize*2, x, y, 120);
+	stepForward();
 }
 
 function actionBear(){
 	console.log("actionBear!!");
+	if(animals.length <= 0) return;
+	const animal = animals[animals.length-1];
+	const x = cW;
+	const y = animal.y;
+	animal.openAndByebye(gSize*2, x, y, 120);
+	stepForward();
+}
+
+function stepForward(){
+	console.log("stepForward");
+	const sY = cH - gSize * 10 - padY * animals.length;
+	for(let i=0; i<animals.length-1; i++){
+		const animal = animals[i];
+		const y = sY + padY * i;
+		animal.setPosition(animal.x, y);
+	}
 }
 
 function drawGrids(){
@@ -138,9 +159,9 @@ function drawGrids(){
 
 function drawMsgScore(x, y){
 	fill("#ffffff");
-	textSize(gSize * 2.0); 
-	textAlign(CENTER, CENTER);
-	text(cntScore, x, y);
+	textSize(gSize * 1.4); 
+	textAlign(LEFT, CENTER);
+	text("スコア:"+cntScore, x, y);
 }
 
 function loadScore(){
