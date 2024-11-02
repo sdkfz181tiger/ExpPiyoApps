@@ -90,7 +90,7 @@ function nextAnimal(){
 	const x = random(cW);
 	const y = random(cH);
 	animal.moveTo(x, y, 100, (pos)=>{
-		animal.setPosition(pos.x, pos.y);
+		console.log("moved:", pos);
 	});
 }
 

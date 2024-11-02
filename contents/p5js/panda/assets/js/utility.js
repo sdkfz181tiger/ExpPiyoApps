@@ -122,7 +122,8 @@ class Animal{
 		this._pageClose = new Actor(fileClose, x, y, size);
 		this._pageOpen = new Actor(fileOpen, x, y, size);
 		this._pageCurrent = this._pageClose;
-		this._finishFlg = false;
+		this._size = size;
+		this._byebyeFlg = false;
 	}
 
 	get x(){return this._pageCurrent.x;}
@@ -141,12 +142,13 @@ class Animal{
 
 	isClosed(){return this._pageCurrent == this._pageClose;}
 
-	isFinished(){return this._finishFlg;}
+	isByebyed(){return this._byebyeFlg;}
 
 	open(jumpH){
 		if(this.isOpened()) return;
 		this._pageCurrent = this._pageOpen;
-		this._pageCurrent.jump(jumpH, ()=>{
+		this._pageCurrent.jump(jumpH, (pos)=>{
+			this.setPosition(pos.x, pos.y);
 			console.log("opened");
 		});
 	}
@@ -154,7 +156,8 @@ class Animal{
 	close(shakeW){
 		if(this.isClosed()) return;
 		this._pageCurrent = this._pageClose;
-		this._pageCurrent.shake(shakeW, ()=>{
+		this._pageCurrent.shake(shakeW, (pos)=>{
+			this.setPosition(pos.x, pos.y);
 			console.log("closed");
 		});
 	}
@@ -177,11 +180,32 @@ class Animal{
 	}
 
 	moveTo(x, y, delay, onFinished){
-		this._pageCurrent.moveTo(x, y, delay, onFinished);
+		this._pageCurrent.moveTo(x, y, delay, (pos)=>{
+			this.setPosition(pos.x, pos.y);
+			onFinished(pos);
+		});
+	}
+
+	byebyeTo(x, y, delay, onFinished){
+		this._pageCurrent.moveTo(x, y, delay, (pos)=>{
+			this.setPosition(pos.x, pos.y);
+			this._byebyeFlg = true;// Byebye
+			onFinished(pos);
+		});
+	}
+
+	drawMsg(msg, size){
+		fill("#ffffff");
+		textSize(this._size / 4); 
+		textAlign(CENTER, CENTER);
+		const x = this._pageCurrent.x;
+		const y = this._pageCurrent.y - this._pageCurrent.h/2;
+		text(msg, x, y);
 	}
 
 	update(){
 		this._pageCurrent.update();
+		if(this.isOpened()) this.drawMsg("Thanks!");
 	}
 }
 
