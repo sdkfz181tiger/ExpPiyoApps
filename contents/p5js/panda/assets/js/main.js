@@ -3,7 +3,7 @@ console.log("main.js!!");
 const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
-const KEY_HIGH  = "panda";
+const KEY_HIGH  = "panda_v0.2";
 const TOTAL     = 1000;
 
 const FILES_IMG = [
@@ -12,7 +12,8 @@ const FILES_IMG = [
 ];
 
 let font, cW, cH, cX, cY;
-let cntScore, overFlg, animals, padY;
+let cntScore, cntHigh;
+let overFlg, animals, padY;
 let btnPanda, btnBear;
 let btnRetryDialog;
 
@@ -40,9 +41,8 @@ function setup(){
 
 	// Score
 	cntScore = 0;
+	cntHigh = loadHigh();
 	overFlg = false;
-
-	// Animals
 	animals = [];
 	padY = gSize * 3;
 
@@ -74,11 +74,14 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsg("スコア:"+cntScore, cW-gSize, gSize*2, gSize*1.4, RIGHT);// Score
+	drawMsg("ハイ:"+cntHigh, cW-gSize, gSize*3.4, gSize*0.8, RIGHT);// Score
+
 	drawMsg("パンダをシロクマに、", gSize, gSize*2, gSize*0.8, LEFT);
 	drawMsg("シロクマをパンダに", gSize, gSize*3, gSize*0.8, LEFT);
 	drawMsg("するゲームです。", gSize, gSize*4, gSize*0.8, LEFT);
 	drawMsg("間違えたら", gSize, gSize*5, gSize*0.8, LEFT);
 	drawMsg("ゲームオーバーだよ!!", gSize, gSize*6, gSize*0.8, LEFT);
+	drawMsg("レッツらゴー!!", gSize, gSize*7, gSize*0.8, LEFT);
 
 	if(!overFlg){
 		btnPanda.update();// Panda
@@ -124,8 +127,7 @@ function actionPanda(){
 	const animal = animals[animals.length-1];
 	if(animal.isChecked()) return;
 	if(animal.isClosed()){
-		overFlg = true;// GameOver
-		for(const animal of animals) animal.saySomething("えー...");
+		gameOver();
 		return;
 	}
 	const x = 0;
@@ -142,9 +144,7 @@ function actionBear(){
 	const animal = animals[animals.length-1];
 	if(animal.isChecked()) return;
 	if(animal.isOpened()){
-		console.log("omg");
-		overFlg = true;// GameOver
-		for(const animal of animals) animal.saySomething("えー...");
+		gameOver();
 		return;
 	}
 	const x = cW;
@@ -169,6 +169,12 @@ function isMovingAll(){
 	return false;
 }
 
+function gameOver(){
+	overFlg = true;// GameOver
+	saveHigh();
+	for(const animal of animals) animal.saySomething("えー...");
+}
+
 function drawGrids(){
 	stroke("#111111"); strokeWeight(1);
 	for(let r=0; r<gRows+1; r++){
@@ -188,12 +194,13 @@ function drawMsg(msg, x, y, size, align){
 	text(msg, x, y);
 }
 
-function loadScore(){
+function loadHigh(){
 	const num = localStorage.getItem(KEY_HIGH);
 	if(num == null) return 0;
 	return num;
 }
 
-function saveScore(){
-	localStorage.setItem(KEY_HIGH, cntTap);
+function saveHigh(){
+	cntHigh = max(cntHigh, cntScore);
+	localStorage.setItem(KEY_HIGH, cntHigh);
 }
