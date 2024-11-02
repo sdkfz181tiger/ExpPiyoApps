@@ -4,16 +4,15 @@ const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
 const KEY_HIGH  = "panda";
+const TOTAL     = 5;
 
 const FILES_IMG = [
 	"a_panda.png", 
 	"a_bear.png"
 ];
 
-const TOTAL = 100;
-
 let font, cW, cH, cX, cY;
-let cntScore, overFlg, animal;
+let cntScore, overFlg, animals, padY;
 let btnPanda, btnBear;
 let btnRetryDialog;
 
@@ -44,7 +43,16 @@ function setup(){
 	overFlg = false;
 
 	// Animals
-	animal = new Animal("a_panda.png", "a_bear.png", cX, cY, gSize*4);
+	animals = [];
+	padY = gSize * 3;
+
+	const sY = cY + gSize*5 - padY * TOTAL;
+	for(let i=0; i<TOTAL; i++){
+		const x = cX;
+		const y = sY + padY * i;
+		const animal = new Animal("a_panda.png", "a_bear.png", x, y, gSize*4);
+		animals.push(animal);
+	}
 
 	// Panda
 	btnPanda = new Button(cX-gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
@@ -74,7 +82,8 @@ function draw(){
 		btnRetryDialog.update();// RetyDialog
 	}
 
-	animal.update();
+	// Animals
+	for(const animal of animals) animal.update();
 
 	TWEEN.update();// Tween
 }
@@ -87,10 +96,10 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	if(animal.contains(mouseX, mouseY)){
-		animal.toggle(gSize*2, gSize*1);
-		cntScore++;
-	}
+	// if(animal.contains(mouseX, mouseY)){
+	// 	animal.toggle(gSize*2, gSize*1);
+	// 	cntScore++;
+	// }
 
 	// if(!overFlg){
 	// 	btnPanda.touch(mouseX, mouseY);// Panda
