@@ -50,7 +50,8 @@ function setup(){
 	for(let i=0; i<TOTAL; i++){
 		const x = cX + random(gSize*-1, gSize*1);
 		const y = sY + padY * i;
-		const animal = new Animal("a_panda.png", "a_bear.png", x, y, gSize*4);
+		const size = random(gSize*3, gSize*5);
+		const animal = new Animal("a_panda.png", "a_bear.png", x, y, size);
 		animals.push(animal);
 	}
 
@@ -63,7 +64,7 @@ function setup(){
 		"シロクマに!", "#5e59ff", true, ()=>{actionBear();});
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 }
 
@@ -74,11 +75,11 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsg("スコア:"+cntScore, cW-gSize, gSize*2, gSize*1.4, RIGHT);// Score
-	drawMsg("ハイ:"+cntHigh, cW-gSize, gSize*3.4, gSize*0.8, RIGHT);// Score
+	drawMsg("ハイ:"+cntHigh, cW-gSize, gSize*3.4, gSize*1.0, RIGHT, "#ff595e");// High
 
 	drawMsg("パンダをシロクマに、", gSize, gSize*2, gSize*0.8, LEFT);
 	drawMsg("シロクマをパンダに", gSize, gSize*3, gSize*0.8, LEFT);
-	drawMsg("するゲームです。", gSize, gSize*4, gSize*0.8, LEFT);
+	drawMsg("転職させるゲームだよ。", gSize, gSize*4, gSize*0.8, LEFT);
 	drawMsg("間違えたら", gSize, gSize*5, gSize*0.8, LEFT);
 	drawMsg("ゲームオーバーだよ!!", gSize, gSize*6, gSize*0.8, LEFT);
 	drawMsg("レッツらゴー!!", gSize, gSize*7, gSize*0.8, LEFT);
@@ -187,8 +188,8 @@ function drawGrids(){
 	}
 }
 
-function drawMsg(msg, x, y, size, align){
-	fill("#ffffff");
+function drawMsg(msg, x, y, size, align, color="#ffffff"){
+	fill(color);
 	textSize(size);
 	textAlign(align, CENTER);
 	text(msg, x, y);
