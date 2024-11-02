@@ -121,7 +121,7 @@ class Animal{
 	constructor(fileClose, fileOpen, x, y, size){
 		this._pageClose = new Actor(fileClose, x, y, size);
 		this._pageOpen = new Actor(fileOpen, x, y, size);
-		this._pageCurrent = this._pageClose;
+		this._pageCurrent = (random()<0.5) ? this._pageClose:this._pageOpen;
 		this._size = size;
 		this._byebyeFlg = false;
 	}
@@ -143,6 +143,12 @@ class Animal{
 	isClosed(){return this._pageCurrent == this._pageClose;}
 
 	isByebye(){return this._byebyeFlg;}
+
+	isMoving(){
+		if(this._pageClose.isMoving()) return true;
+		if(this._pageOpen.isMoving()) return true;
+		return false;
+	}
 
 	open(jumpH){
 		if(this.isOpened()) return;
@@ -190,6 +196,16 @@ class Animal{
 		});
 	}
 
+	closeAndByebye(jumpH, x, y, delay, onFinished=null){
+		if(this.isClosed()) return;
+		this._pageCurrent = this._pageClose;
+		this._pageCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
+			this.setPosition(pos.x, pos.y);
+			this._byebyeFlg = true;// Byebye
+			if(onFinished) onFinished(pos);
+		});
+	}
+
 	drawMsg(msg, size){
 		fill("#ffffff");
 		textSize(this._size / 4); 
@@ -201,7 +217,6 @@ class Animal{
 
 	update(){
 		this._pageCurrent.update();
-		if(this.isOpened()) this.drawMsg("Thanks!");
 	}
 }
 

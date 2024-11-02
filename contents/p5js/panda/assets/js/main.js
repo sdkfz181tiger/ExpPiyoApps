@@ -10,10 +10,10 @@ const FILES_IMG = [
 	"a_bear.png"
 ];
 
-const TOTAL = 30;
+const TOTAL = 80;
 
 let font, cW, cH, cX, cY;
-let cntScore, animals, padY;
+let cntScore, overFlg, animals, padY;
 let btnPanda, btnBear;
 let btnRetryDialog;
 
@@ -40,7 +40,8 @@ function setup(){
 	noSmooth();
 
 	// Score
-	cntScore = loadScore();
+	cntScore = 0;
+	overFlg = false;
 
 	// Animals
 	animals = [];
@@ -52,8 +53,7 @@ function setup(){
 		const y = sY + padY * i;
 		const size = random(gSize*4, gSize*6);
 		const animal = new Animal(
-			"a_panda.png", "a_bear.png",
-			x, y, size);
+			"a_panda.png", "a_bear.png", x, y, size);
 		animals.push(animal);
 	}
 
@@ -76,11 +76,19 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgScore(gSize, gSize*2);// Score
+	drawMsgScore(cW-gSize, gSize*2);// Score
+	drawMsgHowto(gSize, gSize*1, "パンダをシロクマに、");
+	drawMsgHowto(gSize, gSize*2, "シロクマをパンダに");
+	drawMsgHowto(gSize, gSize*3, "してね!!");
+	drawMsgHowto(gSize, gSize*4, "かわいいね!!");
 
-	btnPanda.update();// Panda
-	btnBear.update();// Bear
-	btnRetryDialog.update();// RetyDialog
+	if(!overFlg){
+		btnPanda.update();// Panda
+		btnBear.update();// Bear
+	}else{
+		btnRetryDialog.update();// RetyDialog
+		drawMsgGameOver(cX, cH-gSize*6);// GameOver
+	}
 
 	// Clean
 	if(0 < animals.length){
@@ -95,7 +103,7 @@ function draw(){
 
 	// Draw
 	for(const animal of animals){
-		//if(animal.y < 0) continue;
+		if(animal.y < 0) continue;
 		animal.update();// Update
 	}
 
@@ -110,29 +118,45 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	btnPanda.touch(mouseX, mouseY);// Panda
-	btnBear.touch(mouseX, mouseY);// Bear
-	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	if(!overFlg){
+		btnPanda.touch(mouseX, mouseY);// Panda
+		btnBear.touch(mouseX, mouseY);// Bear
+	}else{
+		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	}
 }
 
 function actionPanda(){
 	console.log("actionPanda!!");
 	if(animals.length <= 0) return;
 	const animal = animals[animals.length-1];
+	if(animal.isMoving()) return;
+	if(animal.isClosed()){
+		overFlg = true;// GameOver
+		return;
+	}
 	const x = 0;
 	const y = animal.y;
-	animal.openAndByebye(gSize*2, x, y, 120);
+	animal.closeAndByebye(gSize*2, x, y, 120);
 	stepForward();
+	cntScore++;
+	return true;
 }
 
 function actionBear(){
 	console.log("actionBear!!");
 	if(animals.length <= 0) return;
 	const animal = animals[animals.length-1];
+	if(animal.isMoving()) return;
+	if(animal.isOpened()){
+		overFlg = true;// GameOver
+		return;
+	}
 	const x = cW;
 	const y = animal.y;
 	animal.openAndByebye(gSize*2, x, y, 120);
 	stepForward();
+	cntScore++;
 }
 
 function stepForward(){
@@ -160,8 +184,22 @@ function drawGrids(){
 function drawMsgScore(x, y){
 	fill("#ffffff");
 	textSize(gSize * 1.4); 
-	textAlign(LEFT, CENTER);
+	textAlign(RIGHT, CENTER);
 	text("スコア:"+cntScore, x, y);
+}
+
+function drawMsgGameOver(x, y){
+	fill("#ffffff");
+	textSize(gSize * 1.4); 
+	textAlign(CENTER, CENTER);
+	text("ゲームオーバー", x, y);
+}
+
+function drawMsgHowto(x, y, str){
+	fill("#ffffff");
+	textSize(gSize * 0.8); 
+	textAlign(LEFT, CENTER);
+	text(str, x, y);
 }
 
 function loadScore(){
