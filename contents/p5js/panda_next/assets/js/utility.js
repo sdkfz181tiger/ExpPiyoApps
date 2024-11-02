@@ -124,6 +124,8 @@ class Animal{
 		this._actorCurrent = (random()<0.5) ? this._actorPanda:this._actorBear;
 		this._size = size;
 		this._byebyeFlg = false;
+		this._checkedFlg = false;
+		this._msg = "";
 	}
 
 	get x(){return this._actorCurrent.x;}
@@ -144,6 +146,14 @@ class Animal{
 	isClosed(){return this._actorCurrent == this._actorPanda;}
 
 	isByebye(){return this._byebyeFlg;}
+
+	isChecked(){return this._checkedFlg;}
+
+	isMoving(){
+		if(this._actorPanda.isMoving()) return true;
+		if(this._actorBear.isMoving()) return true;
+		return false;
+	}
 
 	open(jumpH){
 		if(this.isOpened()) return;
@@ -176,6 +186,7 @@ class Animal{
 
 	openAndByebye(jumpH, x, y, delay, onFinished=null){
 		if(this.isOpened()) return;
+		this._checkedFlg = true;
 		this._actorCurrent = this._actorBear;
 		this._actorCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
@@ -186,6 +197,7 @@ class Animal{
 
 	closeAndByebye(jumpH, x, y, delay, onFinished=null){
 		if(this.isClosed()) return;
+		this._checkedFlg = true;
 		this._actorCurrent = this._actorPanda;
 		this._actorCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
@@ -194,16 +206,28 @@ class Animal{
 		});
 	}
 
-	drawMsg(msg, size){
+	moveDown(disY, delay, onFinished=null){
+		this._actorCurrent.moveDown(disY, delay, (pos)=>{
+			this.setPosition(pos.x, pos.y);
+			if(onFinished) onFinished(pos);
+		});
+	}
+
+	drawMsg(){
 		fill("#ffffff");
-		textSize(this._size / 4); 
-		textAlign(CENTER, CENTER);
-		const x = this._actorCurrent.x;
-		const y = this._actorCurrent.y - this._actorCurrent.h/2;
-		text(msg, x, y);
+		textSize(this._size / 4);
+		textAlign(LEFT, CENTER);
+		const x = this._actorCurrent.x + this._size/2;
+		const y = this._actorCurrent.y - this._size/4;
+		text(this._msg, x, y);
+	}
+
+	saySomething(msg){
+		this._msg = msg;
 	}
 
 	update(){
+		this.drawMsg();
 		this._actorCurrent.update();
 	}
 }
@@ -293,6 +317,23 @@ class Actor extends Sprite{
 			});
 		tween1.chain(tween2);// Chain
 		tween2.chain(tween3);
+		tween1.start();
+	}
+
+	moveDown(disY, delay, onFinished=null){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
+		// Tween
+		const defX   = this._pos.x;
+		const defY   = this._pos.y;
+		const tween1 = new TWEEN.Tween(this._pos)
+			.delay(delay)
+			.to({x: defX, y: defY+disY}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+				if(onFinished) onFinished(this._pos);// Callback
+			});
 		tween1.start();
 	}
 }

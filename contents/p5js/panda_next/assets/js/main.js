@@ -4,7 +4,7 @@ const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
 const KEY_HIGH  = "panda";
-const TOTAL     = 5;
+const TOTAL     = 30;
 
 const FILES_IMG = [
 	"a_panda.png", 
@@ -35,7 +35,7 @@ function setup(){
 	const canvas = createCanvas(cW, cH);
 	canvas.parent("game");
 	textFont(font);
-	frameRate(32);
+	frameRate(48);
 	noSmooth();
 
 	// Score
@@ -48,7 +48,7 @@ function setup(){
 
 	const sY = cY + gSize*5 - padY * TOTAL;
 	for(let i=0; i<TOTAL; i++){
-		const x = cX;
+		const x = cX + random(gSize*-1, gSize*1);
 		const y = sY + padY * i;
 		const animal = new Animal("a_panda.png", "a_bear.png", x, y, gSize*4);
 		animals.push(animal);
@@ -73,17 +73,23 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgScore(cW-gSize, gSize*2);// Score
+	drawMsg("スコア:"+cntScore, cW-gSize, gSize*2, gSize*1.4, RIGHT);// Score
 
 	if(!overFlg){
 		btnPanda.update();// Panda
 		btnBear.update();// Bear
 	}else{
+		drawMsg("ゲームオーバー", cX, cY+gSize*8, gSize*1.4, CENTER);// Score
 		btnRetryDialog.update();// RetyDialog
 	}
 
 	// Animals
 	for(const animal of animals) animal.update();
+	for(let i=animals.length-1; 0<=i; i--){
+		const animal = animals[i];
+		if(!animal.isByebye()) continue;
+		animals.splice(i, 1);
+	}
 
 	TWEEN.update();// Tween
 }
@@ -95,60 +101,64 @@ function mousePressed(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
-
-	// if(animal.contains(mouseX, mouseY)){
-	// 	animal.toggle(gSize*2, gSize*1);
-	// 	cntScore++;
-	// }
-
-	// if(!overFlg){
-	// 	btnPanda.touch(mouseX, mouseY);// Panda
-	// 	btnBear.touch(mouseX, mouseY);// Bear
-	// }else{
-	// 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
-	// }
+	if(!overFlg){
+		btnPanda.touch(mouseX, mouseY);// Panda
+		btnBear.touch(mouseX, mouseY);// Bear
+	}else{
+		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	}
 }
 
 function actionPanda(){
 	console.log("actionPanda!!");
-	// if(animals.length <= 0) return;
-	// const animal = animals[animals.length-1];
-	// if(animal.isMoving()) return;
-	// if(animal.isClosed()){
-	// 	overFlg = true;// GameOver
-	// 	return;
-	// }
-	// const x = 0;
-	// const y = animal.y;
-	// animal.closeAndByebye(gSize*2, x, y, 120);
-	// stepForward();
-	// cntScore++;
+	if(animals.length <= 0) return;
+	if(isMovingAll()) return;
+	const animal = animals[animals.length-1];
+	if(animal.isChecked()) return;
+	if(animal.isClosed()){
+		overFlg = true;// GameOver
+		for(const animal of animals) animal.saySomething("えー...");
+		return;
+	}
+	const x = 0;
+	const y = animal.y;
+	animal.closeAndByebye(gSize*2, x, y, 120);
+	moveDownAll();
+	cntScore++;
 }
 
 function actionBear(){
 	console.log("actionBear!!");
-	// if(animals.length <= 0) return;
-	// const animal = animals[animals.length-1];
-	// if(animal.isMoving()) return;
-	// if(animal.isOpened()){
-	// 	overFlg = true;// GameOver
-	// 	return;
-	// }
-	// const x = cW;
-	// const y = animal.y;
-	// animal.openAndByebye(gSize*2, x, y, 120);
-	// stepForward();
-	// cntScore++;
+	if(animals.length <= 0) return;
+	if(isMovingAll()) return;
+	const animal = animals[animals.length-1];
+	if(animal.isChecked()) return;
+	if(animal.isOpened()){
+		console.log("omg");
+		overFlg = true;// GameOver
+		for(const animal of animals) animal.saySomething("えー...");
+		return;
+	}
+	const x = cW;
+	const y = animal.y;
+	animal.openAndByebye(gSize*2, x, y, 120);
+	moveDownAll();
+	cntScore++;
 }
 
-function stepForward(){
-	console.log("stepForward");
-	const sY = cH - gSize * 10 - padY * animals.length;
+function moveDownAll(){
+	console.log("moveDownAll");
 	for(let i=0; i<animals.length-1; i++){
 		const animal = animals[i];
-		const y = sY + padY * i;
-		animal.setPosition(animal.x, y);
+		animal.moveDown(padY, 200);
 	}
+}
+
+function isMovingAll(){
+	for(const animal of animals){
+		if(animal.isMoving()) return true;
+	}
+	return false;
 }
 
 function drawGrids(){
@@ -163,11 +173,11 @@ function drawGrids(){
 	}
 }
 
-function drawMsgScore(x, y){
+function drawMsg(msg, x, y, size, align){
 	fill("#ffffff");
-	textSize(gSize * 1.4); 
-	textAlign(RIGHT, CENTER);
-	text("スコア:"+cntScore, x, y);
+	textSize(size);
+	textAlign(align, CENTER);
+	text(msg, x, y);
 }
 
 function loadScore(){
