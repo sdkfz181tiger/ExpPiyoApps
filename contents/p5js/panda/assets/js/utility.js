@@ -126,6 +126,10 @@ class Animal{
 		this._byebyeFlg = false;
 		this._checkedFlg = false;
 		this._msg = "";
+
+		const rotation = random(-10, 10);
+		this._actorPanda.rotation = rotation;
+		this._actorBear.rotation = rotation;
 	}
 
 	get x(){return this._actorCurrent.x;}
