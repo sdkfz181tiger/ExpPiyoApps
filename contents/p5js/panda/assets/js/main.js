@@ -12,7 +12,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let cntScore, animals;
-let btnNext;
+let btnPanda, btnBear;
 let btnRetryDialog;
 
 function preload(){
@@ -43,18 +43,22 @@ function setup(){
 	// Animals
 	animals = [];
 	for(let i=0; i<10; i++){
-		const x = random(cW);
+		const x = cX;
 		const y = random(0, cH-gSize*10);
-		const size = random(gSize*4, gSize*5);
+		const size = random(gSize*2, gSize*6);
 		const animal = new Animal(
 			"reimu_good_01.png", "reimu_bad_01.png",
 			x, y, size);
 		animals.push(animal);
 	}
 
-	// Next
-	btnNext = new Button(cX, cY+gSize*8, gSize*6, gSize*2.2, 
-		"NEXT", "#5e59ff", true, ()=>{nextAnimal();});
+	// Panda
+	btnPanda = new Button(cX-gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
+		"PANDA", "#5e59ff", true, ()=>{actionPanda();});
+
+	// Bear
+	btnBear = new Button(cX+gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
+		"BEAR", "#5e59ff", true, ()=>{actionBear();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -68,7 +72,9 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsgScore(cX, cY-gSize*11);// Score
-	btnNext.update();// Next
+
+	btnPanda.update();// Panda
+	btnBear.update();// Bear
 	btnRetryDialog.update();// RetyDialog
 
 	// Animals
@@ -105,12 +111,17 @@ function touchStarted(){
 		}
 	}
 
-	btnNext.touch(mouseX, mouseY);// Next
+	btnPanda.touch(mouseX, mouseY);// Panda
+	btnBear.touch(mouseX, mouseY);// Bear
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 }
 
-function nextAnimal(){
-	console.log("nextAnimal!!");
+function actionPanda(){
+	console.log("actionPanda!!");
+}
+
+function actionBear(){
+	console.log("actionBear!!");
 }
 
 function drawGrids(){
