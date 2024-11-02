@@ -123,12 +123,10 @@ class Animal{
 		this._pageOpen = new Actor(fileOpen, x, y, size);
 		this._pageCurrent = this._pageClose;
 		this._finishFlg = false;
-		this._num = Number(fileOpen.split("_")[2].split(".")[0]);
 	}
 
 	get x(){return this._pageCurrent.x;}
 	get y(){return this._pageCurrent.y;}
-	get num(){return this._num;}
 
 	contains(x, y){return this._pageCurrent.contains(x, y);}
 
@@ -149,7 +147,7 @@ class Animal{
 		if(this.isOpened()) return;
 		this._pageCurrent = this._pageOpen;
 		this._pageCurrent.jump(jumpH, ()=>{
-			console.log("opened:", this._num);
+			console.log("opened");
 		});
 	}
 
@@ -157,7 +155,7 @@ class Animal{
 		if(this.isClosed()) return;
 		this._pageCurrent = this._pageClose;
 		this._pageCurrent.shake(shakeW, ()=>{
-			console.log("closed:", this._num);
+			console.log("closed");
 		});
 	}
 
@@ -176,6 +174,10 @@ class Animal{
 			this.close(shakeW);
 			return;
 		}
+	}
+
+	moveTo(x, y, delay, onFinished){
+		this._pageCurrent.moveTo(x, y, delay, onFinished);
 	}
 
 	update(){
@@ -209,7 +211,7 @@ class Actor extends Sprite{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
-				if(onFinished) onFinished();// Callback
+				if(onFinished) onFinished(this._pos);// Callback
 			});
 		tween1.chain(tween2);// Chain
 		tween1.start();
@@ -237,11 +239,27 @@ class Actor extends Sprite{
 			.easing(TWEEN.Easing.Quadratic.Out)
 			.onComplete(()=>{
 				this._movingFlg = false;
-				if(onFinished) onFinished();// Callback
+				if(onFinished) onFinished(this._pos);// Callback
 			});
 		tween1.chain(tween2);// Chain
 		tween2.chain(tween3);
 		tween3.chain(tween4);
 		tween1.start();
+	}
+
+	moveTo(x, y, delay, onFinished){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
+		// Move
+		const defX   = this._pos.x;
+		const defY   = this._pos.y;
+		const tween = new TWEEN.Tween(this._pos)
+			.to({x: x, y: y}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+				if(onFinished) onFinished(this._pos);// Callback
+			});
+		tween.start();
 	}
 }

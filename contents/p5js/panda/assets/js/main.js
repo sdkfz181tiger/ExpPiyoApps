@@ -12,6 +12,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let cntTap, animal;
+let btnNext;
 let btnRetryDialog;
 
 function preload(){
@@ -44,6 +45,10 @@ function setup(){
 		"reimu_good_01.png", "reimu_bad_01.png",
 		cX, cY, gSize*5);
 
+	// Next
+	btnNext = new Button(cX, cY+gSize*6, gSize*6, gSize*2.2, 
+		"NEXT", "#5e59ff", true, ()=>{nextAnimal();});
+
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
@@ -58,6 +63,7 @@ function draw(){
 	drawMsgCounter(cX, cY-gSize*11);// Counter
 
 	animal.update();// Animal
+	btnNext.update();// Next
 	btnRetryDialog.update();// RetyDialog
 
 	TWEEN.update();// Tween
@@ -71,11 +77,21 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
+	btnNext.touch(mouseX, mouseY);// Next
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 
 	if(animal.contains(mouseX, mouseY)){
 		animal.toggle(gSize*2, gSize);
 	}
+}
+
+function nextAnimal(){
+	console.log("nextAnimal!!");
+	const x = random(cW);
+	const y = random(cH);
+	animal.moveTo(x, y, 100, (pos)=>{
+		animal.setPosition(pos.x, pos.y);
+	});
 }
 
 function drawGrids(){
