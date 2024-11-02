@@ -119,41 +119,36 @@ class Button{
 class Animal{
 
 	constructor(fileClose, fileOpen, x, y, size){
-		this._pageClose = new Actor(fileClose, x, y, size);
-		this._pageOpen = new Actor(fileOpen, x, y, size);
-		this._pageCurrent = (random()<0.5) ? this._pageClose:this._pageOpen;
+		this._actorPanda = new Actor(fileClose, x, y, size);
+		this._actorBear = new Actor(fileOpen, x, y, size);
+		this._actorCurrent = (random()<0.5) ? this._actorPanda:this._actorBear;
 		this._size = size;
 		this._byebyeFlg = false;
 	}
 
-	get x(){return this._pageCurrent.x;}
-	get y(){return this._pageCurrent.y;}
+	get x(){return this._actorCurrent.x;}
+	get y(){return this._actorCurrent.y;}
+	get size(){return this._size;}
 
-	contains(x, y){return this._pageCurrent.contains(x, y);}
+	contains(x, y){return this._actorCurrent.contains(x, y);}
 
 	setPosition(x, y){
-		this._pageClose.x = x;
-		this._pageClose.y = y;
-		this._pageOpen.x = x;
-		this._pageOpen.y = y;
+		this._actorPanda.x = x;
+		this._actorPanda.y = y;
+		this._actorBear.x = x;
+		this._actorBear.y = y;
 	}
 
-	isOpened(){return this._pageCurrent == this._pageOpen;}
+	isOpened(){return this._actorCurrent == this._actorBear;}
 
-	isClosed(){return this._pageCurrent == this._pageClose;}
+	isClosed(){return this._actorCurrent == this._actorPanda;}
 
 	isByebye(){return this._byebyeFlg;}
 
-	isMoving(){
-		if(this._pageClose.isMoving()) return true;
-		if(this._pageOpen.isMoving()) return true;
-		return false;
-	}
-
 	open(jumpH){
 		if(this.isOpened()) return;
-		this._pageCurrent = this._pageOpen;
-		this._pageCurrent.jump(jumpH, (pos)=>{
+		this._actorCurrent = this._actorBear;
+		this._actorCurrent.jump(jumpH, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			console.log("opened");
 		});
@@ -161,8 +156,8 @@ class Animal{
 
 	close(shakeW){
 		if(this.isClosed()) return;
-		this._pageCurrent = this._pageClose;
-		this._pageCurrent.shake(shakeW, (pos)=>{
+		this._actorCurrent = this._actorPanda;
+		this._actorCurrent.shake(shakeW, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			console.log("closed");
 		});
@@ -180,7 +175,7 @@ class Animal{
 	}
 
 	moveTo(x, y, delay, onFinished){
-		this._pageCurrent.moveTo(x, y, delay, (pos)=>{
+		this._actorCurrent.moveTo(x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			onFinished(pos);
 		});
@@ -188,8 +183,8 @@ class Animal{
 
 	openAndByebye(jumpH, x, y, delay, onFinished=null){
 		if(this.isOpened()) return;
-		this._pageCurrent = this._pageOpen;
-		this._pageCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
+		this._actorCurrent = this._actorBear;
+		this._actorCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			this._byebyeFlg = true;// Byebye
 			if(onFinished) onFinished(pos);
@@ -198,8 +193,8 @@ class Animal{
 
 	closeAndByebye(jumpH, x, y, delay, onFinished=null){
 		if(this.isClosed()) return;
-		this._pageCurrent = this._pageClose;
-		this._pageCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
+		this._actorCurrent = this._actorPanda;
+		this._actorCurrent.jumpAndMoveTo(jumpH, x, y, delay, (pos)=>{
 			this.setPosition(pos.x, pos.y);
 			this._byebyeFlg = true;// Byebye
 			if(onFinished) onFinished(pos);
@@ -210,13 +205,13 @@ class Animal{
 		fill("#ffffff");
 		textSize(this._size / 4); 
 		textAlign(CENTER, CENTER);
-		const x = this._pageCurrent.x;
-		const y = this._pageCurrent.y - this._pageCurrent.h/2;
+		const x = this._actorCurrent.x;
+		const y = this._actorCurrent.y - this._actorCurrent.h/2;
 		text(msg, x, y);
 	}
 
 	update(){
-		this._pageCurrent.update();
+		this._actorCurrent.update();
 	}
 }
 

@@ -13,7 +13,7 @@ const FILES_IMG = [
 const TOTAL = 100;
 
 let font, cW, cH, cX, cY;
-let cntScore, overFlg, animals, padY;
+let cntScore, overFlg, animal;
 let btnPanda, btnBear;
 let btnRetryDialog;
 
@@ -44,18 +44,7 @@ function setup(){
 	overFlg = false;
 
 	// Animals
-	animals = [];
-
-	padY = gSize * 3;
-	const sY = cH - gSize * 10 - padY * TOTAL;
-	for(let i=0; i<TOTAL; i++){
-		const x = cX + random(-gSize*2, gSize*2);
-		const y = sY + padY * i;
-		const size = random(gSize*4, gSize*6);
-		const animal = new Animal(
-			"a_panda.png", "a_bear.png", x, y, size);
-		animals.push(animal);
-	}
+	animal = new Animal("a_panda.png", "a_bear.png", cX, cY, gSize*4);
 
 	// Panda
 	btnPanda = new Button(cX-gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
@@ -77,11 +66,6 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsgScore(cW-gSize, gSize*2);// Score
-	drawMsgHowto(gSize, gSize*1, "パンダをシロクマに、");
-	drawMsgHowto(gSize, gSize*2, "シロクマをパンダに");
-	drawMsgHowto(gSize, gSize*3, "してね!!");
-	drawMsgHowto(gSize, gSize*4, "間違えたら、");
-	drawMsgHowto(gSize, gSize*5, "ゲームオーバー!!");
 
 	if(!overFlg){
 		btnPanda.update();// Panda
@@ -91,22 +75,7 @@ function draw(){
 		drawMsgGameOver(cX, cH-gSize*6);// GameOver
 	}
 
-	// Clean
-	if(0 < animals.length){
-		for(let i=animals.length-1; 0<=i; i--){
-			const animal = animals[i];
-			if(animal.isByebye()){// Delete
-				animals.splice(i, 1);
-				continue;
-			}
-		}
-	}
-
-	// Draw
-	for(const animal of animals){
-		if(animal.y < 0) continue;
-		animal.update();// Update
-	}
+	animal.update();
 
 	TWEEN.update();// Tween
 }
@@ -119,45 +88,49 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	if(!overFlg){
-		btnPanda.touch(mouseX, mouseY);// Panda
-		btnBear.touch(mouseX, mouseY);// Bear
-	}else{
-		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	if(animal.contains(mouseX, mouseY)){
+		animal.toggle(gSize*2, gSize*1);
+		cntScore++;
 	}
+
+	// if(!overFlg){
+	// 	btnPanda.touch(mouseX, mouseY);// Panda
+	// 	btnBear.touch(mouseX, mouseY);// Bear
+	// }else{
+	// 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	// }
 }
 
 function actionPanda(){
 	console.log("actionPanda!!");
-	if(animals.length <= 0) return;
-	const animal = animals[animals.length-1];
-	if(animal.isMoving()) return;
-	if(animal.isClosed()){
-		overFlg = true;// GameOver
-		return;
-	}
-	const x = 0;
-	const y = animal.y;
-	animal.closeAndByebye(gSize*2, x, y, 120);
-	stepForward();
-	cntScore++;
-	return true;
+	// if(animals.length <= 0) return;
+	// const animal = animals[animals.length-1];
+	// if(animal.isMoving()) return;
+	// if(animal.isClosed()){
+	// 	overFlg = true;// GameOver
+	// 	return;
+	// }
+	// const x = 0;
+	// const y = animal.y;
+	// animal.closeAndByebye(gSize*2, x, y, 120);
+	// stepForward();
+	// cntScore++;
 }
 
 function actionBear(){
 	console.log("actionBear!!");
-	if(animals.length <= 0) return;
-	const animal = animals[animals.length-1];
-	if(animal.isMoving()) return;
-	if(animal.isOpened()){
-		overFlg = true;// GameOver
-		return;
-	}
-	const x = cW;
-	const y = animal.y;
-	animal.openAndByebye(gSize*2, x, y, 120);
-	stepForward();
-	cntScore++;
+	// if(animals.length <= 0) return;
+	// const animal = animals[animals.length-1];
+	// if(animal.isMoving()) return;
+	// if(animal.isOpened()){
+	// 	overFlg = true;// GameOver
+	// 	return;
+	// }
+	// const x = cW;
+	// const y = animal.y;
+	// animal.openAndByebye(gSize*2, x, y, 120);
+	// stepForward();
+	// cntScore++;
 }
 
 function stepForward(){
