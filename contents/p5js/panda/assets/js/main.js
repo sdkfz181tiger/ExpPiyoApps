@@ -10,7 +10,7 @@ const FILES_IMG = [
 	"a_bear.png"
 ];
 
-const TOTAL = 80;
+const TOTAL = 100;
 
 let font, cW, cH, cX, cY;
 let cntScore, overFlg, animals, padY;
@@ -80,7 +80,8 @@ function draw(){
 	drawMsgHowto(gSize, gSize*1, "パンダをシロクマに、");
 	drawMsgHowto(gSize, gSize*2, "シロクマをパンダに");
 	drawMsgHowto(gSize, gSize*3, "してね!!");
-	drawMsgHowto(gSize, gSize*4, "かわいいね!!");
+	drawMsgHowto(gSize, gSize*4, "間違えたら、");
+	drawMsgHowto(gSize, gSize*5, "ゲームオーバー!!");
 
 	if(!overFlg){
 		btnPanda.update();// Panda
