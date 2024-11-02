@@ -3,14 +3,15 @@ console.log("main.js!!");
 const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
-const KEY_HIGH  = "aho202411";
+const KEY_HIGH  = "panda";
 
 const FILES_IMG = [
-	"reimu_good_01.png"
+	"reimu_good_01.png", 
+	"reimu_bad_01.png"
 ];
 
 let font, cW, cH, cX, cY;
-let cntTap, reimu;
+let cntTap, animal;
 let btnRetryDialog;
 
 function preload(){
@@ -38,8 +39,10 @@ function setup(){
 	// Counter
 	cntTap = loadCounter();
 
-	// Reimu
-	reimu = new Hero("reimu_good_01.png", cX, cY, gSize*5);
+	// Animal
+	animal = new Animal(
+		"reimu_good_01.png", "reimu_bad_01.png",
+		cX, cY, gSize*5);
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -54,7 +57,7 @@ function draw(){
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
 
-	reimu.update();// Hero
+	animal.update();// Animal
 	btnRetryDialog.update();// RetyDialog
 
 	TWEEN.update();// Tween
@@ -70,11 +73,8 @@ function touchStarted(){
 
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 
-	// Shake
-	if(reimu.contains(mouseX, mouseY)){
-		reimu.shake(gSize/2);
-		cntTap++;
-		saveCounter();
+	if(animal.contains(mouseX, mouseY)){
+		animal.toggle(gSize*2, gSize);
 	}
 }
 

@@ -114,8 +114,77 @@ class Button{
 	}
 }
 
-// Hero
-class Hero extends Sprite{
+//==========
+// Animal
+class Animal{
+
+	constructor(fileClose, fileOpen, x, y, size){
+		this._pageClose = new Actor(fileClose, x, y, size);
+		this._pageOpen = new Actor(fileOpen, x, y, size);
+		this._pageCurrent = this._pageClose;
+		this._finishFlg = false;
+		this._num = Number(fileOpen.split("_")[2].split(".")[0]);
+	}
+
+	get x(){return this._pageCurrent.x;}
+	get y(){return this._pageCurrent.y;}
+	get num(){return this._num;}
+
+	contains(x, y){return this._pageCurrent.contains(x, y);}
+
+	setPosition(x, y){
+		this._pageClose.x = x;
+		this._pageClose.y = y;
+		this._pageOpen.x = x;
+		this._pageOpen.y = y;
+	}
+
+	isOpened(){return this._pageCurrent == this._pageOpen;}
+
+	isClosed(){return this._pageCurrent == this._pageClose;}
+
+	isFinished(){return this._finishFlg;}
+
+	open(jumpH){
+		if(this.isOpened()) return;
+		this._pageCurrent = this._pageOpen;
+		this._pageCurrent.jump(jumpH, ()=>{
+			console.log("opened:", this._num);
+		});
+	}
+
+	close(shakeW){
+		if(this.isClosed()) return;
+		this._pageCurrent = this._pageClose;
+		this._pageCurrent.shake(shakeW, ()=>{
+			console.log("closed:", this._num);
+		});
+	}
+
+	finish(){
+		if(this._finishFlg) return;
+		this._finishFlg = true;
+		this._pageCurrent.alpha = 100;// Alpha
+	}
+
+	toggle(jumpH, shakeW){
+		if(this.isClosed()){
+			this.open(jumpH);
+			return;
+		}
+		if(this.isOpened()){
+			this.close(shakeW);
+			return;
+		}
+	}
+
+	update(){
+		this._pageCurrent.update();
+	}
+}
+
+// Actor
+class Actor extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
 		super(file, x, y, size, alpha, rotation);
