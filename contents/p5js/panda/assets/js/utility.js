@@ -145,6 +145,9 @@ class Countdown{
 		text(sec, this._x, this._y);
 		textSize(this._size*0.5);
 		textAlign(CENTER, TOP);
+		text("TIME", this._x, this._y - this._size*0.8);
+		textSize(this._size*0.5);
+		textAlign(CENTER, TOP);
 		text(mil, this._x, this._y + this._size*0.52);
 	}
 }

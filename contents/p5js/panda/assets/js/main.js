@@ -54,7 +54,7 @@ function setup(){
 	// Score
 	cntScore = 0;
 	cntHigh = loadHigh();
-	cntDown = new Countdown(cW-gSize*2.5, gSize*1.5, gSize*2, ()=>{
+	cntDown = new Countdown(cW-gSize*2.5, gSize*1.8, gSize*2, ()=>{
 		gameOver();// GameOver
 	});
 
