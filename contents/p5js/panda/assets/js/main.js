@@ -108,7 +108,7 @@ function draw(){
 	cntDown.update();
 
 	if(!overFlg){
-		cntDown.tick(floor(12));// Tick
+		cntDown.tick(floor(9));// Tick
 		btnPanda.update();// Panda
 		btnBear.update();// Bear
 	}else{
