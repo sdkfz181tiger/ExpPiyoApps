@@ -7,19 +7,9 @@ const KEY_HIGH  = "panda_v0.3";
 const TOTAL     = 512;
 
 const FILES_IMG = [
-	"a_panda.png", "a_bear.png"
+	"a_panda.png", 
+	"a_bear.png"
 ];
-
-const FILES_SOUND_SUCCESS = [
-	"./assets/sounds/se_success_01.mp3",
-	"./assets/sounds/se_success_02.mp3",
-	"./assets/sounds/se_success_03.mp3"
-];
-const FILES_SOUND_FAILED = [
-	"./assets/sounds/se_failed_01.mp3"
-];
-const sounds_success = [];
-const sounds_failed = [];
 
 let font, cW, cH, cX, cY;
 let cntScore, cntHigh, cntDown;
@@ -30,8 +20,6 @@ let btnRetryDialog;
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
 	for(let file of FILES_IMG) ImgLoader.loadImg(file);
-	for(let file of FILES_SOUND_SUCCESS) sounds_success.push(loadSound(file));
-	for(let file of FILES_SOUND_FAILED) sounds_failed.push(loadSound(file));
 }
 
 function setup(){
@@ -156,7 +144,6 @@ function actionPanda(){
 	animal.closeAndByebye(gSize*2, x, y, 60);
 	moveDownAll();
 	cntScore++;
-	playSoundRandom(sounds_success);// Success
 }
 
 function actionBear(){
@@ -174,7 +161,6 @@ function actionBear(){
 	animal.openAndByebye(gSize*2, x, y, 60);
 	moveDownAll();
 	cntScore++;
-	playSoundRandom(sounds_success);// Success
 }
 
 function moveDownAll(){
@@ -200,12 +186,6 @@ function gameOver(){
 		const rdm = floor(random(msgs.length));
 		animal.saySomething(msgs[rdm]);
 	}
-	playSoundRandom(sounds_failed);// Failed
-}
-
-function playSoundRandom(arr){
-	const rdm = floor(random(arr.length));
-	arr[rdm].play();
 }
 
 function drawGrids(){
