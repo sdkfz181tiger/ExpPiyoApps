@@ -3,7 +3,7 @@ console.log("main.js!!");
 const FONT_SIZE = 28;
 const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
-const KEY_HIGH  = "panda_v0.3";
+const KEY_HIGH  = "panda_v0.4";
 const TOTAL     = 512;
 
 const FILES_IMG = [
