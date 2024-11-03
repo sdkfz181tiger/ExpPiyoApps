@@ -11,7 +11,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let cntScore, cntHigh;
-let btnRetryDialog, btnX;
+let btnRetryDialog, btnShareWithX;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -40,11 +40,11 @@ function setup(){
 	cntHigh = loadHigh();
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX+gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
-	// X
-	btnX = new Button(cX, cY, gSize*6, gSize*2.2, 
+	// ShareWithX
+	btnShareWithX = new Button(cX-gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
 		"Xでシェア", "#1da1f2", true, ()=>{shareWithX();});
 }
 
@@ -58,7 +58,7 @@ function draw(){
 	drawMsg("ハイ:"+cntHigh, gSize, gSize*3.0, gSize*1.0, LEFT, "#ff595e");// High
 
 	btnRetryDialog.update();// RetyDialog
-	btnX.update();// X
+	btnShareWithX.update();// ShareWithX
 
 	TWEEN.update();// Tween
 }
@@ -71,7 +71,7 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
-	btnX.touch(mouseX, mouseY);// X
+	btnShareWithX.touch(mouseX, mouseY);// ShareWithX
 }
 
 function drawGrids(){
@@ -102,16 +102,4 @@ function loadHigh(){
 function saveHigh(){
 	cntHigh = max(cntHigh, cntScore);
 	localStorage.setItem(KEY_HIGH, cntHigh);
-}
-
-function shareWithX(){
-	console.log("shareWithX");
-	const api = "https://twitter.com/share";
-	const params = {
-		"url": "https://sdkfz181tiger.github.io/ExpPiyoApps/contents/p5js/panda/",
-		"text": "パンダロンダリングで" + cntScore + "点取りました!!(最高得点は" + cntHigh + "です)",
-		"hashtags": ["ahoge", "gamedev", "パンダロンダリング"]
-	}
-	const query =  new URLSearchParams(params).toString();
-	location.href = api + "?" + query;
 }
