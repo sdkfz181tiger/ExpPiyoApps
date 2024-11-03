@@ -115,41 +115,6 @@ class Button{
 }
 
 //==========
-// Countdown
-class Countdown{
-
-	constructor(x, y, size, onFinished=null){
-		this._cntMax = 10000;
-		this._cntMin = 1000;
-		this._cntNum = this._cntMax;
-		this._x = x;
-		this._y = y;
-		this._size = size;
-		this._onFinished = onFinished;
-	}
-
-	tick(num){
-		if(this._cntNum <= 0) return;
-		this._cntNum -= num;
-		if(this._cntMin < this._cntNum) return;
-		this._cntNum = 0;
-		if(this._onFinished) this._onFinished();
-	}
-
-	update(){
-		fill("white");
-		const sec = floor(this._cntNum/1000);
-		const mil = this._cntNum % 1000;
-		textSize(this._size*1.0); 
-		textAlign(CENTER, CENTER);
-		text(sec, this._x, this._y);
-		textSize(this._size*0.5);
-		textAlign(CENTER, TOP);
-		text(mil, this._x, this._y + this._size*0.52);
-	}
-}
-
-//==========
 // Animal
 class Animal{
 
