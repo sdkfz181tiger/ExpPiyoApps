@@ -25,7 +25,7 @@ let font, cW, cH, cX, cY;
 let cntScore, cntHigh, cntDown;
 let overFlg, animals, padY;
 let btnPanda, btnBear;
-let btnRetryDialog;
+let btnRetryDialog, btnShareWithX;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -80,8 +80,12 @@ function setup(){
 		"シロクマに!", "#5e59ff", true, ()=>{actionBear();});
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX+gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
+
+	// ShareWithX
+	btnShareWithX = new Button(cX-gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
+		"Xでシェア", "#1da1f2", true, ()=>{shareWithX();});
 }
 
 function draw(){
@@ -110,6 +114,7 @@ function draw(){
 	}else{
 		drawMsg("ゲームオーバー", cX, cY+gSize*8, gSize*1.4, CENTER);// Score
 		btnRetryDialog.update();// RetyDialog
+		btnShareWithX.update();// ShareWithX
 	}
 
 	// Animals
@@ -138,6 +143,7 @@ function touchStarted(){
 		btnBear.touch(mouseX, mouseY);// Bear
 	}else{
 		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+		btnShareWithX.touch(mouseX, mouseY);// ShareWithX
 	}
 }
 

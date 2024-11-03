@@ -115,6 +115,20 @@ class Button{
 }
 
 //==========
+// Share
+function shareWithX(){
+	console.log("shareWithX");
+	const api = "https://twitter.com/share";
+	const params = {
+		"url": "https://sdkfz181tiger.github.io/ExpPiyoApps/contents/p5js/panda/",
+		"text": "パンダロンダリングで" + cntScore + "点取りました!!(最高得点は" + cntHigh + "です)",
+		"hashtags": ["ahoge", "gamedev", "パンダロンダリング"]
+	}
+	const query =  new URLSearchParams(params).toString();
+	location.href = api + "?" + query;
+}
+
+//==========
 // Countdown
 class Countdown{
 
