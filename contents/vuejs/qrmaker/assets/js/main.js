@@ -123,7 +123,7 @@ app.component("qrcode", {
 			console.log("init");
 			// QR
 			this.qrcode = new QRCode("qrcode", {
-				text: "https://sdkfz181tiger.github.io/ExpPiyoApps/",
+				text: "http://sdkfz181tiger.github.io/ExpPiyoApps/",
 				width: 256, height: 256,
 				colorDark: "#000000",
 				colorLight: "#ffffff",
