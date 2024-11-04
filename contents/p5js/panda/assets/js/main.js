@@ -80,11 +80,11 @@ function setup(){
 		"シロクマに!", "#5e59ff", true, ()=>{actionBear();});
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX+gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX+gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
 	// ShareWithX
-	btnShareWithX = new Button(cX-gSize*4, cY+gSize*11, gSize*6, gSize*2.2, 
+	btnShareWithX = new Button(cX-gSize*4, cY+gSize*8, gSize*6, gSize*2.2, 
 		"Xでシェア", "#1da1f2", true, ()=>{shareWithX();});
 }
 
@@ -112,7 +112,7 @@ function draw(){
 		btnPanda.update();// Panda
 		btnBear.update();// Bear
 	}else{
-		drawMsg("ゲームオーバー", cX, cY+gSize*8, gSize*1.4, CENTER);// Score
+		drawMsg("ゲームオーバー", cX, cY+gSize*11, gSize*1.4, CENTER);// Score
 		btnRetryDialog.update();// RetyDialog
 		btnShareWithX.update();// ShareWithX
 	}

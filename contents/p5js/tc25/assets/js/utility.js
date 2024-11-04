@@ -120,9 +120,9 @@ function shareWithX(){
 	console.log("shareWithX");
 	const api = "https://twitter.com/share";
 	const params = {
-		"url": "http://sdkfz181tiger.github.io/ExpPiyoApps/contents/p5js/panda/",
-		"text": "パンダロンダリングで" + cntScore + "点取りました!!(最高得点は" + cntHigh + "です)",
-		"hashtags": ["ahoge", "gamedev", "パンダロンダリング"]
+		"url": "https://sdkfz181tiger.github.io/ExpPiyoApps/",
+		"text": "PiyoAppsで" + cntScore + "点取りました!!(最高得点は" + cntHigh + "です)",
+		"hashtags": ["gamedev", "ゲーム開発"]
 	}
 	const query =  new URLSearchParams(params).toString();
 	location.href = api + "?" + query;
