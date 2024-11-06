@@ -26,6 +26,7 @@ const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
 let cntTap, cardSelected;
+let btnHigh, btnLow;
 let btnRetryDialog;
 
 const trump = [];
@@ -55,6 +56,13 @@ function setup(){
 
 	cntTap = loadCounter();// Counter
 	cardSelected = [];// Selected
+
+	// Button
+	btnHigh = new Button(cX-gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
+		"HIGH", "#ff595e", true, ()=>{onTouchBtn();});
+
+	btnLow = new Button(cX+gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
+		"LOW", "#595eff", true, ()=>{onTouchBtn();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
@@ -88,6 +96,8 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsgCounter(cX, cY-gSize*11);// Counter
+	btnHigh.update();// High
+	btnLow.update();// Low
 	btnRetryDialog.update();// RetyDialog
 	for(const card of cards){
 		card.update();// Cards
@@ -106,7 +116,13 @@ function touchStarted(){
 
 	cntTap++;// Counter
 
+	btnHigh.touch(mouseX, mouseY);// High
+	btnLow.touch(mouseX, mouseY);// Low
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+}
+
+function onTouchBtn(){
+	console.log("onTouchBtn");
 
 	// Pickup card
 	cards.push(trump[trump.length-1]);
