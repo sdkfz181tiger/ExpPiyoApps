@@ -57,7 +57,7 @@ function setup(){
 	cardSelected = [];// Selected
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
 	// Trump(13 x 4)

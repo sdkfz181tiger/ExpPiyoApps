@@ -1,6 +1,6 @@
 {
-	"name":"ハイかロー",
-	"short_name":"ハイかロー",
+	"name":"高いの低いの?",
+	"short_name":"高いの低いの?",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",
