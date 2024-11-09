@@ -122,7 +122,6 @@ class Card{
 		this._pageClose = new OnePage(fileClose, x, y, size);
 		this._pageOpen = new OnePage(fileOpen, x, y, size);
 		this._pageCurrent = this._pageClose;
-		this._finishFlg = false;
 		this._num = Number(fileOpen.split("_")[2].split(".")[0]);
 	}
 
@@ -139,16 +138,19 @@ class Card{
 		this._pageOpen.y = y;
 	}
 
+	adaptPosition(){
+		this.setPosition(this._pageCurrent.x, this._pageCurrent.y);
+	}
+
 	isOpened(){return this._pageCurrent == this._pageOpen;}
 
 	isClosed(){return this._pageCurrent == this._pageClose;}
-
-	isFinished(){return this._finishFlg;}
 
 	open(jumpH){
 		if(this.isOpened()) return;
 		this._pageCurrent = this._pageOpen;
 		this._pageCurrent.jump(jumpH, ()=>{
+			this.adaptPosition();// Adapt
 			console.log("opened:", this._num);
 		});
 	}
@@ -157,25 +159,16 @@ class Card{
 		if(this.isClosed()) return;
 		this._pageCurrent = this._pageClose;
 		this._pageCurrent.shake(shakeW, ()=>{
+			this.adaptPosition();// Adapt
 			console.log("closed:", this._num);
 		});
 	}
 
-	finish(){
-		if(this._finishFlg) return;
-		this._finishFlg = true;
-		this._pageCurrent.alpha = 100;// Alpha
-	}
-
-	toggle(jumpH, shakeW){
-		if(this.isClosed()){
-			this.open(jumpH);
-			return;
-		}
-		if(this.isOpened()){
-			this.close(shakeW);
-			return;
-		}
+	moveTo(x, y, delay, onFinished=null){
+		this._pageCurrent.moveTo(x, y, delay, ()=>{
+			this.adaptPosition();// Adapt
+			if(onFinished) onFinished();
+		});
 	}
 
 	update(){
@@ -242,5 +235,21 @@ class OnePage extends Sprite{
 		tween2.chain(tween3);
 		tween3.chain(tween4);
 		tween1.start();
+	}
+
+	moveTo(x, y, delay, onFinished=null){
+		if(this._movingFlg) return;
+		this._movingFlg = true;
+		// Tween
+		const defX  = this._pos.x;
+		const defY  = this._pos.y;
+		const tween = new TWEEN.Tween(this._pos)
+			.to({x: x, y: y}, delay)
+			.easing(TWEEN.Easing.Quadratic.Out)
+			.onComplete(()=>{
+				this._movingFlg = false;
+				if(onFinished) onFinished();// Callback
+			});
+		tween.start();
 	}
 }

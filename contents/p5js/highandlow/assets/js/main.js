@@ -29,8 +29,8 @@ let cntTap, cardSelected;
 let btnHigh, btnLow;
 let btnRetryDialog;
 
-const trump = [];
-const cards = [];
+const closedCards = [];
+const openedCards = [];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -59,16 +59,16 @@ function setup(){
 
 	// Button
 	btnHigh = new Button(cX-gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
-		"HIGH", "#ff595e", true, ()=>{onTouchBtn();});
+		"HIGH", "#ff595e", true, ()=>{onTouchHigh();});
 
 	btnLow = new Button(cX+gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
-		"LOW", "#595eff", true, ()=>{onTouchBtn();});
+		"LOW", "#595eff", true, ()=>{onTouchLow();});
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*12, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
-	// Trump
+	// ClosedCards
 	for(let i=0; i<13; i++){
 		for(let s=SUITS.length-1; 0<=s; s--){
 			const rdm = floor(random(s));
@@ -76,16 +76,16 @@ function setup(){
 		}
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
-			const card = new Card("card_back_03.png", file, cX, cY, gSize*4);
-			trump.push(card);
+			const card = new Card("card_back_03.png", file, cX, 0, gSize*4);
+			closedCards.push(card);
 		}
 	}
 
 	// Shuffle with 2 pairs
 	for(let i=24; 0<=i; i--){
 		const rdm = floor(random(i));
-		[trump[i*2], trump[rdm*2]] = [trump[rdm*2], trump[i*2]];
-		[trump[i*2+1], trump[rdm*2+1]] = [trump[rdm*2+1], trump[i*2+1]];
+		[closedCards[i*2], closedCards[rdm*2]] = [closedCards[rdm*2], closedCards[i*2]];
+		[closedCards[i*2+1], closedCards[rdm*2+1]] = [closedCards[rdm*2+1], closedCards[i*2+1]];
 	}
 }
 
@@ -99,9 +99,10 @@ function draw(){
 	btnHigh.update();// High
 	btnLow.update();// Low
 	btnRetryDialog.update();// RetyDialog
-	for(const card of cards){
-		card.update();// Cards
-	}
+
+	// Cards
+	for(const card of openedCards) card.update();
+	for(const card of closedCards) card.update();
 
 	TWEEN.update();// Tween
 }
@@ -114,23 +115,45 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	cntTap++;// Counter
-
 	btnHigh.touch(mouseX, mouseY);// High
 	btnLow.touch(mouseX, mouseY);// Low
 	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 }
 
-function onTouchBtn(){
-	console.log("onTouchBtn");
+function onTouchHigh(){
+	console.log("onTouchHigh");
+	if(openedCards.length <= 0) return;
+	cntTap++;// Counter
 
-	// Pickup card
-	cards.push(trump[trump.length-1]);
-	trump.splice(trump.length-1, 1);
+	// Pickup
+	closedCards.push(openedCards[openedCards.length-1]);
+	openedCards.splice(openedCards.length-1, 1);
 
 	// Slide
-	const card = cards[cards.length-1];
-	card.open(gSize);
+	const card = closedCards[closedCards.length-1];
+	const x = cX;
+	const y = 0;
+	card.moveTo(x, y, 250, ()=>{
+		card.close(gSize);
+	});
+}
+
+function onTouchLow(){
+	console.log("onTouchLow");
+	if(closedCards.length <= 0) return;
+	cntTap--;// Counter
+
+	// Pickup
+	openedCards.push(closedCards[closedCards.length-1]);
+	closedCards.splice(closedCards.length-1, 1);
+
+	// Slide
+	const card = openedCards[openedCards.length-1];
+	const x = cX + random(-gSize*2, gSize*2);
+	const y = cY + random(-gSize*2, gSize*2);
+	card.moveTo(x, y, 250, ()=>{
+		card.open(gSize);
+	});
 }
 
 function drawGrids(){
