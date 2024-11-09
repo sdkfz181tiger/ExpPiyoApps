@@ -29,6 +29,11 @@ let cntTap, cardSelected;
 let btnHigh, btnLow;
 let btnRetryDialog;
 
+let posLeft = {x: 0, y: 0}
+let posRight = {x: 0, y: 0}
+let numLeft = 0;
+let numRight = 0;
+
 const closedCards = [];
 const openedCards = [];
 
@@ -68,6 +73,12 @@ function setup(){
 	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
+	// Positions
+	posLeft.x = cX - gSize * 4;
+	posLeft.y = cY - gSize * 2;
+	posRight.x = cX + gSize * 4;
+	posRight.y = cY - gSize * 2;
+
 	// ClosedCards
 	for(let i=0; i<13; i++){
 		for(let s=SUITS.length-1; 0<=s; s--){
@@ -81,12 +92,21 @@ function setup(){
 		}
 	}
 
-	// Shuffle with 2 pairs
-	for(let i=24; 0<=i; i--){
+	// Shuffle
+	for(let i=closedCards.length-1; 0<i; i--){
 		const rdm = floor(random(i));
-		[closedCards[i*2], closedCards[rdm*2]] = [closedCards[rdm*2], closedCards[i*2]];
-		[closedCards[i*2+1], closedCards[rdm*2+1]] = [closedCards[rdm*2+1], closedCards[i*2+1]];
+		[closedCards[i], closedCards[rdm]] = [closedCards[rdm], closedCards[i]];
 	}
+
+	// Set first card
+	openedCards.push(closedCards[closedCards.length-1]);
+	closedCards.splice(closedCards.length-1, 1);
+	const card = openedCards[openedCards.length-1];
+	const x = posLeft.x;
+	const y = posLeft.y;
+	card.moveTo(x, y, 250, ()=>{
+		card.open(gSize);
+	});
 }
 
 function draw(){
@@ -95,7 +115,12 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsgCounter(cX, cY-gSize*11);// Counter
+	drawMsg(cntTap, cX, cY-gSize*11);// Counter
+	drawMsg(numLeft, cX - gSize*4, cY-gSize*7);
+	drawMsg(numRight, cX + gSize*4, cY-gSize*7);
+	drawMsg("NEXT", cX + gSize*4, cY+gSize*1.8, 1.0);
+	drawMsg("HIGH or LOW ?", cX, cY+gSize*4, 1.2);
+
 	btnHigh.update();// High
 	btnLow.update();// Low
 	btnRetryDialog.update();// RetyDialog
@@ -124,33 +149,25 @@ function onTouchHigh(){
 	console.log("onTouchHigh");
 	if(openedCards.length <= 0) return;
 	cntTap++;// Counter
-
-	// Pickup
-	closedCards.push(openedCards[openedCards.length-1]);
-	openedCards.splice(openedCards.length-1, 1);
-
-	// Slide
-	const card = closedCards[closedCards.length-1];
-	const x = cX;
-	const y = 0;
-	card.moveTo(x, y, 250, ()=>{
-		card.close(gSize);
-	});
 }
 
 function onTouchLow(){
 	console.log("onTouchLow");
+	openNext();
+}
+
+function openNext(){
 	if(closedCards.length <= 0) return;
 	cntTap--;// Counter
 
-	// Pickup
+	// Open
 	openedCards.push(closedCards[closedCards.length-1]);
 	closedCards.splice(closedCards.length-1, 1);
 
 	// Slide
 	const card = openedCards[openedCards.length-1];
-	const x = cX + random(-gSize*2, gSize*2);
-	const y = cY + random(-gSize*2, gSize*2);
+	const x = posRight.x;
+	const y = posRight.y;
 	card.moveTo(x, y, 250, ()=>{
 		card.open(gSize);
 	});
@@ -168,11 +185,11 @@ function drawGrids(){
 	}
 }
 
-function drawMsgCounter(x, y){
+function drawMsg(msg, x, y, size=2.0, alignX=CENTER, alignY=CENTER){
 	fill("#ffffff");
-	textSize(gSize * 2.0); 
-	textAlign(CENTER, CENTER);
-	text(cntTap, x, y);
+	textSize(gSize * size); 
+	textAlign(alignX, alignY);
+	text(msg, x, y);
 }
 
 function loadCounter(){
