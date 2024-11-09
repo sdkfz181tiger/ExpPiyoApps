@@ -25,7 +25,7 @@ const FILES_IMG = [
 const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
-let cntTap, cardSelected;
+let score;
 let btnHigh, btnLow;
 let btnRetryDialog;
 
@@ -34,8 +34,8 @@ let posRight = {x: 0, y: 0}
 let numLeft = 0;
 let numRight = 0;
 
-const closedCards = [];
-const openedCards = [];
+const stockCards = [];
+const readyCards = [];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -59,8 +59,7 @@ function setup(){
 	frameRate(32);
 	noSmooth();
 
-	cntTap = loadCounter();// Counter
-	cardSelected = [];// Selected
+	score = loadScore();// Score
 
 	// Button
 	btnHigh = new Button(cX-gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
@@ -88,25 +87,26 @@ function setup(){
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
 			const card = new Card("card_back_03.png", file, cX, 0, gSize*4);
-			closedCards.push(card);
+			stockCards.push(card);
 		}
 	}
 
 	// Shuffle
-	for(let i=closedCards.length-1; 0<i; i--){
+	for(let i=stockCards.length-1; 0<i; i--){
 		const rdm = floor(random(i));
-		[closedCards[i], closedCards[rdm]] = [closedCards[rdm], closedCards[i]];
+		[stockCards[i], stockCards[rdm]] = [stockCards[rdm], stockCards[i]];
 	}
 
-	// Set first card
-	openedCards.push(closedCards[closedCards.length-1]);
-	closedCards.splice(closedCards.length-1, 1);
-	const card = openedCards[openedCards.length-1];
-	const x = posLeft.x;
-	const y = posLeft.y;
-	card.moveTo(x, y, 250, ()=>{
-		card.open(gSize);
-	});
+	// Set first
+	readyCards.push(stockCards[stockCards.length-1]);
+	stockCards.splice(stockCards.length-1, 1);
+	const first = readyCards[readyCards.length-1];
+	first.moveTo(posLeft.x, posLeft.y, 250, ()=>{first.open(gSize);});
+	// Set second
+	readyCards.push(stockCards[stockCards.length-1]);
+	stockCards.splice(stockCards.length-1, 1);
+	const second = readyCards[readyCards.length-1];
+	second.moveTo(posRight.x, posRight.y, 250);
 }
 
 function draw(){
@@ -115,7 +115,7 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsg(cntTap, cX, cY-gSize*11);// Counter
+	drawMsg(score, cX, cY-gSize*11);// Counter
 	drawMsg(numLeft, cX - gSize*4, cY-gSize*7);
 	drawMsg(numRight, cX + gSize*4, cY-gSize*7);
 	drawMsg("NEXT", cX + gSize*4, cY+gSize*1.8, 1.0);
@@ -126,8 +126,8 @@ function draw(){
 	btnRetryDialog.update();// RetyDialog
 
 	// Cards
-	for(const card of openedCards) card.update();
-	for(const card of closedCards) card.update();
+	for(const card of stockCards) card.update();
+	for(const card of readyCards) card.update();
 
 	TWEEN.update();// Tween
 }
@@ -147,30 +147,35 @@ function touchStarted(){
 
 function onTouchHigh(){
 	console.log("onTouchHigh");
-	if(openedCards.length <= 0) return;
-	cntTap++;// Counter
+	if(readyCards.length <= 0) return;
+	score++;// Score
 }
 
 function onTouchLow(){
 	console.log("onTouchLow");
-	openNext();
+	openAndCheck();
 }
 
-function openNext(){
-	if(closedCards.length <= 0) return;
-	cntTap--;// Counter
+function openAndCheck(){
+	if(readyCards.length <= 1) return;
+	const first = readyCards[readyCards.length-2];
+	const second = readyCards[readyCards.length-1];
+	second.open(gSize);
+	setTimeout(()=>{readyNext();}, 400);// Ready
+}
 
-	// Open
-	openedCards.push(closedCards[closedCards.length-1]);
-	closedCards.splice(closedCards.length-1, 1);
+function readyNext(){
+	if(stockCards.length <= 0) return;
+
+	// Ready
+	readyCards.push(stockCards[stockCards.length-1]);
+	stockCards.splice(stockCards.length-1, 1);
 
 	// Slide
-	const card = openedCards[openedCards.length-1];
-	const x = posRight.x;
-	const y = posRight.y;
-	card.moveTo(x, y, 250, ()=>{
-		card.open(gSize);
-	});
+	const first = readyCards[readyCards.length-2];
+	first.moveTo(posLeft.x, posLeft.y, 250);
+	const second = readyCards[readyCards.length-1];
+	second.moveTo(posRight.x, posRight.y, 250);
 }
 
 function drawGrids(){
@@ -192,12 +197,12 @@ function drawMsg(msg, x, y, size=2.0, alignX=CENTER, alignY=CENTER){
 	text(msg, x, y);
 }
 
-function loadCounter(){
+function loadScore(){
 	const num = localStorage.getItem(KEY_HIGH);
 	if(num == null) return 0;
 	return num;
 }
 
-function saveCounter(){
-	localStorage.setItem(KEY_HIGH, cntTap);
+function saveScore(){
+	localStorage.setItem(KEY_HIGH, score);
 }
