@@ -133,11 +133,11 @@ function draw(){
 	btnLow.update();// Low
 	btnRetryDialog.update();// RetyDialog
 
+	mark.update();// Mark
+
 	// Cards
 	for(const card of stockCards) card.update();
 	for(const card of readyCards) card.update();
-
-	mark.update();// Mark
 
 	TWEEN.update();// Tween
 }
@@ -165,11 +165,30 @@ function onTouchLow(){
 	openAndCheck(false);
 }
 
-function openAndCheck(flg){
+function openAndCheck(highFlg){
 	if(readyCards.length <= 1) return;
+
+	if(!mark.isFinished()) return;
+
 	const first = readyCards[readyCards.length-2];
 	const second = readyCards[readyCards.length-1];
 	second.open(gSize);
+
+	if(highFlg){
+		if(first.num <= second.num){
+			mark.jumpOK(gSize);
+		}else{
+			mark.jumpNG(gSize);
+		}
+	}else{
+		if(second.num <= first.num){
+			mark.jumpOK(gSize);
+		}else{
+			mark.jumpNG(gSize);
+		}
+	}
+
+	setTimeout(()=>{readyNext();}, 800);
 }
 
 function readyNext(){
@@ -184,6 +203,9 @@ function readyNext(){
 	first.moveTo(posLeft.x, posLeft.y, 250);
 	const second = readyCards[readyCards.length-1];
 	second.moveTo(posRight.x, posRight.y, 250);
+
+	// Reset
+	mark.reset();
 }
 
 function drawGrids(){

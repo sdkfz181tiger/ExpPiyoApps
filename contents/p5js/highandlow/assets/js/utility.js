@@ -184,12 +184,15 @@ class Mark{
 		this._sprNg = new MySprite(fileNg, x, y, size);
 		this._sprOk = new MySprite(fileOk, x, y, size);
 		this._sprCurrent = this._sprBkg;
+		this._finishFlg = true;
 	}
 
 	get x(){return this._sprCurrent.x;}
 	get y(){return this._sprCurrent.y;}
 
 	contains(x, y){return this._sprCurrent.contains(x, y);}
+
+	isFinished(){return this._finishFlg;}
 
 	setPosition(x, y){
 		this._sprBkg.x = x;
@@ -199,7 +202,38 @@ class Mark{
 		this._sprOk.x = x;
 		this._sprOk.y = y;
 	}
-	
+
+	adaptPosition(){
+		this.setPosition(this._sprCurrent.x, this._sprCurrent.y);
+	}
+
+	jumpNG(jumpH, wait=1200){
+		if(this._finishFlg == false) return;
+		this._finishFlg = false;
+		this._sprCurrent = this._sprNg;
+		this._sprCurrent.jump(jumpH, ()=>{
+			this.adaptPosition();// Adapt
+			setTimeout(()=>{this._finishFlg = true;}, wait);
+			console.log("NG");
+		});
+	}
+
+	jumpOK(jumpH, wait=1200){
+		if(this._finishFlg == false) return;
+		this._finishFlg = false;
+		this._sprCurrent = this._sprOk;
+		this._sprCurrent.jump(jumpH, ()=>{
+			this.adaptPosition();// Adapt
+			setTimeout(()=>{this._finishFlg = true;}, wait);
+			console.log("OK");
+		});
+	}
+
+	reset(){
+		this._finishFlg = false;
+		this._sprCurrent = this._sprBkg;
+	}
+
 	update(){
 		this._sprCurrent.update();
 	}
