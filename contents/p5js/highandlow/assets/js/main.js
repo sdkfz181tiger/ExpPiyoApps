@@ -26,7 +26,7 @@ const FILES_IMG = [
 const SUITS = ["spade", "heart", "diamond", "club"];
 
 let font, cW, cH, cX, cY;
-let score;
+let score, high;
 let btnHigh, btnLow;
 let btnRetryDialog;
 
@@ -61,7 +61,8 @@ function setup(){
 	frameRate(32);
 	noSmooth();
 
-	score = loadScore();// Score
+	score = 0;// Score
+	high = loadHighScore();// High
 
 	// Button
 	btnHigh = new Button(cX-gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
@@ -124,7 +125,8 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsg(score, cX, cY-gSize*11);// Counter
+	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.2, "#ffffff", LEFT);
+	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.2, "#ff595e", RIGHT);
 	drawMsg(numFirst, cX - gSize*4, cY-gSize*7);
 	drawMsg(numSecond, cX + gSize*4, cY-gSize*7);
 	drawMsg("NOW", cX - gSize*4, cY+gSize*1.8, 1.0);
@@ -184,15 +186,23 @@ function openAndCheck(highFlg){
 	if(highFlg){
 		if(first.num <= second.num){
 			mark.jumpOK(gSize);
+			score++;
 		}else{
 			mark.jumpNG(gSize);
 		}
 	}else{
 		if(second.num <= first.num){
 			mark.jumpOK(gSize);
+			score++;
 		}else{
 			mark.jumpNG(gSize);
 		}
+	}
+
+	// HighScore
+	if(high < score){
+		high = score;
+		saveHighScore();
 	}
 
 	setTimeout(()=>{readyNext();}, 800);
@@ -231,19 +241,20 @@ function drawGrids(){
 	}
 }
 
-function drawMsg(msg, x, y, size=2.0, alignX=CENTER, alignY=CENTER){
-	fill("#ffffff");
+function drawMsg(msg, x, y, size=2.0, 
+	color="#ffffff", alignX=CENTER, alignY=CENTER){
+	fill(color);
 	textSize(gSize * size); 
 	textAlign(alignX, alignY);
 	text(msg, x, y);
 }
 
-function loadScore(){
+function loadHighScore(){
 	const num = localStorage.getItem(KEY_HIGH);
 	if(num == null) return 0;
 	return num;
 }
 
-function saveScore(){
-	localStorage.setItem(KEY_HIGH, score);
+function saveHighScore(){
+	localStorage.setItem(KEY_HIGH, high);
 }
