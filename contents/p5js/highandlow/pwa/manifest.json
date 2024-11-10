@@ -1,6 +1,6 @@
 {
-	"name":"高いの低いの?",
-	"short_name":"高いの低いの?",
+	"name":"大か小か",
+	"short_name":"大か小か",
 	"icons": [{
 		"src": "./icon144x144.png",
 		"sizes":"144x144",

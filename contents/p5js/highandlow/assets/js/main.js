@@ -67,10 +67,10 @@ function setup(){
 
 	// Button
 	btnHigh = new Button(cX-gSize*4, cH-gSize*4, gSize*6, gSize*2.2, 
-		"HIGH", "#ff595e", true, ()=>{onTouchHigh();});
+		"大きい", "#ff595e", true, ()=>{onTouchHigh();});
 
 	btnLow = new Button(cX+gSize*4, cH-gSize*4, gSize*6, gSize*2.2, 
-		"LOW", "#595eff", true, ()=>{onTouchLow();});
+		"小さい", "#595eff", true, ()=>{onTouchLow();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cH-gSize*4, gSize*6, gSize*2.2, 
@@ -130,13 +130,12 @@ function draw(){
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
 	drawMsg(numFirst, posLeft.x, cY-gSize*7);
 	drawMsg(numSecond, posRight.x, cY-gSize*7);
-	drawMsg("NOW", posLeft.x, cY+gSize*4.2, 1.0);
-	drawMsg("NEXT", posRight.x, cY+gSize*4.2, 1.0);
+	drawMsg("次のカード", posRight.x, cY+gSize*4.2, 1.0);
 
 	if(!gameOverFlg){
-		drawMsg("HIGH or LOW?", cX, cY+gSize*6.8, 1.2);
+		drawMsg("次のカードが大か小か当ててね", cX, cY+gSize*6.8, 1.2);
 	}else{
-		drawMsg("GAME OVER!!", cX, cY+gSize*6.8, 1.2);
+		drawMsg("残念、ゲームオーバー!!", cX, cY+gSize*6.8, 1.2);
 	}
 
 	if(!gameOverFlg){
