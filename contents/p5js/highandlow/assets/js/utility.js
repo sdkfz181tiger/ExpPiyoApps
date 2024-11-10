@@ -211,7 +211,7 @@ class Mark{
 		if(this._finishFlg == false) return;
 		this._finishFlg = false;
 		this._sprCurrent = this._sprNg;
-		this._sprCurrent.jump(jumpH, ()=>{
+		this._sprCurrent.shake(jumpH, ()=>{
 			this.adaptPosition();// Adapt
 			setTimeout(()=>{this._finishFlg = true;}, wait);
 			console.log("NG");

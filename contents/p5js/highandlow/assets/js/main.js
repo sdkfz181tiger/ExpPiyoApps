@@ -32,13 +32,12 @@ let btnRetryDialog;
 
 let posLeft = {x: 0, y: 0}
 let posRight = {x: 0, y: 0}
-let numLeft = 0;
-let numRight = 0;
-
-const stockCards = [];
-const readyCards = [];
+let numFirst = 0;
+let numSecond = 0;
 
 let mark;
+const stockCards = [];
+const readyCards = [];
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -81,6 +80,10 @@ function setup(){
 	posRight.x = cX + gSize * 4;
 	posRight.y = cY - gSize * 2;
 
+	// Mark
+	mark = new Mark("mark_bkg.png", "mark_ng.png", "mark_ok.png", 
+		cX, cY-gSize*2, gSize*3);
+
 	// StockCards
 	for(let i=0; i<13; i++){
 		for(let s=SUITS.length-1; 0<=s; s--){
@@ -105,15 +108,14 @@ function setup(){
 	stockCards.splice(stockCards.length-1, 1);
 	const first = readyCards[readyCards.length-1];
 	first.moveTo(posLeft.x, posLeft.y, 250, ()=>{first.open(gSize);});
+	numFirst = first.num;
+
 	// Set second
 	readyCards.push(stockCards[stockCards.length-1]);
 	stockCards.splice(stockCards.length-1, 1);
 	const second = readyCards[readyCards.length-1];
 	second.moveTo(posRight.x, posRight.y, 250);
-
-	// Mark
-	mark = new Mark("mark_bkg.png", "mark_ng.png", "mark_ok.png", 
-		cX, cY-gSize*2, gSize*3);
+	numSecond = "?";
 }
 
 function draw(){
@@ -123,9 +125,9 @@ function draw(){
 	drawGrids();// Grids
 
 	drawMsg(score, cX, cY-gSize*11);// Counter
-	drawMsg(numLeft, cX - gSize*4, cY-gSize*7);
-	drawMsg(numRight, cX + gSize*4, cY-gSize*7);
-	drawMsg("YOU", cX - gSize*4, cY+gSize*1.8, 1.0);
+	drawMsg(numFirst, cX - gSize*4, cY-gSize*7);
+	drawMsg(numSecond, cX + gSize*4, cY-gSize*7);
+	drawMsg("NOW", cX - gSize*4, cY+gSize*1.8, 1.0);
 	drawMsg("NEXT", cX + gSize*4, cY+gSize*1.8, 1.0);
 	drawMsg("HIGH or LOW ?", cX, cY+gSize*4, 1.2);
 
@@ -136,8 +138,12 @@ function draw(){
 	mark.update();// Mark
 
 	// Cards
-	for(const card of stockCards) card.update();
-	for(const card of readyCards) card.update();
+	for(let i=max(stockCards.length-2, 0); i<stockCards.length; i++){
+		stockCards[i].update();
+	}
+	for(let i=max(readyCards.length-3, 0); i<readyCards.length; i++){
+		readyCards[i].update();
+	}
 
 	TWEEN.update();// Tween
 }
@@ -173,6 +179,7 @@ function openAndCheck(highFlg){
 	const first = readyCards[readyCards.length-2];
 	const second = readyCards[readyCards.length-1];
 	second.open(gSize);
+	numSecond = second.num;
 
 	if(highFlg){
 		if(first.num <= second.num){
@@ -194,18 +201,22 @@ function openAndCheck(highFlg){
 function readyNext(){
 	if(stockCards.length <= 0) return;
 
+	// Reset
+	mark.reset();
+
 	// Ready
 	readyCards.push(stockCards[stockCards.length-1]);
 	stockCards.splice(stockCards.length-1, 1);
 
-	// Slide
+	// First
 	const first = readyCards[readyCards.length-2];
 	first.moveTo(posLeft.x, posLeft.y, 250);
+	numFirst = first.num;
+
+	// Second
 	const second = readyCards[readyCards.length-1];
 	second.moveTo(posRight.x, posRight.y, 250);
-
-	// Reset
-	mark.reset();
+	numSecond = "?";
 }
 
 function drawGrids(){
