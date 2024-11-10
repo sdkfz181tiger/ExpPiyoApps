@@ -34,6 +34,7 @@ let posLeft = {x: 0, y: 0}
 let posRight = {x: 0, y: 0}
 let numFirst = 0;
 let numSecond = 0;
+let gameOverFlg = false;
 
 let mark;
 const stockCards = [];
@@ -65,25 +66,25 @@ function setup(){
 	high = loadHighScore();// High
 
 	// Button
-	btnHigh = new Button(cX-gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
+	btnHigh = new Button(cX-gSize*4, cH-gSize*4, gSize*6, gSize*2.2, 
 		"HIGH", "#ff595e", true, ()=>{onTouchHigh();});
 
-	btnLow = new Button(cX+gSize*4, cY+gSize*7, gSize*6, gSize*2.2, 
+	btnLow = new Button(cX+gSize*4, cH-gSize*4, gSize*6, gSize*2.2, 
 		"LOW", "#595eff", true, ()=>{onTouchLow();});
 
 	// RetryDialog
-	btnRetryDialog = new Button(cX, cY+gSize*11, gSize*6, gSize*2.2, 
+	btnRetryDialog = new Button(cX, cH-gSize*4, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
 
 	// Positions
-	posLeft.x = cX - gSize * 4;
-	posLeft.y = cY - gSize * 2;
-	posRight.x = cX + gSize * 4;
-	posRight.y = cY - gSize * 2;
+	posLeft.x = cX - gSize * 5;
+	posLeft.y = cY - gSize * 1;
+	posRight.x = cX + gSize * 5;
+	posRight.y = cY - gSize * 1;
 
 	// Mark
 	mark = new Mark("mark_bkg.png", "mark_ng.png", "mark_ok.png", 
-		cX, cY-gSize*2, gSize*3);
+		cX, cY-gSize, gSize*3);
 
 	// StockCards
 	for(let i=0; i<13; i++){
@@ -93,7 +94,7 @@ function setup(){
 		}
 		for(const suit of SUITS){
 			const file = "card_" + suit + "_" + String(i+1).padStart(2, "0") + ".png";
-			const card = new Card("card_back_03.png", file, cX, 0, gSize*4);
+			const card = new Card("card_back_03.png", file, cX, 0, gSize*6);
 			stockCards.push(card);
 		}
 	}
@@ -125,17 +126,25 @@ function draw(){
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
 
-	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.2, "#ffffff", LEFT);
-	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.2, "#ff595e", RIGHT);
-	drawMsg(numFirst, cX - gSize*4, cY-gSize*7);
-	drawMsg(numSecond, cX + gSize*4, cY-gSize*7);
-	drawMsg("NOW", cX - gSize*4, cY+gSize*1.8, 1.0);
-	drawMsg("NEXT", cX + gSize*4, cY+gSize*1.8, 1.0);
-	drawMsg("HIGH or LOW ?", cX, cY+gSize*4, 1.2);
+	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
+	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
+	drawMsg(numFirst, posLeft.x, cY-gSize*7);
+	drawMsg(numSecond, posRight.x, cY-gSize*7);
+	drawMsg("NOW", posLeft.x, cY+gSize*4.2, 1.0);
+	drawMsg("NEXT", posRight.x, cY+gSize*4.2, 1.0);
 
-	btnHigh.update();// High
-	btnLow.update();// Low
-	btnRetryDialog.update();// RetyDialog
+	if(!gameOverFlg){
+		drawMsg("HIGH or LOW?", cX, cY+gSize*6.8, 1.2);
+	}else{
+		drawMsg("GAME OVER!!", cX, cY+gSize*6.8, 1.2);
+	}
+
+	if(!gameOverFlg){
+		btnHigh.update();// High
+		btnLow.update();// Low
+	}else{
+		btnRetryDialog.update();// RetyDialog
+	}
 
 	mark.update();// Mark
 
@@ -158,9 +167,12 @@ function mousePressed(){
 function touchStarted(){
 	if(mouseY < 0) return;
 
-	btnHigh.touch(mouseX, mouseY);// High
-	btnLow.touch(mouseX, mouseY);// Low
-	btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	if(!gameOverFlg){
+		btnHigh.touch(mouseX, mouseY);// High
+		btnLow.touch(mouseX, mouseY);// Low
+	}else{
+		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+	}
 }
 
 function onTouchHigh(){
@@ -174,6 +186,7 @@ function onTouchLow(){
 }
 
 function openAndCheck(highFlg){
+	if(gameOverFlg) return;
 	if(readyCards.length <= 1) return;
 
 	if(!mark.isFinished()) return;
@@ -189,6 +202,7 @@ function openAndCheck(highFlg){
 			score++;
 		}else{
 			mark.jumpNG(gSize);
+			gameOverFlg = true;
 		}
 	}else{
 		if(second.num <= first.num){
@@ -196,6 +210,7 @@ function openAndCheck(highFlg){
 			score++;
 		}else{
 			mark.jumpNG(gSize);
+			gameOverFlg = true;
 		}
 	}
 
@@ -205,6 +220,7 @@ function openAndCheck(highFlg){
 		saveHighScore();
 	}
 
+	if(gameOverFlg) return;
 	setTimeout(()=>{readyNext();}, 800);
 }
 
