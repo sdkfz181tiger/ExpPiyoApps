@@ -6,6 +6,7 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "highandlow";
 
 const FILES_IMG = [
+	"mark_bkg.png", "mark_ng.png", "mark_ok.png",
 	"card_back_01.png",  "card_back_02.png",  "card_back_04.png",    "card_back_03.png",
 	"card_spade_01.png", "card_heart_01.png", "card_diamond_01.png", "card_club_01.png",
 	"card_spade_02.png", "card_heart_02.png", "card_diamond_02.png", "card_club_02.png",
@@ -36,6 +37,8 @@ let numRight = 0;
 
 const stockCards = [];
 const readyCards = [];
+
+let mark;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -78,7 +81,7 @@ function setup(){
 	posRight.x = cX + gSize * 4;
 	posRight.y = cY - gSize * 2;
 
-	// ClosedCards
+	// StockCards
 	for(let i=0; i<13; i++){
 		for(let s=SUITS.length-1; 0<=s; s--){
 			const rdm = floor(random(s));
@@ -107,6 +110,10 @@ function setup(){
 	stockCards.splice(stockCards.length-1, 1);
 	const second = readyCards[readyCards.length-1];
 	second.moveTo(posRight.x, posRight.y, 250);
+
+	// Mark
+	mark = new Mark("mark_bkg.png", "mark_ng.png", "mark_ok.png", 
+		cX, cY-gSize*2, gSize*3);
 }
 
 function draw(){
@@ -118,6 +125,7 @@ function draw(){
 	drawMsg(score, cX, cY-gSize*11);// Counter
 	drawMsg(numLeft, cX - gSize*4, cY-gSize*7);
 	drawMsg(numRight, cX + gSize*4, cY-gSize*7);
+	drawMsg("YOU", cX - gSize*4, cY+gSize*1.8, 1.0);
 	drawMsg("NEXT", cX + gSize*4, cY+gSize*1.8, 1.0);
 	drawMsg("HIGH or LOW ?", cX, cY+gSize*4, 1.2);
 
@@ -128,6 +136,8 @@ function draw(){
 	// Cards
 	for(const card of stockCards) card.update();
 	for(const card of readyCards) card.update();
+
+	mark.update();// Mark
 
 	TWEEN.update();// Tween
 }
@@ -147,21 +157,19 @@ function touchStarted(){
 
 function onTouchHigh(){
 	console.log("onTouchHigh");
-	if(readyCards.length <= 0) return;
-	score++;// Score
+	openAndCheck(true);
 }
 
 function onTouchLow(){
 	console.log("onTouchLow");
-	openAndCheck();
+	openAndCheck(false);
 }
 
-function openAndCheck(){
+function openAndCheck(flg){
 	if(readyCards.length <= 1) return;
 	const first = readyCards[readyCards.length-2];
 	const second = readyCards[readyCards.length-1];
 	second.open(gSize);
-	setTimeout(()=>{readyNext();}, 400);// Ready
 }
 
 function readyNext(){

@@ -119,37 +119,37 @@ class Button{
 class Card{
 
 	constructor(fileClose, fileOpen, x, y, size){
-		this._pageClose = new OnePage(fileClose, x, y, size);
-		this._pageOpen = new OnePage(fileOpen, x, y, size);
-		this._pageCurrent = this._pageClose;
+		this._sprClose = new MySprite(fileClose, x, y, size);
+		this._sprOpen = new MySprite(fileOpen, x, y, size);
+		this._sprCurrent = this._sprClose;
 		this._num = Number(fileOpen.split("_")[2].split(".")[0]);
 	}
 
-	get x(){return this._pageCurrent.x;}
-	get y(){return this._pageCurrent.y;}
+	get x(){return this._sprCurrent.x;}
+	get y(){return this._sprCurrent.y;}
 	get num(){return this._num;}
 
-	contains(x, y){return this._pageCurrent.contains(x, y);}
+	contains(x, y){return this._sprCurrent.contains(x, y);}
 
 	setPosition(x, y){
-		this._pageClose.x = x;
-		this._pageClose.y = y;
-		this._pageOpen.x = x;
-		this._pageOpen.y = y;
+		this._sprClose.x = x;
+		this._sprClose.y = y;
+		this._sprOpen.x = x;
+		this._sprOpen.y = y;
 	}
 
 	adaptPosition(){
-		this.setPosition(this._pageCurrent.x, this._pageCurrent.y);
+		this.setPosition(this._sprCurrent.x, this._sprCurrent.y);
 	}
 
-	isOpened(){return this._pageCurrent == this._pageOpen;}
+	isOpened(){return this._sprCurrent == this._sprOpen;}
 
-	isClosed(){return this._pageCurrent == this._pageClose;}
+	isClosed(){return this._sprCurrent == this._sprClose;}
 
 	open(jumpH){
 		if(this.isOpened()) return;
-		this._pageCurrent = this._pageOpen;
-		this._pageCurrent.jump(jumpH, ()=>{
+		this._sprCurrent = this._sprOpen;
+		this._sprCurrent.jump(jumpH, ()=>{
 			this.adaptPosition();// Adapt
 			console.log("opened:", this._num);
 		});
@@ -157,26 +157,56 @@ class Card{
 
 	close(shakeW){
 		if(this.isClosed()) return;
-		this._pageCurrent = this._pageClose;
-		this._pageCurrent.shake(shakeW, ()=>{
+		this._sprCurrent = this._sprClose;
+		this._sprCurrent.shake(shakeW, ()=>{
 			this.adaptPosition();// Adapt
 			console.log("closed:", this._num);
 		});
 	}
 
 	moveTo(x, y, delay, onFinished=null){
-		this._pageCurrent.moveTo(x, y, delay, ()=>{
+		this._sprCurrent.moveTo(x, y, delay, ()=>{
 			this.adaptPosition();// Adapt
 			if(onFinished) onFinished();
 		});
 	}
 
 	update(){
-		this._pageCurrent.update();
+		this._sprCurrent.update();
 	}
 }
 
-class OnePage extends Sprite{
+// Mark
+class Mark{
+
+	constructor(fileBkg, fileNg, fileOk, x, y, size){
+		this._sprBkg = new MySprite(fileBkg, x, y, size);
+		this._sprNg = new MySprite(fileNg, x, y, size);
+		this._sprOk = new MySprite(fileOk, x, y, size);
+		this._sprCurrent = this._sprBkg;
+	}
+
+	get x(){return this._sprCurrent.x;}
+	get y(){return this._sprCurrent.y;}
+
+	contains(x, y){return this._sprCurrent.contains(x, y);}
+
+	setPosition(x, y){
+		this._sprBkg.x = x;
+		this._sprBkg.y = y;
+		this._sprNg.x = x;
+		this._sprNg.y = y;
+		this._sprOk.x = x;
+		this._sprOk.y = y;
+	}
+	
+	update(){
+		this._sprCurrent.update();
+	}
+}
+
+// MySprite
+class MySprite extends Sprite{
 
 	constructor(file, x, y, size, alpha=255, rotation=0){
 		super(file, x, y, size, alpha, rotation);
