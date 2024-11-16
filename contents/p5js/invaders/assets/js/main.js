@@ -63,7 +63,7 @@ function draw(){
 
 	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
-	drawMsg("準備中です...", cX, cY-gSize*12, 1.2);
+	drawMsg("レベルを調整...!?", cX, cY-gSize*12, 1.2);
 
 	if(!gameOverFlg){
 		btnLeft.update();// Left
