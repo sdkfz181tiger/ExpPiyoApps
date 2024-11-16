@@ -104,3 +104,29 @@ class Sprite{
 		}
 	}
 }
+
+//==========
+// Player
+
+class Player extends Sprite{
+
+	constructor(file, x, y, size){
+		super(file, x, y, size);
+		this._vel = {x: 0, y: 0};
+	}
+
+	moveTo(x, y, spd){
+		const disX = x - this._pos.x;
+		const disY = y - this._pos.y;
+		const rad = atan2(disY, disX);
+		this._vel.x = spd * cos(rad);
+		this._vel.y = spd * sin(rad);
+	}
+
+	update(){
+		super.update();
+		const rate = frameRate();
+		this._pos.x += (this._vel.x / rate);
+		this._pos.y += (this._vel.y / rate);
+	}
+}

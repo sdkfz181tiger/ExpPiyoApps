@@ -6,7 +6,8 @@ const AD_HEIGHT = 120;
 const KEY_HIGH  = "invaders";
 
 const FILES_IMG = [
-	"mark_bkg.png", "mark_ng.png", "mark_ok.png"
+	"mark_bkg.png", "mark_ng.png", "mark_ok.png",
+	"reimu_good_01.png"
 ];
 
 let font, cW, cH, cX, cY;
@@ -14,6 +15,8 @@ let score, high;
 let btnLeft, btnRight, btnShot;
 let btnRetryDialog;
 let gameOverFlg = false;
+
+let player;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -53,6 +56,9 @@ function setup(){
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cH-gSize*4, gSize*6, gSize*2.2, 
 		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
+
+	// Player
+	player = new Player("reimu_good_01.png", cX, cY+gSize*6, gSize*3);
 }
 
 function draw(){
@@ -60,6 +66,7 @@ function draw(){
 	noStroke(); fill("#cccccc");
 	textSize(FONT_SIZE); textAlign(CENTER, CENTER);
 	drawGrids();// Grids
+	if(frameRate() <= 0) return;
 
 	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
@@ -72,6 +79,9 @@ function draw(){
 	}else{
 		btnRetryDialog.update();// RetyDialog
 	}
+
+	player.update();
+	overWrapCanvas(player);
 
 	TWEEN.update();// Tween
 }
@@ -91,6 +101,9 @@ function touchStarted(){
 	}else{
 		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
 	}
+
+	// TODO: test
+	player.moveTo(mouseX, mouseY, gSize);
 }
 
 function onTouchLeft(){
@@ -133,4 +146,11 @@ function loadHighScore(){
 
 function saveHighScore(){
 	localStorage.setItem(KEY_HIGH, high);
+}
+
+function overWrapCanvas(spr){
+	if(spr.x < 0) spr.x = cW;
+	if(spr.y < 0) spr.y = cH;
+	if(cW < spr.x) spr.x = 0;
+	if(cH < spr.y) spr.y = 0;
 }
