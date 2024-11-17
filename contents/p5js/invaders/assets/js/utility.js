@@ -72,14 +72,17 @@ function showRetryDialog(){
 class Button{
 
 	constructor(x, y, w, h, str="HELLO", 
-		color="#444444", visible=true, onPressed=null){
-		this._pos       = {x: x, y: y};
-		this._w         = w;
-		this._h         = h;
-		this._str       = str;
-		this._color     = color;
-		this._visible   = visible;
-		this._onPressed = onPressed;
+		color="#444444", visible=true, 
+		onPressed=null, onReleased=null){
+		this._pos        = {x: x, y: y};
+		this._w          = w;
+		this._h          = h;
+		this._str        = str;
+		this._color      = color;
+		this._visible    = visible;
+		this._activeFlg  = false;
+		this._onPressed  = onPressed;
+		this._onReleased = onReleased;
 	}
 
 	isInside(tX, tY){
@@ -90,10 +93,36 @@ class Button{
 		return true;
 	}
 
-	touch(tX, tY){
+	touchStarted(tX, tY){
 		if(!this.isInside(tX, tY)) return false;
 		if(!this._visible) return false;
+		if(this._activeFlg) return false;
+		this._activeFlg = true;
 		if(this._onPressed) this._onPressed();
+		return true;
+	}
+
+	touchMoved(tX, tY){
+		if(!this._activeFlg){
+			if(!this.isInside(tX, tY)) return false;
+			if(!this._visible) return false;
+			this._activeFlg = true;
+			if(this._onPressed) this._onPressed();
+		}else{
+			if(this.isInside(tX, tY)) return false;
+			if(!this._visible) return false;
+			this._activeFlg = false;
+			if(this._onReleased) this._onReleased();
+		}
+		return true;
+	}
+
+	touchEnded(tX, tY){
+		if(!this.isInside(tX, tY)) return false;
+		if(!this._visible) return false;
+		if(!this._activeFlg) return false;
+		this._activeFlg = false;
+		if(this._onReleased) this._onReleased();
 		return true;
 	}
 

@@ -26,6 +26,8 @@ class Sprite{
 		this._scale    = size / this._img.width;
 		this._alpha    = alpha;
 		this._rotation = rotation;
+		this._flipX    = false;
+		this._flipY    = false;
 		this._visible  = true;
 		this._w        = this._img.width * this._scale;
 		this._h        = this._img.height * this._scale;
@@ -43,13 +45,17 @@ class Sprite{
 	get scale(){return this._scale;}
 	set scale(n){
 		this._scale = n;
-		this.w = this._img.width * n;
-		this.h = this._img.height * n;
+		this._w = this._img.width * n;
+		this._h = this._img.height * n;
 	}
 	get alpha(){return this._alpha;}
 	set alpha(n){this._alpha = n;}
 	get rotation(){return this._rotation;}
 	set rotation(n){this._rotation = n;}
+	get flipX(){this._flipX;}
+	set flipX(flg){this._flipX = flg;}
+	get flipY(){this._flipY;}
+	set flipY(flg){this._flipY = flg;}
 	get visible(){return this._visible;}
 	set visible(n){this._visible = n;}
 
@@ -93,15 +99,18 @@ class Sprite{
 	update(){
 		if(!this._visible) return;
 		tint(255, this._alpha);
-		if(this._rotation == 0){
+		if(this._rotation == 0 && !this._flipX && !this._flipY){
 			image(this._img, this.l, this.t, this.w, this.h);
-		}else{
-			push();
-			translate(this._pos.x, this._pos.y);
-			rotate(this._rotation * PI/180);
-			image(this._img, -this.hw, -this.hh, this.w, this.h);
-			pop();
+			return;
 		}
+		// Rotation or Flip
+		push();
+		translate(this._pos.x, this._pos.y);
+		if(this._rotation != 0) rotate(this._rotation * PI/180);
+		if(this._flipX) scale(-1, 1);
+		if(this._flipY) scale(1, -1);
+		image(this._img, -this.hw, -this.hh, this.w, this.h);
+		pop();
 	}
 }
 
@@ -115,6 +124,27 @@ class Player extends Sprite{
 		this._vel = {x: 0, y: 0};
 	}
 
+	move(spd, deg){
+		const rad = deg * (PI/180);
+		this._vel.x = spd * cos(rad);
+		this._vel.y = spd * sin(rad);
+	}
+
+	moveLeft(spd){
+		this.move(spd, 180);
+		this.flipX = true;
+	}
+
+	moveRight(spd){
+		this.move(spd, 0);
+		this.flipX = false;
+	}
+
+	moveStop(){
+		this._vel.x = 0;
+		this._vel.y = 0;
+	}
+
 	moveTo(x, y, spd){
 		const disX = x - this._pos.x;
 		const disY = y - this._pos.y;
@@ -125,6 +155,7 @@ class Player extends Sprite{
 
 	update(){
 		super.update();
+		if(this._vel.x == 0 && this._vel.y == 0) return;
 		const rate = frameRate();
 		this._pos.x += (this._vel.x / rate);
 		this._pos.y += (this._vel.y / rate);

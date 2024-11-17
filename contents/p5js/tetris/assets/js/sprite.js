@@ -47,8 +47,8 @@ class Sprite{
 	get scale(){return this._scale;}
 	set scale(n){
 		this._scale = n;
-		this.w = this._img.width * n;
-		this.h = this._img.height * n;
+		this._w = this._img.width * n;
+		this._h = this._img.height * n;
 	}
 	get alpha(){return this._alpha;}
 	set alpha(n){this._alpha = n;}

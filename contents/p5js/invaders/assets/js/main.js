@@ -12,7 +12,7 @@ const FILES_IMG = [
 
 let font, cW, cH, cX, cY;
 let score, high;
-let btnLeft, btnRight, btnShot;
+let btnLeft, btnRight;
 let btnRetryDialog;
 let gameOverFlg = false;
 
@@ -44,14 +44,13 @@ function setup(){
 	high = loadHighScore();// High
 
 	// Button
-	btnLeft = new Button(cX-gSize*7.4, cH-gSize*3, gSize*3.2, gSize*3.2, 
-		"<", "#ff595e", true, ()=>{onTouchLeft();});
+	btnLeft = new Button(cX-gSize*4.8, cH-gSize*3, 
+		gSize*8, gSize*3.2, "<-L", "#ff595e", true, 
+		()=>{onTouchLeft();}, ()=>{onReleaseLR();});
 
-	btnRight = new Button(cX-gSize*3.4, cH-gSize*3, gSize*3.2, gSize*3.2, 
-		">", "#595eff", true, ()=>{onTouchRight();});
-
-	btnShot = new Button(cX+gSize*5.5, cH-gSize*3, gSize*7, gSize*3.2, 
-		"SHOT", "#59cc5e", true, ()=>{onTouchShot();});
+	btnRight = new Button(cX+gSize*4.8, cH-gSize*3, 
+		gSize*8, gSize*3.2, "R->", "#595eff", true, 
+		()=>{onTouchRight();}, ()=>{onReleaseLR();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cH-gSize*4, gSize*6, gSize*2.2, 
@@ -75,7 +74,6 @@ function draw(){
 	if(!gameOverFlg){
 		btnLeft.update();// Left
 		btnRight.update();// Right
-		btnShot.update();// Shot
 	}else{
 		btnRetryDialog.update();// RetyDialog
 	}
@@ -91,31 +89,59 @@ function mousePressed(){
 	touchStarted();
 }
 
+function mouseMoved(){
+	if(FLG_MOBILE) return;
+	touchMoved();
+}
+
+function mouseReleased(){
+	if(FLG_MOBILE) return;
+	touchEnded();
+}
+
 function touchStarted(){
 	if(mouseY < 0) return;
-
 	if(!gameOverFlg){
-		btnLeft.touch(mouseX, mouseY);// Left
-		btnRight.touch(mouseX, mouseY);// Right
-		btnShot.touch(mouseX, mouseY);// Shot
+		btnLeft.touchStarted(mouseX, mouseY);// Left
+		btnRight.touchStarted(mouseX, mouseY);// Right
 	}else{
-		btnRetryDialog.touch(mouseX, mouseY);// RetryDialog
+		btnRetryDialog.touchStarted(mouseX, mouseY);// RetryDialog
 	}
+}
 
-	// TODO: test
-	player.moveTo(mouseX, mouseY, gSize);
+function touchMoved(){
+	if(mouseY < 0) return;
+	if(!gameOverFlg){
+		btnLeft.touchMoved(mouseX, mouseY);// Left
+		btnRight.touchMoved(mouseX, mouseY);// Right
+	}else{
+		btnRetryDialog.touchMoved(mouseX, mouseY);// RetryDialog
+	}
+}
+
+function touchEnded(){
+	if(mouseY < 0) return;
+	if(!gameOverFlg){
+		btnLeft.touchEnded(mouseX, mouseY);// Left
+		btnRight.touchEnded(mouseX, mouseY);// Right
+	}else{
+		btnRetryDialog.touchEnded(mouseX, mouseY);// RetryDialog
+	}
 }
 
 function onTouchLeft(){
 	console.log("onTouchLeft");
+	player.moveLeft(gSize*3);
 }
 
 function onTouchRight(){
 	console.log("onTouchRight");
+	player.moveRight(gSize*3);
 }
 
-function onTouchShot(){
-	console.log("onTouchShot");
+function onReleaseLR(){
+	console.log("onReleaseLR");
+	player.moveStop();
 }
 
 function drawGrids(){
