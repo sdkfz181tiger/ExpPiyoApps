@@ -116,13 +116,63 @@ class Sprite{
 
 //==========
 // Player
-
 class Player extends Sprite{
 
 	constructor(file, x, y, size){
 		super(file, x, y, size);
 		this._vel = {x: 0, y: 0};
 	}
+
+	move(spd, deg){
+		const rad = deg * (PI/180);
+		this._vel.x = spd * cos(rad);
+		this._vel.y = spd * sin(rad);
+	}
+
+	moveLeft(spd){
+		this.move(spd, 180);
+		this.flipX = true;
+	}
+
+	moveRight(spd){
+		this.move(spd, 0);
+		this.flipX = false;
+	}
+
+	moveStop(){
+		this._vel.x = 0;
+		this._vel.y = 0;
+	}
+
+	moveTo(x, y, spd){
+		const disX = x - this._pos.x;
+		const disY = y - this._pos.y;
+		const rad = atan2(disY, disX);
+		this._vel.x = spd * cos(rad);
+		this._vel.y = spd * sin(rad);
+	}
+
+	update(){
+		super.update();
+		if(this._vel.x == 0 && this._vel.y == 0) return;
+		const rate = frameRate();
+		this._pos.x += (this._vel.x / rate);
+		this._pos.y += (this._vel.y / rate);
+	}
+}
+
+//==========
+// Enemy
+class Enemy extends Sprite{
+
+	constructor(file, x, y, size){
+		super(file, x, y, size);
+		this._vel = {x: 0, y: 0};
+		this._deadFlg = false;
+	}
+
+	isDead(){return this._deadFlg;}
+	setDead(){this._deadFlg = true;}
 
 	move(spd, deg){
 		const rad = deg * (PI/180);

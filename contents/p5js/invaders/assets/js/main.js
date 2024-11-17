@@ -7,7 +7,7 @@ const KEY_HIGH  = "invaders";
 
 const FILES_IMG = [
 	"mark_bkg.png", "mark_ng.png", "mark_ok.png",
-	"reimu_good_01.png"
+	"reimu_good_01.png", "marisa_good_01.png"
 ];
 
 let font, cW, cH, cX, cY;
@@ -62,9 +62,7 @@ function setup(){
 		"RETRY", "#ff595e", true, null, ()=>{showRetryDialog();});
 
 	// Player
-	player = new Player("reimu_good_01.png", cX, cY+gSize*5, gSize*2.4);
-
-	//gameOverFlg = true;// TODO: test
+	player = new Player("reimu_good_01.png", cX, cY+gSize*5, gSize*2.2);
 }
 
 function draw(){
@@ -77,7 +75,6 @@ function draw(){
 	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
 	drawMsg("Lv:"+numLevel, cX, cY-gSize*12, 1.4);
-	drawMsg(numCnt + "," + numWave, cX, cY-gSize*10, 1.0);
 
 	if(!gameOverFlg){
 		btnLeft.update();// Left
@@ -86,8 +83,17 @@ function draw(){
 		btnRetryDialog.update();// RetyDialog
 	}
 
+	// Player
 	player.update();
 	overWrapCanvas(player);
+
+	// Enemies
+	for(const enemy of enemies){
+		enemy.update();
+		if(player.contains(enemy.x, enemy.y)) gameOver();
+		if(cH-gSize*1 < enemy.y) enemy.setDead();
+	}
+	cleanupEnemies();
 
 	countUp();// Countup
 	TWEEN.update();// Tween
@@ -139,24 +145,26 @@ function touchEnded(){
 }
 
 function onTouchLeft(){
-	console.log("onTouchLeft");
+	//console.log("onTouchLeft");
 	player.moveLeft(gSize*3);
 }
 
 function onTouchRight(){
-	console.log("onTouchRight");
+	//console.log("onTouchRight");
 	player.moveRight(gSize*3);
 }
 
 function onReleaseLR(){
-	console.log("onReleaseLR");
+	//console.log("onReleaseLR");
 	player.moveStop();
 }
 
 function countUp(){
 	numCnt++;// Counter
-	if(numCnt < frameRate()) return;
+	if(numCnt < frameRate()*2) return;
 	numCnt = 0;
+
+	createEnemy();// Enemy
 
 	numWave++;// Wave
 	if(numWave < 10) return;
@@ -168,7 +176,34 @@ function countUp(){
 }
 
 function createEnemy(){
+	const num = pow(numWave/10, 5/(numLevel+1));
+	const rate = round(num*100) / 100;
+	const total = round(rate*10) + 1;
+	for(let i=0; i<total; i++){
+		const x = random(cH);
+		const y = random(-gSize*4, -gSize*2);
+		const spd = random(gSize*2, gSize*5);
+		const rotation = random(80, 100);
+		const enemy = new Enemy("marisa_good_01.png", x, y, gSize*2.4);
+		enemy.flipX = random() < 0.5;
+		enemy.move(spd, rotation);
+		enemies.push(enemy);
+	}
+}
 
+function cleanupEnemies(){
+	for(let i=enemies.length-1; 0<=i; i--){
+		const enemy = enemies[i];
+		if(!enemy.isDead()) continue;
+		enemies.splice(i, 1);
+	}
+}
+
+function gameOver(){
+	console.log("gameOver");
+	player.moveStop();
+	for(const enemy of enemies) enemy.moveStop();
+	gameOverFlg = true;
 }
 
 function drawGrids(){

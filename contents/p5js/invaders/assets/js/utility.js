@@ -112,7 +112,7 @@ class Button{
 			if(this.isInside(tX, tY)) return false;
 			if(!this._visible) return false;
 			this._activeFlg = false;
-			if(this._onReleased) this._onReleased();
+			if(this._onPressed && this._onReleased) this._onReleased();
 		}
 		return true;
 	}
