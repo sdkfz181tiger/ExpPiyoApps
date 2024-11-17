@@ -5,6 +5,7 @@ const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
 const KEY_HIGH  = "invaders";
 const ENEMY_LEVELS = [5, 10, 20, 40, 80, 160, 320];
+const ENEMY_WAVES = 20;
 const ENEMY_MAX = 5;
 
 const FILES_IMG = [
@@ -22,7 +23,7 @@ let player;
 let enemies = [];
 
 let numCnt = 0;
-let numWave = 1;
+let numWave = 0;
 let numLevel = 0;
 
 function preload(){
@@ -174,7 +175,7 @@ function countUp(){
 	createEnemy();// Enemy
 
 	numWave++;// Wave
-	if(numWave < 10) return;
+	if(numWave < ENEMY_WAVES) return;
 	numWave = 0;
 
 	numLevel++;// Level
