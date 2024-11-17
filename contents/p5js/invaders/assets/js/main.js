@@ -17,6 +17,11 @@ let btnRetryDialog;
 let gameOverFlg = false;
 
 let player;
+let enemies = [];
+
+let numCnt = 0;
+let numWave = 1;
+let numLevel = 1;
 
 function preload(){
 	font = loadFont("../../assets/fonts/nicokaku_v2.ttf");
@@ -44,20 +49,22 @@ function setup(){
 	high = loadHighScore();// High
 
 	// Button
-	btnLeft = new Button(cX-gSize*4.8, cH-gSize*3, 
+	btnLeft = new Button(cX-gSize*4.8, cH-gSize*4, 
 		gSize*8, gSize*3.2, "<-L", "#ff595e", true, 
 		()=>{onTouchLeft();}, ()=>{onReleaseLR();});
 
-	btnRight = new Button(cX+gSize*4.8, cH-gSize*3, 
+	btnRight = new Button(cX+gSize*4.8, cH-gSize*4, 
 		gSize*8, gSize*3.2, "R->", "#595eff", true, 
 		()=>{onTouchRight();}, ()=>{onReleaseLR();});
 
 	// RetryDialog
 	btnRetryDialog = new Button(cX, cH-gSize*4, gSize*6, gSize*2.2, 
-		"RETRY", "#ff595e", true, ()=>{showRetryDialog();});
+		"RETRY", "#ff595e", true, null, ()=>{showRetryDialog();});
 
 	// Player
-	player = new Player("reimu_good_01.png", cX, cY+gSize*6, gSize*3);
+	player = new Player("reimu_good_01.png", cX, cY+gSize*5, gSize*2.4);
+
+	//gameOverFlg = true;// TODO: test
 }
 
 function draw(){
@@ -69,7 +76,8 @@ function draw(){
 
 	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
-	drawMsg("レベルを調整...!?", cX, cY-gSize*12, 1.2);
+	drawMsg("Lv:"+numLevel, cX, cY-gSize*12, 1.4);
+	drawMsg(numCnt + "," + numWave, cX, cY-gSize*10, 1.0);
 
 	if(!gameOverFlg){
 		btnLeft.update();// Left
@@ -81,6 +89,7 @@ function draw(){
 	player.update();
 	overWrapCanvas(player);
 
+	countUp();// Countup
 	TWEEN.update();// Tween
 }
 
@@ -142,6 +151,24 @@ function onTouchRight(){
 function onReleaseLR(){
 	console.log("onReleaseLR");
 	player.moveStop();
+}
+
+function countUp(){
+	numCnt++;// Counter
+	if(numCnt < frameRate()) return;
+	numCnt = 0;
+
+	numWave++;// Wave
+	if(numWave < 10) return;
+	numWave = 0;
+
+	numLevel++;// Level
+	if(numLevel < 10) return;
+	numLevel = 0;
+}
+
+function createEnemy(){
+
 }
 
 function drawGrids(){
