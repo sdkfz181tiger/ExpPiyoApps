@@ -75,6 +75,7 @@ function draw(){
 	drawMsg("SC:"+score, gSize, cY-gSize*12, 1.4, "#ffffff", LEFT);
 	drawMsg("HI:"+high, cW-gSize, cY-gSize*12, 1.4, "#ff595e", RIGHT);
 	drawMsg("Lv:"+numLevel, cX, cY-gSize*12, 1.4);
+	if(gameOverFlg) drawMsg("GAME OVER!", cX, cY, 1.4, "#ffffff");
 
 	if(!gameOverFlg){
 		btnLeft.update();// Left
@@ -184,7 +185,7 @@ function createEnemy(){
 		const y = random(-gSize*4, -gSize*2);
 		const spd = random(gSize*2, gSize*5);
 		const rotation = random(80, 100);
-		const enemy = new Enemy("marisa_good_01.png", x, y, gSize*2.4);
+		const enemy = new Enemy("marisa_good_01.png", x, y, gSize*2.6);
 		enemy.flipX = random() < 0.5;
 		enemy.move(spd, rotation);
 		enemies.push(enemy);
