@@ -5,7 +5,7 @@ const A_RACIO   = 3/4;
 const AD_HEIGHT = 120;
 const KEY_HIGH  = "invaders";
 const ENEMY_LEVELS = [5, 10, 20, 40, 80, 160, 320];
-const ENEMY_MAX = 6;
+const ENEMY_MAX = 5;
 
 const FILES_IMG = [
 	"mark_bkg.png", "mark_ng.png", "mark_ok.png",
@@ -120,6 +120,7 @@ function mouseReleased(){
 
 function touchStarted(){
 	if(mouseY < 0) return;
+	if(frameCount <= 0) return;
 	if(!gameOverFlg){
 		btnLeft.touchStarted(mouseX, mouseY);// Left
 		btnRight.touchStarted(mouseX, mouseY);// Right
@@ -130,6 +131,7 @@ function touchStarted(){
 
 function touchMoved(){
 	if(mouseY < 0) return;
+	if(frameCount <= 0) return;
 	if(!gameOverFlg){
 		btnLeft.touchMoved(mouseX, mouseY);// Left
 		btnRight.touchMoved(mouseX, mouseY);// Right
@@ -140,6 +142,7 @@ function touchMoved(){
 
 function touchEnded(){
 	if(mouseY < 0) return;
+	if(frameCount <= 0) return;
 	if(!gameOverFlg){
 		btnLeft.touchEnded(mouseX, mouseY);// Left
 		btnRight.touchEnded(mouseX, mouseY);// Right
@@ -181,13 +184,12 @@ function countUp(){
 
 function createEnemy(){
 	// Difficulty
-	const level = ENEMY_LEVELS[numLevel];
-	const difficulty = pow(numWave/10, 40/(level+1));
-	const total = round(difficulty * ENEMY_MAX) + 1;
+	const difficulty = getDifficulty();// Difficulty
+	const total = floor(difficulty * ENEMY_MAX);
 	for(let i=0; i<total; i++){
 		const x = random(cH);
 		const y = random(-gSize*4, -gSize*2);
-		const spd = random(gSize*2, gSize*5);
+		const spd = gSize*2 + (gSize*5 * getDifficulty());
 		const dir = random(70, 110);
 		const enemy = new Enemy("marisa_good_01.png", x, y, gSize*2.6);
 		enemy.flipX = random() < 0.5;
@@ -203,6 +205,12 @@ function cleanupEnemies(){
 		enemies.splice(i, 1);
 		addScore(1);// Score;
 	}
+}
+
+function getDifficulty(){
+	const level = ENEMY_LEVELS[numLevel];
+	const mid = ENEMY_LEVELS[floor(ENEMY_LEVELS.length/2)];
+	return pow(random(), 40/(level+1));
 }
 
 function gameOver(){
