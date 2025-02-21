@@ -8,13 +8,13 @@
 	<!-- PWA for iOS -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="dodgerblue">
-	<meta name="apple-mobile-web-app-title" content="ぴよApps">
+	<meta name="apple-mobile-web-app-title" content="ShimejiKajiru">
 	<link rel="apple-touch-icon" href="../contents/pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="../contents/pwa/manifest.json">
 	<!-- Favicon -->
 	<link rel="shortcut icon" href="../contents/pwa/favicon.ico">
-	<title>ぴよApps</title>
+	<title>ShimejiKajiru</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="../contents/assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="../contents/assets/libs/animate/animate.min.css">
@@ -23,17 +23,19 @@
 </head>
 <body>
 	<div id="app">
+		
 		<!-- Header(Start) -->
 		<header class="fixed-top" v-if="mode!=0">
+
 			<!-- Navigation(Start) -->
 			<nav class="navbar navbar-dark bg-primary">
 				<div class="container-fluid">
-					<a class="btn btn-primary btn-sm" href="../">
+					<a class="btn btn-primary btn-sm me-4" href="../">
 						<i class="bi-caret-left-fill" role="img"></i>
 					</a>
 					<div>
 						<i class="bi-github text-white m-1" role="img"></i>
-						<a class="navbar-brand" href="../index.html">ぴよApps</a>
+						<a class="navbar-brand" href="../index.html">ShimejiKajiru</a>
 					</div>
 					<button class="navbar-toggler invisible" type="button"
 						data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas">
@@ -42,11 +44,13 @@
 				</div>
 			</nav>
 			<!-- Navigation(End) -->
+
 		</header>
 		<!-- Header(End) -->
 
 		<!-- Main(Start) -->
 		<main>
+
 			<!-- Loading(Start) -->
 			<div class="position-absolute top-50 start-50 translate-middle" v-if="mode==0">
 				<div class="spinner-border text-primary" role="status">
@@ -56,17 +60,17 @@
 			<!-- Loading(End) -->
 
 			<!-- Home(Start) -->
-			<div class="container" v-if="mode==1">
-				<div class="row pt-2">
+			<div class="container text-center" v-if="mode==1">
+				<div class="row pt-4">
 					<div class="col">
 						<h1>Privacy Policy</h1>
 					</div>
 				</div>
-				<div class="row pt-2">
+				<div class="row pt-4">
 					<div class="col" id="privacy-comments">
 						<h3 class="mt-4">プライバシーポリシー</h3>
 						<p class="my-3">
-							ぴよAppsは、<br>
+							ShimejiKajiruは、<br>
 							以下のとおり個人情報保護方針を定め、<br>
 							個人情報保護の仕組みを構築し、<br>
 							個人情報保護の重要性の認識と取組みをすることにより、<br>
@@ -74,7 +78,7 @@
 						</p>
 						<h3 class="mt-4">個人情報の管理</h3>
 						<p class="my-3">
-							ぴよAppsは、<br>
+							ShimejiKajiruは、<br>
 							お客さまの個人情報を正確かつ最新の状態に保ち、<br>
 							個人情報への不正アクセス・紛失・破損・改ざん・漏洩などを防止するため、<br>
 							セキュリティシステムの維持・管理体制の整備徹底等の必要な措置を講じ、<br>安全対策を実施し個人情報の厳重な管理を行ないます。
@@ -87,7 +91,7 @@
 						</p>
 						<h3 class="mt-4">個人情報の第三者への開示<br>提供の禁止</h3>
 						<p class="my-3">
-							ぴよAppsは、<br>
+							ShimejiKajiruは、<br>
 							お客さまよりお預かりした個人情報を適切に管理し、<br>
 							次のいずれかに該当する場合を除き、<br>
 							個人情報を第三者に開示いたしません。
@@ -98,7 +102,7 @@
 						</p>
 						<h3 class="mt-4">個人情報の安全対策</h3>
 						<p class="my-3">
-							ぴよAppsは、<br>
+							ShimejiKajiruは、<br>
 							個人情報の正確性及び安全性確保のために、<br>
 							セキュリティに万全の対策を講じています。
 						</p>
@@ -108,20 +112,21 @@
 						</p>
 						<h3 class="mt-4">法令、規範の遵守と見直し</h3>
 						<p class="my-3">
-							ぴよAppsは、<br>
+							ShimejiKajiruは、<br>
 							保有する個人情報に関して適用される日本の法令、<br>
 							その他規範を遵守するとともに、<br>
 							本ポリシーの内容を適宜見直し、その改善に努めます。
 						</p>
 						<h3 class="mt-4">お問い合せ</h3>
 						<p class="my-3">
-							ぴよAppsの個人情報の取扱に関するお問い合せは下記までご連絡ください。<br/>
-							ぴよApps:<a href="mailto:sdkfz181tiger@gmail.com" target="_blank">E-mail</a>
+							ShimejiKajiruの個人情報の取扱に関するお問い合せは下記までご連絡ください。<br/>
+							ShimejiKajiru:<a href="mailto:sdkfz181tiger@gmail.com" target="_blank">E-mail</a>
 						</p>
 					</div>
 				</div>
 			</div>
 			<!-- Home(End) -->
+
 		</main>
 		<!-- Main(End) -->
 
@@ -130,6 +135,7 @@
 			
 		</footer>
 		<!-- Footer(End) -->
+
 	</div>
 
 	<!-- JavaScript -->
