@@ -19,7 +19,7 @@ window.addEventListener("beforeinstallprompt", (prompt)=>{
 				e.target.classList.add("invisible");
 			}else{
 				console.log("Dismissed");
-				elem.classList.remove("invisible");
+				e.target.classList.remove("invisible");
 			}
 		});
 	});
