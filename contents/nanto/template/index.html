@@ -26,10 +26,42 @@
 	<link rel="stylesheet" href="../../assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="./assets/css/custom.css">
+
+<!-- NantoApps(CSS) -->
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background:#22301a; color:#fff; font-family: sans-serif; overflow:hidden; height:100%; }
+  #hud { height:56px; display:flex; align-items:center; gap:12px; padding:6px 10px; background:#2b1a0e; }
+  #hud .box { line-height:1.1; }
+  #hud .label { font-size:10px; color:#d8b98a; }
+  #hud .val { font-size:20px; font-weight:bold; }
+  #timeVal.danger { color:#ff5252; animation: pulse .5s infinite alternate; }
+  @keyframes pulse { from { transform:scale(1);} to { transform:scale(1.15);} }
+  #timeBarWrap { height:10px; background:#4a3421; position:relative; }
+  #timeBar { height:100%; width:100%; background:#66bb6a; transition:background .3s; }
+  #verBadge { position:fixed; right:8px; bottom:calc(8px + max(24px, env(safe-area-inset-bottom, 0px))); font-size:11px; color:#ffe9c4; background:rgba(0,0,0,.45); padding:2px 7px; border-radius:8px; z-index:5; pointer-events:none; }
+  canvas { display:block; touch-action:none; }
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,.72); display:flex; align-items:center; justify-content:center; z-index:20; padding:10px; }
+  .overlay.hidden { display:none; }
+  .card { background:#fff8ec; color:#2b1a0e; border-radius:14px; width:100%; max-width:430px; max-height:92dvh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  .card-head { padding:14px 16px 8px; }
+  .card-head h1 { margin:0; font-size:21px; }
+  .card-head .sub { font-size:12px; color:#8a6a42; margin-top:2px; }
+  .scroll-body { overflow-y:auto; touch-action:pan-y; padding:4px 16px 12px; font-size:14px; line-height:1.65; scrollbar-width:thin; }
+  .scroll-body::-webkit-scrollbar { width:5px; }
+  .scroll-body::-webkit-scrollbar-thumb { background:#c9a86a; border-radius:3px; }
+  .card-foot { padding:10px 16px 14px; border-top:1px solid #e5d3ae; background:#fff8ec; }
+  .card-foot button { width:100%; font-size:18px; font-weight:bold; padding:13px; border:none; border-radius:10px; background:#c62828; color:#fff; cursor:pointer; }
+  #ready { font-size:12px; color:#558b2f; margin-bottom:8px; text-align:center; }
+  .hl { background:#ffe082; padding:0 4px; border-radius:3px; font-weight:bold; }
+  #flash { position:fixed; left:0; right:0; top:84px; text-align:center; font-size:26px; font-weight:bold; color:#ffeb3b; text-shadow:2px 2px 0 #b71c1c, -1px -1px 0 #b71c1c; z-index:6; pointer-events:none; opacity:0; }
+</style>
+<!-- NantoApps(CSS) -->
+
 </head>
 <body>
 
-<!-- NantoApps(Start) -->
+<!-- NantoApps(Body) -->
 
 <div id="hud">
   <div class="box"><div class="label">時間</div><div class="val" id="timeVal">60</div></div>
@@ -495,7 +527,7 @@ window.__wide = { start: function(){ startGame(false); }, startPractice: functio
 };
 </script>
 
-<!-- NantoApps(End) -->
+<!-- NantoApps(Body) -->
 
 	<div>
 		<!-- Footer(Start) -->
