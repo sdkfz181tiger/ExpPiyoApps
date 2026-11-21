@@ -7,11 +7,13 @@ navigator.serviceWorker.register("./pwa_sw.js");
 //==========
 // BeforeInstall
 window.addEventListener("beforeinstallprompt", (prompt)=>{
-	prompt.preventDefault();
+	//prompt.preventDefault();
+	prompt.prompt()
 	const elem = document.getElementById("btn-install");
 	elem.classList.remove("invisible");
 	elem.addEventListener("click", (e)=>{
-		e.preventDefault();
+		//e.preventDefault();
+		e.prompt()
 		prompt.prompt();// Prompt
 		prompt.userChoice.then((choice)=>{
 			if(choice.outcome === "accepted"){
