@@ -29,7 +29,8 @@ function loadImobile(path){
 		const type = (navigator.userAgent.match(/iPhone|Android.+Mobile/))?"sp":"pc";
 		const places = [
 			{"ad": "banner", "id": "ad_banner"},
-			{"ad": "rectangle", "id": "ad_rectangle"}];
+			{"ad": "rectangle", "id": "ad_rectangle"},
+			{"ad": "bigbanner", "id": "ad_bigbanner"}];
 		for(place of places){
 			const ad = place["ad"];
 			const id = place["id"];
