@@ -12,37 +12,25 @@ const installButton = document.getElementById("btn-install");
 
 // PWAインストールイベント
 window.addEventListener("beforeinstallprompt", (e) => {
-
     e.preventDefault();
-
     deferredPrompt = e;
-
     installButton.classList.remove("invisible");
-
 });
 
 // インストールボタン
 installButton.addEventListener("click", async (e) => {
-
     e.preventDefault();
-
     if (!deferredPrompt) return;
-
     const promptEvent = deferredPrompt;
     deferredPrompt = null;
-
     await promptEvent.prompt();
-
     const choice = await promptEvent.userChoice;
-
     if (choice.outcome === "accepted") {
         console.log("Accepted");
     } else {
         console.log("Dismissed");
     }
-
     installButton.classList.add("invisible");
-
 });
 
 window.addEventListener("appinstalled", ()=>{
