@@ -16,10 +16,11 @@ window.addEventListener("beforeinstallprompt", (prompt)=>{
 		prompt.userChoice.then((choice)=>{
 			if(choice.outcome === "accepted"){
 				console.log("Accepted");
+				e.target.classList.add("invisible");
 			}else{
 				console.log("Dismissed");
+				elem.classList.remove("invisible");
 			}
-			e.target.classList.add("invisible");
 		});
 	});
 });
