@@ -6,31 +6,22 @@ navigator.serviceWorker.register("./pwa_sw.js");
 
 //==========
 // BeforeInstall
-let deferredPrompt = null;
-
-const installButton = document.getElementById("btn-install");
-
-// PWAインストールイベント
-window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installButton.classList.remove("invisible");
-});
-
-// インストールボタン
-installButton.addEventListener("click", async (e) => {
-    e.preventDefault();
-    if (!deferredPrompt) return;
-    const promptEvent = deferredPrompt;
-    deferredPrompt = null;
-    await promptEvent.prompt();
-    const choice = await promptEvent.userChoice;
-    if (choice.outcome === "accepted") {
-        console.log("Accepted");
-    } else {
-        console.log("Dismissed");
-    }
-    installButton.classList.add("invisible");
+window.addEventListener("beforeinstallprompt", (prompt)=>{
+	prompt.preventDefault();
+	const elem = document.getElementById("btn-install");
+	elem.classList.remove("invisible");
+	elem.addEventListener("click", (e)=>{
+		e.preventDefault();
+		prompt.prompt();// Prompt
+		prompt.userChoice.then((choice)=>{
+			if(choice.outcome === "accepted"){
+				console.log("Accepted");
+			}else{
+				console.log("Dismissed");
+			}
+			e.target.classList.add("invisible");
+		});
+	});
 });
 
 window.addEventListener("appinstalled", ()=>{
