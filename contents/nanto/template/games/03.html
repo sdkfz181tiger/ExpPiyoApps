@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ガンプラ積み v11（身内用モック）</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{width:100%;height:100%;overflow:hidden;background:#1c1710}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;
+    color:#fff;position:fixed;inset:0;touch-action:none;overscroll-behavior:none;
+  }
+  #app{position:relative;width:100%;height:100dvh;max-width:520px;margin:0 auto;overflow:hidden;background:#2a2118}
+  canvas{display:block;width:100%;height:100%;touch-action:none}
+
+  /* ---------- HUD ---------- */
+  #hud{
+    position:absolute;top:0;left:0;right:0;padding:calc(6px + env(safe-area-inset-top)) 10px 6px;
+    display:flex;align-items:flex-start;gap:8px;pointer-events:none;z-index:5;
+  }
+  #hud .ver{
+    background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.35);border-radius:8px;
+    font-size:11px;font-weight:700;padding:4px 7px;line-height:1.25;white-space:nowrap;
+  }
+  #hud .total-box{
+    flex:1;background:rgba(0,0,0,.55);border:1px solid rgba(255,210,90,.6);border-radius:10px;
+    padding:4px 10px 5px;text-align:right;min-width:0;
+  }
+  #hud .total-label{font-size:10px;color:#ffd75e;letter-spacing:.12em;font-weight:700}
+  #total{
+    font-size:26px;font-weight:900;line-height:1.05;color:#ffe98a;
+    font-variant-numeric:tabular-nums;white-space:nowrap;display:inline-block;
+  }
+  #total.pop{animation:pop .28s ease-out}
+  @keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
+  #hud .sub-box{
+    background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.35);border-radius:8px;
+    font-size:11px;font-weight:700;padding:4px 7px;line-height:1.35;white-space:nowrap;text-align:center;
+  }
+  #combo{
+    position:absolute;top:calc(74px + env(safe-area-inset-top));left:0;right:0;text-align:center;
+    font-size:15px;font-weight:900;color:#7df0ff;text-shadow:0 2px 6px rgba(0,0,0,.7);
+    pointer-events:none;z-index:5;min-height:20px;
+  }
+  #hint{
+    position:absolute;bottom:calc(8px + env(safe-area-inset-bottom));left:0;right:0;text-align:center;
+    font-size:12px;color:rgba(255,255,255,.85);text-shadow:0 1px 4px rgba(0,0,0,.8);
+    pointer-events:none;z-index:5;
+  }
+  #wobbleInfo{
+    position:absolute;top:calc(100px + env(safe-area-inset-top));left:0;right:0;text-align:center;
+    font-size:12px;font-weight:700;color:#ffe98a;text-shadow:0 1px 4px rgba(0,0,0,.85);
+    pointer-events:none;z-index:5;white-space:pre-line;line-height:1.5;display:none;
+  }
+  .wob-ctl{margin:0 0 10px;padding:9px 12px;background:#f3e6c8;border-radius:10px}
+  .wob-ctl label{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;color:#7a3d08;cursor:pointer}
+  .wob-ctl input[type="checkbox"]{width:20px;height:20px;accent-color:#b35f06;flex:none}
+  .wob-ctl .wob-note{font-size:11px;color:#99835f;margin-top:4px;line-height:1.45}
+
+  /* ---------- Overlays / cards ---------- */
+  .overlay{
+    position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+    background:rgba(10,6,2,.62);padding:10px;
+  }
+  .overlay.hidden{display:none}
+  .card{
+    width:100%;max-width:430px;max-height:92dvh;display:flex;flex-direction:column;
+    background:#fff8ec;color:#2b2118;border-radius:16px;border:3px solid #8a5a22;
+    box-shadow:0 12px 32px rgba(0,0,0,.55);overflow:hidden;
+  }
+  .card-head{
+    flex:none;padding:14px 16px 8px;text-align:center;border-bottom:2px dashed #d8bd8d;
+  }
+  .card-head h1{font-size:27px;font-weight:900;letter-spacing:.04em;color:#7a3d08}
+  .card-head h2{font-size:22px;font-weight:900;color:#7a3d08}
+  .card-head .version{font-size:12px;font-weight:800;color:#b3762a;margin-top:2px}
+  .card-head .purpose{font-size:13.5px;font-weight:700;line-height:1.55;margin-top:7px;color:#4a3421}
+  .card-head .private-note{font-size:11px;color:#a33;margin-top:5px;font-weight:700}
+  .card-body{
+    flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+    padding:10px 16px 12px;font-size:13.5px;line-height:1.7;
+    scrollbar-width:thin;scrollbar-color:#b3762a #efe0c2;
+  }
+  .card-body::-webkit-scrollbar{width:5px}
+  .card-body::-webkit-scrollbar-thumb{background:#b3762a;border-radius:3px}
+  .card-body::-webkit-scrollbar-track{background:#efe0c2}
+  .card-body h3{font-size:14px;color:#7a3d08;margin:10px 0 3px}
+  .card-body h3:first-child{margin-top:0}
+  .card-body ul{padding-left:1.25em}
+  .card-body .db-sample{background:#f3e6c8;border-radius:8px;padding:7px 10px;font-size:12.5px;line-height:1.65;margin-top:4px}
+  .card-body .scroll-note{font-size:11px;color:#99835f;text-align:center;margin-top:8px}
+  .card-foot{
+    flex:none;padding:10px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top:2px dashed #d8bd8d;background:#fff8ec;
+  }
+  .big-btn{
+    display:block;width:100%;padding:14px 10px;font-size:18px;font-weight:900;letter-spacing:.06em;
+    color:#fff;background:linear-gradient(180deg,#e08a1e,#b35f06);border:none;border-radius:12px;
+    box-shadow:0 4px 0 #7a3d08;cursor:pointer;font-family:inherit;
+  }
+  .big-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7a3d08}
+  .gap-ctl{margin:0 0 10px;padding:9px 12px 7px;background:#f3e6c8;border-radius:10px}
+  .gap-ctl label{display:block;font-size:13.5px;font-weight:800;color:#7a3d08;margin-bottom:5px}
+  .gap-ctl label span{color:#b35f06}
+  .gap-ctl input[type="range"]{width:100%;height:30px;accent-color:#b35f06;cursor:pointer}
+  .gap-scale{display:flex;justify-content:space-between;font-size:11px;color:#99835f;margin-top:1px}
+  .result-rows{font-size:15px;line-height:1.9;font-weight:700}
+  .result-rows .yen{font-size:24px;color:#b35f06;font-weight:900}
+  .result-rows .best{font-size:12.5px;color:#8a6b3f}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <div id="hud">
+    <div class="ver">ガンプラ積み<br>v11</div>
+    <div class="total-box">
+      <div class="total-label">積みプラ総額</div>
+      <span id="total">¥0</span>
+    </div>
+    <div class="sub-box"><span id="count">0</span>箱<br><span id="height">0</span>cm</div>
+  </div>
+  <div id="combo"></div>
+  <div id="wobbleInfo"></div>
+  <div id="hint">タップで箱を落とす</div>
+
+  <!-- ======== START ======== -->
+  <div class="overlay" id="startOverlay">
+    <div class="card">
+      <div class="card-head">
+        <h1>ガンプラ積み</h1>
+        <div class="version">v11 ／ 核だけモック</div>
+        <p class="purpose">買うだけ買って作らないガンプラの箱を<br>天井まで積め。スコアは総額（円）。</p>
+        <p class="private-note">※実名風の身内用モックです。公開用ではありません。</p>
+      </div>
+      <div class="card-body" id="startBody">
+        <h3>あそびかた</h3>
+        <ul>
+          <li>箱が画面の上を左右に動きます。</li>
+          <li><b>タップ（クリック／Space）で、そのまま真下に落とす</b>だけです。操作はこれ1つだけです。</li>
+          <li>下の箱にちゃんと乗れば積み上がり、その箱の<b>価格が総額に加算</b>されます。</li>
+          <li>箱は<b>本物の物理</b>で積み上がります。重心が支えからはみ出すと箱は傾いて滑り落ち、<b>崩れてゲームオーバー</b>です。</li>
+          <li>真ん中にピッタリ（中心のズレ約8px以内）乗せると「ピッタリ！」コンボが付きます。</li>
+          <li>落下中は画面に「速度・角速度・静止つづき」の数値が出ます。着地判定が見ている値そのものです。</li>
+          <li>積み上げ成功のたびに、キット名と二つ名（「白い悪魔！」「足なんて飾りです！」など）が画面に大きく出ます。</li>
+          <li>ズレを同じ方向に重ねると、塔がだんだん傾いてやがて崩れます。着地の衝撃で下の箱が動くこともあります。</li>
+          <li>ゲームオーバーになると、カメラがズームアウトして<b>塔全体と崩れる様子</b>を表示してから結果画面になります。</li>
+        </ul>
+        <h3>箱の大きさ</h3>
+        <ul>
+          <li>EG／HG（1/144）は小さくて薄く、積みやすい代わりに安い。</li>
+          <li>RG（1/144）は小さめでも少し高め。</li>
+          <li>MG（1/100）は幅広で高いけど、置く場所がシビア。</li>
+          <li>PG（1/60）は巨大で超高額。塔が高くなってから、たまにしか来ません。</li>
+          <li>積むほど大きな箱が出やすくなります。</li>
+        </ul>
+        <h3>箱データベース（抜粋・価格は税込の目安）</h3>
+        <div class="db-sample">
+          EG 1/144 RX-78-2ガンダム ¥550<br>
+          HG 1/144 RX-78-2ガンダム ¥1,100<br>
+          HG 1/144 量産型ザクII ¥1,100<br>
+          HG 1/144 シャア専用ザクII ¥1,760<br>
+          HG 1/144 グフ ¥1,320 ／ ドム ¥1,760<br>
+          HG 1/144 ジム ¥1,100 ／ ガンキャノン ¥1,320<br>
+          HG 1/144 ジオング ¥1,980<br>
+          HG 1/144 ガンダムエアリアル ¥1,430<br>
+          HG 1/144 νガンダム ¥2,530<br>
+          RG 1/144 νガンダム ¥4,950 ／ サザビー ¥5,280<br>
+          MG 1/100 RX-78-2ガンダム Ver.3.0 ¥5,060<br>
+          MG 1/100 シャア専用ザクII Ver.2.0 ¥4,950<br>
+          PG 1/60 RX-78-2ガンダム PG UNLEASHED ¥27,500
+        </div>
+        <h3>このモックについて</h3>
+        <ul>
+          <li>核は「タイミングよく落として積む気持ちよさ」と「総額が増えていく気持ちよさ」の2点だけを確かめる版です。</li>
+          <li>ショップ・ステージ・図鑑などの作り込みは入っていません。</li>
+          <li>箱の絵は公式の箱絵のコピーではなく、色と簡単なロボットのシルエットで描いた簡易版です。ロゴも使っていません。</li>
+          <li>ベスト記録（箱数と総額）はこの端末の中だけに保存されます。</li>
+          <li>落下距離（塔のてっぺんから落とす高さ）は、開始前と結果画面の下にあるスライダーで調整できます。設定はこの端末に保存されます。</li>
+        </ul>
+        <p class="scroll-note">（この説明はスクロールできます）</p>
+      </div>
+      <div class="card-foot">
+        <div class="gap-ctl">
+          <label>落下距離：<span id="gapValStart">170</span>px</label>
+          <input type="range" id="gapSliderStart" min="40" max="320" step="10" value="170">
+          <div class="gap-scale"><span>近い（やさしい）</span><span>遠い（衝撃大）</span></div>
+        </div>
+        <div class="wob-ctl">
+          <label><input type="checkbox" id="wobbleChkStart" checked>揺れチェック ON（止まるまで待つ）</label>
+          <div class="wob-note">OFFにすると、着地してから3秒たてば、揺れていても次に進めます（傾き・支えの判定はそのまま）。</div>
+        </div>
+        <button class="big-btn" id="startBtn">積みはじめる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== GAME OVER ======== -->
+  <div class="overlay hidden" id="overOverlay">
+    <div class="card">
+      <div class="card-head">
+        <h2>崩れた…！</h2>
+        <div class="version">ガンプラ積み v11</div>
+      </div>
+      <div class="card-body">
+        <div class="result-rows">
+          積めた箱：<span id="finalCount">0</span>箱（<span id="finalHeight">0</span>cm）<br>
+          総額：<span class="yen" id="finalTotal">¥0</span><br>
+          <span class="best" id="finalBest">ベスト：0箱 ／ ¥0</span><br>
+          <span class="best" id="finalCombo">最大ピッタリコンボ：0</span>
+        </div>
+        <p style="margin-top:8px">箱は本物の物理で積み上がっています。ズレを同じ方向に重ねると塔が傾いて、やがて崩れます。真ん中を狙うほど安定して、総額も伸びます。</p>
+        <p class="scroll-note">（この説明はスクロールできます）</p>
+      </div>
+      <div class="card-foot">
+        <div class="gap-ctl">
+          <label>落下距離：<span id="gapValOver">170</span>px</label>
+          <input type="range" id="gapSliderOver" min="40" max="320" step="10" value="170">
+          <div class="gap-scale"><span>近い（やさしい）</span><span>遠い（衝撃大）</span></div>
+        </div>
+        <div class="wob-ctl">
+          <label><input type="checkbox" id="wobbleChkOver" checked>揺れチェック ON（止まるまで待つ）</label>
+          <div class="wob-note">OFFにすると、着地してから3秒たてば、揺れていても次に進めます（傾き・支えの判定はそのまま）。</div>
+        </div>
+        <button class="big-btn" id="retryBtn">もう一回</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ============================================================
+   ガンプラ積み v11 （身内用・核だけモック）
+   解釈値（本人の指定ではなく、このモックで決めた数値）:
+     - v3から本物の剛体物理（自前エンジン）: 重力・回転・摩擦・衝突で判定
+     - 着地確定: 落下箱の速度22px/s未満・角速度0.30rad/s未満が0.35秒続いた時
+     - 転倒判定: 落下箱が50度以上傾いて静止したら失敗。積み済みは65度で崩壊
+     - v4: ゲームオーバー時はズームアウトして塔全体を表示（ズーム1.0秒＋注視2.0秒）
+     - v7: 土台はv4の物理のまま「下部だけ徐々に石化」を追加（本人の発案）:
+         登録済み箱は、上の箱が10箱までは完全物理（v4そのまま）、10〜20箱下で
+         徐々に固まり（実効逆質量・逆慣性を (1-s) 倍＋追加減衰）、20箱以上下は
+         完全石化してそのプレイ中は二度と動かない。見た目は一切変えない
+         （画面には見えない仕組み）。あわせて結果画面の高さは、崩壊後ではなく
+         到達した最大の高さ（ピーク）で表示するよう修正
+     - v8: 崩れる時（ゲームオーバーの dying 開始の瞬間）には全ての石化を解除する
+         （本人の決定。プレイ中は v7 のまま、崩壊時だけ塔全体が v4 のように全崩れする）。
+         解除はフラグ・スリープを消すだけで、速度や位置は一切付けない
+     - v9: 落下地点を上げる（本人の希望）: 塔のてっぺんから落とす高さ DROP_GAP を
+         36px → 170px に。落下距離が伸びて着地の衝撃が強くなる。あわせてカメラの
+         下限を「動いている箱がHUDの下に隠れない位置」まで引き上げる
+     - v10: 落下距離を開始前・結果画面のスライダーで調整可能に（本人の希望）:
+         範囲40〜320px・10px刻み、初期値170px、設定は端末に保存される
+     - v11: 揺れ（着地確定）パラメータのライブ表示＋揺れチェックon/off（本人の希望）:
+         実機で1分以上「静止待ち」になる事象への対策。off時は着地（接触）から
+         3秒で静止条件だけを飛ばして継続判定に入る（傾き・支え・床落ちの失敗
+         判定は従来通り）。設定は端末に保存される
+     - ピッタリ判定: 中心のズレ 8px 以内
+     - 箱の実寸換算: 画面1px ≒ 0.14cm として高さ表示
+   入力は「タップ/クリック/Space = 落とす」の1経路のみ。
+   ドラッグ移動・デッドゾーン・スムージング・速度制限は無し。
+   ============================================================ */
+
+// ---------- データベース（実名風・価格は税込の目安） ----------
+// w/h は画面上の箱サイズ(px)。sil = シルエットの形 (0:連邦系 1:ザク系 2:丸頭系 3:重装系)
+var DB = [
+  {grade:'EG', scale:'1/144', name:'RX-78-2ガンダム',        lines:['RX-78-2','ガンダム'],        price:550,   w:118, h:34, bg:'#eef1f4', sub:'#2a5fb0', sil:'#33507e', silType:0, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'RX-78-2ガンダム',        lines:['RX-78-2','ガンダム'],        price:1100,  w:132, h:38, bg:'#eef1f4', sub:'#c8372d', sil:'#33507e', silType:0, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'量産型ザクII',           lines:['量産型','ザクII'],            price:1100,  w:132, h:38, bg:'#5d7040', sub:'#33401f', sil:'#26331a', silType:1, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'シャア専用ザクII',       lines:['シャア専用','ザクII'],        price:1760,  w:136, h:38, bg:'#b84a42', sub:'#7c241e', sil:'#5e1a15', silType:1, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'グフ',                   lines:['グフ',''],                   price:1320,  w:134, h:38, bg:'#3d5a96', sub:'#22355e', sil:'#1c2c4e', silType:1, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ドム',                   lines:['ドム',''],                   price:1760,  w:142, h:40, bg:'#4a4258', sub:'#8a2f4f', sil:'#241d30', silType:3, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ジオング',               lines:['ジオング',''],               price:1980,  w:144, h:42, bg:'#7a6a9a', sub:'#3e2f5e', sil:'#2c2144', silType:3, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ジム',                   lines:['ジム',''],                   price:1100,  w:128, h:36, bg:'#e6e2d4', sub:'#7a8a99', sil:'#5a6a72', silType:2, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ガンキャノン',           lines:['ガンキャノン',''],           price:1320,  w:138, h:40, bg:'#a03a30', sub:'#5e1f18', sil:'#571f18', silType:3, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ガンダムエアリアル',     lines:['ガンダム','エアリアル'],      price:1430,  w:134, h:38, bg:'#eef1f4', sub:'#3a7ac8', sil:'#3a5a86', silType:0, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'ガンダム・バルバトス',   lines:['ガンダム','バルバトス'],      price:1100,  w:132, h:38, bg:'#e9e6de', sub:'#8a8f96', sil:'#4e5a66', silType:0, tier:'S'},
+  {grade:'HG', scale:'1/144', name:'νガンダム',              lines:['νガンダム',''],              price:2530,  w:146, h:42, bg:'#eceff2', sub:'#c8a02a', sil:'#3a4a66', silType:0, tier:'S'},
+  {grade:'RG', scale:'1/144', name:'νガンダム',              lines:['νガンダム',''],              price:4950,  w:142, h:44, bg:'#dde3e8', sub:'#2a2f36', sil:'#2c384c', silType:0, tier:'M'},
+  {grade:'RG', scale:'1/144', name:'サザビー',               lines:['サザビー',''],               price:5280,  w:148, h:44, bg:'#b03a32', sub:'#5e1a15', sil:'#571a15', silType:3, tier:'M'},
+  {grade:'MG', scale:'1/100', name:'RX-78-2ガンダム Ver.3.0',lines:['RX-78-2 ガンダム','Ver.3.0'], price:5060,  w:192, h:56, bg:'#e8ecf0', sub:'#2a5fb0', sil:'#33507e', silType:0, tier:'L'},
+  {grade:'MG', scale:'1/100', name:'シャア専用ザクII Ver.2.0',lines:['シャア専用ザクII','Ver.2.0'],price:4950,  w:190, h:56, bg:'#b84a42', sub:'#7c241e', sil:'#5e1a15', silType:1, tier:'L'},
+  {grade:'PG', scale:'1/60',  name:'RX-78-2ガンダム PG UNLEASHED', lines:['RX-78-2 ガンダム','PG UNLEASHED'], price:27500, w:252, h:74, bg:'#dfe5ea', sub:'#16202c', sil:'#263c5c', silType:0, tier:'XL'}
+];
+
+// ---------- 成功時のコール（二つ名・名セリフ） ----------
+// 積み上げ成功時にキット名と一緒に大きく表示する（本人の発案 2026-11-19）
+var CALLS = {
+  'EG|RX-78-2ガンダム': '白い悪魔（お手軽版）！',
+  'HG|RX-78-2ガンダム': '白い悪魔！',
+  'HG|量産型ザクII': '量産の名機！',
+  'HG|シャア専用ザクII': '赤い彗星！通常の3倍！',
+  'HG|グフ': 'ザクとは違うのだよ！',
+  'HG|ドム': '黒い三連星！',
+  'HG|ジオング': '足なんて飾りです！',
+  'HG|ジム': '連邦の量産機！',
+  'HG|ガンキャノン': '真っ赤な砲撃手！',
+  'HG|ガンダムエアリアル': '水星の魔女！',
+  'HG|ガンダム・バルバトス': '鉄血の悪魔！',
+  'HG|νガンダム': '伊達じゃない！',
+  'RG|νガンダム': 'ファンネル、装備！',
+  'RG|サザビー': 'シャアの最後の機体！',
+  'MG|RX-78-2ガンダム Ver.3.0': '白い悪魔、Ver.3.0！',
+  'MG|シャア専用ザクII Ver.2.0': '赤い彗星、再び！',
+  'PG|RX-78-2ガンダム PG UNLEASHED': '究極の白い悪魔！'
+};
+function callFor(e){ return CALLS[e.grade + '|' + e.name] || ''; }
+var callout = null;  // {title, call, t} 成功コールの表示状態
+
+var SUPPORT_MIN_RATIO = 0.35;  // 解釈値: これ未満の重なりで崩壊
+var PERFECT_PX = 8;            // 解釈値: ピッタリ判定の中心ズレ
+var PX_TO_CM = 0.14;           // 解釈値: 高さ表示の換算
+
+function pickNext(count){
+  // 積むほど大きな箱が出やすい重み付け
+  var pool = [];
+  var i, e, weight;
+  for(i=0;i<DB.length;i++){
+    e = DB[i]; weight = 0;
+    if(count < 4){
+      weight = (e.tier==='S') ? 10 : 0;
+    } else if(count < 8){
+      weight = (e.tier==='S') ? 10 : (e.tier==='M' ? 4 : 0);
+    } else if(count < 12){
+      weight = (e.tier==='S') ? 9 : (e.tier==='M' ? 5 : (e.tier==='L' ? 3 : 0));
+    } else {
+      weight = (e.tier==='S') ? 8 : (e.tier==='M' ? 5 : (e.tier==='L' ? 5 : 1));
+    }
+    if(e.tier==='XL' && count < 12) weight = 0; // PGは終盤だけ
+    for(var k=0;k<weight;k++) pool.push(e);
+  }
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+// ---------- DOM ----------
+var canvas = document.getElementById('game');
+var ctx = canvas.getContext('2d');
+var totalEl = document.getElementById('total');
+var countEl = document.getElementById('count');
+var heightEl = document.getElementById('height');
+var comboEl = document.getElementById('combo');
+var hintEl = document.getElementById('hint');
+var wobbleEl = document.getElementById('wobbleInfo');
+var startOverlay = document.getElementById('startOverlay');
+var overOverlay = document.getElementById('overOverlay');
+
+var W = 0, H = 0, DPR = 1;
+function resize(){
+  var app = document.getElementById('app');
+  W = app.clientWidth; H = app.clientHeight;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- 音（WebAudio合成・素材なし） ----------
+var audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    try{ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ audioCtx = null; }
+  }
+  if(audioCtx && audioCtx.state === 'suspended'){ audioCtx.resume(); }
+}
+function blip(freq, t0, dur, type, gain){
+  if(!audioCtx) return;
+  var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(gain, audioCtx.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + t0 + dur);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(audioCtx.currentTime + t0); o.stop(audioCtx.currentTime + t0 + dur + 0.02);
+}
+function playRegister(perfect){
+  ensureAudio(); if(!audioCtx) return;
+  blip(1560, 0, 0.07, 'square', 0.06);          // レジの「ピッ」
+  blip(2090, 0.07, 0.10, 'square', 0.05);       // 「チン」
+  if(perfect){ blip(2630, 0.16, 0.14, 'square', 0.05); blip(3130, 0.24, 0.16, 'square', 0.045); }
+}
+function playTopple(){
+  ensureAudio(); if(!audioCtx) return;
+  blip(220, 0, 0.35, 'sawtooth', 0.07);
+  blip(140, 0.12, 0.45, 'sawtooth', 0.07);
+  blip(70, 0.35, 0.5, 'triangle', 0.09);
+}
+
+// ---------- ベスト ----------
+var BEST_KEY = 'gunpla-tsumi-best-v1';
+function loadBest(){
+  try{
+    var b = JSON.parse(localStorage.getItem(BEST_KEY) || 'null');
+    if(b && typeof b.count === 'number') return b;
+  }catch(e){}
+  return {count:0, total:0};
+}
+function saveBest(b){
+  try{ localStorage.setItem(BEST_KEY, JSON.stringify(b)); }catch(e){}
+}
+
+// ---------- ゲーム状態 ----------
+// v3: 本物の剛体物理（自前エンジン、外部ライブラリなし）。
+// 箱は位置・角度・速度・角速度を持ち、重力・摩擦・衝突インパルスで積み上がる。
+// ワールド座標: x は画面ピクセル、y は床の上面を 0 として上向きが負。
+var state = 'title'; // title | moving | falling | dying | over
+var bodies = [];     // 物理ボディ（床は floorBody が別）
+var stack = [];      // 登録済みボディ（積み成功した順）
+var floorBody = null;
+var active = null;   // 落下中のボディ
+var mover = null;    // 落下前、左右に動いている箱 {entry, w, h, x, dir, speed}
+var totalPrice = 0;
+var displayedPrice = 0;
+var combo = 0, maxCombo = 0;
+var peakHeightCm = 0;  // v7: 到達した最大の高さ（結果画面はこちらを出す）
+var petriReleased = false; // v8: dying開始で全石化を解除したら true（そのプレイ中は再石化しない）
+var camera = 0, cameraTarget = 0;
+var floaters = [];               // {text, x, y, t, color}
+var settleTimer = 0;
+var contactTimer = 0;            // v11: 落下箱が最初に何かに触れてからの経過秒（揺れチェックOFF時の強制継続用）
+var contactLanded = false;       // v11: 一度でも接触したら true（以後は跳ねても contactTimer は止めない）
+var jiggleFlip = 1;              // テスト用フック jiggle の符号反転用
+var wobbleCheck = true;          // v11: true=従来通り静止するまで待つ / false=着地3秒で強制継続
+var WOBBLE_KEY = 'gunpla-tsumi-wobble-v1';
+var dyingTimer = 0;
+var physAcc = 0;
+var arbiters = {};               // pairKey -> [{x,y,Pn,Pt}] ウォームスタート用
+var lastContacts = [];           // 直近ステップの接触（支持判定用）
+var nextBodyId = 1;
+var lastTime = 0;
+
+var FLOOR_H = 64;
+// ---------- 物理の解釈値（本人の指定ではなく、このモックで決めた数値） ----------
+var GRAVITY = 2400;        // px/s^2
+var PHYS_H = 1 / 240;      // 物理ステップ（秒）。1フレームで複数回回す
+var SOLVER_ITERS = 8;      // インパルス反復回数
+var FRICTION = 0.85;       // 摩擦係数（高め＝滑りにくい）
+var BIAS = 0.2;            // めり込み解消の強さ
+var SLOP_PX = 0.4;         // 許容めり込み px
+var MAX_VEL = 1250;        // px/s 速度上限
+var MAX_ANGVEL = 9;        // rad/s 角速度上限
+var SLEEP_VEL = 16;        // px/s これ未満が続けば眠る（ソルバの微振動より上に設定）
+var SLEEP_ANGVEL = 0.25;   // rad/s
+var SLEEP_TIME = 0.35;     // s
+var SETTLE_VEL = 22;       // px/s 着地確定の静止しきい値
+var FORCE_CONTINUE_TIME = 3.0;  // v11: 揺れチェックOFF時、着地からこの秒数で揺れていても継続判定に入る
+var SETTLE_ANGVEL = 0.30;  // rad/s
+var SETTLE_TIME = 0.35;    // s 静止が続いたら着地を確定判定
+var TIP_OVER_DEG = 50;     // 落下箱がこの角度以上傾いて静止したら転倒＝失敗
+var STACK_TIP_DEG = 65;    // 積み済みの箱がこの角度を超えたら崩壊＝失敗
+var DROP_GAP = 170;        // 塔のてっぺんから落とす高さ px（v9で36→170。v10から開始前スライダーで調整可）
+var GAP_MIN = 40, GAP_MAX = 320;  // v10: スライダーの調整範囲 px
+var GAP_KEY = 'gunpla-tsumi-gap-v1';
+
+// ---------- v7: 石化グラデーション（本人の発案・解釈値） ----------
+// 登録済み箱だけが対象。depthAbove = その箱より上に積まれた登録済み箱の数。
+// s = clamp((depthAbove - PETRI_FREE) / (PETRI_FULL - PETRI_FREE), 0, 1)
+var PETRI_FREE = 10;       // 上の箱がこの数までは s=0（完全物理・v4そのまま）
+var PETRI_FULL = 20;       // 上の箱がこの数以上で s=1（完全石化の対象）
+var PETRI_DAMP_LIN = 0.015; // グラデーション帯の線形減衰（物理サブステップ毎に (1 - これ*s) 倍）
+var PETRI_DAMP_ANG = 0.03;  // グラデーション帯の角減衰（物理サブステップ毎に (1 - これ*s) 倍）
+var PETRI_VEL = 40;        // px/s 石化が確定する速度の上限
+var PETRI_ANGVEL = 0.6;    // rad/s 石化が確定する角速度の上限
+
+// ---------- v4: ゲームオーバー時の全体表示（ズームアウト）解釈値 ----------
+var ZOOM_DUR = 1.0;        // s ズームアウトにかける時間
+var WATCH_TIME = 2.0;      // s 失敗から結果画面までの最低注視時間（全静止ならズーム完了時点で早めに進む）
+var FIT_TOP = 84;          // px ズーム後の塔のてっぺんと画面上端の間隔（HUDの下）
+var FIT_BOTTOM = 24;       // px ズーム後の床の下端と画面下端の間隔
+var FIT_WORLD_PAD = 36;    // ワールドpx 塔の上に確保する余白（全体の高さ計算に含める）
+var viewScale = 1;         // 現在の表示倍率（通常プレイは常に1、dying/over の時だけ下がる）
+var viewOffY = 0;          // 現在の表示オフセット（床上面 worldY=0 の画面Y）
+var viewFrom = null;       // {scale, offY} ズーム開始時点
+var viewTo = null;         // {scale, offY} ズーム目標
+var viewFitTowerH = 0;     // 失敗時点の塔の高さ px（ズーム計算に使った値）
+
+function currentViewScale(){ return (state === 'dying' || state === 'over') ? viewScale : 1; }
+function currentViewOffY(){ return (state === 'dying' || state === 'over') ? viewOffY : (H - FLOOR_H + camera); }
+function floorScreenY(){ return currentViewOffY(); }
+function yen(n){ return '¥' + n.toLocaleString('ja-JP'); }
+function normAngle(a){ while(a > Math.PI) a -= Math.PI * 2; while(a < -Math.PI) a += Math.PI * 2; return a; }
+function aabbHalfH(b){ var c = Math.abs(Math.cos(b.angle)), s = Math.abs(Math.sin(b.angle)); return s * b.w / 2 + c * b.h / 2; }
+function aabbTop(b){ return b.y - aabbHalfH(b); }
+function aabbBottom(b){ return b.y + aabbHalfH(b); }
+function towerTopY(){
+  var top = 0;
+  for(var i = 0; i < stack.length; i++){ var t = aabbTop(stack[i]); if(t < top) top = t; }
+  return top;
+}
+function towerHeightPx(){ return -towerTopY(); }
+function heightCm(){ return Math.round(towerHeightPx() * PX_TO_CM); }
+function stackTopScreenY(){ return floorScreenY() + towerTopY(); }
+function topBody(){
+  var t = null;
+  for(var i = 0; i < stack.length; i++){ if(!t || aabbTop(stack[i]) < aabbTop(t)) t = stack[i]; }
+  return t;
+}
+function topX(){ var t = topBody(); return t ? t.x : W / 2; }
+function moverCenterY(){ return towerTopY() - DROP_GAP - (mover ? mover.h : 0) / 2; }
+
+// ---------- 剛体 ----------
+function makeBody(entry, x, y){
+  var m = entry.w * entry.h / 3000;
+  var I = m * (entry.w * entry.w + entry.h * entry.h) / 12;
+  return {
+    id: nextBodyId++, entry: entry, w: entry.w, h: entry.h,
+    x: x, y: y, vx: 0, vy: 0, angle: 0, va: 0,
+    mass: m, invMass: 1 / m, inertia: I, invI: 1 / I,
+    radius: 0.5 * Math.sqrt(entry.w * entry.w + entry.h * entry.h),
+    asleep: false, sleepTimer: 0, registered: false, isFloor: false,
+    petrified: false, petriS: 0
+  };
+}
+function makeFloor(){
+  var w = Math.max(W * 3, 1200);
+  return {
+    id: 0, entry: null, w: w, h: 100, x: W / 2, y: 50,
+    vx: 0, vy: 0, angle: 0, va: 0,
+    mass: 0, invMass: 0, inertia: 0, invI: 0,
+    radius: 0.5 * Math.sqrt(w * w + 100 * 100),
+    asleep: true, sleepTimer: 999, registered: false, isFloor: true,
+    petrified: false, petriS: 0
+  };
+}
+function effInvM(b){ if(b.petrified || b.asleep) return 0; return b.invMass * (1 - (b.petriS || 0)); }
+function effInvI(b){ if(b.petrified || b.asleep) return 0; return b.invI * (1 - (b.petriS || 0)); }
+// v7: 石化度の更新。登録済み箱について「上にある登録済み箱の数」から s を決める。
+// s>=1 で十分に静かなら petrified をラッチし、プレイ中は二度と目覚めない。
+// s>=1 の間は速度をゼロに保ち、重力・積分からも外す（逆質量0だけだと自速度で沈むため）。
+// v8: petriReleased 中（dying/over）は石化を完全に無効化し、s を 0 に保つ（再石化しない）。
+function updatePetri(){
+  var n = stack.length, i, b, idx, depth, s, sp;
+  if(petriReleased){
+    for(i = 0; i < bodies.length; i++) bodies[i].petriS = 0;
+    return;
+  }
+  for(i = 0; i < bodies.length; i++){
+    b = bodies[i];
+    idx = stack.indexOf(b);
+    if(idx < 0){ b.petriS = 0; continue; }
+    depth = (n - 1) - idx;
+    s = (depth - PETRI_FREE) / (PETRI_FULL - PETRI_FREE);
+    if(s < 0) s = 0; if(s > 1) s = 1;
+    b.petriS = s;
+    if(s >= 1 && !b.petrified){
+      sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if(sp < PETRI_VEL && Math.abs(b.va) < PETRI_ANGVEL){
+        b.petrified = true; b.asleep = false; b.sleepTimer = 0;
+      }
+      b.vx = 0; b.vy = 0; b.va = 0;
+    }
+  }
+}
+function wake(b){ if(b.isFloor) return; b.asleep = false; b.sleepTimer = 0; }
+function rotPt(b, lx, ly){
+  var c = Math.cos(b.angle), s = Math.sin(b.angle);
+  return {x: b.x + c * lx - s * ly, y: b.y + s * lx + c * ly};
+}
+
+// ---------- 衝突検出（OBB同士、面クリッピング方式） ----------
+// 接触法線は A→B 方向。sep は負でめり込み。
+function incidentFace(body, nx, ny){
+  var c = Math.cos(body.angle), s = Math.sin(body.angle);
+  var nlx = c * nx + s * ny, nly = -s * nx + c * ny;
+  var hw = body.w / 2, hh = body.h / 2;
+  if(Math.abs(nlx) >= Math.abs(nly)){
+    if(nlx > 0) return [rotPt(body, -hw, -hh), rotPt(body, -hw, hh)];
+    return [rotPt(body, hw, hh), rotPt(body, hw, -hh)];
+  }
+  if(nly > 0) return [rotPt(body, hw, -hh), rotPt(body, -hw, -hh)];
+  return [rotPt(body, -hw, hh), rotPt(body, hw, hh)];
+}
+function clipSegment(pts, nx, ny, offset){
+  var out = [];
+  var d0 = nx * pts[0].x + ny * pts[0].y - offset;
+  var d1 = nx * pts[1].x + ny * pts[1].y - offset;
+  if(d0 <= 0) out.push(pts[0]);
+  if(d1 <= 0) out.push(pts[1]);
+  if(d0 * d1 < 0){
+    var t = d0 / (d0 - d1);
+    out.push({x: pts[0].x + (pts[1].x - pts[0].x) * t, y: pts[0].y + (pts[1].y - pts[0].y) * t});
+  }
+  return out;
+}
+function refContacts(ref, inc, axis, sign){
+  var c = Math.cos(ref.angle), s = Math.sin(ref.angle);
+  var nlx = axis === 0 ? sign : 0, nly = axis === 0 ? 0 : sign;
+  var nx = c * nlx - s * nly, ny = s * nlx + c * nly;
+  var front = nx * ref.x + ny * ref.y + (axis === 0 ? ref.w / 2 : ref.h / 2);
+  var tlx = axis === 0 ? 0 : 1, tly = axis === 0 ? 1 : 0;
+  var tx = c * tlx - s * tly, ty = s * tlx + c * tly;
+  var side = axis === 0 ? ref.h / 2 : ref.w / 2;
+  var tc = tx * ref.x + ty * ref.y;
+  var pts = incidentFace(inc, nx, ny);
+  pts = clipSegment(pts, tx, ty, tc + side);
+  if(pts.length < 2) return [];
+  pts = clipSegment(pts, -tx, -ty, -tc + side);
+  if(pts.length < 2) return [];
+  var out = [];
+  for(var i = 0; i < pts.length; i++){
+    var sep = nx * pts[i].x + ny * pts[i].y - front;
+    if(sep <= SLOP_PX) out.push({x: pts[i].x, y: pts[i].y, nx: nx, ny: ny, sep: sep});
+  }
+  return out;
+}
+function collide(A, B){
+  var dx = B.x - A.x, dy = B.y - A.y;
+  var rr = A.radius + B.radius;
+  if(dx * dx + dy * dy > rr * rr) return [];
+  var cA = Math.cos(A.angle), sA = Math.sin(A.angle);
+  var cB = Math.cos(B.angle), sB = Math.sin(B.angle);
+  var dAx = cA * dx + sA * dy, dAy = -sA * dx + cA * dy;
+  var dBx = cB * dx + sB * dy, dBy = -sB * dx + cB * dy;
+  var C00 = cA * cB + sA * sB,  C01 = -cA * sB + sA * cB;
+  var C10 = -sA * cB + cA * sB, C11 = sA * sB + cA * cB;
+  var aC00 = Math.abs(C00), aC01 = Math.abs(C01), aC10 = Math.abs(C10), aC11 = Math.abs(C11);
+  var faceAx = Math.abs(dAx) - A.w / 2 - (aC00 * B.w / 2 + aC01 * B.h / 2);
+  var faceAy = Math.abs(dAy) - A.h / 2 - (aC10 * B.w / 2 + aC11 * B.h / 2);
+  if(faceAx > 0 || faceAy > 0) return [];
+  var faceBx = Math.abs(dBx) - B.w / 2 - (aC00 * A.w / 2 + aC10 * A.h / 2);
+  var faceBy = Math.abs(dBy) - B.h / 2 - (aC01 * A.w / 2 + aC11 * A.h / 2);
+  if(faceBx > 0 || faceBy > 0) return [];
+  var axis = 0, best = faceAx, sign = dAx >= 0 ? 1 : -1;
+  if(faceAy > best + 0.01){ axis = 1; best = faceAy; sign = dAy >= 0 ? 1 : -1; }
+  if(faceBx > best + 0.01){ axis = 2; best = faceBx; sign = dBx > 0 ? -1 : 1; }
+  if(faceBy > best + 0.01){ axis = 3; best = faceBy; sign = dBy > 0 ? -1 : 1; }
+  if(axis < 2) return refContacts(A, B, axis, sign);
+  var cs = refContacts(B, A, axis - 2, sign);
+  for(var i = 0; i < cs.length; i++){ cs[i].nx *= -1; cs[i].ny *= -1; }
+  return cs;
+}
+
+// ---------- インパルス・ソルバ ----------
+function applyImpulse(ct, px, py){
+  var A = ct.a, B = ct.b;
+  var imA = effInvM(A), iiA = effInvI(A), imB = effInvM(B), iiB = effInvI(B);
+  A.vx -= imA * px; A.vy -= imA * py; A.va -= iiA * (ct.r1x * py - ct.r1y * px);
+  B.vx += imB * px; B.vy += imB * py; B.va += iiB * (ct.r2x * py - ct.r2y * px);
+}
+function prepContact(ct){
+  var A = ct.a, B = ct.b;
+  ct.r1x = ct.x - A.x; ct.r1y = ct.y - A.y;
+  ct.r2x = ct.x - B.x; ct.r2y = ct.y - B.y;
+  var rn1 = ct.r1x * ct.ny - ct.r1y * ct.nx;
+  var rn2 = ct.r2x * ct.ny - ct.r2y * ct.nx;
+  var kn = effInvM(A) + effInvM(B) + effInvI(A) * rn1 * rn1 + effInvI(B) * rn2 * rn2;
+  ct.massN = kn > 0 ? 1 / kn : 0;
+  ct.tx = -ct.ny; ct.ty = ct.nx;
+  var rt1 = ct.r1x * ct.ty - ct.r1y * ct.tx;
+  var rt2 = ct.r2x * ct.ty - ct.r2y * ct.tx;
+  var kt = effInvM(A) + effInvM(B) + effInvI(A) * rt1 * rt1 + effInvI(B) * rt2 * rt2;
+  ct.massT = kt > 0 ? 1 / kt : 0;
+  ct.bias = -BIAS / PHYS_H * Math.min(0, ct.sep + SLOP_PX);
+}
+function relVel(ct){
+  var A = ct.a, B = ct.b;
+  return {
+    x: (B.vx - B.va * ct.r2y) - (A.vx - A.va * ct.r1y),
+    y: (B.vy + B.va * ct.r2x) - (A.vy + A.va * ct.r1x)
+  };
+}
+function solveContact(ct){
+  // 法線方向
+  var dv = relVel(ct);
+  var vn = dv.x * ct.nx + dv.y * ct.ny;
+  var dPn = ct.massN * (-vn + ct.bias);
+  var oldPn = ct.Pn;
+  ct.Pn = Math.max(oldPn + dPn, 0);
+  dPn = ct.Pn - oldPn;
+  applyImpulse(ct, ct.nx * dPn, ct.ny * dPn);
+  // 摩擦
+  dv = relVel(ct);
+  var vt = dv.x * ct.tx + dv.y * ct.ty;
+  var dPt = ct.massT * (-vt);
+  var maxPt = FRICTION * ct.Pn;
+  var oldPt = ct.Pt;
+  ct.Pt = Math.max(-maxPt, Math.min(maxPt, oldPt + dPt));
+  dPt = ct.Pt - oldPt;
+  applyImpulse(ct, ct.tx * dPt, ct.ty * dPt);
+}
+function gatherContacts(){
+  var all = bodies.concat([floorBody]);
+  var list = [];
+  var newArbiters = {};
+  for(var i = 0; i < all.length; i++){
+    for(var j = i + 1; j < all.length; j++){
+      var A = all[i], B = all[j];
+      if(effInvM(A) === 0 && effInvM(B) === 0){
+        // v7: 石化した土台の上で眠っている箱は、接触を残さないと支持判定から
+        // 消えて目覚めループに入る。静的同士の接触はソルバでは無力（質量0）なので安全。
+        var petriPair = (A.petrified && B.asleep) || (B.petrified && A.asleep);
+        if(!petriPair) continue;
+      }
+      var cs = collide(A, B);
+      if(!cs.length) continue;
+      var key = A.id + '_' + B.id;
+      var old = arbiters[key] || [];
+      var used = [];
+      for(var k = 0; k < cs.length; k++){
+        var ct = {a: A, b: B, x: cs[k].x, y: cs[k].y, nx: cs[k].nx, ny: cs[k].ny, sep: cs[k].sep, Pn: 0, Pt: 0};
+        for(var m = 0; m < old.length; m++){
+          if(used[m]) continue;
+          var ddx = old[m].x - ct.x, ddy = old[m].y - ct.y;
+          if(ddx * ddx + ddy * ddy < 16){ ct.Pn = old[m].Pn; ct.Pt = old[m].Pt; used[m] = true; break; }
+        }
+        list.push(ct);
+        if(!newArbiters[key]) newArbiters[key] = [];
+        newArbiters[key].push(ct);
+      }
+    }
+  }
+  arbiters = newArbiters;
+  return list;
+}
+function handleWakes(contacts){
+  var supported = {};
+  var i, ct, S, P;
+  for(i = 0; i < contacts.length; i++){
+    ct = contacts[i];
+    // 接触点が中心より下にある側は「下から支えられている」
+    if(ct.y > ct.a.y + 1) supported[ct.a.id] = true;
+    if(ct.y > ct.b.y + 1) supported[ct.b.id] = true;
+  }
+  for(i = 0; i < contacts.length; i++){
+    ct = contacts[i];
+    if(ct.a.asleep && !ct.b.asleep){ S = ct.a; P = ct.b; }
+    else if(ct.b.asleep && !ct.a.asleep){ S = ct.b; P = ct.a; }
+    else continue;
+    var pSpeed = Math.sqrt(P.vx * P.vx + P.vy * P.vy);
+    if(P === active || pSpeed > 18 || ct.sep < -1.2) wake(S);
+  }
+  // 支えを失った眠り箱は起こす（下が抜けたら落ちる）
+  var all = bodies.concat([floorBody]);
+  for(i = 0; i < all.length; i++){
+    if(all[i].asleep && !all[i].isFloor && !supported[all[i].id]) wake(all[i]);
+  }
+}
+function physStep(h){
+  var i, b;
+  updatePetri(); // v7: 石化度を毎ステップ更新
+  // 重力＋速度上限
+  for(i = 0; i < bodies.length; i++){
+    b = bodies[i];
+    if(b.asleep || b.petrified || b.petriS >= 1) continue;
+    b.vy += GRAVITY * h;
+    var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    if(sp > MAX_VEL){ b.vx *= MAX_VEL / sp; b.vy *= MAX_VEL / sp; }
+    if(b.va > MAX_ANGVEL) b.va = MAX_ANGVEL;
+    if(b.va < -MAX_ANGVEL) b.va = -MAX_ANGVEL;
+    b.va *= Math.max(0, 1 - 0.4 * h);
+    // v7: グラデーション帯の追加減衰（徐々に落ち着かせる）
+    if(b.petriS > 0){
+      var pdk = 1 - PETRI_DAMP_LIN * b.petriS;
+      b.vx *= pdk; b.vy *= pdk;
+      b.va *= (1 - PETRI_DAMP_ANG * b.petriS);
+    }
+  }
+  var contacts = gatherContacts();
+  handleWakes(contacts);
+  lastContacts = contacts;
+  for(i = 0; i < contacts.length; i++){
+    prepContact(contacts[i]);
+    if(contacts[i].Pn || contacts[i].Pt) applyImpulse(contacts[i], contacts[i].nx * contacts[i].Pn + contacts[i].tx * contacts[i].Pt, contacts[i].ny * contacts[i].Pn + contacts[i].ty * contacts[i].Pt);
+  }
+  for(var it = 0; it < SOLVER_ITERS; it++){
+    for(i = 0; i < contacts.length; i++) solveContact(contacts[i]);
+  }
+  // 位置の積分＋スリープ判定
+  var hasContact = {};
+  for(i = 0; i < contacts.length; i++){ hasContact[contacts[i].a.id] = true; hasContact[contacts[i].b.id] = true; }
+  for(i = 0; i < bodies.length; i++){
+    b = bodies[i];
+    if(b.asleep || b.petrified || b.petriS >= 1) continue;
+    // 接触中の低速ボディには強めの減衰（静止摩擦っぽく微振動を殺す）
+    if(hasContact[b.id]){
+      var spA = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+      if(spA < 40){ var dk = Math.max(0, 1 - 4 * h); b.vx *= dk; b.vy *= dk; b.va *= Math.max(0, 1 - 6 * h); }
+    }
+    b.x += b.vx * h;
+    b.y += b.vy * h;
+    b.angle = normAngle(b.angle + b.va * h);
+    var sp2 = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    if(hasContact[b.id] && sp2 < SLEEP_VEL && Math.abs(b.va) < SLEEP_ANGVEL){
+      b.sleepTimer += h;
+      if(b.sleepTimer >= SLEEP_TIME){ b.asleep = true; b.vx = 0; b.vy = 0; b.va = 0; }
+    } else {
+      b.sleepTimer = 0;
+    }
+  }
+}
+
+// ---------- ゲーム進行 ----------
+function spawnMover(){
+  var e = pickNext(stack.length);
+  var speed = Math.min(150 + stack.length * 9, 330);
+  mover = {entry: e, w: e.w, h: e.h, x: W / 2, dir: (Math.random() < 0.5 ? -1 : 1), speed: speed};
+  state = 'moving';
+}
+function startGame(){
+  wobbleEl.style.display = 'none';
+  bodies = []; stack = []; active = null; mover = null;
+  totalPrice = 0; displayedPrice = 0;
+  combo = 0; maxCombo = 0; peakHeightCm = 0; petriReleased = false; camera = 0; cameraTarget = 0;
+  viewScale = 1; viewOffY = H - FLOOR_H; viewFrom = null; viewTo = null; viewFitTowerH = 0;
+  floaters = []; callout = null; settleTimer = 0; contactTimer = 0; contactLanded = false; dyingTimer = 0;
+  physAcc = 0; arbiters = {}; lastContacts = [];
+  floorBody = makeFloor();
+  startOverlay.classList.add('hidden');
+  overOverlay.classList.add('hidden');
+  hintEl.style.display = 'block';
+  updateHud(true);
+  spawnMover();
+}
+function dropBox(){
+  if(state !== 'moving' || !mover) return;
+  active = makeBody(mover.entry, mover.x, moverCenterY());
+  bodies.push(active);
+  mover = null;
+  settleTimer = 0;
+  contactTimer = 0;
+  contactLanded = false;
+  state = 'falling';
+}
+function findSupport(b){
+  // lastContacts から、b の下半分で接している相手を探す
+  var best = null, floorSupport = false;
+  for(var i = 0; i < lastContacts.length; i++){
+    var ct = lastContacts[i];
+    var other = null;
+    if(ct.a === b) other = ct.b; else if(ct.b === b) other = ct.a; else continue;
+    if(ct.y <= b.y + 2) continue; // 上側の接触は支えではない
+    if(other.isFloor){ floorSupport = true; continue; }
+    if(!best || aabbTop(other) < aabbTop(best)) best = other;
+  }
+  return {body: best, floor: floorSupport};
+}
+function resolveActive(){
+  var b = active;
+  var angDeg = Math.abs(normAngle(b.angle)) * 180 / Math.PI;
+  var onFloor = aabbBottom(b) > -3;
+  var sup = findSupport(b);
+  var ok = angDeg <= TIP_OVER_DEG && (sup.body || (stack.length === 0 && onFloor)) && !(onFloor && stack.length > 0);
+  if(!ok){ startDying(); return; }
+  var perfect = sup.body ? Math.abs(b.x - sup.body.x) <= PERFECT_PX : Math.abs(b.x - W / 2) <= PERFECT_PX;
+  b.registered = true;
+  stack.push(b);
+  totalPrice += b.entry.price;
+  callout = {title: b.entry.grade + ' ' + b.entry.scale + ' ' + b.entry.name, call: callFor(b.entry), t: 0};
+  if(perfect){
+    combo++; if(combo > maxCombo) maxCombo = combo;
+    floaters.push({text: 'ピッタリ！ +' + yen(b.entry.price), x: b.x, y: stackTopScreenY() - 8, t: 0, color: '#7df0ff'});
+  } else {
+    combo = 0;
+    floaters.push({text: '+' + yen(b.entry.price), x: b.x, y: stackTopScreenY() - 8, t: 0, color: '#ffe98a'});
+  }
+  updateCombo();
+  playRegister(perfect);
+  if(window.navigator && navigator.vibrate){ try{ navigator.vibrate(perfect ? [18, 40, 18] : 18); }catch(e){} }
+  active = null;
+  settleTimer = 0;
+  updateHud(false);
+  spawnMover();
+}
+function activeHasContact(){
+  for(var i = 0; i < lastContacts.length; i++){
+    if(lastContacts[i].a === active || lastContacts[i].b === active) return true;
+  }
+  return false;
+}
+function checkActive(dt){
+  if(!active) return;
+  if(active.x < -90 || active.x > W + 90 || active.y > 300){ startDying(); return; }
+  var sp = Math.sqrt(active.vx * active.vx + active.vy * active.vy);
+  if(sp < SETTLE_VEL && Math.abs(active.va) < SETTLE_ANGVEL) settleTimer += dt;
+  else settleTimer = 0;
+  // v11: 着地してからの経過時間。最初の接触で計測開始、以後は小さく跳ねても止めない
+  if(activeHasContact()) contactLanded = true;
+  if(contactLanded) contactTimer += dt;
+  // v11: 揺れパラメータのライブ表示（落下中のみ）
+  var line1 = '落下箱 速度 ' + Math.round(sp) + 'px/s（' + SETTLE_VEL + '未満で静止） 角速度 ' + Math.abs(active.va).toFixed(2) + '（' + SETTLE_ANGVEL + '未満）';
+  var line2 = '静止つづき ' + settleTimer.toFixed(2) + ' / ' + SETTLE_TIME + '秒';
+  if(!wobbleCheck && contactTimer > 0) line2 += ' ｜ 強制継続まで あと' + Math.max(0, FORCE_CONTINUE_TIME - contactTimer).toFixed(1) + '秒';
+  wobbleEl.textContent = line1 + '\n' + line2;
+  wobbleEl.style.display = 'block';
+  if(settleTimer >= SETTLE_TIME){ wobbleEl.style.display = 'none'; resolveActive(); return; }
+  // v11: 揺れチェックOFFなら、着地3秒で「静止」条件だけを飛ばして継続判定（傾き・支え・床落ちは resolveActive が従来通り判定）
+  if(!wobbleCheck && contactTimer >= FORCE_CONTINUE_TIME){ wobbleEl.style.display = 'none'; resolveActive(); return; }
+}
+function checkCollapse(){
+  for(var i = 0; i < stack.length; i++){
+    var b = stack[i];
+    if(b.x < -90 || b.x > W + 90 || b.y > 300){ startDying(); return; }
+    if(Math.abs(normAngle(b.angle)) * 180 / Math.PI > STACK_TIP_DEG){ startDying(); return; }
+    if(i > 0 && aabbBottom(b) > -2){ startDying(); return; } // 積んだ箱が床まで落ちた＝崩壊
+  }
+}
+function computeFitView(){
+  // 失敗時点の塔の広がり（積み済み＋落下箱）から、全体が収まる表示を計算する
+  var topY = 0, found = false;
+  var i, t;
+  for(i = 0; i < stack.length; i++){ t = aabbTop(stack[i]); if(!found || t < topY){ topY = t; found = true; } }
+  if(active){ t = aabbTop(active); if(!found || t < topY){ topY = t; found = true; } }
+  var towerH = found ? Math.max(0, -topY) : 0;
+  viewFitTowerH = towerH;
+  var avail = Math.max(120, H - FIT_TOP - FIT_BOTTOM);
+  var scale = Math.min(1, avail / (towerH + FLOOR_H + FIT_WORLD_PAD));
+  var offY = FIT_TOP + (towerH + FIT_WORLD_PAD * 0.5) * scale;
+  return {scale: scale, offY: offY};
+}
+function allBodiesRest(){
+  for(var i = 0; i < bodies.length; i++){
+    var b = bodies[i];
+    if(b.asleep) continue;
+    var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+    if(sp >= SLEEP_VEL || Math.abs(b.va) >= SLEEP_ANGVEL) return false;
+  }
+  return true;
+}
+function startDying(){
+  if(state === 'dying' || state === 'over') return;
+  // v8: 失敗が確定した瞬間に全石化を解除し、全ボディを起こす。
+  // 速度・位置は一切付けない（石化していた姿勢のまま、重力と接触だけが効き始める）。
+  petriReleased = true;
+  for(var pi = 0; pi < bodies.length; pi++){
+    var pb = bodies[pi];
+    pb.petrified = false; pb.petriS = 0;
+    pb.asleep = false; pb.sleepTimer = 0;
+  }
+  // ズーム開始時点の表示（通常カメラ）を記録し、全体表示の目標を失敗時点の塔で決める
+  viewFrom = {scale: 1, offY: H - FLOOR_H + camera};
+  viewScale = 1; viewOffY = viewFrom.offY;
+  viewTo = computeFitView();
+  wobbleEl.style.display = 'none';
+  state = 'dying';
+  dyingTimer = 0;
+  mover = null;
+  combo = 0; updateCombo();
+  playTopple();
+  if(window.navigator && navigator.vibrate){ try{ navigator.vibrate(120); }catch(e){} }
+}
+function gameOver(){
+  state = 'over';
+  hintEl.style.display = 'none';
+  var best = loadBest();
+  if(stack.length > best.count || (stack.length === best.count && totalPrice > best.total)){
+    best = {count: stack.length, total: totalPrice};
+    saveBest(best);
+  }
+  document.getElementById('finalCount').textContent = stack.length;
+  document.getElementById('finalHeight').textContent = peakHeightCm;
+  document.getElementById('finalTotal').textContent = yen(totalPrice);
+  document.getElementById('finalBest').textContent = 'ベスト：' + best.count + '箱 ／ ' + yen(best.total);
+  document.getElementById('finalCombo').textContent = '最大ピッタリコンボ：' + maxCombo;
+  overOverlay.classList.remove('hidden');
+}
+function updateCombo(){
+  comboEl.textContent = combo >= 2 ? ('ピッタリ ' + combo + 'コンボ！') : '';
+}
+function updateHud(snap){
+  if(snap) displayedPrice = totalPrice;
+  totalEl.textContent = yen(Math.round(displayedPrice));
+  countEl.textContent = stack.length;
+  var hc = heightCm();
+  heightEl.textContent = hc;
+  if(hc > peakHeightCm) peakHeightCm = hc;
+}
+
+// ---------- 更新 ----------
+function update(dt){
+  // dying/over 中は通常カメラを凍結する（ズームアウト側で表示を動かすため）
+  if(state !== 'dying' && state !== 'over'){
+    // v9: 落下地点を引き上げた分、動いている箱が画面上部のHUDに隠れないようカメラ下限も確保する
+    var moverNeed = towerHeightPx() + DROP_GAP + (mover ? mover.h : 44) + 150 + FLOOR_H - H;
+    cameraTarget = Math.max(0, towerHeightPx() - H * 0.40, moverNeed);
+    camera += (cameraTarget - camera) * Math.min(1, dt * 5);
+    if(Math.abs(cameraTarget - camera) < 0.2) camera = cameraTarget;
+  }
+
+  if(displayedPrice !== totalPrice){
+    var diff = totalPrice - displayedPrice;
+    displayedPrice += diff * Math.min(1, dt * 10);
+    if(Math.abs(totalPrice - displayedPrice) < 1) displayedPrice = totalPrice;
+    totalEl.textContent = yen(Math.round(displayedPrice));
+  }
+
+  for(var i = floaters.length - 1; i >= 0; i--){
+    floaters[i].t += dt; floaters[i].y -= 34 * dt;
+    if(floaters[i].t > 1.1) floaters.splice(i, 1);
+  }
+  if(callout){ callout.t += dt; if(callout.t > 1.15) callout = null; }
+
+  if(state === 'moving' && mover){
+    mover.x += mover.dir * mover.speed * dt;
+    var half = mover.w / 2, m = 6;
+    if(mover.x < half + m){ mover.x = half + m; mover.dir = 1; }
+    if(mover.x > W - half - m){ mover.x = W - half - m; mover.dir = -1; }
+  }
+
+  if(state !== 'title'){
+    physAcc += dt;
+    var n = 0;
+    while(physAcc >= PHYS_H && n < 16){ physStep(PHYS_H); physAcc -= PHYS_H; n++; }
+    if(n === 16) physAcc = 0;
+  }
+
+  if(state === 'falling') checkActive(dt);
+  if(state === 'moving' || state === 'falling') checkCollapse();
+  if(state === 'dying'){
+    dyingTimer += dt;
+    // ズームアウト（倍率とオフセットを同時に、スムーズステップで補間）
+    var zt = Math.min(1, dyingTimer / ZOOM_DUR);
+    var ez = zt * zt * (3 - 2 * zt);
+    if(viewFrom && viewTo){
+      viewScale = viewFrom.scale + (viewTo.scale - viewFrom.scale) * ez;
+      viewOffY = viewFrom.offY + (viewTo.offY - viewFrom.offY) * ez;
+    }
+    // 結果画面は、ズーム完了＋注視時間を過ぎてから（全静止ならズーム完了時点でよい）
+    if(dyingTimer >= WATCH_TIME || (dyingTimer >= ZOOM_DUR && allBodiesRest())){ active = null; gameOver(); }
+  }
+}
+
+
+// ---------- 描画 ----------
+function drawMechaSilhouette(x, y, w, h, color, type){
+  // 簡易的な幾何学シルエット（公式箱絵のコピーではない）
+  ctx.save();
+  ctx.fillStyle = color; ctx.strokeStyle = color;
+  var cx = x + w/2, cy = y + h/2, s = Math.min(w, h);
+  var headW = s*0.20, headH = s*0.20;
+  // 頭
+  ctx.fillRect(cx - headW/2, cy - s*0.34, headW, headH);
+  if(type === 0){ // Vアンテナ風
+    ctx.lineWidth = Math.max(1.5, s*0.045);
+    ctx.beginPath();
+    ctx.moveTo(cx - headW*0.4, cy - s*0.34); ctx.lineTo(cx, cy - s*0.10);
+    ctx.lineTo(cx + headW*0.4, cy - s*0.34);
+    ctx.stroke();
+  } else if(type === 1){ // 角＋モノアイ風
+    ctx.fillRect(cx - 1, cy - s*0.50, 2.5, s*0.17);
+    ctx.fillRect(cx - headW*0.32, cy - s*0.27, headW*0.64, Math.max(2, s*0.06));
+  } else if(type === 2){ // バイザー風
+    ctx.fillRect(cx - headW*0.36, cy - s*0.28, headW*0.72, Math.max(2, s*0.07));
+  }
+  // 肩
+  ctx.fillRect(cx - s*0.34, cy - s*0.12, s*0.20, s*0.17);
+  ctx.fillRect(cx + s*0.14, cy - s*0.12, s*0.20, s*0.17);
+  if(type === 3){ // 重装: 肩を大きく
+    ctx.fillRect(cx - s*0.40, cy - s*0.16, s*0.24, s*0.22);
+    ctx.fillRect(cx + s*0.16, cy - s*0.16, s*0.24, s*0.22);
+  }
+  // 胴
+  ctx.fillRect(cx - s*0.15, cy - s*0.12, s*0.30, s*0.30);
+  // 脚
+  ctx.fillRect(cx - s*0.15, cy + s*0.18, s*0.11, s*0.24);
+  ctx.fillRect(cx + s*0.04, cy + s*0.18, s*0.11, s*0.24);
+  ctx.restore();
+}
+
+function drawBox(xCenter, yTop, entry, alpha){
+  var w = entry.w, h = entry.h;
+  ctx.save();
+  if(alpha !== undefined) ctx.globalAlpha = alpha;
+  var x = xCenter - w/2, y = yTop;
+  // 本体
+  ctx.fillStyle = entry.bg;
+  ctx.fillRect(x, y, w, h);
+  // 上部ストライプ
+  ctx.fillStyle = entry.sub;
+  ctx.fillRect(x, y, w, Math.max(5, h*0.16));
+  // 右側にシルエット面
+  var silW = Math.min(h*1.05, w*0.34);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillRect(x + w - silW - 4, y + h*0.20, silW, h*0.74);
+  drawMechaSilhouette(x + w - silW - 4, y + h*0.20, silW, h*0.74, entry.sil, entry.silType);
+  // グレード表示
+  ctx.fillStyle = entry.sub;
+  ctx.font = '900 ' + Math.max(13, h*0.34) + 'px sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText(entry.grade, x + 6, y + h*0.20);
+  ctx.font = '700 ' + Math.max(8, h*0.20) + 'px sans-serif';
+  ctx.fillStyle = 'rgba(20,16,10,0.75)';
+  ctx.fillText(entry.scale, x + 7, y + h*0.20 + Math.max(14, h*0.36));
+  // 名前
+  ctx.fillStyle = '#1d1712';
+  var nameX = x + 8 + Math.max(30, h*0.62);
+  var nameW = w - (nameX - x) - silW - 10;
+  ctx.font = '800 ' + Math.max(9.5, Math.min(13, h*0.27)) + 'px sans-serif';
+  var lines = entry.lines || [entry.name];
+  for(var i=0;i<lines.length;i++){
+    if(lines[i]) ctx.fillText(lines[i], nameX, y + h*0.22 + i*Math.max(11, h*0.29), Math.max(30, nameW));
+  }
+  // 価格
+  ctx.font = '800 ' + Math.max(8.5, h*0.21) + 'px sans-serif';
+  ctx.fillStyle = 'rgba(20,16,10,0.8)';
+  ctx.textAlign = 'left';
+  ctx.fillText(yen(entry.price), nameX, y + h*0.76);
+  // 枠
+  ctx.strokeStyle = 'rgba(15,10,5,0.65)';
+  ctx.lineWidth = 1.6;
+  ctx.strokeRect(x + 0.8, y + 0.8, w - 1.6, h - 1.6);
+  ctx.restore();
+}
+
+function drawBackground(){
+  // ワールド空間で描く（ズーム変換の中から呼ばれる）。変換後の可視範囲を覆うよう広めに描く。
+  var vs = currentViewScale(), voy = currentViewOffY();
+  var vx0 = W / 2 - (W / 2) / vs - 80, vx1 = W / 2 + (W / 2) / vs + 80;
+  var vy0 = voy - voy / vs - 80, vy1 = voy + (H - voy) / vs + 80;
+
+  // 壁の下地
+  ctx.fillStyle = '#78644c';
+  ctx.fillRect(vx0, vy0, vx1 - vx0, vy1 - vy0);
+
+  // 壁のパネル線（ワールド高さごとに引く）
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)';
+  ctx.lineWidth = 1 / vs;
+  var spacing = 190;
+  var startWorld = Math.floor(camera / spacing) * spacing;
+  for(var wy = startWorld; wy < camera + H / vs + spacing; wy += spacing){
+    var sy = floorScreenY() - wy;
+    if(sy < vy0 || sy > vy1) continue;
+    ctx.beginPath(); ctx.moveTo(vx0, sy); ctx.lineTo(vx1, sy); ctx.stroke();
+  }
+  // ポスター風の飾り（決まったワールド高さに）
+  var posters = [120, 430, 760, 1090];
+  ctx.fillStyle = 'rgba(240,230,205,0.5)';
+  for(var p=0;p<posters.length;p++){
+    var psy = floorScreenY() - posters[p] - 74;
+    if(psy < vy0 - 90 || psy > vy1) continue;
+    var px = (p % 2 === 0) ? 14 : W - 74;
+    ctx.fillRect(px, psy, 60, 74);
+    ctx.fillStyle = 'rgba(90,70,45,0.55)';
+    ctx.fillRect(px + 8, psy + 10, 44, 30);
+    ctx.fillStyle = 'rgba(240,230,205,0.5)';
+  }
+  // 天井（ワールド高さ1500px付近）
+  var ceilY = floorScreenY() - 1500;
+  if(ceilY > vy0 - 70){
+    ctx.fillStyle = '#ded3ba';
+    ctx.fillRect(vx0, ceilY - 46, vx1 - vx0, 46);
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.fillRect(vx0, ceilY - 3, vx1 - vx0, 3);
+    ctx.fillStyle = '#5a4630';
+    ctx.font = '700 ' + (12 / vs) + 'px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('― 天井 ―', W/2, ceilY - 30);
+  }
+  // 床
+  var fy = floorScreenY();
+  if(fy < vy1){
+    ctx.fillStyle = '#5e4630';
+    ctx.fillRect(vx0, fy, vx1 - vx0, vy1 - fy + 4);
+    ctx.fillStyle = '#77593a';
+    ctx.fillRect(vx0, fy, vx1 - vx0, 7);
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1 / vs;
+    for(var bx = Math.floor(vx0 / 64) * 64 - (Math.floor(camera) % 3); bx < vx1; bx += 64){
+      ctx.beginPath(); ctx.moveTo(bx, fy + 8); ctx.lineTo(bx - 10, vy1); ctx.stroke();
+    }
+  }
+}
+
+function drawBodyRot(b){
+  var sy = floorScreenY() + b.y;
+  ctx.save();
+  ctx.translate(b.x, sy);
+  ctx.rotate(b.angle);
+  drawBox(0, -b.h / 2, b.entry, 1);
+  ctx.restore();
+}
+
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  // 壁のグラデーションは画面空間で全面に敷く
+  var grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#6b5a44');
+  grad.addColorStop(1, '#8a7557');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // ワールド空間（背景・床・箱）は、床上面の中心を軸にしたズーム変換の中で描く。
+  // 通常プレイでは倍率1＝従来通り。dying/over の時だけ全体表示に寄る。
+  var vs = currentViewScale(), voy = currentViewOffY();
+  ctx.save();
+  ctx.translate(W / 2, voy);
+  ctx.scale(vs, vs);
+  ctx.translate(-W / 2, -voy);
+
+  drawBackground();
+
+  // 物理ボディ（積み済み＋落下中＋崩壊中すべて実角度で描く）
+  for(var i = 0; i < bodies.length; i++) drawBodyRot(bodies[i]);
+
+  // 落下前の箱（左右移動中）
+  if(state === 'moving' && mover){
+    var my = moverCenterY();
+    var mTopScreen = floorScreenY() + my - mover.h / 2;
+    // ガイド点線（真下）
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.setLineDash([4, 6]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(mover.x, mTopScreen + mover.h + 4);
+    ctx.lineTo(mover.x, stackTopScreenY());
+    ctx.stroke();
+    ctx.restore();
+    drawBox(mover.x, mTopScreen, mover.entry, 1);
+  }
+  ctx.restore();
+
+  // フローター
+  for(var j = 0; j < floaters.length; j++){
+    var f2 = floaters[j];
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - f2.t / 1.1);
+    ctx.fillStyle = f2.color;
+    ctx.font = '900 17px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 5;
+    ctx.fillText(f2.text, Math.max(80, Math.min(W - 80, f2.x)), f2.y);
+    ctx.restore();
+  }
+
+  // 成功コール（キット名＋二つ名を大きく表示）
+  if(callout && state !== 'over'){
+    var ct = callout.t;
+    var pop = ct < 0.14 ? (0.6 + (ct / 0.14) * 0.4) : 1;
+    var fade = ct > 0.9 ? Math.max(0, 1 - (ct - 0.9) / 0.25) : 1;
+    var cy = H * 0.30;
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.translate(W / 2, cy);
+    ctx.scale(pop, pop);
+    ctx.textAlign = 'center';
+    if(callout.call){
+      ctx.font = '900 30px sans-serif';
+      ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 8;
+      ctx.lineWidth = 6; ctx.strokeStyle = 'rgba(20,10,0,0.85)';
+      ctx.strokeText(callout.call, 0, 0);
+      ctx.fillStyle = '#ffd83d';
+      ctx.fillText(callout.call, 0, 0);
+    }
+    ctx.font = '700 14px sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 5;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(callout.title, 0, 26);
+    ctx.restore();
+  }
+}
+
+function loop(ts){
+  if(!lastTime) lastTime = ts;
+  var dt = Math.min(0.033, (ts - lastTime)/1000 || 0.016);
+  lastTime = ts;
+  if(state !== 'title'){ update(dt); }
+  draw();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ---------- 入力（タップ = 落とす、の1経路だけ） ----------
+function onTap(e){
+  if(state === 'title' || state === 'over') return;
+  ensureAudio();
+  dropBox();
+}
+document.getElementById('app').addEventListener('pointerdown', function(e){
+  if(e.target.closest('.overlay')) return; // カード上の操作は落下にしない
+  onTap(e);
+});
+window.addEventListener('keydown', function(e){
+  if(e.code === 'Space'){
+    e.preventDefault();
+    if(state === 'moving'){ ensureAudio(); dropBox(); }
+  }
+});
+// v10: 落下距離スライダー（開始画面・結果画面の両方に置き、同期させる。設定は端末に保存）
+function setGap(v){
+  v = Math.round(v / 10) * 10;
+  if(v < GAP_MIN) v = GAP_MIN;
+  if(v > GAP_MAX) v = GAP_MAX;
+  DROP_GAP = v;
+  var s1 = document.getElementById('gapSliderStart'), s2 = document.getElementById('gapSliderOver');
+  if(s1) s1.value = v;
+  if(s2) s2.value = v;
+  var l1 = document.getElementById('gapValStart'), l2 = document.getElementById('gapValOver');
+  if(l1) l1.textContent = v;
+  if(l2) l2.textContent = v;
+  try{ localStorage.setItem(GAP_KEY, String(v)); }catch(e){}
+}
+(function initGap(){
+  var saved = null;
+  try{ saved = localStorage.getItem(GAP_KEY); }catch(e){}
+  var v = saved !== null ? parseInt(saved, 10) : NaN;
+  setGap(isNaN(v) ? 170 : v);
+  var s1 = document.getElementById('gapSliderStart'), s2 = document.getElementById('gapSliderOver');
+  if(s1) s1.addEventListener('input', function(){ setGap(parseInt(s1.value, 10)); });
+  if(s2) s2.addEventListener('input', function(){ setGap(parseInt(s2.value, 10)); });
+})();
+
+// v11: 揺れチェック on/off（開始画面・結果画面の両方に置き、同期させる。設定は端末に保存）
+function setWobble(on){
+  wobbleCheck = !!on;
+  var c1 = document.getElementById('wobbleChkStart'), c2 = document.getElementById('wobbleChkOver');
+  if(c1) c1.checked = wobbleCheck;
+  if(c2) c2.checked = wobbleCheck;
+  try{ localStorage.setItem(WOBBLE_KEY, wobbleCheck ? 'on' : 'off'); }catch(e){}
+}
+(function initWobble(){
+  var saved = null;
+  try{ saved = localStorage.getItem(WOBBLE_KEY); }catch(e){}
+  setWobble(saved !== 'off');
+  var c1 = document.getElementById('wobbleChkStart'), c2 = document.getElementById('wobbleChkOver');
+  if(c1) c1.addEventListener('change', function(){ setWobble(c1.checked); });
+  if(c2) c2.addEventListener('change', function(){ setWobble(c2.checked); });
+})();
+
+document.getElementById('startBtn').addEventListener('click', function(e){
+  e.stopPropagation(); ensureAudio(); startGame();
+});
+document.getElementById('retryBtn').addEventListener('click', function(e){
+  e.stopPropagation(); ensureAudio(); startGame();
+});
+
+// ページ全体のスクロール防止。ただしカード内（.card-body）はスクロールを許可する。
+document.addEventListener('touchmove', function(e){
+  if(e.target.closest('.card-body')) return;
+  e.preventDefault();
+}, {passive:false});
+
+// テスト用フック（画面には出ない）
+window.GUNPLA_TEST = {
+  getState: function(){
+    var cur = mover || active;
+    return {
+      state: state, count: stack.length, totalPrice: totalPrice,
+      peakHeightCm: peakHeightCm, heightCmNow: heightCm(),
+      towerHeight: towerHeightPx(), combo: combo, maxCombo: maxCombo,
+      currentName: cur ? cur.entry.name : null,
+      currentGrade: cur ? cur.entry.grade : null,
+      currentX: mover ? mover.x : (active ? active.x : null),
+      currentW: cur ? cur.w : null,
+      moverX: mover ? mover.x : null,
+      activeX: active ? active.x : null,
+      activeY: active ? active.y : null,
+      activeAngle: active ? active.angle : null,
+      topX: topX(),
+      camera: camera, bodies: bodies.length,
+      callout: callout ? callout.call : null,
+      viewScale: currentViewScale(),
+      viewOffY: currentViewOffY(),
+      viewTargetScale: viewTo ? viewTo.scale : null,
+      viewTargetOffY: viewTo ? viewTo.offY : null,
+      viewFitTowerH: viewFitTowerH,
+      dyingTimer: dyingTimer, dropGap: DROP_GAP,
+      wobbleCheck: wobbleCheck, settleTimer: settleTimer, contactTimer: contactTimer,
+      activeSpeed: active ? Math.sqrt(active.vx * active.vx + active.vy * active.vy) : null,
+      activeAngVel: active ? active.va : null,
+      wobbleText: wobbleEl.textContent, wobbleShown: wobbleEl.style.display,
+      screenH: H, screenW: W,
+      fitTop: FIT_TOP, fitBottom: FIT_BOTTOM, floorH: FLOOR_H, fitWorldPad: FIT_WORLD_PAD
+    };
+  },
+  start: function(){ startGame(); },
+  drop: function(){ dropBox(); },
+  setCurrentX: function(x){ if(mover) mover.x = x; },
+  setWobble: function(on){ setWobble(on); },
+  jiggle: function(){ if(active){ jiggleFlip = -jiggleFlip; active.vx = 60 * jiggleFlip; active.va = 0.9 * jiggleFlip; } },
+  step: function(dt){ update(dt || 0.016); },
+  topX: function(){ return topX(); },
+  getBodies: function(){
+    return bodies.map(function(b){
+      return {name: b.entry ? b.entry.name : 'floor', grade: b.entry ? b.entry.grade : '', price: b.entry ? b.entry.price : 0, x: b.x, y: b.y, angle: b.angle, vx: b.vx, vy: b.vy, va: b.va, registered: b.registered, asleep: b.asleep, petrified: b.petrified, petriS: b.petriS, stackIndex: stack.indexOf(b)};
+    });
+  }
+};
+</script>
+</body>
+</html>
