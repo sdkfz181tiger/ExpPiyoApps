@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>猫 回転して着地 v14</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#87c5e8; font-family:"Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif; }
+  #wrap { position:fixed; inset:0; }
+  canvas { display:block; width:100%; height:100%; touch-action:none; }
+  #hud { position:absolute; top:0; left:0; right:0; padding:8px 10px 6px; color:#fff; pointer-events:none;
+         background:linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,0)); }
+  #hud .row { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  #score { font-size:20px; font-weight:900; text-shadow:0 2px 3px #000; }
+  #ver { background:#e65100; color:#fff; font-size:12px; font-weight:900; padding:2px 8px; border-radius:999px; }
+  #flipInfo { font-size:15px; font-weight:900; text-shadow:0 2px 3px #000; }
+  #angleInfo { margin-top:4px; font-size:13px; font-weight:900; text-shadow:0 1px 2px #000; }
+  .overlay { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+             background:rgba(10,20,35,.72); color:#fff; text-align:center; padding:24px; z-index:5; }
+  .card { width:100%; max-width:430px; max-height:92dvh; display:flex; flex-direction:column; }
+  .cardBody { overflow-y:auto; touch-action:pan-y; scrollbar-width:thin; padding:2px 6px 2px 2px; }
+  .cardBody::-webkit-scrollbar { width:5px; }
+  .cardBody::-webkit-scrollbar-thumb { background:rgba(255,255,255,.45); border-radius:99px; }
+  .cardFoot { flex:none; }
+  .stageGrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .stageBtn { background:rgba(255,255,255,.14); color:#fff; border:2px solid rgba(255,255,255,.25); border-radius:12px;
+              padding:10px 6px; font-size:15px; font-weight:900; cursor:pointer; font-family:inherit; }
+  .stageBtn small { display:block; font-size:11px; font-weight:700; opacity:.85; margin-top:2px; }
+  .stageBtn.sel { background:#e65100; border-color:#ffb74d; }
+  .stageBtn.locked { opacity:.5; filter:grayscale(.7); }
+  .stageBtn.wide { grid-column:span 2; }
+  #stageDesc { margin-top:8px; font-size:12.5px; opacity:.92; }
+  .btn.sub { background:rgba(255,255,255,.18); box-shadow:0 4px 0 rgba(0,0,0,.35); font-size:15px; padding:10px 26px; margin-top:10px; }
+  .overlay h1 { font-size:30px; font-weight:900; line-height:1.25; text-shadow:0 3px 0 #000; }
+  .overlay h1 .big { font-size:44px; display:block; }
+  .overlay p { margin-top:12px; font-size:14px; line-height:1.7; }
+  .rules { margin-top:10px; background:rgba(255,255,255,.12); border-radius:12px; padding:10px 14px; font-size:13px; line-height:1.85; text-align:left; }
+  .btn { margin-top:18px; background:#e65100; color:#fff; border:none; font-size:19px; font-weight:900;
+         padding:13px 42px; border-radius:999px; box-shadow:0 4px 0 #5d2600; cursor:pointer; }
+  .btn:active { transform:translateY(3px); box-shadow:0 1px 0 #5d2600; }
+  #resultStats { font-size:16px; line-height:1.9; margin-top:8px; }
+  .hidden { display:none !important; }
+  #reason { font-size:26px; font-weight:900; color:#ffcc80; }
+  .tag { margin-top:6px; background:#e65100; padding:2px 12px; border-radius:999px; font-weight:900; font-size:13px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+  <div id="hud">
+    <div class="row">
+      <div id="score">⭐ 0</div>
+      <div id="flipInfo">🌀 0回転</div>
+      <div id="ver">v14</div>
+    </div>
+    <div id="angleInfo">連続 0回 ・ 足が下まで 0°</div>
+  </div>
+
+  <div id="title" class="overlay">
+    <div class="card">
+      <div class="cardBody">
+        <h1><span class="big">🐱🌀</span>猫<br>回転して着地</h1>
+        <div class="tag">試作 v14 ・ 解禁ノルマ</div>
+        <div class="rules">
+          🐾 落ちている<b>猫そのものをつかんで</b>回す<br>　 バーもスライダーも無し<br>
+          🎡 車輪を回す感じ：つかんだ場所を動かした分だけ、<br>　 猫がそのまま回ります<br>　（頭側をつかんで右へ＝時計回り、足側なら逆）<br>
+          ✋ 指を止めれば回転も止まる／離しても勢いは付きません<br>
+          🌀 たくさん回るほど高得点<br>
+          🐾 でも<b>着地の瞬間に足が下</b>じゃないと失敗<br>　 足まで15°以内＝ピッタシ！／35°以内＝セーフ<br>
+          🎊 着地が成功したら<b>紙吹雪</b>、ピッタシなら<b>くす玉</b>も割れる<br>
+          📋 着地から約2秒おいて<b>結果表示</b>、<b>リトライ</b>で再開<br>
+          🎯 ステージ解禁は<b>ノルマ回転＋着地成功</b>：<br>　 イージー3／ノーマル5／ハード15／エクストラ30回転
+        </div>
+        <div class="stageGrid">
+          <button class="stageBtn sel" data-stage="easy">イージー<small>家の中の棚から</small></button>
+          <button class="stageBtn" data-stage="normal">ノーマル<small>2階建ての屋根から</small></button>
+          <button class="stageBtn" data-stage="hard">ハード<small>ビルの屋上から</small></button>
+          <button class="stageBtn" data-stage="extra">エクストラ<small>飛行機から</small></button>
+          <button class="stageBtn wide" data-stage="legend">レジェンド<small>大気圏の宇宙船から</small></button>
+        </div>
+        <div id="stageDesc">イージー：家の中の棚から。ゴールが見える1画面です</div>
+      </div>
+      <div class="cardFoot">
+        <button class="btn" id="startBtn">落としてみる</button>
+        <p style="font-size:12px;opacity:.85;margin-top:10px;">ステージは好きなのを選べます<br>※高さや速さなどの数値は、私の解釈値です</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="result" class="overlay hidden">
+    <div class="card">
+      <div class="cardBody">
+        <div id="reason">ゴロン…</div>
+        <div id="resultStats"></div>
+      </div>
+      <div class="cardFoot">
+        <button class="btn" id="retryBtn">リトライ</button><br>
+        <button class="btn sub" id="toTitleBtn">ステージを変える</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+// ---------- constants ----------
+// v5 control is the USER's choice: "猫を直接つかんで回す版を試す" (the last trial).
+// Only the numbers below are interpretation values.
+const GRAB_RADIUS = 92;           // px from the cat's center that counts as grabbing the cat
+const MIN_GRAB_R = 30;            // px: grabbing closer to the center than this gives almost no torque (like a real wheel hub)
+const GRAVITY0 = 180;             // px/s^2 on round 1. History: 300 (v1-v5) -> 240 (v6) -> 180 (v7);
+                                  // the user asked for slower, then "もっと遅く" (even slower).
+                                  // Round-1 fall time: ~1.57s -> ~1.74s -> ~1.99s
+                                  // (landing speed ~500 -> ~448 -> ~388 px/s).
+const GRAVITY_STEP = 0.10;        // (unused since v9: one landing = one play, no next round)
+const RESULT_DELAY_SEC = 2.0;     // v9 (user: "着地で2秒ほど時間をおいてから結果表示"):
+                                  // seconds of celebration / flop shown before the result
+const START_VY = -135;            // px/s. v8 (user: "上に少し上がってから落下"): the cat first
+                                  // pops UP, then falls. Negative = upward. Rise height is
+                                  // 135^2 / (2*180) = about 51px in round 1 (interpretation).
+                                  // v1-v7 was +30 (started falling immediately).
+const PERFECT_DEG = 15;           // |angle to feet-down| <= 15 = perfect
+const SAFE_DEG = 35;              // <= 35 = safe, > 35 = fail
+const CAT_HALF_H = 34;            // approx distance from cat center to feet, for ground contact
+const TOP_OFFSET = 138;           // screen y of the cat's start point (world y = 0) when the camera is at 0
+
+// ---------- stages (v10, the user's stage system) ----------
+// User's words: current stage = Easy; stages are selectable; Normal = from the
+// 2nd floor, Hard = from a 10-story building, Extra = from an airplane;
+// Normal and up scroll (the goal is not visible); Hard and up have birds;
+// Extra and up have clouds and birds; the scenery changes gradually with height.
+// Everything numeric below is an interpretation value.
+const STAGES = {
+  easy:  { name:'イージー',   sub:'家の中の棚から',     dropPx:0,    totalMeters:0,     quota:3,  birds:false, clouds:false, facade:null,       deco:'shelf',   skyHigh:[126,195,234], ground:'floor',
+           desc:'イージー：家の中の棚から。ゴールが見える1画面です' },
+  normal:{ name:'ノーマル',   sub:'2階建ての屋根から',   dropPx:1100, totalMeters:6,     quota:5,  birds:false, clouds:false, facade:'house',    deco:'roof',    skyHigh:[126,195,234], ground:'grass',
+           desc:'ノーマル：2階建ての屋根から。スクロールするのでゴールは見えません' },
+  hard:  { name:'ハード',     sub:'ビルの屋上から',     dropPx:2600, totalMeters:30,    quota:15, birds:true,  clouds:false, facade:'building', deco:'rooftop', skyHigh:[84,140,205], ground:'dirt',
+           desc:'ハード：ビルの屋上から。鳥が飛んでいます（鳥は風景です）' },
+  extra: { name:'エクストラ', sub:'飛行機から',         dropPx:4400, totalMeters:1200,  quota:30, birds:true,  clouds:true,  facade:null,       deco:'plane',   skyHigh:[43,94,166], ground:'dirt',
+           desc:'エクストラ：飛行機から。雲と鳥の中を、高さで風景が変わりながら落ちます' },
+  legend:{ name:'レジェンド', sub:'大気圏の宇宙船から', dropPx:7200, totalMeters:100000, quota:0,  birds:true, birdsFrom:0.45, clouds:true, facade:null,   deco:'ship',    skyHigh:[10,12,48],  ground:'dirt',
+           desc:'レジェンド：大気圏の宇宙船から。星空から青空へ、雲を抜けて落ちます' }
+};
+const STAGE_ORDER = ['easy','normal','hard','extra','legend'];
+let selectedStage = 'easy';
+// Unlock progression (v13, the user's rule: clear one by one to unlock the
+// next). v14 (the user's revision): "clear" = reach the stage's rotation
+// QUOTA and still land successfully. Quotas are the user's numbers:
+// Easy 3 / Normal 5 / Hard 15 / Extra 30. Legend is the last stage and has
+// no quota (nothing to unlock; a successful landing marks it cleared).
+// Persisted in localStorage; Easy is always open.
+let unlockedIdx = Math.min(STAGE_ORDER.length - 1, +(localStorage.getItem('catFlipLandUnlockedV1')||0));
+let clearedSet = new Set(JSON.parse(localStorage.getItem('catFlipLandClearedV1')||'[]'));
+const MAX_VY = 620;               // px/s terminal velocity (interpretation). Easy's landing
+                                  // speed is ~388, so Easy never touches this cap and
+                                  // stays exactly the current game; only the long
+                                  // scrolling falls are capped so they remain playable.
+
+// ---------- pure judgement (also used by automated checks) ----------
+function angleDiffDeg(angleDeg){
+  // distance to the nearest feet-down orientation (0, 360, -360, ...)
+  let d = ((angleDeg % 360) + 360) % 360; // 0..360
+  if (d > 180) d = 360 - d;
+  return d; // 0..180
+}
+function flipCount(angleDeg){
+  return Math.floor(Math.abs(angleDeg) / 360);
+}
+function judge(angleDeg){
+  const diff = angleDiffDeg(angleDeg);
+  const flips = flipCount(angleDeg);
+  if (diff <= PERFECT_DEG) return { result:'perfect', diff, flips };
+  if (diff <= SAFE_DEG) return { result:'safe', diff, flips };
+  return { result:'fail', diff, flips };
+}
+function landingScore(j){
+  if (j.result === 'fail') return 0;
+  let s = 10 + j.flips * 100 + Math.round((SAFE_DEG - j.diff) / SAFE_DEG * 50);
+  if (j.result === 'perfect') s += 50;
+  return s;
+}
+
+// ---------- audio ----------
+let AC = null;
+function beep(freq, dur, type, vol){
+  try{
+    if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type||'square'; o.frequency.value = freq;
+    g.gain.value = vol||0.05;
+    o.connect(g); g.connect(AC.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur);
+    o.stop(AC.currentTime + dur);
+  }catch(e){}
+}
+function vib(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+
+// ---------- state ----------
+const S = {
+  mode: 'title', time: 0,
+  score: 0, streak: 0, landings: 0, maxFlips: 0,
+  round: 1,
+  stage: 'easy', dropPx: 416, camY: 0, groundScreenY: 0,
+  catX: 0, catY: 0, vy: 0, angle: 0,   // catY is WORLD y: 0 = start point, dropPx = ground contact
+  gravity: GRAVITY0,
+  grabbing: false, relX: 0, relY: 0, lastX: 0, lastY: 0,
+  lastFlipCount: 0, landedT: 0, landedJudge: null, squash: 0,
+  dust: [], pops: [], confetti: [], streamers: [], kusudama: null,
+  birds: [], birdTimer: 1.5, worldClouds: [], stars: [],
+  best: +(localStorage.getItem('catFlipLandBestV1')||0)
+};
+function stageDef(){ return STAGES[S.stage]; }
+function groundLineWorld(){ return S.dropPx + CAT_HALF_H; }        // world y of the ground surface
+function screenY(wy){ return wy - S.camY + TOP_OFFSET; }           // world y -> screen y
+function catScrY(){ return S.mode === 'title' ? TOP_OFFSET : screenY(S.catY); }
+function bestKey(){ return S.stage === 'easy' ? 'catFlipLandBestV1' : 'catFlipLandBestV1_' + S.stage; }
+function startRound(){
+  const st = stageDef();
+  S.grabbing = false;
+  // Easy's drop is derived from the screen exactly as before (start 138 to ground H*0.84),
+  // so Easy is the current game pixel-for-pixel. Other stages use fixed world drops.
+  S.dropPx = st.dropPx > 0 ? st.dropPx : (Math.floor(H * 0.84) - CAT_HALF_H - TOP_OFFSET);
+  S.catX = W/2; S.catY = 0; S.vy = START_VY;
+  S.angle = 0; S.lastFlipCount = 0;
+  S.gravity = GRAVITY0;
+  S.landedJudge = null; S.squash = 0;
+  S.camY = 0;
+  S.best = +(localStorage.getItem(bestKey())||0);
+  S.birds = []; S.birdTimer = 1.2 + Math.random();
+  S.worldClouds = [];
+  if(st.clouds){
+    for(let wy = 420; wy < S.dropPx - 360; wy += 320 + Math.random()*180){
+      S.worldClouds.push({ wy, x: 36 + Math.random()*Math.max(60, W-72), s: 0.7 + Math.random()*0.8 });
+    }
+  }
+  S.stars = [];
+  if(S.stage === 'legend'){
+    for(let i = 0; i < 46; i++){
+      S.stars.push({ x: Math.random()*W, y: Math.random()*H*0.92, r: 0.8 + Math.random()*1.7, ph: Math.random()*6.28 });
+    }
+  }
+}
+function reset(stageId){
+  if(stageId && STAGES[stageId]) S.stage = stageId;
+  S.time = 0; S.score = 0; S.streak = 0; S.landings = 0; S.maxFlips = 0; S.round = 1;
+  S.dust = []; S.pops = []; S.confetti = []; S.streamers = []; S.kusudama = null;
+  startRound();
+}
+
+// ---------- input: grab the cat itself and turn it like a wheel (v5, the only path) ----------
+// Torque from the grabbed point: moving the finger tangentially at the grabbed
+// point rotates the cat by exactly that arc angle. No gain, no smoothing,
+// no inertia: a still finger rotates nothing, releasing adds no spin.
+function grabDeltaDeg(relX, relY, dx, dy){
+  const r2 = Math.max(relX*relX + relY*relY, MIN_GRAB_R * MIN_GRAB_R);
+  return (relX * dy - relY * dx) / r2 * 180 / Math.PI;
+}
+function noteFlips(){
+  const f = flipCount(S.angle);
+  if(f > S.lastFlipCount){
+    S.lastFlipCount = f;
+    S.pops.push({x:S.catX, y:catScrY()-52, a:1, txt:f + '回転！'});
+    beep(520 + f*90, 0.08, 'square', 0.045); vib(10);
+  } else if (f < S.lastFlipCount){
+    S.lastFlipCount = f;
+  }
+}
+function pointerDown(x, y){
+  if(S.mode !== 'play') return;
+  const rx = x - S.catX, ry = y - catScrY();
+  if(rx*rx + ry*ry > GRAB_RADIUS * GRAB_RADIUS) return; // missed the cat: nothing happens
+  S.grabbing = true; S.relX = rx; S.relY = ry; S.lastX = x; S.lastY = y;
+}
+function pointerMove(x, y){
+  if(!S.grabbing) return;
+  const dx = x - S.lastX, dy = y - S.lastY; S.lastX = x; S.lastY = y;
+  if(S.mode !== 'play') return;
+  if(dx === 0 && dy === 0) return;
+  const d = grabDeltaDeg(S.relX, S.relY, dx, dy);
+  S.angle += d;
+  // the grabbed material point rotates together with the cat
+  const rad = d * Math.PI/180, c = Math.cos(rad), s = Math.sin(rad);
+  const nrx = S.relX * c - S.relY * s, nry = S.relX * s + S.relY * c;
+  S.relX = nrx; S.relY = nry;
+  noteFlips();
+}
+function pointerUp(){ S.grabbing = false; }
+cv.addEventListener('pointerdown', e=>pointerDown(e.clientX, e.clientY));
+window.addEventListener('pointermove', e=>pointerMove(e.clientX, e.clientY));
+window.addEventListener('pointerup', pointerUp);
+window.addEventListener('pointercancel', pointerUp);
+
+// ---------- celebration (v9) ----------
+const CONFETTI_COLORS = ['#ef5350','#ffb300','#42a5f5','#66bb6a','#ab47bc','#ff7043','#ffee58'];
+function spawnConfetti(x, y, n, spread, baseVy){
+  for(let i=0;i<n;i++){
+    S.confetti.push({ x, y,
+      vx:(Math.random()*2-1)*spread, vy:baseVy - Math.random()*190,
+      w:5+Math.random()*5, h:8+Math.random()*7,
+      rot:Math.random()*Math.PI, vr:(Math.random()*2-1)*9,
+      seed:Math.random()*6.28,
+      color:CONFETTI_COLORS[i % CONFETTI_COLORS.length], a:1, rest:false });
+  }
+}
+function openKusudama(){
+  const kx = W/2, ky = 96;
+  S.kusudama = { x:kx, y:ky, t:0 };
+  for(let i=0;i<14;i++){
+    S.streamers.push({ x:kx + (Math.random()*76-38), y:ky + 12,
+      vy:55 + Math.random()*75, len:26 + Math.random()*32,
+      phase:Math.random()*6.28,
+      color:CONFETTI_COLORS[i % CONFETTI_COLORS.length], a:1 });
+  }
+  spawnConfetti(kx, ky + 8, 36, 130, 30); // paper bursting out of the ball, falling down
+}
+
+// ---------- update ----------
+function land(){
+  S.grabbing = false;
+  const j = judge(S.angle);
+  S.landedJudge = j;
+  S.maxFlips = Math.max(S.maxFlips, j.flips);
+  S.catY = S.dropPx;
+  const gScr = screenY(groundLineWorld());
+  for(let i=0;i<10;i++) S.dust.push({x:S.catX+(Math.random()*90-45), y:gScr-2, r:3+Math.random()*4, a:0.9});
+  if(j.result === 'fail'){
+    // flop on the field first; the result comes RESULT_DELAY_SEC later (update)
+    S.mode = 'flopped'; S.landedT = 0;
+    beep(220,0.22,'sawtooth',0.06); setTimeout(()=>beep(130,0.35,'sawtooth',0.06),170);
+    vib([70,40,110]);
+    return;
+  }
+  const gained = landingScore(j);
+  S.score += gained; S.streak++; S.landings++;
+  S.squash = 1;
+  S.mode = 'landed'; S.landedT = 0;
+  S.pops.push({x:S.catX, y:catScrY()-64, a:1.4, txt:(j.result==='perfect'?'ピッタシ！ +':'着地！ +') + gained});
+  spawnConfetti(S.catX, gScr - 12, 70, 175, -120); // success = confetti
+  if(j.result==='perfect'){
+    openKusudama(); // perfect = confetti + kusudama
+    beep(760,0.09,'square',0.05); setTimeout(()=>beep(1040,0.14,'square',0.05),90); vib(35);
+  }
+  else { beep(560,0.1,'square',0.05); vib(15); }
+}
+function showResult(){
+  const j = S.landedJudge;
+  S.mode = 'over';
+  let bestTxt = '';
+  if(S.score > S.best){
+    S.best = S.score; localStorage.setItem(bestKey(), S.best);
+    bestTxt = '<br>🏆 自己ベスト更新！';
+  } else bestTxt = '<br>🏆 ベスト ' + S.best + '点';
+  let reason;
+  if(j.result === 'perfect') reason = '🎉 ピッタシ！';
+  else if(j.result === 'safe') reason = '🐾 着地成功！';
+  else reason = '💥 ゴロン… ' + (j.diff <= 90 ? '横向きで着地…' : '背中から着地…');
+  document.getElementById('reason').textContent = reason;
+  // clear / unlock (v14): clear = rotation quota reached AND a successful
+  // landing. A successful landing without the quota does not clear.
+  const quota = stageDef().quota;
+  const quotaMet = j.result !== 'fail' && j.flips >= quota;
+  let unlockTxt = '';
+  if(j.result !== 'fail' && quota > 0 && !quotaMet){
+    unlockTxt = '<br>🎯 ノルマ未達（' + j.flips + '／' + quota + '回転）… あと' + (quota - j.flips) + '回転で解禁でした';
+  }
+  if(quotaMet){
+    clearedSet.add(S.stage);
+    localStorage.setItem('catFlipLandClearedV1', JSON.stringify([...clearedSet]));
+    const idx = STAGE_ORDER.indexOf(S.stage);
+    if(idx === unlockedIdx && unlockedIdx < STAGE_ORDER.length - 1){
+      unlockedIdx++;
+      localStorage.setItem('catFlipLandUnlockedV1', unlockedIdx);
+      unlockTxt = '<br>🎯 ノルマ達成！<br>🔓 次のステージ「' + STAGES[STAGE_ORDER[unlockedIdx]].name + '」解禁！';
+    } else if(quota > 0){
+      unlockTxt = '<br>🎯 ノルマ達成！';
+    }
+    renderStageButtons();
+  }
+  document.getElementById('resultStats').innerHTML =
+    '⭐ スコア ' + S.score + '点<br>' +
+    '🌀 ' + j.flips + '回転 ・ 着地のズレ ' + Math.round(j.diff) + '°<br>' +
+    '🏠 ステージ：' + stageDef().name + bestTxt + unlockTxt;
+  document.getElementById('result').classList.remove('hidden');
+}
+function update(dt){
+  S.time += dt;
+  // camera: the cat stays around 38% from the top while there is world left to
+  // scroll; the camera stops when the ground reaches its usual screen position.
+  // Easy's world is exactly one screen, so maxCam is 0 and the camera never moves.
+  const maxCam = Math.max(0, groundLineWorld() + TOP_OFFSET - Math.floor(H * 0.84));
+  S.camY = Math.max(0, Math.min(S.catY + TOP_OFFSET - H * 0.38, maxCam));
+  S.groundScreenY = screenY(groundLineWorld());
+  // birds (Hard and up): scenery only, they cross at the cat's current height.
+  // Legend has birdsFrom: birds only appear in the lower part of the fall
+  // (there are no birds in the upper atmosphere).
+  if(stageDef().birds && S.mode === 'play' && (S.catY / Math.max(1, S.dropPx)) >= (stageDef().birdsFrom || 0)){
+    S.birdTimer -= dt;
+    if(S.birdTimer <= 0){
+      const dir = Math.random() < 0.5 ? -1 : 1;
+      S.birds.push({ x: dir > 0 ? -46 : W + 46, wy: S.catY + (Math.random()*460 - 260),
+                     vx: dir * (70 + Math.random()*60), ph: Math.random()*6.28 });
+      S.birdTimer = 1.4 + Math.random()*1.6;
+    }
+  }
+  for(const b of S.birds) b.x += b.vx * dt;
+  S.birds = S.birds.filter(b => Math.abs(b.x - W/2) < W/2 + 90);
+  for(const d of S.dust){ d.x += (d.x<S.catX?-14:14)*dt; d.r += 15*dt; d.a -= 1.6*dt; }
+  S.dust = S.dust.filter(d=>d.a>0);
+  for(const p of S.pops){ p.y -= 36*dt; p.a -= 0.9*dt; }
+  S.pops = S.pops.filter(p=>p.a>0);
+  if(S.squash > 0) S.squash = Math.max(0, S.squash - dt*4);
+  // confetti physics: burst, flutter, settle on the ground, fade
+  for(const c of S.confetti){
+    if(!c.rest){
+      c.vy += 520*dt; c.vx *= Math.max(0, 1 - 1.1*dt);
+      c.x += c.vx*dt + Math.sin(S.time*9 + c.seed)*22*dt;
+      c.y += c.vy*dt; c.rot += c.vr*dt;
+      if(c.y >= S.groundScreenY + 4){ c.y = S.groundScreenY + 4; c.rest = true; }
+    } else c.a -= 1.4*dt;
+    c.a -= 0.12*dt;
+  }
+  S.confetti = S.confetti.filter(c=>c.a>0);
+  for(const st of S.streamers){ st.y += st.vy*dt; st.a -= 0.38*dt; }
+  S.streamers = S.streamers.filter(st=>st.a>0);
+  if(S.kusudama){ S.kusudama.t += dt; if(S.kusudama.t > 2.4) S.kusudama = null; }
+
+  if(S.mode === 'play'){
+    S.vy = Math.min(S.vy + S.gravity * dt, MAX_VY);
+    S.catY += S.vy * dt;
+    if(S.catY >= S.dropPx) land();
+  } else if(S.mode === 'landed' || S.mode === 'flopped'){
+    // about 2 seconds of celebration / flop on the field, THEN the result
+    S.landedT += dt;
+    if(S.landedT >= RESULT_DELAY_SEC) showResult();
+  }
+  // HUD
+  document.getElementById('score').textContent = '⭐ ' + S.score;
+  document.getElementById('flipInfo').textContent = '🌀 ' + flipCount(S.angle) + '回転' +
+    (stageDef().quota > 0 ? ' ／ ノルマ' + stageDef().quota : '');
+  const st = stageDef();
+  let remTxt = '';
+  if(st.totalMeters > 0 && S.mode !== 'over'){
+    const rem = st.totalMeters * Math.max(0, S.dropPx - S.catY) / S.dropPx;
+    remTxt = rem >= 10000 ? ' ・ 残り約' + Math.round(rem/1000) + 'km'
+                          : ' ・ 残り約' + (rem >= 100 ? Math.round(rem/10)*10 : Math.round(rem)) + 'm';
+  }
+  document.getElementById('angleInfo').textContent =
+    st.name + remTxt + ' ・ 足が下まで ' + Math.round(angleDiffDeg(S.angle)) + '°' +
+    (S.mode==='play' && (S.dropPx - S.catY) < 170 ? '　⚠️ もうすぐ着地！' : '');
+}
+
+// ---------- draw ----------
+function drawCelebration(){
+  // kusudama (perfect only): a ball hanging from the top, split open
+  if(S.kusudama){
+    const k = S.kusudama;
+    ctx.strokeStyle = 'rgba(120,80,20,.9)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(k.x, 0); ctx.lineTo(k.x, k.y - 24); ctx.stroke();
+    ctx.save(); ctx.translate(k.x, k.y);
+    const open = Math.min(1, k.t * 5) * 0.62; // swings open quickly, then stays
+    for(const sgn of [-1, 1]){
+      ctx.save(); ctx.translate(sgn * 7, 0); ctx.rotate(sgn * open);
+      ctx.fillStyle = '#d32f2f';
+      ctx.beginPath(); ctx.arc(0, 0, 25, sgn < 0 ? Math.PI/2 : -Math.PI/2, sgn < 0 ? Math.PI*1.5 : Math.PI/2); ctx.fill();
+      ctx.fillStyle = '#ffd54f';
+      ctx.beginPath(); ctx.arc(0, 0, 25, sgn < 0 ? Math.PI/2 : -Math.PI/2, sgn < 0 ? Math.PI*1.5 : Math.PI/2, true); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = '#fff8e1';
+    ctx.beginPath(); ctx.ellipse(0, 2, 9, 13, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#d32f2f'; ctx.font = '900 11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('祝', 0, 6);
+    ctx.restore();
+  }
+  // streamers falling out of the kusudama
+  for(const st of S.streamers){
+    ctx.strokeStyle = st.color; ctx.globalAlpha = Math.max(0, st.a); ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath();
+    for(let i=0;i<=4;i++){
+      const yy = st.y + st.len * i/4;
+      const xx = st.x + Math.sin(st.phase + i*1.2 + S.time*3) * 4;
+      if(i===0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+    }
+    ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  // confetti pieces
+  for(const c of S.confetti){
+    ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot);
+    ctx.globalAlpha = Math.max(0, Math.min(1, c.a));
+    ctx.fillStyle = c.color; ctx.fillRect(-c.w/2, -c.h/2, c.w, c.h);
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
+}
+function drawCat(x, y, angleDeg, squash){
+  ctx.save(); ctx.translate(x, y); ctx.rotate(angleDeg * Math.PI/180);
+  const sy = squash > 0 ? 1 - 0.22*squash : 1;
+  ctx.scale(1 + 0.12*squash, sy);
+  // tail (back-top side, helps read orientation)
+  ctx.strokeStyle = '#e07f28'; ctx.lineWidth = 9; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-34,-4); ctx.quadraticCurveTo(-54,-10,-52,-30); ctx.stroke();
+  ctx.strokeStyle = '#fff3e0'; ctx.lineWidth = 9;
+  ctx.beginPath(); ctx.moveTo(-52,-30); ctx.quadraticCurveTo(-51,-36,-48,-38); ctx.stroke();
+  // legs (bottom = feet-down direction)
+  ctx.fillStyle = '#e07f28';
+  for(const lx of [-22, -6, 14, 27]){
+    ctx.beginPath(); ctx.ellipse(lx, 30, 6, 10, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff3e0';
+    ctx.beginPath(); ctx.ellipse(lx, 38, 6.5, 4, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e07f28';
+  }
+  // body
+  ctx.beginPath(); ctx.ellipse(0, 6, 40, 25, 0, 0, Math.PI*2); ctx.fill();
+  // belly (light = underside)
+  ctx.fillStyle = '#fff3e0';
+  ctx.beginPath(); ctx.ellipse(2, 14, 28, 15, 0, 0, Math.PI*2); ctx.fill();
+  // back stripes (dark, on top side)
+  ctx.strokeStyle = '#b35c12'; ctx.lineWidth = 4;
+  for(const sx of [-20, -6, 8]){
+    ctx.beginPath(); ctx.moveTo(sx, -17); ctx.quadraticCurveTo(sx+3, -8, sx, 0); ctx.stroke();
+  }
+  // head (front)
+  ctx.fillStyle = '#f59d3d';
+  ctx.beginPath(); ctx.arc(38, -8, 19, 0, Math.PI*2); ctx.fill();
+  // ears
+  ctx.beginPath(); ctx.moveTo(26,-22); ctx.lineTo(28,-36); ctx.lineTo(38,-25); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(42,-25); ctx.lineTo(52,-34); ctx.lineTo(54,-20); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#ffb3a7';
+  ctx.beginPath(); ctx.moveTo(29,-24); ctx.lineTo(30,-31); ctx.lineTo(36,-25); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(44,-23); ctx.lineTo(50,-29); ctx.lineTo(51,-21); ctx.closePath(); ctx.fill();
+  // face
+  ctx.fillStyle = '#212121';
+  ctx.beginPath(); ctx.arc(34,-10,2.2,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(47,-10,2.2,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#e75480';
+  ctx.beginPath(); ctx.ellipse(42,-3,3,2.2,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(33,33,33,.65)'; ctx.lineWidth = 1.2;
+  for(const wy of [-4, 1]){
+    ctx.beginPath(); ctx.moveTo(50,wy); ctx.lineTo(64,wy-2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(32,wy); ctx.lineTo(20,wy-2); ctx.stroke();
+  }
+  ctx.restore();
+}
+function mixc(c1, c2, t){
+  const r = Math.round(c1[0] + (c2[0]-c1[0])*t), g = Math.round(c1[1] + (c2[1]-c1[1])*t), b = Math.round(c1[2] + (c2[2]-c1[2])*t);
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+function drawHouse(groundScr){
+  // Normal background: ONE two-story house, and since v13 the cat starts
+  // FROM THE ROOF (the user's revision: "ノーマルは２階建ての屋根から",
+  // replacing the v10-v12 balcony start). World y=38 is the ridge the cat
+  // stands on; eaves at y=150; the wall runs from there to the ground.
+  const houseW = Math.min(W * 0.86, 380), hx0 = (W - houseW) / 2, hx1 = hx0 + houseW;
+  const wallTop = screenY(150);
+  // wall, all the way down to the ground line
+  ctx.fillStyle = '#f2e4c6';
+  ctx.fillRect(hx0, wallTop, houseW, groundScr - wallTop);
+  ctx.strokeStyle = 'rgba(150,115,70,.16)'; ctx.lineWidth = 2;
+  for(let wy = 182; wy < groundLineWorld(); wy += 30){
+    const sy = screenY(wy);
+    if(sy < wallTop || sy > groundScr) continue;
+    ctx.beginPath(); ctx.moveTo(hx0, sy); ctx.lineTo(hx1, sy); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(120,90,55,.35)';
+  ctx.beginPath(); ctx.moveTo(hx0, wallTop); ctx.lineTo(hx0, groundScr); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(hx1, wallTop); ctx.lineTo(hx1, groundScr); ctx.stroke();
+  // roof: ridge at world 38 (the cat stands on it), eaves at world 150
+  ctx.fillStyle = '#c06a4a';
+  ctx.beginPath();
+  ctx.moveTo(hx0 - 18, screenY(150)); ctx.lineTo(W/2, screenY(38)); ctx.lineTo(hx1 + 18, screenY(150));
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(120,50,25,.35)'; ctx.lineWidth = 2;
+  for(const ry of [78, 114]){
+    const hw = (houseW/2 + 18) * (ry - 38) / 112;
+    ctx.beginPath(); ctx.moveTo(W/2 - hw, screenY(ry)); ctx.lineTo(W/2 + hw, screenY(ry)); ctx.stroke();
+  }
+  ctx.fillStyle = '#a5522f'; ctx.fillRect(W/2 - 32, screenY(32), 64, 9);
+  // small round attic window under the ridge
+  ctx.fillStyle = '#ffe9a8';
+  ctx.beginPath(); ctx.arc(W/2, screenY(112), 10, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#8d5a2b'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.arc(W/2, screenY(112), 10, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = 'rgba(80,50,15,.9)'; ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('2階建ての屋根', W/2, screenY(196));
+  // windows: two floors only — 2F pair, 1F pair flanking the door
+  const win = (x, wy, lit) => {
+    const sy = screenY(wy);
+    if(sy < -70 || sy > H + 10) return;
+    ctx.fillStyle = lit ? '#ffe9a8' : '#7d8a94';
+    ctx.fillRect(x, sy, 46, 58);
+    ctx.strokeStyle = 'rgba(90,70,50,.55)'; ctx.lineWidth = 2; ctx.strokeRect(x, sy, 46, 58);
+    ctx.beginPath(); ctx.moveTo(x + 23, sy); ctx.lineTo(x + 23, sy + 58); ctx.stroke();
+  };
+  win(hx0 + 22, 300, true);  win(hx1 - 68, 300, false);
+  win(hx0 + 22, S.dropPx - 480, false); win(hx1 - 68, S.dropPx - 480, true);
+  // front door at the ground, behind the cushion
+  const dx = W/2 - 27, dy = groundScr - 98;
+  if(dy < H && dy + 98 > -10){
+    ctx.fillStyle = '#9a6a42'; ctx.fillRect(dx, dy, 54, 98);
+    ctx.strokeStyle = 'rgba(70,45,20,.6)'; ctx.lineWidth = 2; ctx.strokeRect(dx + 7, dy + 10, 40, 34);
+    ctx.strokeRect(dx + 7, dy + 54, 40, 34);
+    ctx.fillStyle = '#ffd54f';
+    ctx.beginPath(); ctx.arc(dx + 44, dy + 52, 3.2, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#cbb493'; ctx.fillRect(dx - 7, groundScr - 5, 68, 5);
+  }
+}
+function drawFacade(kind, groundScr){
+  // wall the cat falls alongside: a house near the top (Normal) or a full
+  // 10-story building (Hard). Windows are laid out in world coordinates so
+  // they scroll past and sell the height.
+  const topW = -300, botW = kind === 'building' ? groundLineWorld() : S.dropPx - 260;
+  const y0 = screenY(topW), y1 = screenY(botW);
+  if(y1 < -20 || y0 > H + 20) return;
+  ctx.fillStyle = kind === 'building' ? '#aeb6ba' : '#e9dbc4';
+  ctx.fillRect(0, y0, W, y1 - y0);
+  const step = kind === 'building' ? 110 : 175; // a house has fewer, taller floors
+  let row = 0;
+  for(let wy = topW + 70; wy < botW - 40; wy += step, row++){
+    const sy = screenY(wy);
+    if(sy < -70 || sy > H + 10) continue;
+    for(let ci = 0; ci < 3; ci++){
+      const wx = 36 + ci * ((W - 140) / 2) + ((row % 2) ? 10 : 0);
+      const lit = ((row * 3 + ci) % 4) !== 0;
+      ctx.fillStyle = lit ? '#ffe9a8' : '#7d8a94';
+      ctx.fillRect(wx, sy, 46, 58);
+      ctx.strokeStyle = 'rgba(90,70,50,.5)'; ctx.lineWidth = 2; ctx.strokeRect(wx, sy, 46, 58);
+      ctx.beginPath(); ctx.moveTo(wx + 23, sy); ctx.lineTo(wx + 23, sy + 58); ctx.stroke();
+    }
+  }
+}
+function drawStartDeco(kind, platY){
+  // what the cat drops FROM, per stage. platY = screen y of world 0.
+  if(platY < -190 || platY > H + 60) return;
+  ctx.textAlign = 'center';
+  if(kind === 'roof'){
+    // Normal: the roof itself is drawn by drawHouse; nothing extra here.
+    return;
+  }
+  if(kind === 'ship'){
+    // Legend: a spaceship in the upper atmosphere; the cat pops out of the
+    // hatch in the middle of the hull.
+    ctx.fillStyle = '#cfd8dc';
+    ctx.beginPath(); ctx.ellipse(W/2, platY + 18, 152, 30, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#90caf9';
+    ctx.beginPath(); ctx.arc(W/2 - 52, platY + 2, 19, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#78909c';
+    ctx.beginPath(); ctx.moveTo(W/2 - 150, platY + 26); ctx.lineTo(W/2 - 178, platY + 48); ctx.lineTo(W/2 - 128, platY + 40); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(W/2 + 150, platY + 26); ctx.lineTo(W/2 + 178, platY + 48); ctx.lineTo(W/2 + 128, platY + 40); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ff7043'; ctx.fillRect(W/2 - 17, platY + 20, 34, 15);
+    ctx.fillStyle = (Math.floor(S.time * 2) % 2) ? '#ff5252' : '#ffccbc';
+    ctx.beginPath(); ctx.arc(W/2 + 128, platY + 6, 4.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W/2 - 128, platY + 6, 4.5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.font = '700 11px sans-serif';
+    ctx.fillText('うちゅうせん', W/2, platY - 40);
+    return;
+  }
+  if(kind === 'shelf'){
+    ctx.fillStyle = '#8d5a2b';
+    ctx.fillRect(W/2-74, platY+40, 148, 10);
+    ctx.fillRect(W/2-74, platY+50, 8, 16); ctx.fillRect(W/2+66, platY+50, 8, 16);
+    ctx.fillStyle = 'rgba(80,50,15,.92)'; ctx.font = '700 11px sans-serif';
+    ctx.fillText('ここから落ちる', W/2, platY+80);
+  } else if(kind === 'balcony'){
+    ctx.strokeStyle = '#6d4c2f'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(W/2-86, platY+42); ctx.lineTo(W/2+86, platY+42); ctx.stroke();
+    ctx.lineWidth = 3;
+    for(let bx = -78; bx <= 78; bx += 19.5){
+      ctx.beginPath(); ctx.moveTo(W/2+bx, platY+42); ctx.lineTo(W/2+bx, platY+70); ctx.stroke();
+    }
+    ctx.fillStyle = '#8d5a2b'; ctx.fillRect(W/2-92, platY+70, 184, 8);
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.font = '700 11px sans-serif';
+    ctx.fillText('2階のベランダ', W/2, platY+96);
+  } else if(kind === 'rooftop'){
+    ctx.fillStyle = '#7c8288'; ctx.fillRect(14, platY+40, W-28, 16);
+    ctx.fillStyle = '#98a0a6'; ctx.fillRect(14, platY+56, W-28, 6);
+    // water tank + antenna behind the cat
+    ctx.fillStyle = '#8a6d4b'; ctx.fillRect(26, platY-38, 46, 62);
+    ctx.beginPath(); ctx.moveTo(22, platY-38); ctx.lineTo(49, platY-58); ctx.lineTo(76, platY-38); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#546e7a'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(W-52, platY+40); ctx.lineTo(W-52, platY-52); ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(W-70, platY-34); ctx.lineTo(W-34, platY-34); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-64, platY-46); ctx.lineTo(W-40, platY-46); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.font = '700 11px sans-serif';
+    ctx.fillText('10階ビルの屋上', W/2, platY+86);
+  } else if(kind === 'plane'){
+    // the airplane the cat pops out of; it scrolls away upward as the cat falls
+    ctx.fillStyle = '#eceff1';
+    ctx.beginPath(); ctx.ellipse(W/2, platY+4, 168, 25, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#cfd8dc';
+    ctx.beginPath(); ctx.moveTo(W/2-168, platY+2); ctx.lineTo(W/2-196, platY-26); ctx.lineTo(W/2-172, platY-28); ctx.lineTo(W/2-140, platY-2); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#90caf9';
+    for(let wi = 0; wi < 6; wi++){
+      if(wi === 2 || wi === 3) continue; // the open door is in the middle
+      ctx.beginPath(); ctx.ellipse(W/2 - 120 + wi*44, platY, 8, 6, 0, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = '#ff7043'; ctx.fillRect(W/2-16, platY-14, 32, 26);
+    ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.font = '700 11px sans-serif';
+    ctx.fillText('ひこうき', W/2, platY-38);
+  }
+}
+function drawBird(b){
+  const sy = screenY(b.wy);
+  if(sy < -30 || sy > H + 30) return;
+  const flap = Math.sin(S.time*10 + b.ph) * 6;
+  ctx.strokeStyle = 'rgba(38,50,56,.85)'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(b.x - 11, sy + flap); ctx.quadraticCurveTo(b.x - 4, sy - 4, b.x, sy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(b.x + 11, sy + flap); ctx.quadraticCurveTo(b.x + 4, sy - 4, b.x, sy); ctx.stroke();
+  ctx.fillStyle = 'rgba(38,50,56,.85)';
+  ctx.beginPath(); ctx.ellipse(b.x, sy, 4.5, 3, 0, 0, Math.PI*2); ctx.fill();
+}
+function drawRoom(groundY){
+  // Easy background (v11, the user's word): inside a house. Warm wall, a
+  // window with the sky outside it, a picture, and a wooden floor.
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#f8ead2'); grad.addColorStop(1,'#f0d9b5');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+  // window (upper left) with a little sky and a drifting cloud outside
+  const wx = 20, wy = 116, ww = 106, wh = 132;
+  ctx.fillStyle = '#aee2ff'; ctx.fillRect(wx, wy, ww, wh);
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  const clx = wx + 20 + ((S.time*4) % 60);
+  ctx.beginPath(); ctx.ellipse(clx, wy + 40, 17, 7, 0, 0, Math.PI*2); ctx.ellipse(clx + 13, wy + 43, 12, 5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffe082'; ctx.beginPath(); ctx.arc(wx + ww - 20, wy + 24, 10, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = '#8d5a2b'; ctx.lineWidth = 6; ctx.strokeRect(wx, wy, ww, wh);
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(wx + ww/2, wy); ctx.lineTo(wx + ww/2, wy + wh); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(wx, wy + wh/2); ctx.lineTo(wx + ww, wy + wh/2); ctx.stroke();
+  // picture frame (upper right): a little cat portrait
+  const px = W - 116, py = 138, pw = 88, ph = 66;
+  ctx.fillStyle = '#fff8e1'; ctx.fillRect(px, py, pw, ph);
+  ctx.strokeStyle = '#8d5a2b'; ctx.lineWidth = 5; ctx.strokeRect(px, py, pw, ph);
+  ctx.fillStyle = '#f59d3d';
+  ctx.beginPath(); ctx.arc(px + pw/2, py + ph/2 + 4, 15, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(px + pw/2 - 12, py + ph/2 - 6); ctx.lineTo(px + pw/2 - 10, py + ph/2 - 18); ctx.lineTo(px + pw/2 - 2, py + ph/2 - 9); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(px + pw/2 + 12, py + ph/2 - 6); ctx.lineTo(px + pw/2 + 10, py + ph/2 - 18); ctx.lineTo(px + pw/2 + 2, py + ph/2 - 9); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#212121';
+  ctx.beginPath(); ctx.arc(px + pw/2 - 5, py + ph/2 + 2, 1.8, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(px + pw/2 + 5, py + ph/2 + 2, 1.8, 0, Math.PI*2); ctx.fill();
+  // wooden floor + baseboard
+  ctx.fillStyle = '#b08954'; ctx.fillRect(0, groundY, W, H - groundY);
+  ctx.strokeStyle = 'rgba(90,60,25,.35)'; ctx.lineWidth = 2;
+  for(let fy = groundY + 20; fy < H; fy += 22){
+    ctx.beginPath(); ctx.moveTo(0, fy); ctx.lineTo(W, fy); ctx.stroke();
+  }
+  ctx.fillStyle = '#e6cf9f'; ctx.fillRect(0, groundY - 9, W, 9);
+}
+function draw(){
+  const st = stageDef();
+  const groundY = S.mode==='title' ? Math.floor(H*0.84) : S.groundScreenY;
+  const catY = catScrY();
+  const platY = S.mode==='title' ? TOP_OFFSET : screenY(0);
+  const indoor = S.stage === 'easy' && S.mode !== 'title';
+  // sky: the colour itself changes with height — deep blue at the top of the
+  // world, easing to the usual light sky near the ground
+  const prog = S.mode==='title' ? 1 : Math.max(0, Math.min(1, S.catY / Math.max(1, S.dropPx)));
+  if(indoor){
+    drawRoom(groundY);
+  } else {
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0, mixc(st.skyHigh, [126,195,234], prog));
+    grad.addColorStop(1, mixc([126,195,234], [205,239,251], prog));
+    ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+  }
+  // stars (Legend): thick in the near-space dark at the top of the world,
+  // fading out as the sky turns blue on the way down
+  if(S.stage === 'legend' && S.mode !== 'title'){
+    const sa = Math.max(0, 1.1 - prog * 1.6);
+    if(sa > 0){
+      for(const s of S.stars){
+        ctx.globalAlpha = sa * (0.55 + 0.45 * Math.sin(S.time * 2 + s.ph));
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  // the house (Normal) / the building wall (Hard)
+  if(S.mode !== 'title' && st.facade === 'house') drawHouse(groundY);
+  else if(S.mode !== 'title' && st.facade) drawFacade(st.facade, groundY);
+  // ambient drifting clouds: the title only — Easy is indoors now, and the
+  // scrolling stages use world-anchored scenery so the scroll reads as height
+  if(S.mode === 'title'){
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    for(let i=0;i<3;i++){
+      const cx = ((i*173 + 60 - S.time*7) % (W+140) + W+140) % (W+140) - 70;
+      const cy = 54 + i*44;
+      ctx.beginPath(); ctx.ellipse(cx,cy,30,12,0,0,Math.PI*2); ctx.ellipse(cx+22,cy+3,22,9,0,0,Math.PI*2); ctx.fill();
+    }
+  }
+  // world clouds (Extra): fixed in the world, the cat falls past them
+  ctx.fillStyle = 'rgba(255,255,255,.92)';
+  for(const c of S.worldClouds){
+    const cy = screenY(c.wy);
+    if(cy < -70 || cy > H + 70) continue;
+    ctx.beginPath();
+    ctx.ellipse(c.x, cy, 34*c.s, 13*c.s, 0, 0, Math.PI*2);
+    ctx.ellipse(c.x + 26*c.s, cy + 4*c.s, 24*c.s, 10*c.s, 0, 0, Math.PI*2);
+    ctx.ellipse(c.x - 27*c.s, cy + 5*c.s, 20*c.s, 8*c.s, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+  // what the cat drops from
+  drawStartDeco(S.mode==='title' ? 'shelf' : st.deco, platY);
+  // ground + cushion (only once the ground has scrolled into view)
+  if(groundY < H + 90){
+    if(indoor){
+      // the wooden floor was already drawn with the room
+    } else if(st.ground === 'grass'){
+      // a house garden (Normal): lawn + a white picket fence + a bush
+      ctx.fillStyle = '#79a83b'; ctx.fillRect(0, groundY, W, H-groundY);
+      ctx.fillStyle = '#8fbf4d'; ctx.fillRect(0, groundY, W, 9);
+      ctx.fillStyle = '#f5f0e6';
+      for(let fx = 8; fx < W; fx += 34) ctx.fillRect(fx, groundY - 20, 6, 20);
+      ctx.fillRect(0, groundY - 17, W, 4); ctx.fillRect(0, groundY - 8, W, 4);
+      ctx.fillStyle = '#5d8f3e';
+      ctx.beginPath(); ctx.ellipse(34, groundY - 8, 22, 13, 0, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(W - 30, groundY - 6, 18, 11, 0, 0, Math.PI*2); ctx.fill();
+    } else {
+      ctx.fillStyle = '#977950'; ctx.fillRect(0, groundY, W, H-groundY);
+    }
+    ctx.fillStyle = '#ef7d9b';
+    ctx.beginPath();
+    ctx.moveTo(W/2-88, groundY+24); ctx.quadraticCurveTo(W/2-92, groundY-8, W/2-60, groundY-10);
+    ctx.lineTo(W/2+60, groundY-10); ctx.quadraticCurveTo(W/2+92, groundY-8, W/2+88, groundY+24);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#d14f72'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(W/2-70, groundY+4); ctx.quadraticCurveTo(0+W/2, groundY+14, W/2+70, groundY+4); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = '900 11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('クッション', W/2, groundY+40);
+  }
+  // birds (Hard and up)
+  for(const b of S.birds) drawBird(b);
+  // shadow (grows as the cat nears the ground) + height gauge
+  if(S.mode==='play' || S.mode==='landed' || S.mode==='flopped' || S.mode==='over'){
+    if(groundY <= H + 30){
+      const dist = Math.max(0, S.dropPx - S.catY);
+      const t = Math.max(0, Math.min(1, 1 - dist/520));
+      ctx.fillStyle = 'rgba(0,0,0,' + (0.10 + t*0.22) + ')';
+      ctx.beginPath(); ctx.ellipse(S.catX, groundY+6, 22 + t*36, 6 + t*4, 0, 0, Math.PI*2); ctx.fill();
+    }
+    // height gauge on the right: fixed to the screen, the dot shows the
+    // fraction of the whole drop (works the same for one-screen Easy)
+    const gTop = 96, gBot = Math.floor(H*0.74);
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(W-16, gTop, 5, gBot-gTop);
+    ctx.fillStyle = '#e65100'; ctx.beginPath(); ctx.arc(W-13.5, gTop + prog*(gBot-gTop), 6, 0, Math.PI*2); ctx.fill();
+  }
+  // dust
+  for(const d of S.dust){
+    ctx.strokeStyle = 'rgba(120,90,60,'+d.a+')'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(d.x, d.y, d.r, d.r*0.45, 0, 0, Math.PI*2); ctx.stroke();
+  }
+  // grab guide: a ring around the cat = "you can grab inside here"
+  if(S.mode==='play'){
+    ctx.strokeStyle = S.grabbing ? 'rgba(255,145,40,.95)' : 'rgba(255,255,255,.45)';
+    ctx.lineWidth = S.grabbing ? 3 : 2;
+    if(ctx.setLineDash) ctx.setLineDash([7,7]);
+    ctx.beginPath(); ctx.arc(S.catX, catY, GRAB_RADIUS, 0, Math.PI*2); ctx.stroke();
+    if(ctx.setLineDash) ctx.setLineDash([]);
+    if(!S.grabbing){
+      ctx.font = '900 12px sans-serif'; ctx.textAlign = 'center';
+      if(ctx.strokeText){ ctx.strokeStyle = 'rgba(60,35,5,.55)'; ctx.lineWidth = 3; ctx.strokeText('🐾 猫をつかんで回して', S.catX, catY - GRAB_RADIUS - 8); }
+      ctx.fillStyle = 'rgba(255,255,255,.92)';
+      ctx.fillText('🐾 猫をつかんで回して', S.catX, catY - GRAB_RADIUS - 8);
+    } else {
+      // the grabbed material point, rotating with the cat
+      const gx = S.catX + S.relX, gy = catY + S.relY;
+      ctx.strokeStyle = 'rgba(255,145,40,.8)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(S.catX, catY); ctx.lineTo(gx, gy); ctx.stroke();
+      ctx.fillStyle = '#ff9128';
+      ctx.beginPath(); ctx.arc(gx, gy, 9, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '900 11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('🐾', gx, gy + 4);
+    }
+  }
+  // cat
+  if(S.mode==='title'){
+    drawCat(W/2, TOP_OFFSET, Math.sin(S.time*1.4)*7, 0);
+  } else {
+    drawCat(S.catX, catY, S.angle, S.mode==='landed' ? S.squash : 0);
+    if(S.mode==='over' || S.mode==='flopped'){
+      // dizzy stars over the flopped cat
+      ctx.font = '16px sans-serif'; ctx.textAlign = 'center';
+      for(let i=0;i<3;i++){
+        const sx = S.catX + Math.cos(S.time*3 + i*2.1)*30;
+        const sy2 = catY - 44 + Math.sin(S.time*3 + i*2.1)*6;
+        ctx.fillText('⭐', sx, sy2);
+      }
+    }
+  }
+  drawCelebration();
+  // pops
+  for(const p of S.pops){
+    ctx.fillStyle = 'rgba(230,81,0,'+Math.min(1,p.a)+')'; ctx.font = '900 19px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(p.txt, p.x, p.y);
+  }
+  // near-ground cue
+  if(S.mode==='play' && (S.dropPx - S.catY) < 170){
+    const diff = angleDiffDeg(S.angle);
+    ctx.font = '900 21px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = diff <= SAFE_DEG ? 'rgba(46,160,60,.95)' : 'rgba(229,57,53,.95)';
+    ctx.fillText(diff <= SAFE_DEG ? 'そのまま！🐾' : '足を下に！ あと' + Math.round(diff) + '°', W/2, 92);
+  }
+}
+
+// ---------- loop ----------
+let lastT = performance.now();
+function loop(now){
+  let dt = (now-lastT)/1000; lastT = now;
+  if(dt > 0.05) dt = 0.05;
+  if(S.mode !== 'title') update(dt); else S.time += dt;
+  draw();
+  requestAnimationFrame(loop);
+}
+resize();
+reset();
+S.mode = 'title';
+requestAnimationFrame(loop);
+
+function renderStageButtons(){
+  document.querySelectorAll('.stageBtn').forEach(b => {
+    const id = b.dataset.stage;
+    const locked = STAGE_ORDER.indexOf(id) > unlockedIdx;
+    b.classList.toggle('locked', locked);
+    b.classList.toggle('sel', id === selectedStage && !locked);
+    b.innerHTML = (clearedSet.has(id) ? '✅ ' : '') + STAGES[id].name +
+      '<small>' + (locked ? '🔒 クリアで解禁' : STAGES[id].sub) + '</small>';
+  });
+}
+function selectStage(id){
+  if(!STAGES[id]) return;
+  if(STAGE_ORDER.indexOf(id) > unlockedIdx){
+    // locked: explain, do not select
+    document.getElementById('stageDesc').textContent =
+      '🔒 ' + STAGES[id].name + 'は、ひとつ前のステージをクリアすると解禁されます';
+    beep(160,0.12,'sawtooth',0.05);
+    return;
+  }
+  selectedStage = id;
+  renderStageButtons();
+  document.getElementById('stageDesc').textContent = STAGES[id].desc +
+    (STAGES[id].quota > 0 ? '｜解禁ノルマ：' + STAGES[id].quota + '回転して着地成功' : '');
+}
+document.querySelectorAll('.stageBtn').forEach(b => b.addEventListener('click', ()=>{
+  selectStage(b.dataset.stage);
+  beep(520,0.05,'square',0.03);
+}));
+renderStageButtons();
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  document.getElementById('title').classList.add('hidden');
+  reset(selectedStage); S.mode = 'play';
+  beep(660,0.08,'square',0.04);
+});
+document.getElementById('retryBtn').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  reset(S.stage); S.mode = 'play';
+});
+document.getElementById('toTitleBtn').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  selectStage(S.stage);
+  reset(S.stage); S.mode = 'title';
+  document.getElementById('title').classList.remove('hidden');
+});
+// hooks for automated checking
+window.CATFLIP = { S, reset, startRound, pointerDown, pointerMove, pointerUp, judge, angleDiffDeg, flipCount, landingScore,
+                   grabDeltaDeg, spawnConfetti, openKusudama, showResult, selectStage, renderStageButtons,
+                   getUnlocked: () => unlockedIdx, getCleared: () => [...clearedSet],
+                   STAGES, STAGE_ORDER, MAX_VY, screenY, groundLineWorld, catScrY,
+                   PERFECT_DEG, SAFE_DEG, GRAB_RADIUS, GRAVITY0, START_VY, RESULT_DELAY_SEC };
+</script>
+</body>
+</html>
