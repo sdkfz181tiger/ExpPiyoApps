@@ -1,0 +1,1483 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>サッカードリブル</title>
+<style>
+  :root{
+    --ink:#0f2318;
+    --paper:#f4fbf2;
+    --accent:#ffcf3f;
+    --accent2:#ff5a3c;
+    --panel:#10281a;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: "Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+    background:#0b1f12;
+    color:var(--paper);
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  #wrap{
+    position:fixed; inset:0;
+    max-width:520px; margin:0 auto;
+    background:#1d7a34;
+    overflow:hidden;
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+  /* HUD */
+  #hud{
+    position:absolute; top:0; left:0; right:0;
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    pointer-events:none; z-index:5;
+  }
+  .hud-box{
+    background:rgba(6,26,13,.78);
+    border:2px solid rgba(255,255,255,.22);
+    border-radius:14px;
+    padding:7px 12px 6px;
+    min-width:92px;
+    backdrop-filter: blur(2px);
+  }
+  .hud-box.right{ text-align:right; min-width:84px;}
+  .hud-box.ally{ text-align:center; min-width:66px;}
+  .ally-icons{ font-size:21px; letter-spacing:2px; }
+  .ally-icons span{ opacity:.16; filter:grayscale(1); }
+  .ally-icons span.on{ opacity:1; filter:none; }
+  .hud-label{ font-size:11px; letter-spacing:.08em; opacity:.85; font-weight:700;}
+  .hud-value{ font-size:28px; line-height:1; font-weight:900; font-variant-numeric:tabular-nums;}
+  .hud-value small{ font-size:14px; font-weight:800; opacity:.9;}
+  #combo{
+    position:absolute; top: calc(180px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%) scale(.8);
+    background:var(--accent); color:#231a00; font-weight:900; font-size:18px;
+    padding:6px 14px; border-radius:999px; border:2px solid #fff3;
+    opacity:0; transition:opacity .15s, transform .15s; pointer-events:none; z-index:6;
+    box-shadow:0 6px 18px rgba(0,0,0,.25); white-space:nowrap;
+  }
+  #combo.show{ opacity:1; transform:translateX(-50%) scale(1);}
+  #trialBadge{
+    position:absolute; top: calc(84px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
+    background:rgba(6,26,13,.85); color:#ffe9a8; border:1.5px dashed var(--accent);
+    font-size:11.5px; font-weight:900; letter-spacing:.04em;
+    padding:4px 12px; border-radius:999px; z-index:6; pointer-events:none; white-space:nowrap;
+  }
+  #powerHud{
+    position:absolute; top: calc(114px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%);
+    width:min(300px, calc(100% - 40px));
+    background:rgba(6,26,13,.85); border:2px solid var(--accent); border-radius:14px;
+    padding:7px 12px 9px; z-index:6; pointer-events:none; text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.3);
+  }
+  #powerHud.hidden{ display:none; }
+  #powerHud .p-label{ font-size:14px; font-weight:900; color:#fff; letter-spacing:.02em;}
+  #powerHud .p-label .sec{ color:var(--accent); font-size:19px; font-variant-numeric:tabular-nums;}
+  #powerHud.low{ border-color:var(--accent2); animation:blink .3s steps(2) infinite; }
+  @keyframes blink{ 50%{ background:rgba(90,20,6,.9);} }
+  @media (prefers-reduced-motion: reduce){ #powerHud.low{animation:none} }
+  #powerBarWrap{ height:8px; background:rgba(255,255,255,.22); border-radius:99px; margin-top:6px; overflow:hidden;}
+  #powerBar{ height:100%; width:100%; background:var(--accent); border-radius:99px; transition:width .1s linear;}
+  #powerHud.low #powerBar{ background:var(--accent2); }
+  #hint{
+    position:absolute; left:50%; bottom: calc(22px + env(safe-area-inset-bottom)); transform:translateX(-50%);
+    background:rgba(6,26,13,.82); color:#fff; font-weight:800; font-size:14px;
+    padding:9px 16px; border-radius:999px; pointer-events:none; z-index:5; white-space:nowrap;
+    transition:opacity .4s;
+  }
+  #hint small{ opacity:.8; font-weight:600;}
+
+  /* Overlays */
+  .overlay{
+    position:absolute; inset:0; z-index:10;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:24px 20px calc(24px + env(safe-area-inset-bottom));
+    text-align:center;
+    background: radial-gradient(120% 90% at 50% 10%, rgba(10,40,18,.18), rgba(4,18,8,.72));
+  }
+  .overlay.hidden{ display:none; }
+  .ball-badge{
+    font-size:52px; line-height:1; filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));
+    animation:bob 1.2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{transform:translateY(0) rotate(-8deg)} 50%{transform:translateY(-10px) rotate(10deg)} }
+  @media (prefers-reduced-motion: reduce){ .ball-badge{animation:none} }
+  h1{
+    margin:10px 0 4px; font-size:44px; line-height:1.05; font-weight:900; letter-spacing:.02em;
+    color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.28);
+  }
+  h1 .y{ color:var(--accent); }
+  .sub{ margin:0 0 18px; font-size:15px; font-weight:700; opacity:.95; line-height:1.6;}
+  .how{
+    background:rgba(255,255,255,.96); color:var(--ink);
+    border-radius:18px; padding:14px 16px; width:min(360px,100%);
+    text-align:left; font-size:14.5px; line-height:1.55; font-weight:600;
+    box-shadow:0 12px 28px rgba(0,0,0,.3);
+    margin-bottom:20px;
+  }
+  .how b{ font-weight:900; }
+  .how .row{ display:flex; gap:10px; align-items:flex-start; margin:7px 0;}
+  .how .ic{ font-size:19px; line-height:1.3; flex:0 0 24px; text-align:center;}
+  .btn{
+    appearance:none; border:none; cursor:pointer;
+    background:var(--accent); color:#241a00;
+    font-family:inherit; font-weight:900; font-size:21px;
+    padding:15px 34px; border-radius:999px;
+    box-shadow:0 6px 0 #c79a12, 0 14px 26px rgba(0,0,0,.35);
+    transition:transform .08s, box-shadow .08s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #c79a12, 0 8px 16px rgba(0,0,0,.3);}
+  .btn.red{ background:var(--accent2); color:#fff; box-shadow:0 6px 0 #b93420, 0 14px 26px rgba(0,0,0,.35);}
+  .btn.red:active{ box-shadow:0 2px 0 #b93420, 0 8px 16px rgba(0,0,0,.3);}
+  .result-num{ font-size:64px; font-weight:900; line-height:1; color:#fff; text-shadow:0 3px 0 rgba(0,0,0,.3); font-variant-numeric:tabular-nums;}
+  .result-num small{ font-size:24px; }
+  .result-grid{ display:flex; gap:10px; margin:16px 0 22px; flex-wrap:wrap; justify-content:center;}
+  .result-cell{ background:rgba(255,255,255,.96); color:var(--ink); border-radius:14px; padding:10px 16px; min-width:104px;}
+  .result-cell .l{ font-size:11px; font-weight:800; letter-spacing:.06em; opacity:.65;}
+  .result-cell .v{ font-size:24px; font-weight:900; line-height:1.15; font-variant-numeric:tabular-nums;}
+  .reason{
+    display:inline-block; background:#fff; color:#b3270f; font-weight:900; font-size:16px;
+    padding:7px 16px; border-radius:999px; margin-top:12px; box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  .best{ margin-top:12px; font-size:13px; font-weight:700; opacity:.85;}
+  .tap-note{ margin-top:14px; font-size:12.5px; opacity:.75; font-weight:600;}
+  /* START: the pitch stays fully visible — the player waits on the centre
+     spot and only a minimal tap prompt is shown */
+  #startScreen{
+    background:none; justify-content:flex-end; pointer-events:none;
+    padding-bottom: calc(13vh + env(safe-area-inset-bottom));
+  }
+  .kickoff{
+    background:var(--accent); color:#241a00; font-weight:900; font-size:22px;
+    padding:14px 28px; border-radius:999px; border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 10px 24px rgba(0,0,0,.35);
+    animation:pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+  @media (prefers-reduced-motion: reduce){ .kickoff{animation:none} }
+  .kickoff-sub{ margin-top:12px; font-size:13.5px; font-weight:700; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.55); }
+  /* "ゲーム開始！" flash — shown the instant the kickoff tap lands, while
+     the game is already moving underneath it (no start delay) */
+  #startBanner{
+    position:absolute; inset:0; z-index:8;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+  }
+  #startBanner.hidden{ display:none; }
+  #startBanner .banner-inner{
+    background:var(--accent); color:#241a00;
+    font-size:40px; font-weight:900; letter-spacing:.04em; white-space:nowrap;
+    padding:16px 34px; border-radius:999px; border:3px solid rgba(255,255,255,.7);
+    box-shadow:0 14px 34px rgba(0,0,0,.4);
+    animation:bannerPop .9s ease-out forwards;
+  }
+  @keyframes bannerPop{
+    0%{ transform:scale(.6); opacity:0; }
+    14%{ transform:scale(1.08); opacity:1; }
+    24%{ transform:scale(1); }
+    72%{ transform:scale(1); opacity:1; }
+    100%{ transform:scale(1.04); opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #startBanner .banner-inner{ animation:bannerFade .9s linear forwards; }
+    @keyframes bannerFade{ 0%{opacity:0} 15%{opacity:1} 72%{opacity:1} 100%{opacity:0} }
+  }
+  /* RED CARD cut-in: play freezes underneath while this shows */
+  #redCutin{
+    position:absolute; inset:0; z-index:9;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+  }
+  #redCutin.hidden{ display:none; }
+  #redCutin .cutin-inner{
+    background:#fff; color:#b3270f; text-align:center;
+    border:4px solid #d42a1e; border-radius:20px;
+    padding:20px 30px 16px; box-shadow:0 18px 40px rgba(0,0,0,.5);
+    animation:cutinPop 1.05s ease-out forwards;
+  }
+  @keyframes cutinPop{
+    0%{ transform:scale(.5) rotate(-6deg); opacity:0; }
+    16%{ transform:scale(1.07) rotate(1deg); opacity:1; }
+    26%{ transform:scale(1); }
+    82%{ transform:scale(1); opacity:1; }
+    100%{ transform:scale(1.02); opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    #redCutin .cutin-inner{ animation:bannerFade 1.05s linear forwards; }
+  }
+  #redCutin .cutin-card{ font-size:56px; line-height:1; }
+  #redCutin .cutin-title{ font-size:32px; font-weight:900; letter-spacing:.03em; margin-top:6px; }
+  #redCutin .cutin-sub{ font-size:13.5px; font-weight:800; color:#5a4632; margin-top:4px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div class="hud-box">
+      <div class="hud-label">すすんだ距離</div>
+      <div class="hud-value"><span id="dist">0</span><small> m</small></div>
+    </div>
+    <div class="hud-box ally">
+      <div class="hud-label">護衛の味方</div>
+      <div class="hud-value ally-icons"><span id="allyIcon0">🛡️</span><span id="allyIcon1">🛡️</span></div>
+    </div>
+    <div class="hud-box right">
+      <div class="hud-label">抜いた人数</div>
+      <div class="hud-value"><span id="beaten">0</span><small> 人</small></div>
+    </div>
+  </div>
+  <div id="trialBadge">🧪 お試し版：審判＆猫</div>
+  <div id="powerHud" class="hidden" role="status" aria-live="polite">
+    <div class="p-label">👟 無敵＆スピードUP！ あと <span class="sec" id="powerSec">6.0</span> 秒</div>
+    <div id="powerBarWrap"><div id="powerBar"></div></div>
+  </div>
+  <div id="combo"></div>
+  <div id="hint">👆 タップで ひだり／みぎ 切り替え</div>
+
+  <div id="startBanner" class="hidden" aria-hidden="true"><div class="banner-inner">ゲーム開始！</div></div>
+
+  <div id="redCutin" class="hidden" aria-hidden="true">
+    <div class="cutin-inner">
+      <div class="cutin-card">🟥</div>
+      <div class="cutin-title">レッドカード！</div>
+      <div class="cutin-sub">審判「審判を吹っ飛ばすとは…！」</div>
+    </div>
+  </div>
+
+  <!-- START: player waits on the centre spot; a tap kicks off -->
+  <div class="overlay" id="startScreen">
+    <div class="kickoff">⚽ タップでキックオフ！</div>
+    <div class="kickoff-sub">タップで ひだり／みぎ に切り替えて、相手をかわそう</div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div class="overlay hidden" id="overScreen">
+    <div style="font-size:44px; line-height:1;">💥</div>
+    <div class="reason" id="reason">タックルされた！</div>
+    <p class="sub" style="margin:14px 0 2px;">すすんだ距離</p>
+    <div class="result-num"><span id="finalDist">0</span><small> m</small></div>
+    <div class="result-grid">
+      <div class="result-cell"><div class="l">抜いた人数</div><div class="v"><span id="finalBeaten">0</span> 人</div></div>
+      <div class="result-cell"><div class="l">連続で抜いた</div><div class="v">最大 <span id="finalCombo">0</span></div></div>
+      <div class="result-cell"><div class="l">吹っ飛ばした</div><div class="v"><span id="finalKnocked">0</span> 人</div></div>
+      <div class="result-cell"><div class="l">身代わり</div><div class="v"><span id="finalSaved">0</span> 回</div></div>
+    </div>
+    <button class="btn red" id="retryBtn">↻ もう一回！</button>
+    <div class="best" id="bestLine"></div>
+    <div class="tap-note">タップでセンターに戻ります（開始はもう一度タップ）</div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var wrap = document.getElementById('wrap');
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var distEl = document.getElementById('dist');
+var beatenEl = document.getElementById('beaten');
+var comboEl = document.getElementById('combo');
+var hintEl = document.getElementById('hint');
+var startScreen = document.getElementById('startScreen');
+var startBanner = document.getElementById('startBanner');
+var overScreen = document.getElementById('overScreen');
+var reasonEl = document.getElementById('reason');
+var redCutin = document.getElementById('redCutin');
+var powerHud = document.getElementById('powerHud');
+var powerSecEl = document.getElementById('powerSec');
+var powerBarEl = document.getElementById('powerBar');
+
+var W=0, H=0, DPR=1;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = wrap.clientWidth; H = wrap.clientHeight;
+  cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+window.addEventListener('resize', resize);
+
+/* ---------- audio (tiny synth) ---------- */
+var AC=null;
+function audio(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC&&AC.state==='suspended') AC.resume(); return AC; }
+function beep(freq, dur, type, vol, slideTo){
+  var ac=audio(); if(!ac) return;
+  var o=ac.createOscillator(), g=ac.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(freq, ac.currentTime);
+  if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, ac.currentTime+dur);
+  g.gain.setValueAtTime(vol||0.12, ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+dur);
+  o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+}
+function sfx(name){
+  if(name==='switch') beep(520,0.07,'triangle',0.07,760);
+  else if(name==='beat'){ beep(660,0.08,'sine',0.10); setTimeout(function(){beep(990,0.10,'sine',0.10);},55); }
+  else if(name==='slide') beep(220,0.22,'sawtooth',0.05,90);
+  else if(name==='out'){ beep(300,0.35,'square',0.10,80); }
+  else if(name==='start'){ beep(523,0.09,'triangle',0.10); setTimeout(function(){beep(784,0.12,'triangle',0.10);},90); }
+  else if(name==='power'){ beep(587,0.08,'square',0.09); setTimeout(function(){beep(880,0.08,'square',0.09);},70); setTimeout(function(){beep(1174,0.14,'square',0.10);},140); }
+  else if(name==='knock'){ beep(180,0.16,'sawtooth',0.13,520); setTimeout(function(){beep(920,0.10,'triangle',0.08,1400);},40); }
+  else if(name==='powerEnd'){ beep(880,0.12,'triangle',0.09,440); }
+  else if(name==='bounce'){ beep(300,0.09,'square',0.11,700); setTimeout(function(){beep(700,0.07,'square',0.07,1050);},45); }
+  else if(name==='ally'){ beep(740,0.09,'triangle',0.10); setTimeout(function(){beep(1108,0.13,'triangle',0.10);},80); }
+  else if(name==='save'){ beep(170,0.16,'square',0.13,80); setTimeout(function(){beep(784,0.10,'sine',0.10);},60); setTimeout(function(){beep(1046,0.14,'sine',0.10);},130); }
+  else if(name==='whistle'){ for(var wi=0; wi<3; wi++){ (function(k){ setTimeout(function(){ beep(2350,0.09,'square',0.07,2100); }, k*95); })(wi); } setTimeout(function(){ beep(2350,0.30,'square',0.08,2050); },300); }
+  else if(name==='dodge'){ beep(980,0.06,'triangle',0.05,1400); }
+  else if(name==='cat'){ beep(1240,0.07,'sine',0.09,1560); setTimeout(function(){ beep(1560,0.10,'sine',0.09,1980); },70); }
+}
+
+/* ---------- game state ---------- */
+var FIELD_MARGIN = 26; // px from wrap edge to touchline outer
+var state = 'ready'; // ready | playing | over
+var player, enemies, particles, distance, rampDist, beatenCount, combo, maxCombo, scrollSpeed, spawnTimer, elapsed, shake, grassOffset, runTime, bestDist=0, flashRed=0;
+var pitchScroll=0; // total px the pitch has scrolled this run — the centre circle rides on it
+var items, powerT=0, powerGraceT=0, knockedCount=0, shoeTimer=0, bounceCooldown=0;
+var allies=[], allyTimer=0, graceT=0, savedCount=0;
+/* --- trial additions: referee & cats ---
+   Referee: spawns ON the pitch like an enemy and stands still (pitch-fixed).
+   No collision in normal play (he sidesteps the player); ONLY a powered
+   player can blow him away, and that alone triggers the red card.
+   Cats: pitch items — pick one up and it joins the trailing line. */
+var referee=null, redT=0, refTimer=0;
+var cats=[], catItems=[], catItemTimer=0, trail=[];
+var CAT_MAX = 5;
+var CAT_STYLES=[
+  { body:'#f6f3ec', ear:'#f6f3ec', stripe:null,    line:'#b9b2a4' },
+  { body:'#33302c', ear:'#33302c', stripe:null,    line:'#17150f' },
+  { body:'#cf8a45', ear:'#cf8a45', stripe:'#9a5f24', line:'#8a5a20' },
+  { body:'#9b9b97', ear:'#9b9b97', stripe:null,    line:'#6e6e6a' },
+  { body:'#f6f3ec', ear:'#f6f3ec', stripe:null,    line:'#b9b2a4', patch:'#e08a3c', patch2:'#3a3630' }
+];
+var POWER_MAX = 6;      // seconds of invincibility
+var POWER_SPEED = 1.55; // speed multiplier while powered
+var POWER_FADE = 2;     // last seconds: blink + speed eases back to normal
+var POWER_GRACE = 0.6;  // trailing protection AFTER the timer ends: while it
+                        // lasts, an enemy hit still knocks the ENEMY away
+                        // instead of killing the player. An opponent who
+                        // closed in during the power window reaches the
+                        // player a fraction of a second after the aura
+                        // disappears — with a hard cutoff that contact was
+                        // judged a normal tackle ("タックルされた") even
+                        // though the whole approach happened under power,
+                        // which is exactly the reported "died while
+                        // invincible" bug. The grace is refreshed every
+                        // frame the power is live, so it always covers
+                        // POWER_GRACE seconds past the true end.
+var BASE_SPEED = 250;   // normal pace in px/s — the ORIGINAL pace from the first
+                        // prototype (before the later slow-down tweaks to 228/215),
+                        // FIXED for the entire run: it never ramps with time or
+                        // distance. Difficulty comes from the enemies (density /
+                        // count / sliders), never from speed. Only the shoes boost
+                        // multiplies it (250 x 1.55 = 387.5), and when the boost
+                        // ends the pace is exactly this value again.
+function isPowered(){ return powerT>0; }
+function bounceSfx(){
+  // reuse the knock sound if present; fall back to a dedicated bounce blip
+  if(typeof sfx==='function'){
+    try{ sfx('bounce'); }catch(e){ try{ sfx('knock'); }catch(e2){} }
+  }
+}
+function powerSpeedMult(){
+  if(powerT<=0) return 1;
+  if(powerT>=POWER_FADE) return POWER_SPEED;
+  // Blink phase == fade phase: both start at powerT == POWER_FADE (the HUD
+  // 'low' blink, the aura blink and the player blink all key off the same
+  // constant), and for that whole window the boost eases back to normal.
+  // Smoothstep, not a straight line: the slowdown begins gently the moment
+  // the blinking starts, is steepest mid-fade, and settles into exactly 1x
+  // as the timer expires — the multiplier is continuous at BOTH ends, so
+  // there is no kink when the fade starts and no step at all when the
+  // power ends. scrollSpeed lands precisely on BASE_SPEED.
+  var t = powerT/POWER_FADE;          // 1 at fade start -> 0 at expiry
+  var s = t*t*(3-2*t);                // smoothstep
+  return 1 + (POWER_SPEED-1) * s;
+}
+function showPowerHud(){
+  if(isPowered()){
+    powerHud.classList.remove('hidden');
+    powerHud.classList.toggle('low', powerT<=POWER_FADE);
+    powerSecEl.textContent = Math.max(0,powerT).toFixed(1);
+    powerBarEl.style.width = (Math.max(0,powerT)/POWER_MAX*100) + '%';
+  } else {
+    powerHud.classList.add('hidden');
+    powerHud.classList.remove('low');
+  }
+}
+function escortCount(){
+  var n=0;
+  for(var i=0;i<allies.length;i++) if(allies[i].state==='escort') n++;
+  return n;
+}
+function showAllyHud(){
+  for(var i=0;i<2;i++){
+    var el=document.getElementById('allyIcon'+i);
+    if(el) el.className = (i<escortCount()) ? 'on' : '';
+  }
+}
+
+function fieldLeft(){ return FIELD_MARGIN; }
+function fieldRight(){ return W - FIELD_MARGIN; }
+function fieldW(){ return fieldRight()-fieldLeft(); }
+
+function reset(){
+  player = {
+    x: W/2, y: H*0.70, r: 17,
+    dir: 1, // 1 = right-up, -1 = left-up
+    lean: 0, stepPhase: 0, alive:true
+  };
+  enemies = [];
+  particles = [];
+  items = [];
+  allies = [];
+  // trial v2: NO referee and NO cats at kickoff. The referee appears on
+  // the pitch only during play (spawn timer below), and cats join the line
+  // only when their pitch item is picked up — the line starts empty.
+  referee = null; refTimer = 12 + Math.random()*6;
+  cats = []; catItems = []; catItemTimer = 10 + Math.random()*6;
+  // trail in world coords (wy = pitchScroll at capture time), newest first,
+  // seeded straight behind the player so the cats start in their line
+  trail = [];
+  for(var twy=0; twy>=-240; twy-=8){ trail.push({ x: W/2, wy: twy }); }
+  redT = 0;
+  redCutin.classList.add('hidden');
+  powerT = 0; powerGraceT = 0; knockedCount = 0; bounceCooldown = 0;
+  allyTimer = 6.5; graceT = 0; savedCount = 0;
+  shoeTimer = 5.5; // first shoes appear a few seconds in
+  distance = 0; rampDist = 0; beatenCount = 0; combo = 0; maxCombo = 0;
+  scrollSpeed = BASE_SPEED;
+  spawnTimer = 0.55;
+  elapsed = 0; shake = 0; grassOffset = 0; runTime = 0; flashRed = 0;
+  pitchScroll = 0; // centre circle back under the player, on the centre spot
+  distEl.textContent = '0'; beatenEl.textContent = '0';
+  comboEl.className=''; comboEl.textContent='';
+  showPowerHud();
+  showAllyHud();
+  startBanner.classList.add('hidden');
+  hintEl.style.opacity = '0'; // the kickoff prompt covers the ready state
+}
+
+function backToReady(){
+  // RETRY lands here — never in startGame. Every retry (button or result
+  // screen tap) returns to the exact initial state: the world fully reset
+  // and frozen, the player waiting on the centre spot, and the kickoff
+  // prompt shown. The retry tap itself is NOT consumed as a start; only
+  // the NEXT tap kicks off.
+  resize(); reset();
+  state='ready';
+  startScreen.classList.remove('hidden');
+  overScreen.classList.add('hidden');
+}
+
+function startGame(){
+  resize(); reset();
+  // Movement and the banner start in the SAME instant: the state flips to
+  // 'playing' right now, so the very next animation frame already scrolls
+  // the pitch, moves the player and lets enemies spawn/advance — the
+  // "ゲーム開始！" banner is only a flash drawn over that live motion,
+  // never a pause or countdown before it.
+  state='playing';
+  startScreen.classList.add('hidden');
+  overScreen.classList.add('hidden');
+  hintEl.style.opacity = '1';
+  // retrigger the banner animation from frame zero
+  var inner = startBanner.firstElementChild;
+  startBanner.classList.remove('hidden');
+  if(inner){ inner.style.animation='none'; void inner.offsetWidth; inner.style.animation=''; }
+  clearTimeout(startBanner._t);
+  startBanner._t = setTimeout(function(){ startBanner.classList.add('hidden'); }, 920);
+  sfx('start');
+}
+
+function triggerRedCard(){
+  if(state!=='playing') return;
+  state='redcard'; redT=0;
+  sfx('whistle');
+  if(navigator.vibrate) navigator.vibrate([70,50,160]);
+  shake = Math.max(shake, 8);
+  redCutin.classList.remove('hidden');
+  var inner = redCutin.firstElementChild;
+  if(inner){ inner.style.animation='none'; void inner.offsetWidth; inner.style.animation=''; }
+}
+
+function gameOver(reason){
+  // HARD GUARANTEE, enforced at the single choke point every death passes
+  // through: a tackle / sliding death can NEVER fire while the player is
+  // powered or inside the trailing power grace — no matter which code path
+  // asked for it. (The red card and the line-out use different reasons and
+  // are deliberately NOT covered by this guard.)
+  if((reason.indexOf('タックル')===0 || reason.indexOf('スライディング')===0) && (isPowered() || powerGraceT>0)) return;
+  if(state!=='playing' && state!=='redcard') return;
+  state='over'; player.alive=false; shake=14; flashRed=0.55;
+  redCutin.classList.add('hidden');
+  sfx('out');
+  if(navigator.vibrate) navigator.vibrate(120);
+  reasonEl.textContent = reason;
+  var d = Math.floor(distance);
+  document.getElementById('finalDist').textContent = d;
+  document.getElementById('finalBeaten').textContent = beatenCount;
+  document.getElementById('finalCombo').textContent = maxCombo;
+  document.getElementById('finalKnocked').textContent = knockedCount;
+  document.getElementById('finalSaved').textContent = savedCount;
+  powerT = 0; showPowerHud();
+  if(d>bestDist) bestDist=d;
+  document.getElementById('bestLine').textContent = '今回までのベスト： ' + bestDist + ' m';
+  burst(player.x, player.y, '#ffffff', 18);
+  setTimeout(function(){ overScreen.classList.remove('hidden'); }, 550);
+}
+
+/* ---------- input : tap = switch direction (1:1, no smoothing/gates) ---------- */
+function switchDir(){
+  if(state!=='playing') return;
+  player.dir *= -1;
+  player.lean = player.dir * 0.5;
+  sfx('switch');
+  puff(player.x - player.dir*10, player.y+16, 4);
+}
+function pressAction(){
+  audio();
+  if(state==='ready'){ startGame(); return; }
+  if(state==='over'){ if(overScreen.classList.contains('hidden')===false) backToReady(); return; }
+  switchDir();
+}
+wrap.addEventListener('pointerdown', function(e){
+  e.preventDefault();
+  pressAction();
+});
+document.getElementById('retryBtn').addEventListener('click', function(e){
+  // The button is the retry, not the start: it returns to the frozen
+  // kickoff state only. (Its pointerdown still bubbles to wrap, where the
+  // 'over' branch does the same backToReady — this click is a fallback.)
+  e.stopPropagation();
+  if(state==='over') backToReady();
+});
+window.addEventListener('keydown', function(e){
+  if(e.code==='Space' || e.code==='ArrowLeft' || e.code==='ArrowRight'){
+    e.preventDefault();
+    if(e.repeat) return;
+    if(state==='playing' && (e.code==='ArrowLeft')){ if(player.dir!== -1) switchDir(); return; }
+    if(state==='playing' && (e.code==='ArrowRight')){ if(player.dir!== 1) switchDir(); return; }
+    pressAction();
+  }
+});
+
+/* ---------- enemies ---------- */
+function spawnRow(){
+  // Difficulty lives HERE (and in the spawn interval), not in speed: the
+  // further the run goes, the more enemies share a row and the more of them
+  // are sliders. Every enemy in a row is kept >=165px from the others, so
+  // there is ALWAYS a passable channel (>=130px clear) — the field is never
+  // walled shut; if a spot can't keep that spacing it simply isn't placed.
+  var fl=fieldLeft(), fr=fieldRight(), fw=fieldW();
+  var sliderChance = 0.22 + Math.min(0.18, distance*0.00045); // 22% -> up to 40%
+  var count = 1;
+  if(distance>70  && Math.random() < 0.30 + Math.min(0.28, distance*0.0006)) count = 2; // 2 at once, more often over time
+  if(distance>280 && Math.random() < 0.16 + Math.min(0.18, distance*0.0003)) count = 3; // late game: sometimes 3
+  var y = -50;
+  var placed = [];
+  function farFromOthers(x){
+    for(var i=0;i<placed.length;i++){ if(Math.abs(x-placed[i])<165) return false; }
+    return true;
+  }
+  function mk(x){
+    var slider = Math.random() < sliderChance;
+    enemies.push({
+      x:x, y:y, r:16,
+      ownSpeed: 95 + Math.random()*45, // fixed too — enemies don't speed up either
+      type: slider ? 'slider' : 'runner',
+      state:'run', // run | warn | sliding | beaten
+      warnT:0, slideT:0, beatenT:0, faceDown:true,
+      stepPhase: Math.random()*6.28, wob: Math.random()*6.28
+    });
+    placed.push(x);
+  }
+  for(var n=0;n<count;n++){
+    var x, tries=0, ok=false;
+    do { x = fl + 30 + Math.random()*(fw-60); tries++; ok = farFromOthers(x); } while(!ok && tries<14);
+    if(ok) mk(x); // no spot with a guaranteed gap -> this one just doesn't spawn
+  }
+}
+
+function burst(x,y,color,n){
+  for(var i=0;i<n;i++){
+    var a=Math.random()*6.28, s=40+Math.random()*150;
+    particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-40,life:0.5+Math.random()*0.4,t:0,color:color,r:2+Math.random()*3});
+  }
+}
+function puff(x,y,n){
+  for(var i=0;i<n;i++){
+    particles.push({x:x+(Math.random()-0.5)*10,y:y,vx:(Math.random()-0.5)*30,vy:20+Math.random()*30,life:0.35,t:0,color:'rgba(255,255,255,0.8)',r:2+Math.random()*2.5});
+  }
+}
+
+/* ---------- cats: follow the player's recorded path ---------- */
+function trailPointAt(distBack){
+  // walk the trail (newest first, world coords) until distBack px behind
+  // the player, then convert back to screen coords: things behind the
+  // player appear that many px BELOW them on screen
+  var acc=0;
+  for(var i=0;i<trail.length-1;i++){
+    var a=trail[i], b=trail[i+1];
+    var sx=a.x-b.x, sy=a.wy-b.wy, seg=Math.sqrt(sx*sx+sy*sy);
+    if(acc+seg>=distBack && seg>0){
+      var t=(distBack-acc)/seg;
+      var wx=a.x+(b.x-a.x)*t, wy=a.wy+(b.wy-a.wy)*t;
+      return { x: wx, y: player.y + (pitchScroll - wy) };
+    }
+    acc+=seg;
+  }
+  if(trail.length){ var last=trail[trail.length-1]; return { x:last.x, y: player.y + (pitchScroll-last.wy) }; }
+  return null;
+}
+function updateCats(dt){
+  // record the player's path (only while playing — ready/over stay frozen)
+  if(!trail.length || Math.abs(trail[0].x-player.x)+Math.abs(trail[0].wy-pitchScroll)>3){
+    trail.unshift({ x: player.x, wy: pitchScroll });
+    if(trail.length>700) trail.length=700;
+  }
+  for(var i=0;i<cats.length;i++){
+    var pos = trailPointAt(55*(i+1));
+    if(pos){ cats[i].x=pos.x; cats[i].y=pos.y; }
+  }
+}
+
+/* ---------- cat items: sit on the pitch until picked up ---------- */
+function updateCatItems(dt){
+  catItemTimer -= dt;
+  if(catItemTimer<=0){
+    if(cats.length < CAT_MAX && catItems.length===0){
+      // next cat in the colour sequence (white, black, tabby, grey, calico)
+      catItems.push({ x: fieldLeft()+36 + Math.random()*(fieldW()-72), y:-44, phase: Math.random()*6.28, style: CAT_STYLES[cats.length % CAT_STYLES.length] });
+      catItemTimer = 10 + Math.random()*6; // every 10–16s
+    } else {
+      catItemTimer = 1.5; // at the cap, or one already waiting: check again soon
+    }
+  }
+  for(var i=catItems.length-1;i>=0;i--){
+    var it = catItems[i];
+    it.y += scrollSpeed * dt; // sits ON the pitch: rides the grass scroll down
+    var dx = it.x-player.x, dy = it.y-player.y, rr2 = player.r + 24;
+    if(dx*dx + dy*dy < rr2*rr2){
+      // picked up: this cat joins the trailing line (no effect, no collision)
+      catItems.splice(i,1);
+      cats.push({ x: it.x, y: it.y, phase: cats.length*2.1, style: it.style });
+      sfx('cat');
+      if(navigator.vibrate) navigator.vibrate(25);
+      burst(it.x, it.y, '#ffd9ec', 10); burst(it.x, it.y, '#ffffff', 6);
+      comboEl.textContent = '🐱 猫ゲット！（' + cats.length + '/' + CAT_MAX + '）';
+      comboEl.className='show';
+      clearTimeout(comboEl._t);
+      comboEl._t = setTimeout(function(){ comboEl.className=''; }, 1000);
+      continue;
+    }
+    if(it.y > H+60) catItems.splice(i,1); // missed it — drifts off the bottom
+  }
+}
+
+/* ---------- referee: stands on the pitch like an enemy ---------- */
+function spawnReferee(){
+  referee = {
+    x: fieldLeft()+30 + Math.random()*(fieldW()-60), y: -50, r: 16,
+    state:'stand', // stand | dodging | flying
+    stepPhase:0, dodgeT:0, dodgeDir:1,
+    fvx:0, fvy:0, rot:0, vrot:0
+  };
+}
+function updateReferee(dt, poweredThisFrame){
+  // spawn: one at a time on a 12–18s cycle, only while playing
+  refTimer -= dt;
+  if(refTimer<=0 && !referee){
+    spawnReferee();
+    refTimer = 12 + Math.random()*6;
+  }
+  if(!referee) return;
+  var ref = referee;
+  if(ref.state==='flying'){
+    ref.x += ref.fvx*dt; ref.y += ref.fvy*dt; ref.fvy += 900*dt; ref.rot += ref.vrot*dt;
+    if(ref.y>H+90 || ref.x<-70 || ref.x>W+70) referee=null;
+    return;
+  }
+  // he stands still ON the pitch, so he rides the grass scroll downward
+  // and leaves off the bottom — he never walks or runs anywhere
+  ref.y += scrollSpeed*dt;
+  if(ref.y > H+60){ referee=null; return; }
+  var dx = ref.x - player.x;
+  if(!poweredThisFrame){
+    // NORMAL play: he sidesteps out of the way when the player closes in.
+    // There is NO collision either way — even a full overlap is harmless;
+    // he is neither an enemy nor an obstacle.
+    if(ref.state==='dodging'){
+      ref.dodgeT -= dt;
+      ref.x += ref.dodgeDir*330*dt;
+      ref.stepPhase += dt*15;
+      if(ref.x < fieldLeft()+20){ ref.x=fieldLeft()+20; ref.dodgeDir=1; }
+      if(ref.x > fieldRight()-20){ ref.x=fieldRight()-20; ref.dodgeDir=-1; }
+      if(ref.dodgeT<=0) ref.state='stand';
+    } else {
+      var dy = ref.y - player.y;
+      if(Math.abs(dx)<105 && dy>-150 && dy<60){
+        ref.dodgeDir = (Math.abs(dx)>=18) ? (dx>0 ? 1 : -1) : (player.dir>0 ? -1 : 1);
+        if(ref.x > fieldRight()-50 && ref.dodgeDir>0) ref.dodgeDir=-1;
+        if(ref.x < fieldLeft()+50 && ref.dodgeDir<0) ref.dodgeDir=1;
+        ref.state='dodging'; ref.dodgeT=0.45;
+        sfx('dodge');
+        puff(ref.x, ref.y-20, 3);
+      }
+    }
+    return;
+  }
+  // POWERED play: the player is too fast for him to dodge. The FEET rule —
+  // the exact same one used for enemies — decides the touch: he is blown
+  // away like an enemy, and THAT (and only that) earns the red card.
+  var pFeet = player.y + player.r*0.85;
+  var rFeet = ref.y + ref.r*0.85;
+  var feetDy = pFeet - rFeet;
+  var hitW = (player.r + ref.r)*0.82;
+  if(Math.abs(dx) < hitW && feetDy>=0 && feetDy<=34){
+    ref.state='flying';
+    var away = (dx>=0 ? 1 : -1);
+    ref.fvx = away*(170 + Math.random()*160) + player.dir*90;
+    ref.fvy = -(300 + Math.random()*170);
+    ref.rot = 0; ref.vrot = away*(7 + Math.random()*6);
+    sfx('knock'); shake = Math.max(shake, 6);
+    if(navigator.vibrate) navigator.vibrate(30);
+    burst(ref.x, ref.y, '#ffffff', 10); burst(ref.x, ref.y, '#ffcf3f', 8);
+    triggerRedCard();
+  }
+}
+
+/* ---------- update ---------- */
+var lastT=0;
+function update(dt){
+  // READY = the game world is completely frozen. Nothing in the world may
+  // advance before the kickoff tap: not the player's run cycle or the
+  // ball's spin (both driven by runTime), not the grass scroll, not enemy
+  // spawning or movement, not particles. update() returns before touching
+  // any of them, and draw() simply re-renders the identical still frame.
+  // (The CSS pulse on the kickoff prompt is UI chrome, not the game world.)
+  if(state==='ready') return;
+  // 'over' = the world is frozen too: the result screen sits over a still
+  // pitch, so runTime (run cycle, ball spin, warning blink) advances only
+  // while actually playing. Particles/shake/flash below are one-shot
+  // game-over feedback and settle on their own.
+  if(state==='playing' || state==='redcard') runTime += dt;
+  if(shake>0) shake = Math.max(0, shake - dt*36);
+  if(flashRed>0) flashRed = Math.max(0, flashRed - dt*1.4);
+  for(var i=particles.length-1;i>=0;i--){ var p=particles[i]; p.t+=dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=180*dt; if(p.t>p.life) particles.splice(i,1); }
+  if(state==='redcard'){
+    // play is frozen; only the blown-away referee's tumble continues,
+    // then it's game over
+    redT += dt;
+    if(referee && referee.state==='flying'){
+      referee.x += referee.fvx*dt; referee.y += referee.fvy*dt; referee.fvy += 900*dt; referee.rot += referee.vrot*dt;
+    }
+    if(redT>=1.05){ gameOver('🟥 レッドカード！（審判を吹っ飛ばした）'); }
+    return;
+  }
+  if(state!=='playing') return;
+
+  elapsed += dt;
+  if(bounceCooldown>0) bounceCooldown = Math.max(0, bounceCooldown - dt);
+  if(graceT>0) graceT = Math.max(0, graceT - dt); // brief safety window right after a save
+  // Snapshot invincibility BEFORE the timer ticks down. The whole frame is
+  // then judged by the state the player was in when the frame began: if the
+  // timer runs out on the very frame the boosted player reaches a touchline,
+  // the bounce below still applies and the line-out check stays off — an
+  // invincible player can never die on the line, not even on the last frame.
+  var poweredThisFrame = isPowered();
+  // invincibility timer — counts down, then everything returns to normal
+  if(poweredThisFrame){
+    powerT -= dt;
+    if(powerT<=0){ powerT=0; sfx('powerEnd'); }
+    showPowerHud();
+  }
+  // Trailing power grace: refreshed to full on every frame the power is
+  // live, then counted down once the power is over. Enemy hits are judged
+  // against it below (poweredForHit), so a contact that lands just after
+  // the timer expires — an opponent who was already closing in under
+  // power — still knocks the enemy away instead of ending the run.
+  if(isPowered()) powerGraceT = POWER_GRACE;
+  else if(powerGraceT>0) powerGraceT = Math.max(0, powerGraceT - dt);
+  // Normal speed is a CONSTANT (BASE_SPEED) from the first frame to the
+  // last — no ramp with time or distance, nothing for the shoes boost to
+  // leave behind. The only thing that ever multiplies it is the boost
+  // itself (powerSpeedMult), so when the power ends the pace returns to
+  // exactly BASE_SPEED, every time, at any point in the run.
+  var baseSpeed = BASE_SPEED;
+  scrollSpeed = baseSpeed * powerSpeedMult();
+  var pxPerM = 16;
+  distance += (scrollSpeed*dt)/pxPerM;
+  // Scroll accumulator for the pitch pattern. It cycles over 1344px =
+  // lcm(stripe period 168, dash period 64) so BOTH ground patterns wrap
+  // seamlessly (see drawField). The old wrap at 84 — a single stripe
+  // height, i.e. HALF the true stripe period — flipped the stripes'
+  // light/dark parity ~3 times a second: the whole field strobed while
+  // scrolling, which is what made it feel sickening.
+  grassOffset = (grassOffset + scrollSpeed*dt) % 1344;
+  pitchScroll += scrollSpeed*dt; // unwrapped twin of grassOffset: markings fixed to the pitch (the centre circle) scroll away with it and never wrap back
+  distEl.textContent = Math.floor(distance);
+
+  // player diagonal movement — raw direction, no easing on the switch itself.
+  // Lateral ratio raised a touch (0.92 -> 1.06) so the run reads a little
+  // more diagonal: more sideways travel per metre of forward scroll.
+  var latSpeed = scrollSpeed * 1.06;
+  player.x += player.dir * latSpeed * dt;
+  player.stepPhase += dt * (scrollSpeed/16);
+  player.lean += ((player.dir*0.28) - player.lean) * Math.min(1, dt*10);
+  if(Math.random()<dt*22) puff(player.x - player.dir*8, player.y+18, 1);
+  if(poweredThisFrame && Math.random()<dt*40) burst(player.x - player.dir*14, player.y+14, '#ffcf3f', 1);
+  updateCats(dt);
+  updateReferee(dt, poweredThisFrame);
+  if(state!=='playing') return; // the referee was blown away -> red card
+  updateCatItems(dt);
+
+  // touchline while invincible: bounce off the line automatically instead of
+  // dying — the run (and the remaining power time) continues uninterrupted.
+  // Judged by poweredThisFrame (the state at frame start), so the protection
+  // also covers the frame the timer expires. The clamp runs in this same
+  // update, before anything is drawn, so the player never visibly crosses.
+  // A normal (non-powered) line-out still ends the game, as before.
+  if(poweredThisFrame && (player.x - player.r < fieldLeft()+3 || player.x + player.r > fieldRight()-3)){
+    var hitLeft = player.x - player.r < fieldLeft()+3;
+    player.x = hitLeft ? fieldLeft()+3+player.r : fieldRight()-3-player.r;
+    player.dir = hitLeft ? 1 : -1; // reverse direction straight off the line
+    player.lean = player.dir * 0.5;
+    if(bounceCooldown<=0){
+      bounceSfx();
+      burst(player.x + (hitLeft ? -player.r : player.r), player.y, '#ffcf3f', 10);
+      burst(player.x + (hitLeft ? -player.r : player.r), player.y, '#ffffff', 6);
+      if(navigator.vibrate) navigator.vibrate(25);
+      bounceCooldown = 0.35; // feedback cooldown only — the reversal itself is immediate every time
+    }
+  }
+  // touchline = out (normal play only — a frame that began invincible is
+  // fully exempt: the bounce above already put the player back inside, and
+  // this check must never fire for it)
+  if(!poweredThisFrame && (player.x - player.r < fieldLeft()+3 || player.x + player.r > fieldRight()-3)){
+    player.x = Math.max(fieldLeft()+3+player.r, Math.min(fieldRight()-3-player.r, player.x));
+    gameOver('ラインアウト！');
+    return;
+  }
+
+  // escort allies: runners shadow the player at fixed side slots, easing
+  // toward them (input is never touched — they only follow). A 'down' ally
+  // has taken a hit for the player: it tumbles, recedes with the pitch and
+  // is gone.
+  for(var ai=allies.length-1; ai>=0; ai--){
+    var al=allies[ai];
+    if(al.state==='down'){
+      al.downT += dt; al.y += scrollSpeed*dt;
+      al.rot = Math.min(1.5, (al.rot||0) + dt*5);
+      if(al.downT>1.15 || al.y>H+60) allies.splice(ai,1);
+      continue;
+    }
+    var atx = player.x + al.slot*38, aty = player.y + 30;
+    var ak = Math.min(1, dt*5.5);
+    al.x += (atx-al.x)*ak; al.y += (aty-al.y)*ak;
+    al.stepPhase += dt*(scrollSpeed/15);
+  }
+  // ally item (star): appears now and then, but only while the escort
+  // isn't already at the max of 2
+  allyTimer -= dt;
+  if(allyTimer<=0){
+    var hasAllyItem=false;
+    for(var aq=0; aq<items.length; aq++) if(items[aq].kind==='ally') hasAllyItem=true;
+    if(!hasAllyItem && escortCount()<2){
+      items.push({ kind:'ally', x: fieldLeft()+36 + Math.random()*(fieldW()-72), y:-44, r:20, bob: Math.random()*6.28 });
+    }
+    allyTimer = 10 + Math.random()*5; // every 10–15s
+  }
+
+  // shoes item: appears occasionally on the pitch, optional to pick up
+  shoeTimer -= dt;
+  if(shoeTimer<=0){
+    if(items.length===0 && !isPowered()){
+      items.push({ kind:'shoes', x: fieldLeft()+36 + Math.random()*(fieldW()-72), y:-44, r:20, bob: Math.random()*6.28 });
+    }
+    shoeTimer = 9 + Math.random()*5; // every 9–14s
+  }
+  for(var ii=items.length-1; ii>=0; ii--){
+    var it = items[ii];
+    it.bob += dt*5;
+    it.y += scrollSpeed * dt; // fixed on the pitch: moves at exactly the field-scroll speed, so it never drifts against the grass
+    var idx = it.x-player.x, idy = it.y-player.y, ir = player.r + it.r + 4;
+    if(idx*idx + idy*idy < ir*ir){
+      items.splice(ii,1);
+      if(it.kind==='ally'){
+        // a teammate joins the escort (max 2), taking whichever side slot
+        // is free, running in from where the star was picked up
+        if(escortCount()<2){
+          var usedL=false;
+          for(var u=0;u<allies.length;u++){ if(allies[u].state==='escort' && allies[u].slot<0) usedL=true; }
+          allies.push({ x: it.x, y: it.y, r:16, slot: usedL ? 1 : -1, stepPhase: Math.random()*6.28, state:'escort', downT:0, rot:0 });
+          showAllyHud();
+          sfx('ally');
+          if(navigator.vibrate) navigator.vibrate(35);
+          burst(it.x, it.y, '#7cc4ff', 14); burst(it.x, it.y, '#ffffff', 8);
+          comboEl.textContent = '⭐ 味方が護衛についた！（' + escortCount() + '/2）';
+          comboEl.className='show';
+          clearTimeout(comboEl._t);
+          comboEl._t = setTimeout(function(){ comboEl.className=''; }, 1100);
+        }
+        continue;
+      }
+      powerT = POWER_MAX; // (re)start the full invincibility window
+      showPowerHud();
+      sfx('power');
+      if(navigator.vibrate) navigator.vibrate(40);
+      burst(player.x, player.y-10, '#ffcf3f', 16);
+      comboEl.textContent = '👟 無敵＆スピードUP！';
+      comboEl.className='show';
+      clearTimeout(comboEl._t);
+      comboEl._t = setTimeout(function(){ comboEl.className=''; }, 1000);
+      continue;
+    }
+    if(it.y > H+60) items.splice(ii,1); // missed it — play just continues
+  }
+
+  // spawning — THIS is the difficulty curve now that speed is fixed: rows
+  // come more and more often as distance grows (interval ~0.95s shrinking
+  // toward ~0.5s), and spawnRow adds more enemies per row plus more
+  // sliders. Rows are still spaced so weaving is always possible.
+  spawnTimer -= dt;
+  if(spawnTimer<=0){
+    spawnRow();
+    var base = 0.95 - Math.min(0.45, distance*0.0022);
+    spawnTimer = base * (0.85 + Math.random()*0.4) * (230/scrollSpeed) + 0.28;
+  }
+
+  // Effective invincibility for ENEMY hits: the frame-start snapshot OR
+  // the live flag. The snapshot alone misses the pickup frame itself —
+  // poweredThisFrame was taken before the shoes were collected later in
+  // this same update, so an enemy contact on that exact frame would be
+  // judged as a normal tackle. The live flag alone misses the expiry
+  // frame (powerT has already ticked down to 0 by then). OR-ing the two
+  // covers all three moments: just after the power starts, mid-power,
+  // and the frame it expires. The trailing grace (powerGraceT) extends
+  // the same knock-away judgement a short way past the expiry frame, for
+  // opponents whose approach happened under power but whose contact lands
+  // just after it — and gameOver() itself refuses tackle deaths outright
+  // while either the power or the grace is live, as a final backstop.
+  var poweredForHit = poweredThisFrame || isPowered() || powerGraceT>0;
+
+  // enemies
+  for(var j=enemies.length-1;j>=0;j--){
+    var e = enemies[j];
+    e.stepPhase += dt*9;
+    if(e.state==='flying'){
+      // knocked away by the invincible player: tumble through the air, no collisions
+      e.x += e.fvx*dt; e.y += e.fvy*dt; e.fvy += 900*dt; e.rot += e.vrot*dt;
+      if(e.y > H+90 || e.x < -70 || e.x > W+70) enemies.splice(j,1);
+      continue;
+    }
+    if(e.state==='downed'){
+      // went down together with the escort ally that saved the player:
+      // lies on the pitch and recedes at the field-scroll speed, no collisions
+      e.downT += dt;
+      e.y += scrollSpeed * dt;
+      if(e.y > H+60 || e.downT>1.6) enemies.splice(j,1);
+      continue;
+    }
+    if(e.state==='beaten'){
+      // stopped dead on the pitch: from the very first frame it recedes at the
+      // full field-scroll speed (same as the grass stripes), so it is clearly
+      // left behind — never hovering alongside the player like it's chasing.
+      e.beatenT += dt;
+      e.y += scrollSpeed * dt;
+      if(e.y > H+60 || e.beatenT>2.2) enemies.splice(j,1);
+      continue;
+    }
+    var vy = scrollSpeed*0.55 + e.ownSpeed;
+    if(e.type==='slider'){
+      if(e.state==='run' && player.y - e.y < 250 && player.y - e.y > 60){
+        e.state='warn'; e.warnT=0; sfx('slide');
+      } else if(e.state==='warn'){
+        e.warnT += dt; vy *= 0.35; // crouch / pause before the slide
+        if(e.warnT>0.38){ e.state='sliding'; e.slideT=0; }
+      } else if(e.state==='sliding'){
+        e.slideT += dt; vy = scrollSpeed*0.55 + e.ownSpeed + 340; // lunge straight down
+        if(e.slideT>0.55) e.state='run';
+      }
+    }
+    e.y += vy*dt;
+
+    // collision — judged at the FEET (lower body only), never the body
+    // centres. A figure's "feet" are where its boots touch the pitch
+    // (centre y + ~0.85r, where the boots are drawn).
+    //   player feet BELOW the enemy's feet on screen (feetDy >= 0) and the
+    //     two pairs of feet actually overlapping -> collision.
+    //   player feet ABOVE the enemy's feet (feetDy < 0) -> NO collision at
+    //     all: the player has slipped past on the far side of them.
+    // The vertical window (34px) is the depth of a lower body: while the
+    // enemy's feet are still higher up than that, the two haven't met yet.
+    // A slider lunges feet-first, so its feet reach ~0.5r lower than a
+    // runner's, and its horizontal reach is a touch wider.
+    var dx = e.x - player.x;
+    var pFeet = player.y + player.r*0.85;
+    var eFeet = e.y + e.r*0.85 + (e.state==='sliding' ? e.r*0.5 : 0);
+    var feetDy = pFeet - eFeet;
+    var hitW = (e.state==='sliding') ? (player.r + e.r)*0.95 : (player.r + e.r)*0.82;
+    if(Math.abs(dx) < hitW && feetDy >= 0 && feetDy <= 34){
+      if(poweredForHit){
+        // invincible (frame-start snapshot OR live flag — see poweredForHit
+        // above): the ENEMY goes flying instead — the player cannot die
+        // on the pickup frame or on the expiry frame
+        e.state='flying';
+        var away = (dx>=0 ? 1 : -1);
+        e.fvx = away*(170 + Math.random()*160) + player.dir*90;
+        e.fvy = -(300 + Math.random()*170);
+        e.rot = 0; e.vrot = away*(7 + Math.random()*6);
+        knockedCount++; beatenCount++; combo++; if(combo>maxCombo) maxCombo=combo;
+        beatenEl.textContent = beatenCount;
+        sfx('knock'); shake = Math.max(shake, 6);
+        if(navigator.vibrate) navigator.vibrate(30);
+        burst(e.x, e.y, '#ffffff', 10); burst(e.x, e.y, '#ffcf3f', 8);
+        comboEl.textContent = '💥 吹っ飛ばした！';
+        comboEl.className='show';
+        clearTimeout(comboEl._t);
+        comboEl._t = setTimeout(function(){ comboEl.className=''; }, 800);
+        // NOTE: blowing ENEMIES away while invincible is the regular,
+        // intended fun — never a foul. Only the referee earns a red card.
+        // This hit is FULLY resolved here: continue to the next enemy so
+        // it can never fall through into the grace / escort-sacrifice /
+        // game-over checks below (that fall-through is what made an
+        // invincible player die — or burn an escort — on contact).
+        continue;
+      }
+      if(graceT>0){
+        // just been saved a moment ago: this overlap cannot kill — no
+        // chain deaths in the instant right after a sacrifice
+      } else if(escortCount()>0){
+        // ESCORT SACRIFICE: the nearest escort ally dives in and goes down
+        // together with THIS enemy; the player survives untouched. The
+        // enemy switches to 'downed', so it can never hit a second time.
+        // (Lines are NOT covered: a line-out is still game over, as before.)
+        var saver=null, bestD=Infinity;
+        for(var si=0; si<allies.length; si++){
+          if(allies[si].state!=='escort') continue;
+          var sdx=allies[si].x-e.x, sdy=allies[si].y-e.y, sd2=sdx*sdx+sdy*sdy;
+          if(sd2<bestD){ bestD=sd2; saver=allies[si]; }
+        }
+        if(saver){ saver.state='down'; saver.downT=0; }
+        e.state='downed'; e.downT=0;
+        graceT=1.0; savedCount++;
+        showAllyHud();
+        sfx('save'); shake=Math.max(shake,6);
+        if(navigator.vibrate) navigator.vibrate(70);
+        burst(e.x, e.y, '#ffffff', 10);
+        if(saver) burst(saver.x, saver.y, '#7cc4ff', 9);
+        comboEl.textContent='🛡️ 味方が身代わりになった！';
+        comboEl.className='show';
+        clearTimeout(comboEl._t);
+        comboEl._t=setTimeout(function(){ comboEl.className=''; }, 1000);
+        continue;
+      } else {
+        gameOver(e.state==='sliding' ? 'スライディングで倒された！' : 'タックルされた！');
+        burst(player.x, player.y, '#ff5a3c', 14);
+        return;
+      }
+    }
+    // passed! (the enemy's feet have dropped below the player's feet —
+    // from here on the player's feet are the higher pair, so the rule
+    // above says there can be no collision) -> stop & look back
+    if(eFeet - pFeet > 6){
+      e.state='beaten'; e.beatenT=0; e.faceDown=false;
+      beatenCount++; combo++; if(combo>maxCombo) maxCombo=combo;
+      beatenEl.textContent = beatenCount;
+      sfx('beat');
+      burst(e.x, e.y-14, '#ffcf3f', 7);
+      if(combo>=2){
+        comboEl.textContent = '🔥 ' + combo + '人連続抜き！';
+        comboEl.className='show';
+        clearTimeout(comboEl._t);
+        comboEl._t = setTimeout(function(){ comboEl.className=''; }, 900);
+      }
+    }
+    if(e.y > H+80) enemies.splice(j,1);
+  }
+
+  if(elapsed>3 && hintEl.style.opacity!=='0') hintEl.style.opacity='0';
+}
+
+/* ---------- drawing ---------- */
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function drawField(){
+  // mowing stripes scrolling. The repeating unit is TWO stripes (one light
+  // band + one dark band = 168px), so the offset is taken modulo stripeH*2.
+  // Taking it modulo a single stripe height instead would swap the light
+  // and dark bands at every wrap and strobe the whole pitch. The contrast
+  // between the two greens is also kept gentle, so the full-screen motion
+  // stays easy on the eyes.
+  ctx.fillStyle = '#1e7d35'; ctx.fillRect(0,0,W,H);
+  var stripeH = 84;
+  var off = grassOffset % (stripeH*2);
+  ctx.fillStyle = '#22853b';
+  for(var y=-stripeH*2+off; y<H; y+=stripeH*2){ ctx.fillRect(0,y,W,stripeH); }
+  // outer area darker
+  ctx.fillStyle = 'rgba(0,0,0,0.16)';
+  ctx.fillRect(0,0,fieldLeft()-8,H); ctx.fillRect(fieldRight()+8,0,W,H);
+  // touchlines
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(fieldLeft()-3,0,6,H);
+  ctx.fillRect(fieldRight()-3,0,6,H);
+  // scrolling dashed centre-ish markings for speed feel
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  var gap=64, o2 = (grassOffset*1.0)%gap;
+  for(var yy=-gap+o2; yy<H; yy+=gap){
+    ctx.fillRect(fieldLeft()+14, yy, 4, 26);
+    ctx.fillRect(fieldRight()-18, yy, 4, 26);
+  }
+}
+function drawCenterCircle(){
+  // Kickoff markings: the halfway line, the centre circle and the centre
+  // spot. At reset the spot sits exactly under the player (W/2, H*0.70);
+  // once the game starts the markings are fixed to the pitch, so they ride
+  // pitchScroll down the screen with the grass and flow away behind.
+  var cx = W/2, cy = H*0.70 + pitchScroll;
+  var R = Math.min(82, fieldW()*0.19);
+  if(cy - R > H + 8) return; // scrolled off the bottom for good
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(fieldLeft(), cy); ctx.lineTo(fieldRight(), cy); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 6.29); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, 6.29); ctx.fill();
+  ctx.restore();
+}
+function drawRunnerFigure(x,y,r,opts){
+  // opts: jersey, skin, shorts, phase, lean, sliding, warn, faceUp, beaten
+  ctx.save(); ctx.translate(x,y);
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,0.25)';
+  ctx.beginPath(); ctx.ellipse(0, r+8, r*0.95, r*0.32, 0, 0, 6.29); ctx.fill();
+  if(opts.sliding){
+    ctx.rotate(1.25);
+    // body lying, sliding feet-first downward (screen +y after rotation approx)
+    ctx.fillStyle=opts.jersey; rr(-r*0.5,-r*1.15, r*1.0, r*1.7, r*0.45); ctx.fill();
+    ctx.fillStyle=opts.skin; ctx.beginPath(); ctx.arc(0,-r*1.35,r*0.52,0,6.29); ctx.fill();
+    ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(0,-r*1.52,r*0.5,Math.PI,0); ctx.fill();
+    ctx.fillStyle='#fff'; rr(-r*0.95, r*0.35, r*0.5, r*0.85, 4); ctx.fill(); rr(r*0.45, r*0.35, r*0.5, r*0.85, 4); ctx.fill();
+    ctx.restore(); return;
+  }
+  var swing = Math.sin(opts.phase)*r*0.55;
+  ctx.rotate((opts.lean||0)+(opts.rot||0));
+  // legs
+  ctx.strokeStyle = opts.skin; ctx.lineWidth = r*0.34; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(0, r*0.25); ctx.lineTo(-r*0.28, r*0.72+swing*0.4); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, r*0.25); ctx.lineTo( r*0.28, r*0.72-swing*0.4); ctx.stroke();
+  // boots
+  ctx.fillStyle='#1b1b1b';
+  ctx.beginPath(); ctx.arc(-r*0.28, r*0.78+swing*0.4, r*0.20,0,6.29); ctx.fill();
+  ctx.beginPath(); ctx.arc( r*0.28, r*0.78-swing*0.4, r*0.20,0,6.29); ctx.fill();
+  // shorts
+  ctx.fillStyle=opts.shorts; rr(-r*0.52, -r*0.05, r*1.04, r*0.5, r*0.18); ctx.fill();
+  // torso (jersey)
+  ctx.fillStyle=opts.jersey; rr(-r*0.58, -r*0.95, r*1.16, r*0.98, r*0.34); ctx.fill();
+  // arms
+  ctx.strokeStyle=opts.jersey; ctx.lineWidth=r*0.30;
+  ctx.beginPath(); ctx.moveTo(-r*0.55,-r*0.75); ctx.lineTo(-r*0.88,-r*0.25 - swing*0.35); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo( r*0.55,-r*0.75); ctx.lineTo( r*0.88,-r*0.25 + swing*0.35); ctx.stroke();
+  // head
+  ctx.fillStyle=opts.skin; ctx.beginPath(); ctx.arc(0,-r*1.28,r*0.52,0,6.29); ctx.fill();
+  // hair (top when running down toward viewer; flipped arc when looking back up)
+  ctx.fillStyle = opts.hair||'#2b1c10';
+  ctx.beginPath();
+  if(opts.faceUp){ ctx.arc(0,-r*1.18,r*0.52,0,Math.PI); }
+  else { ctx.arc(0,-r*1.38,r*0.52,Math.PI,0); }
+  ctx.fill();
+  // eyes
+  ctx.fillStyle='#222';
+  var ey = opts.faceUp ? -r*1.22 : -r*1.30;
+  ctx.beginPath(); ctx.arc(-r*0.19,ey,r*0.07,0,6.29); ctx.fill();
+  ctx.beginPath(); ctx.arc( r*0.19,ey,r*0.07,0,6.29); ctx.fill();
+  if(opts.beaten){
+    // surprised mouth
+    ctx.beginPath(); ctx.arc(0,-r*1.06,r*0.11,0,6.29); ctx.fill();
+  }
+  ctx.restore();
+  if(opts.warn){
+    ctx.save(); ctx.translate(x,y);
+    ctx.fillStyle = (Math.floor(runTime*10)%2===0) ? '#ff3b30' : '#ffcf3f';
+    ctx.font='900 26px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('!', 0, -r*2.15);
+    ctx.restore();
+  }
+  if(opts.beaten){
+    ctx.save(); ctx.translate(x,y);
+    ctx.fillStyle='#fff'; ctx.font='900 15px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('💦', r*0.95, -r*1.5);
+    ctx.restore();
+  }
+}
+function drawBall(x,y,r,rot){
+  ctx.save(); ctx.translate(x,y);
+  ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(0,r*0.75,r*0.95,r*0.3,0,0,6.29); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(0,0,r,0,6.29); ctx.fill();
+  ctx.strokeStyle='#cfd4cf'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='#222';
+  ctx.save(); ctx.rotate(rot);
+  ctx.beginPath(); ctx.arc(0,0,r*0.38,0,6.29); ctx.fill();
+  for(var i=0;i<5;i++){ var a=i/5*6.283; ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.78, Math.sin(a)*r*0.78, r*0.20,0,6.29); ctx.fill(); }
+  ctx.restore();
+  ctx.restore();
+}
+function drawShoes(it){
+  var bobY = Math.sin(it.bob)*4;
+  ctx.save(); ctx.translate(it.x, it.y+bobY);
+  // pulsing glow ring so it reads as a pickup
+  var pulse = 1 + Math.sin(it.bob*1.4)*0.12;
+  ctx.fillStyle='rgba(255,207,63,0.35)';
+  ctx.beginPath(); ctx.arc(0,0,it.r*1.25*pulse,0,6.29); ctx.fill();
+  ctx.fillStyle='#fffbe8';
+  ctx.beginPath(); ctx.arc(0,0,it.r*0.98,0,6.29); ctx.fill();
+  ctx.strokeStyle='#ffcf3f'; ctx.lineWidth=3; ctx.stroke();
+  ctx.font='26px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('👟', 0, 2);
+  ctx.restore();
+  ctx.save(); ctx.translate(it.x, it.y+bobY);
+  ctx.fillStyle='rgba(6,26,13,0.85)';
+  var tw = 62;
+  rr(-tw/2, it.r*1.05, tw, 17, 8); ctx.fill();
+  ctx.fillStyle='#ffcf3f'; ctx.font='900 10.5px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('シューズ', 0, it.r*1.05+13);
+  ctx.restore();
+}
+function drawAllyItem(it){
+  var bobY = Math.sin(it.bob)*4;
+  ctx.save(); ctx.translate(it.x, it.y+bobY);
+  // pulsing glow ring so it reads as a pickup
+  var pulse = 1 + Math.sin(it.bob*1.4)*0.12;
+  ctx.fillStyle='rgba(124,196,255,0.35)';
+  ctx.beginPath(); ctx.arc(0,0,it.r*1.25*pulse,0,6.29); ctx.fill();
+  ctx.fillStyle='#eef7ff';
+  ctx.beginPath(); ctx.arc(0,0,it.r*0.98,0,6.29); ctx.fill();
+  ctx.strokeStyle='#7cc4ff'; ctx.lineWidth=3; ctx.stroke();
+  ctx.font='25px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('⭐', 0, 2);
+  ctx.restore();
+  ctx.save(); ctx.translate(it.x, it.y+bobY);
+  ctx.fillStyle='rgba(6,26,13,0.85)';
+  var tw = 62;
+  rr(-tw/2, it.r*1.05, tw, 17, 8); ctx.fill();
+  ctx.fillStyle='#a8d8ff'; ctx.font='900 10.5px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('味方', 0, it.r*1.05+13);
+  ctx.restore();
+}
+function drawCat(cat, sitting){
+  var st = cat.style;
+  var bob = sitting ? 0 : Math.abs(Math.sin(runTime*9 + cat.phase))*-3.2;
+  ctx.save(); ctx.translate(cat.x, cat.y + bob);
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,0.22)';
+  ctx.beginPath(); ctx.ellipse(0, 13-bob, 12, 4, 0, 0, 6.29); ctx.fill();
+  // tail (wags while running, curls in front when sitting)
+  ctx.strokeStyle=st.body; ctx.lineWidth=4.5; ctx.lineCap='round';
+  ctx.beginPath();
+  if(sitting){ ctx.moveTo(9,10); ctx.quadraticCurveTo(16,12,15,4); }
+  else { var wag=Math.sin(runTime*7+cat.phase)*4; ctx.moveTo(-10,6); ctx.quadraticCurveTo(-17,2+wag,-15,-5+wag); }
+  ctx.stroke();
+  // body
+  ctx.fillStyle=st.body; ctx.strokeStyle=st.line; ctx.lineWidth=1.2;
+  ctx.beginPath();
+  if(sitting) ctx.ellipse(0,4,10.5,10,0,0,6.29); else ctx.arc(0,2,11,0,6.29);
+  ctx.fill(); ctx.stroke();
+  if(st.stripe){ // tabby stripes on the back
+    ctx.strokeStyle=st.stripe; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(-6,-4); ctx.lineTo(-2,-1); ctx.moveTo(0,-6); ctx.lineTo(3,-2); ctx.moveTo(6,-4); ctx.lineTo(8,0); ctx.stroke();
+  }
+  if(st.patch){ // calico patches
+    ctx.fillStyle=st.patch;
+    ctx.beginPath(); ctx.ellipse(-5,-3,4.5,3.5,-0.5,0,6.29); ctx.fill();
+    ctx.fillStyle=st.patch2||st.patch;
+    ctx.beginPath(); ctx.ellipse(6,3,4,3,0.4,0,6.29); ctx.fill();
+  }
+  // head
+  var hy = sitting ? -9 : -8;
+  ctx.fillStyle=st.body; ctx.strokeStyle=st.line; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.arc(0,hy,7.6,0,6.29); ctx.fill(); ctx.stroke();
+  // ears
+  ctx.fillStyle=st.ear;
+  ctx.beginPath(); ctx.moveTo(-6.5,hy-5); ctx.lineTo(-5,hy-11); ctx.lineTo(-1.5,hy-6.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(6.5,hy-5); ctx.lineTo(5,hy-11); ctx.lineTo(1.5,hy-6.5); ctx.closePath(); ctx.fill(); ctx.stroke();
+  // eyes
+  ctx.fillStyle = (st.body==='#33302c') ? '#ffd94d' : '#26221c';
+  if(sitting){ // content closed eyes
+    ctx.strokeStyle=ctx.fillStyle; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(-4.4,hy); ctx.lineTo(-1.6,hy); ctx.moveTo(1.6,hy); ctx.lineTo(4.4,hy); ctx.stroke();
+  } else {
+    ctx.beginPath(); ctx.arc(-2.8,hy,1.15,0,6.29); ctx.fill();
+    ctx.beginPath(); ctx.arc(2.8,hy,1.15,0,6.29); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawReferee(ref){
+  var dodging = ref.state==='dodging';
+  var flying = ref.state==='flying';
+  drawRunnerFigure(ref.x, ref.y, ref.r, {
+    jersey:'#f4f4f4', skin:'#eec39a', shorts:'#191919', hair:'#4a4a4a',
+    phase: dodging ? ref.stepPhase : 0, lean: flying ? 0 : (dodging ? ref.dodgeDir*0.35 : 0),
+    rot: ref.rot||0, faceUp: flying, beaten: flying
+  });
+  if(!flying){
+    // striped shirt: black bands over the white torso
+    ctx.save(); ctx.translate(ref.x, ref.y); ctx.rotate(dodging ? ref.dodgeDir*0.35 : 0);
+    ctx.fillStyle='rgba(20,20,20,0.88)';
+    var r=ref.r;
+    ctx.fillRect(-r*0.38, -r*0.95, r*0.24, r*0.98);
+    ctx.fillRect( r*0.14, -r*0.95, r*0.24, r*0.98);
+    // whistle on a cord at the chest
+    ctx.fillStyle='#ffcf3f'; ctx.beginPath(); ctx.arc(0,-r*0.42,r*0.13,0,6.29); ctx.fill();
+    ctx.strokeStyle='#191919'; ctx.lineWidth=1; ctx.stroke();
+    ctx.restore();
+  }
+  if(dodging){
+    ctx.save(); ctx.translate(ref.x, ref.y);
+    ctx.font='14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('💦', ref.r*1.05, -ref.r*1.7);
+    ctx.restore();
+  }
+}
+function draw(){
+  ctx.save();
+  if(shake>0){ ctx.translate((Math.random()-0.5)*shake, (Math.random()-0.5)*shake); }
+  drawField();
+  drawCenterCircle();
+  // pickups on the pitch
+  for(var s=0;s<items.length;s++){ if(items[s].kind==='ally') drawAllyItem(items[s]); else drawShoes(items[s]); }
+  // cat items: a cat sitting on the pitch, waiting to be picked up
+  for(var ci2=0;ci2<catItems.length;ci2++){
+    var cit = catItems[ci2];
+    ctx.save(); ctx.translate(cit.x, cit.y);
+    ctx.fillStyle='rgba(255,255,255,0.30)';
+    ctx.beginPath(); ctx.arc(0,2,24+Math.sin(runTime*5+cit.phase)*3,0,6.29); ctx.fill();
+    ctx.restore();
+    drawCat(cit, true);
+  }
+  // enemies below player drawn in y order (simple: draw all enemies, then player, beaten behind)
+  var sorted = enemies.slice().sort(function(a,b){ return a.y-b.y; });
+  for(var i=0;i<sorted.length;i++){
+    var e=sorted[i];
+    if(e.state==='flying'){
+      drawRunnerFigure(e.x,e.y,e.r,{jersey:'#e2483a',skin:'#f2c79b',shorts:'#5c130c',hair:'#151515',phase:0,lean:0,rot:e.rot||0,faceUp:true,beaten:true});
+    } else if(e.state==='beaten'){
+      drawRunnerFigure(e.x,e.y,e.r,{jersey:'#c73a2a',skin:'#f2c79b',shorts:'#7c1d12',hair:'#151515',phase:0,lean:0,faceUp:true,beaten:true});
+    } else if(e.state==='downed'){
+      drawRunnerFigure(e.x,e.y,e.r,{jersey:'#c73a2a',skin:'#f2c79b',shorts:'#7c1d12',hair:'#151515',phase:0,lean:0,rot:1.45,faceUp:true,beaten:true});
+    } else {
+      drawRunnerFigure(e.x,e.y,e.r,{
+        jersey: e.type==='slider' ? '#f07d12' : '#e2483a',
+        skin:'#f2c79b', shorts:'#5c130c', hair:'#151515',
+        phase:e.stepPhase, lean:0.05,
+        sliding: e.state==='sliding',
+        warn: e.state==='warn'
+      });
+      if(e.type==='slider' && e.state==='run'){
+        // small boot icon hint that this one slides
+        ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('⚡', e.x, e.y - e.r*2.0);
+      }
+    }
+  }
+  // escort allies, drawn around the player (blue kit + shield marker)
+  for(var a2=0;a2<allies.length;a2++){
+    var al2=allies[a2];
+    var down2 = al2.state==='down';
+    drawRunnerFigure(al2.x, al2.y, al2.r||16, {
+      jersey:'#2b7de0', skin:'#f7cf9f', shorts:'#ffffff', hair:'#20242c',
+      phase: down2 ? 0 : al2.stepPhase, lean: down2 ? 0 : (player ? player.lean*0.7 : 0),
+      rot: al2.rot||0, faceUp: down2, beaten: down2
+    });
+    if(!down2){
+      ctx.save(); ctx.translate(al2.x, al2.y);
+      ctx.font='12px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('🛡️', 0, -(al2.r||16)*2.05);
+      ctx.restore();
+    }
+  }
+  // referee, when one is standing on the pitch (trial v2 model)
+  if(referee) drawReferee(referee);
+  // cats trailing in single file behind the player (no effect, just company)
+  for(var ct=cats.length-1; ct>=0; ct--){ drawCat(cats[ct], state==='over'); }
+  // player
+  if(player){
+    if(isPowered()){
+      // invincible aura — blinks fast in the final stretch as a warning
+      var blinkOff = (powerT<=POWER_FADE) && (Math.floor(runTime*9)%2===0);
+      if(!blinkOff){
+        ctx.save();
+        var grad = ctx.createRadialGradient(player.x,player.y,6,player.x,player.y,46);
+        grad.addColorStop(0,'rgba(255,207,63,0.55)');
+        grad.addColorStop(1,'rgba(255,207,63,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.arc(player.x,player.y,46,0,6.29); ctx.fill();
+        ctx.strokeStyle='rgba(255,220,90,0.95)'; ctx.lineWidth=2.5;
+        ctx.beginPath(); ctx.arc(player.x,player.y,30+Math.sin(runTime*10)*2.5,0,6.29); ctx.stroke();
+        ctx.restore();
+      }
+      // speed lines behind the player
+      ctx.save(); ctx.strokeStyle='rgba(255,255,255,0.55)'; ctx.lineWidth=2.5; ctx.lineCap='round';
+      for(var sl=0; sl<3; sl++){
+        var lx = player.x - player.dir*(26+sl*9), ly = player.y - 8 + sl*11;
+        ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx - player.dir*16, ly+7); ctx.stroke();
+      }
+      ctx.restore();
+    }
+    // direction arrow
+    ctx.save();
+    ctx.translate(player.x, player.y - 52);
+    ctx.fillStyle='rgba(255,207,63,0.95)';
+    ctx.rotate(player.dir * 0.8);
+    ctx.beginPath(); ctx.moveTo(0,-11); ctx.lineTo(7,6); ctx.lineTo(0,2); ctx.lineTo(-7,6); ctx.closePath(); ctx.fill();
+    ctx.restore();
+    var ballX = player.x + player.dir*20 + Math.sin(player.stepPhase)*4;
+    var ballY = player.y + 22 + Math.abs(Math.sin(player.stepPhase))*2;
+    // about to run out: the player themselves blinks on and off
+    var playerBlinkOff = (isPowered() && powerT<=POWER_FADE && (Math.floor(runTime*9)%2===0))
+      || (graceT>0 && (Math.floor(runTime*10)%2===0)); // blink during the post-save safety window
+    if(playerBlinkOff) ctx.globalAlpha = 0.25;
+    drawRunnerFigure(player.x, player.y, player.r, {
+      jersey:'#ffd21f', skin:'#f7cf9f', shorts:'#1450c8', hair:'#3a2410',
+      phase: player.stepPhase, lean: player.lean
+    });
+    drawBall(ballX, ballY, 9, runTime*6*player.dir);
+    ctx.globalAlpha = 1;
+  }
+  // particles
+  for(var k=0;k<particles.length;k++){
+    var p=particles[k]; var a=1-(p.t/p.life);
+    ctx.globalAlpha=a; ctx.fillStyle=p.color;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.29); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  ctx.restore();
+  if(flashRed>0){ ctx.fillStyle='rgba(255,40,20,'+(flashRed*0.35)+')'; ctx.fillRect(0,0,W,H); }
+}
+
+function loop(ts){
+  var dt = Math.min(0.033, (ts-lastT)/1000 || 0.016);
+  lastT = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+resize(); reset();
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

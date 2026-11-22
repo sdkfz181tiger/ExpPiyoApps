@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>リフティング v27</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#79c26a; touch-action:none;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+    -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  #cv { position:fixed; inset:0; display:block; }
+  .hud { position:fixed; top:0; left:0; right:0; pointer-events:none; text-align:center; z-index:5; }
+  #ver { position:fixed; top:8px; left:10px; background:rgba(0,0,0,.45); color:#fff;
+    font-size:12px; font-weight:700; padding:3px 9px; border-radius:20px; z-index:6; pointer-events:none; }
+  #score { font-size:64px; font-weight:900; color:#fff; margin-top:14px;
+    text-shadow:0 3px 0 rgba(0,0,0,.25), 0 0 18px rgba(0,0,0,.15); line-height:1; }
+  #scoreLabel { color:#fff; font-size:13px; font-weight:700; letter-spacing:.25em; opacity:.95;
+    text-shadow:0 1px 3px rgba(0,0,0,.3); }
+  #best { color:#fff; font-size:13px; font-weight:700; margin-top:3px; opacity:.9;
+    text-shadow:0 1px 3px rgba(0,0,0,.3); }
+  #parts { position:fixed; bottom:10px; left:0; right:0; text-align:center; z-index:5; pointer-events:none; }
+  #parts span { display:inline-block; background:rgba(0,0,0,.38); color:#fff; font-size:12px; font-weight:700;
+    padding:3px 9px; border-radius:20px; margin:0 2px; }
+  .overlay { position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; z-index:10; text-align:center; padding:20px; }
+  .card { background:rgba(255,255,255,.95); border-radius:24px; padding:26px 26px 22px;
+    box-shadow:0 12px 32px rgba(0,0,0,.28); max-width:330px; width:92%;
+    max-height:calc(100dvh - 40px); overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+  .card::-webkit-scrollbar { width:6px; }
+  .card::-webkit-scrollbar-thumb { background:rgba(0,0,0,.25); border-radius:3px; }
+  .card h1 { font-size:30px; margin-bottom:4px; }
+  .card .sub { font-size:13px; color:#2e7d32; font-weight:800; margin-bottom:12px; }
+  .card p { font-size:14px; line-height:1.75; color:#333; text-align:left; }
+  .card p b { color:#1565c0; }
+  .btn { pointer-events:auto; margin-top:18px; background:#ff7043; color:#fff; border:none;
+    font-size:19px; font-weight:900; padding:13px 38px; border-radius:40px; cursor:pointer;
+    box-shadow:0 5px 0 #d84315; font-family:inherit; }
+  .btn:active { transform:translateY(3px); box-shadow:0 2px 0 #d84315; }
+  #charRow { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; pointer-events:auto; }
+  .charBtn { padding:8px 10px; font-size:14px; font-weight:700; border-radius:20px; border:2px solid #b0bec5;
+    background:#fff; color:#37474f; cursor:pointer; pointer-events:auto; }
+  .charBtn.sel { border-color:#43a047; background:#e8f5e9; color:#1b5e20; }
+  #overCard { display:none; }
+  #practiceCard { display:none; }
+  #stocks { position:fixed; top:64px; left:10px; z-index:6; pointer-events:none; display:none; }
+  #stocks span { display:inline-block; background:rgba(0,0,0,.45); color:#fff; font-size:13px; font-weight:800;
+    padding:3px 10px; border-radius:20px; margin-right:4px; }
+  #finalReason { font-size:17px; font-weight:900; color:#c62828; margin-bottom:2px; }
+  #timeBadge { position:fixed; top:44px; right:10px; z-index:6; background:rgba(0,0,0,.4); color:#fff;
+    font-size:12px; font-weight:800; padding:3px 10px; border-radius:20px; pointer-events:none; }
+  #varLabel { position:fixed; top:38%; left:50%; transform:translate(-50%,-50%); z-index:9;
+    background:rgba(13,27,62,.92); color:#fff; font-size:21px; font-weight:900; text-align:center;
+    padding:16px 22px; border-radius:18px; border:3px solid #42a5f5; pointer-events:none; display:none;
+    white-space:pre-line; box-shadow:0 14px 40px rgba(0,0,0,.45); }
+  #graceLabel { position:fixed; top:150px; left:50%; transform:translateX(-50%); z-index:7;
+    background:rgba(198,40,40,.85); color:#fff; font-size:16px; font-weight:900;
+    padding:8px 18px; border-radius:24px; pointer-events:none; display:none; white-space:nowrap; }
+  #pauseLabel { position:fixed; top:118px; left:50%; transform:translateX(-50%); z-index:7;
+    background:rgba(0,0,0,.55); color:#fff; font-size:15px; font-weight:800;
+    padding:8px 18px; border-radius:24px; pointer-events:none; display:none; white-space:nowrap; }
+  #modeBadge { position:fixed; top:36px; left:10px; background:rgba(21,101,192,.75); color:#fff;
+    font-size:12px; font-weight:800; padding:3px 10px; border-radius:20px; z-index:6; pointer-events:none; display:none; }
+  #endBtn { position:fixed; top:8px; right:10px; z-index:8; background:rgba(0,0,0,.5); color:#fff;
+    border:none; font-size:13px; font-weight:800; padding:7px 14px; border-radius:20px;
+    font-family:inherit; cursor:pointer; display:none; }
+  .btn.sub { background:#78909c; box-shadow:0 5px 0 #546e7a; font-size:15px; padding:10px 26px; margin-top:10px; }
+  .btn.sub:active { box-shadow:0 2px 0 #546e7a; }
+  .btn.practice { background:#43a047; box-shadow:0 5px 0 #2e7d32; }
+  .btn.practice:active { box-shadow:0 2px 0 #2e7d32; }
+  #finalScore { font-size:56px; font-weight:900; color:#ef6c00; line-height:1.1; }
+  #finalParts { font-size:14px; color:#555; margin-top:6px; line-height:1.7; }
+  #newBest { color:#e53935; font-weight:900; font-size:15px; min-height:20px; }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="ver">リフティング v27</div>
+<div id="modeBadge"></div>
+<div id="stocks"></div>
+<div id="pauseLabel">⏸ 一時停止中（触れると再開）</div>
+<div id="timeBadge">🌅 朝</div>
+<div id="graceLabel">⏱</div>
+<div id="varLabel">📺 VAR判定中…</div>
+<button id="endBtn">練習終了</button>
+<div class="hud">
+  <div id="score">0</div>
+  <div id="scoreLabel">LIFTING</div>
+  <div id="best">ベスト 0</div>
+</div>
+<div id="parts"></div>
+
+<div class="overlay" id="startCard">
+  <div class="card">
+    <h1>⚽ リフティング</h1>
+    <div class="sub">v27 ・ VAR判定チャンス</div>
+    <p>
+      ・<b>ドラッグで右足首</b>を動かす（指の動きそのまま1:1）<br>
+      ・ゲーム中、<b>指を離すと一時停止</b>／触れると再開（マウスは左ボタンを押している間だけ進行）<br>
+      ・背景は<b>河原</b>。時間で朝→昼→夕→夜が巡り、鳥や飛行機、渡り鳥のV字飛行、雲、たまにUFO。遠くに街と電車（夜は明かり）<br>
+      ・左足首は地面に<b>固定</b>。体は物理でグラグラ揺れる<br>
+      ・<b>頭・体・もも</b>でも上げてOK。当たった部位が表示される<br>
+      ・本番は<b>手のひらに当たるとハンドで終了</b>（肩・腕はセーフ）。終了の瞬間、たまに<b>📺VAR判定</b>が入って覆ることも<br>
+      ・空中のアイテム（本番）：<b>✋神の手</b>＝ハンド1回セーフ＆そのまま+1カウント、<b>🐱猫</b>＝落下を1回救う（開始時の頭より高く打ち上げ、上がりきるまで当たり判定なし）（各ストック2まで）、<b>⚽ボール</b>＝ボール+2（上限なし。2つ取れば+4。落としても最後の1個までは消えるだけ）、<b>🔍大玉</b>＝10秒間ボールが1.5倍に（増えたボールも大きくなる）／全部ボールで取る。表示は12秒、最大3個まで同時に出て、散らして配置
+    </p>
+    <div style="font-size:13px; font-weight:800; margin:10px 0 4px;">キャラクター（お試し）</div>
+    <div id="charRow">
+      <button class="charBtn" id="charBoy">🧒 少年</button>
+      <button class="charBtn" id="charSalary">💼 サラリーマン</button>
+      <button class="charBtn" id="charGrandpa">👴 おじいちゃん</button>
+      <button class="charBtn" id="charOl">👩 OL</button>
+      <button class="charBtn" id="charSailor">🎀 セーラー服</button>
+      <button class="charBtn" id="charStraw">👒 麦わら少年</button>
+      <button class="charBtn" id="charNinja">🥷 忍者</button>
+      <button class="charBtn" id="charAnpan">🍞 アンパンマン</button>
+      <button class="charBtn" id="charDora">🔔 ドラえもん風</button>
+      <button class="charBtn" id="charMickey">🐭 ミッキーマウス風</button>
+    </div>
+    <p style="text-align:center; font-size:12px; color:#666; margin:4px 0 10px;">見た目だけ変更。当たり判定は全キャラクター同じ（カバン・杖・髪・スカートに判定なし）</p>
+    <div style="font-size:13px; font-weight:800; margin:6px 0 4px;">本番オプション</div>
+    <div id="charRow">
+      <button class="charBtn" id="optHand">🖐 ハンド判定：あり</button>
+      <button class="charBtn" id="optGround">⏱ 地面3秒ルール：なし</button>
+    </div>
+    <p style="text-align:center; font-size:12px; color:#666; margin:4px 0 10px;">地面3秒ルール＝最後のボールが地面についても、3秒以内にリフティングできればセーフ（猫の救済が先）</p>
+    <button class="btn practice" id="modePractice">🏃 練習モード</button>
+    <p style="text-align:center; font-size:12px; color:#666; margin-top:6px;">落としても終わらない／リセットなし、そのまま拾って続ける／記録なし</p>
+    <button class="btn" id="modeHonban">⚽ 本番モード</button>
+    <p style="text-align:center; font-size:12px; color:#666; margin-top:6px;">落としたら終了・手に当たっても終了／ベスト記録が残る</p>
+  </div>
+</div>
+
+<div class="overlay" id="practiceCard">
+  <div class="card">
+    <h1>🏃 練習おつかれさま</h1>
+    <div id="practiceSummary" style="font-size:15px; color:#333; line-height:1.8; margin-top:8px;"></div>
+    <button class="btn" id="toHonbanBtn">⚽ 本番モードへ</button><br>
+    <button class="btn practice sub" id="resumeBtn">🏃 練習をつづける</button><br>
+    <button class="btn sub" id="toSelectBtn2">モード選択にもどる</button>
+  </div>
+</div>
+
+<div class="overlay" id="overCard">
+  <div class="card">
+    <h1>⚽ 終了！</h1>
+    <div id="finalReason"></div>
+    <div id="finalScore">0回</div>
+    <div id="newBest"></div>
+    <div id="finalParts"></div>
+    <button class="btn" id="retryBtn">⚽ 本番でもう1回</button><br>
+    <button class="btn practice sub" id="toPracticeBtn">🏃 練習モードへ</button><br>
+    <button class="btn sub" id="toSelectBtn">モード選択にもどる</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+// ============ リフティング v27 ============
+// 物理: Verlet式ラグドール（点＋距離拘束）＝ Box2D風の自前実装（外部ライブラリなし）
+// 入力: 相対ドラッグ 1:1。指の移動量 = 足首の移動量そのまま。
+//       補正・滑らか・速度制限・デッドゾーン、一切なし。
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1, groundY = 0;
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  groundY = H - 104; // 地面を上に（v21：下から64px→104px、約40px上へ）
+  if (body) layout(false);
+}
+window.addEventListener('resize', resize);
+
+// ---------- ラグドール ----------
+function P(x, y, pinned) {
+  return { x:x, y:y, px:x, py:y, pinned:!!pinned, vx:0, vy:0 };
+}
+let body = null, cons = [];
+let legReach = 205; // 操作脚の最大リーチ＝太もも＋すね（layoutで実測）
+let shinRest = 90, ghostX = 0, ghostY = 0, ghostOn = false; // 前かがみ用の仮想ターゲット（v26）
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+function layout(resetBallPos) {
+  const cx = W * 0.24, g = groundY;
+  const b = {
+    sA:   P(cx,      g,       true),   // 支え足首（固定）
+    sK:   P(cx - 6,  g - 92),
+    hip:  P(cx + 8,  g - 182),
+    chest:P(cx + 16, g - 296),
+    head: P(cx + 18, g - 338),
+    fK:   P(cx + 80, g - 92),
+    fA:   P(cx + 112, g - 8),          // 操作する足首
+    toe:  P(cx + 138, g - 12),
+    elb:  P(cx - 46, g - 258),
+    hand: P(cx - 56, g - 196),
+  };
+  body = b;
+  cons = [];
+  function C(a, c2, stiff) { cons.push({ a:a, b:c2, rest:dist(a, c2), stiff:(stiff==null?1:stiff) }); }
+  C(b.sA, b.sK); C(b.sK, b.hip); C(b.hip, b.chest); C(b.chest, b.head);
+  C(b.hip, b.fK); C(b.fK, b.fA); C(b.fA, b.toe); C(b.toe, b.fK);
+  C(b.chest, b.elb); C(b.elb, b.hand);
+  legReach = dist(b.hip, b.fK) + dist(b.fK, b.fA) - 1;
+  shinRest = dist(b.fK, b.fA);
+  // 体幹を立たせる構造拘束（三角形で固める）
+  C(b.sA, b.hip); C(b.sA, b.chest); C(b.hip, b.head); C(b.chest, b.hand, 0.6);
+  if (balls.length && resetBallPos !== false && state === 'ready') placeBallOnFoot();
+}
+
+// ---------- ボール ----------
+let bigTimer = 0; // 大玉の残りフレーム（v20）
+const BALL_R = 19, BALL_BIG_R = 29; // 一回り大きい＝半径1.5倍（解釈値）
+function setBig(on) { for (const b of balls) b.r = on ? BALL_BIG_R : BALL_R; }
+function makeBall(x, y, vx, vy) {
+  return { x:x||0, y:y||0, vx:vx||0, vy:vy||0, r: bigTimer > 0 ? BALL_BIG_R : BALL_R, rot:0, inContact:false, lastCountAt:0, impact:0, grace:0, noCollide:false, passedHigh:false, rescueApexY:0 };
+}
+let balls = [makeBall()];
+function placeBallOnFoot() {
+  const b = balls[0];
+  if (!b || !body) return;
+  b.x = (body.fA.x + body.toe.x) / 2 + 2;
+  b.y = body.fA.y - b.r - 8;
+  b.vx = 0; b.vy = 0;
+}
+
+// ---------- ゲーム状態 ----------
+let state = 'ready'; // ready | play | over | pause
+let mode = 'honban'; // 'honban' | 'renshu'（v5〜）
+let score = 0, best = +(localStorage.getItem('lifting-best-v1') || 0);
+let partCounts = {};
+let inContact = false, contactFrames = 0, lastCountAt = 0;
+let popups = [];
+const PARTS = ['足','すね','もも','頭','体','腕','支え脚','神の手'];
+let godStock = 0, catStock = 0; // アイテムのストック（各2まで）
+let items = [], itemTimer = 60 * 3; // 空中アイテム（複数）と次の出現まで
+const ITEM_MAX = 3;      // 同時に出る上限（解釈値）
+const ITEM_LIFE = 60 * 12; // 表示時間12秒（v13で6秒→2倍）
+let armSaveTimer = 0; // 神の手セーフの余韻（フレーム数）。接触のチラつきで二重判定しないため
+let effects = []; // 猫救済などの演出
+function renderStocks() {
+  const el = document.getElementById('stocks');
+  el.innerHTML = '<span>✋ 神の手 ×' + godStock + '</span><span>🐱 猫 ×' + catStock + '</span>' +
+    (bigTimer > 0 ? '<span>🔍 大玉 あと' + Math.ceil(bigTimer / 60) + '秒</span>' : '');
+  el.style.display = (mode === 'honban' && document.getElementById('startCard').style.display === 'none') ? 'block' : 'none';
+}
+function resetPartCounts() { partCounts = {}; PARTS.forEach(p => partCounts[p] = 0); renderParts(); }
+function renderParts() {
+  document.getElementById('parts').innerHTML =
+    PARTS.map(p => '<span>' + p + ' ' + (partCounts[p]||0) + '</span>').join('');
+  document.getElementById('best').textContent = 'ベスト ' + best;
+}
+document.getElementById('best').textContent = 'ベスト ' + best;
+
+// ---------- 背景: 河原と時間経過（v10） ----------
+const CYCLE_SEC = 75; // 朝→昼→夕→夜で1周する秒数（解釈値）
+let bgSec = 2; // 朝から開始
+function mulberry(seed) { return function() { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const srand = mulberry(20261107);
+const STARS = []; for (let i = 0; i < 70; i++) STARS.push({ x:srand(), y:srand() * 0.55, r:0.7 + srand() * 1.3, tw:srand() * 6.28 });
+const BUILDINGS = []; { let bx = 0.01; while (bx < 0.99) { const bw = 0.045 + srand() * 0.05; BUILDINGS.push({ x:bx, w:bw, h:26 + srand() * 54, win:[] }); bx += bw + 0.008; }
+  for (const b of BUILDINGS) { const cols = Math.max(2, Math.floor(b.w * 390 / 13)), rows = Math.max(2, Math.floor(b.h / 15));
+    for (let cx2 = 0; cx2 < cols; cx2++) for (let ry = 0; ry < rows; ry++) if (srand() < 0.5) b.win.push({ cx:cx2 / cols, ry:ry / rows }); } }
+const STONES = []; for (let i = 0; i < 26; i++) STONES.push({ x:srand(), y:srand(), r:2 + srand() * 3.5 });
+const PALS = [
+  { t:0.00, top:'#86b5dd', hor:'#ffdca8', water:'#7fc4c9', bank:'#d9c49a', town:'#8fa3b8', dark:0 },
+  { t:0.30, top:'#35a0e8', hor:'#d6f2fd', water:'#4fb3c4', bank:'#e3cf9f', town:'#7e97ad', dark:0 },
+  { t:0.58, top:'#6a6fb2', hor:'#ffab63', water:'#5d8fa8', bank:'#cbb086', town:'#5d6478', dark:0.35 },
+  { t:0.80, top:'#0a0f24', hor:'#26355c', water:'#1d3a52', bank:'#6f6250', town:'#232c3f', dark:1 },
+  { t:1.00, top:'#86b5dd', hor:'#ffdca8', water:'#7fc4c9', bank:'#d9c49a', town:'#8fa3b8', dark:0 },
+];
+function hexRgb(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+function lerpCol(a, b, f) { const A = hexRgb(a), B = hexRgb(b); return 'rgb(' + Math.round(A[0] + (B[0] - A[0]) * f) + ',' + Math.round(A[1] + (B[1] - A[1]) * f) + ',' + Math.round(A[2] + (B[2] - A[2]) * f) + ')'; }
+function bgPhase() { return (bgSec % CYCLE_SEC) / CYCLE_SEC; }
+function bgPal() {
+  const t = bgPhase();
+  for (let i = 0; i < PALS.length - 1; i++) {
+    if (t >= PALS[i].t && t <= PALS[i + 1].t) {
+      const f = (t - PALS[i].t) / (PALS[i + 1].t - PALS[i].t || 1);
+      const o = {};
+      for (const k of ['top', 'hor', 'water', 'bank', 'town']) o[k] = lerpCol(PALS[i][k], PALS[i + 1][k], f);
+      o.dark = PALS[i].dark + (PALS[i + 1].dark - PALS[i].dark) * f;
+      return o;
+    }
+  }
+  return PALS[0];
+}
+function phaseName() { const t = bgPhase(); return t < 0.18 ? '🌅 朝' : t < 0.47 ? '☀️ 昼' : t < 0.69 ? '🌇 夕' : '🌙 夜'; }
+let birds = [], birdTimer = 3;
+let plane = null, planeTimer = 9;
+let train = null, trainTimer = 6;
+const CLOUDS = []; for (let i = 0; i < 5; i++) CLOUDS.push({ x:srand() * 1.2, y:0.06 + srand() * 0.3, s:0.7 + srand() * 0.9, v:5 + srand() * 6 });
+let vflock = null, vfTimer = 14; // 渡り鳥のV字飛行
+let ufo = null, ufoTimer = 16;   // UFO
+function vfBirdPos(f, idx) {
+  if (idx === 0) return { x:f.x, y:f.y + Math.sin(f.ph) * 2, s:1.8, a:1 };
+  const far = idx > 4, k = far ? idx - 4 : idx;
+  return { x:f.x - f.dir * k * 24, y:f.y + k * 12 + Math.sin(f.ph - k * 0.55) * 2, s: far ? 1.35 : 1.8, a: far ? 0.7 : 1 };
+}
+function bgUpdate(dt) {
+  bgSec += dt;
+  document.getElementById('timeBadge').textContent = phaseName();
+  const dark = bgPal().dark;
+  birdTimer -= dt;
+  if (birdTimer <= 0) {
+    birdTimer = 6 + Math.random() * 6;
+    if (dark < 0.6) {
+      const dir = Math.random() < 0.5 ? 1 : -1, by = H * (0.13 + Math.random() * 0.16), n = 2 + Math.floor(Math.random() * 3);
+      for (let i = 0; i < n; i++) birds.push({ x: dir > 0 ? -30 - i * 26 : W + 30 + i * 26, y: by + (i % 2) * 10 - i * 3, vx: dir * (38 + Math.random() * 14), ph: Math.random() * 6.28, s: 0.8 + Math.random() * 0.5 });
+    }
+  }
+  for (const b of birds) { b.x += b.vx * dt; b.ph += dt * 9; }
+  birds = birds.filter(b => b.x > -70 && b.x < W + 70);
+  planeTimer -= dt;
+  if (!plane && planeTimer <= 0) {
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    plane = { x: dir > 0 ? -70 : W + 70, y: H * (0.09 + Math.random() * 0.07), vx: dir * 52 };
+  }
+  if (plane) { plane.x += plane.vx * dt; if (plane.x < -90 || plane.x > W + 90) { plane = null; planeTimer = 16 + Math.random() * 14; } }
+  trainTimer -= dt;
+  if (!train && trainTimer <= 0) {
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    train = { x: dir > 0 ? -210 : W + 10, vx: dir * 135, cars: 3 };
+  }
+  if (train) { train.x += train.vx * dt; if (train.x < -260 || train.x > W + 260) { train = null; trainTimer = 14 + Math.random() * 12; } }
+  // 雲：ゆっくり流れる
+  for (const c of CLOUDS) { c.x += c.v * dt / W; if (c.x > 1.3) c.x = -0.3; }
+  // 渡り鳥のV字飛行（夜は飛ばない）
+  vfTimer -= dt;
+  if (!vflock && vfTimer <= 0) {
+    vfTimer = 20 + Math.random() * 14;
+    if (dark < 0.6) {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      vflock = { x: dir > 0 ? -60 : W + 60, y: H * (0.16 + Math.random() * 0.12), vx: dir * 34, ph: 0, dir };
+    }
+  }
+  if (vflock) { vflock.x += vflock.vx * dt; vflock.ph += dt * 6; if (vflock.x < -220 || vflock.x > W + 220) vflock = null; }
+  // UFO：来て、止まって、去る
+  ufoTimer -= dt;
+  if (!ufo && ufoTimer <= 0) {
+    const fromLeft = Math.random() < 0.5;
+    ufo = { x: fromLeft ? -40 : W + 40, y: H * (0.12 + Math.random() * 0.08), hoverX: W * (0.25 + Math.random() * 0.5), phase:'in', t:0, dir: fromLeft ? 1 : -1 };
+  }
+  if (ufo) {
+    if (ufo.phase === 'in') {
+      const dx = ufo.hoverX - ufo.x;
+      ufo.x += Math.sign(dx) * Math.min(Math.abs(dx), 130 * dt);
+      if (Math.abs(dx) < 3) { ufo.phase = 'hover'; ufo.t = 0; }
+    } else if (ufo.phase === 'hover') {
+      ufo.t += dt;
+      ufo.y += Math.sin(bgSec * 3.1) * 0.22;
+      if (ufo.t > 3.6) ufo.phase = 'out';
+    } else {
+      ufo.x += ufo.dir * 300 * dt; ufo.y -= 55 * dt;
+      if (ufo.x < -70 || ufo.x > W + 70) { ufo = null; ufoTimer = 24 + Math.random() * 18; }
+    }
+  }
+}
+
+// ---------- 入力（相対ドラッグ 1:1、そのまま） ----------
+let dragging = false, dragStartX = 0, dragStartY = 0, ankleStartX = 0, ankleStartY = 0;
+let dragX = 0, dragY = 0; // 現在の足首ターゲット
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {} }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function pop(freq) {
+  if (!audioCtx) return;
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.16, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.09);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.1);
+}
+function onDown(x, y) {
+  ensureAudio();
+  if (state !== 'play' && state !== 'ready') return;
+  dragging = true;
+  dragStartX = x; dragStartY = y;
+  ankleStartX = body.fA.x; ankleStartY = body.fA.y;
+  dragX = body.fA.x; dragY = body.fA.y;
+  if (state === 'ready') startPlay();
+}
+function onMove(x, y) {
+  if (!dragging) return;
+  // 指の移動量をそのまま足首へ。補正なし。
+  dragX = ankleStartX + (x - dragStartX);
+  dragY = ankleStartY + (y - dragStartY);
+}
+function onUp() { dragging = false; }
+const activePtrs = new Set();
+let dragId = null;
+function isTouching() { return activePtrs.size > 0; }
+cv.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' && e.button !== 0) return; // マウスは左ボタンのみ
+  activePtrs.add(e.pointerId);
+  if (dragId === null) { dragId = e.pointerId; onDown(e.clientX, e.clientY); }
+});
+window.addEventListener('pointermove', e => { if (e.pointerId === dragId) onMove(e.clientX, e.clientY); });
+function ptrUp(e) {
+  activePtrs.delete(e.pointerId);
+  if (e.pointerId === dragId) { dragId = null; onUp(); }
+}
+window.addEventListener('pointerup', ptrUp);
+window.addEventListener('pointercancel', ptrUp);
+
+// ---------- 物理 ----------
+const GRAV = 0.55;
+const BALL_GRAV = 0.27; // ボールだけの落下加速度（v3: 0.55→0.32、v15: もう少しだけ→0.27）
+const BALL_MAX = 13;    // ボールの最高速（v15で14→13。猫リバウンドの初速だけは例外で超える）
+function stepBody() {
+  const pts = [body.sK, body.hip, body.chest, body.head, body.fK, body.fA, body.toe, body.elb, body.hand];
+  for (const p of pts) {
+    if (dragging && p === body.fA) continue;
+    const vx = (p.x - p.px) * 0.995, vy = (p.y - p.py) * 0.995;
+    p.px = p.x; p.py = p.y;
+    p.x += vx; p.y += vy + GRAV;
+    if (p.y > groundY - 6) { p.y = groundY - 6; p.px += (p.x - p.px) * 0.4; }
+    if (p.x < 8) p.x = 8; if (p.x > W - 8) p.x = W - 8;
+    if (p.y < 30) p.y = 30;
+  }
+  if (dragging) {
+    // 脚は伸びない（v25 本人の指定）：足首の行き先を「腰から太もも＋すねの長さ」の範囲に収める。
+    // はみ出し分はドラッグの起点（ankleStart）へ吸収させるので、指を戻せば間髪なく応答する（範囲内は今までどおり1:1）
+    ghostX = dragX; ghostY = Math.min(dragY, groundY - 6);
+    ghostOn = false;
+    const rdx = dragX - body.hip.x, rdy = Math.min(dragY, groundY - 6) - body.hip.y;
+    const rd = Math.hypot(rdx, rdy);
+    if (rd > legReach) {
+      ghostOn = true;
+      const cx2 = body.hip.x + rdx / rd * legReach, cy2 = body.hip.y + rdy / rd * legReach;
+      ankleStartX += cx2 - dragX; ankleStartY += cy2 - Math.min(dragY, groundY - 6);
+      dragX = cx2; dragY = cy2;
+    }
+    // 足首ターゲットへ直接置く。速度はドラッグ移動量から取る（蹴りの勢い用）
+    body.fA.px = body.fA.x; body.fA.py = body.fA.y;
+    body.fA.x = dragX; body.fA.y = dragY;
+    if (body.fA.y > groundY - 6) body.fA.y = groundY - 6;
+    if (body.fA.x < 8) body.fA.x = 8; if (body.fA.x > W - 8) body.fA.x = W - 8;
+    if (body.fA.y < 30) body.fA.y = 30;
+  }
+  body.sA.x = body.sA.px = W * 0.24; body.sA.y = body.sA.py = groundY;
+  // 立ち姿勢のバランス反射（倒れないための弱いバネ。入力への補正ではない）
+  const bal = [[body.hip, 8, -182, 0.02], [body.chest, 16, -296, 0.03], [body.head, 18, -338, 0.03],
+               [body.elb, -46, -258, 0.04], [body.hand, -56, -196, 0.04]]; // 腕の定位置（v7: ハンド判定のため暴れを抑える）
+  for (const [p, ox, oy, k] of bal) {
+    p.x += (body.sA.x + ox - p.x) * k;
+    p.y += (body.sA.y + oy - p.y) * k;
+  }
+  for (let it = 0; it < 14; it++) {
+    for (const c of cons) {
+      const dx = c.b.x - c.a.x, dy = c.b.y - c.a.y;
+      let d = Math.hypot(dx, dy); if (d < 0.001) d = 0.001;
+      const diff = (d - c.rest) / d * 0.5 * c.stiff;
+      const aFix = c.a.pinned || (dragging && c.a === body.fA);
+      const bFix = c.b.pinned || (dragging && c.b === body.fA);
+      if (!aFix && !bFix) { c.a.x += dx * diff; c.a.y += dy * diff; c.b.x -= dx * diff; c.b.y -= dy * diff; }
+      else if (aFix && !bFix) { c.b.x -= dx * diff * 2; c.b.y -= dy * diff * 2; }
+      else if (!aFix && bFix) { c.a.x += dx * diff * 2; c.a.y += dy * diff * 2; }
+    }
+    body.sA.x = W * 0.24; body.sA.y = groundY;
+    if (dragging) { body.fA.x = dragX; body.fA.y = Math.min(dragY, groundY - 6); }
+    if (dragging && ghostOn) { // 前かがみ（v26）：届かない先へ膝を引く仮想拘束。引っ張りを腰→胸→頭へ伝えて体全体が前へ出る
+      const gx = ghostX - body.fK.x, gy = ghostY - body.fK.y;
+      const gd = Math.hypot(gx, gy);
+      if (gd > shinRest) {
+        const gf = (gd - shinRest) / gd * 0.5 * 0.6;
+        const mx = gx * gf, my = gy * gf;
+        body.fK.x += mx; body.fK.y += my;
+        body.chest.x += mx * 0.45; body.chest.y += my * 0.45;
+        body.head.x += mx * 0.30; body.head.y += my * 0.30;
+      }
+    }
+  }
+  // 点の速度（ボールへの受け渡し用）
+  for (const p of [body.sA, body.sK, body.hip, body.chest, body.head, body.fK, body.fA, body.toe, body.elb, body.hand]) {
+    p.vx = p.x - p.px; p.vy = p.y - p.py;
+  }
+}
+function segments() {
+  const b = body;
+  return [
+    { a:b.sA,   b:b.sK,   r:11, name:'支え脚', e:0.55 },
+    { a:b.sK,   b:b.hip,  r:11, name:'支え脚', e:0.55 },
+    { a:b.fA,   b:b.toe,  r:9,  name:'足',     e:0.92 },
+    { a:b.fK,   b:b.fA,   r:10, name:'すね',   e:0.85 },
+    { a:b.hip,  b:b.fK,   r:12, name:'もも',   e:0.8 },
+    { a:b.hip,  b:b.chest,r:15, name:'体',     e:0.55 },
+    { a:b.chest,b:b.head, r:12, name:'体',     e:0.65 },
+    { a:b.chest,b:b.elb,  r:8,  name:'腕',     e:0.6 },
+    { a:b.elb,  b:b.hand, r:8,  name:'腕',     e:0.6 },
+  ];
+}
+function stepBall(now) {
+  if (state === 'ready') { placeBallOnFoot(); return; }
+  if (state === 'pause') return;
+  // 空中アイテムの出現（本番のみ・最大3個まで同時・散らして配置）
+  if (mode === 'honban' && state === 'play') {
+    for (const it of items) { it.t++; it.life--; it.y = it.baseY + Math.sin(it.t / 25) * 7; }
+    items = items.filter(it => it.life > 0);
+    itemTimer--;
+    if (itemTimer <= 0) {
+      itemTimer = 60 * (5 + Math.random() * 4); // 次の出現まで5〜9秒（解釈値）
+      if (items.length < ITEM_MAX) spawnItem();
+    }
+  }
+  if (bigTimer > 0 && state === 'play') { // 大玉の残り時間（v20）
+    bigTimer--;
+    if (bigTimer % 60 === 0) renderStocks();
+    if (bigTimer === 0) setBig(false);
+  }
+  for (const b of [...balls]) {
+    if (state !== 'play' && state !== 'over') break;
+    stepOneBall(b, now);
+  }
+  // 神の手セーフの余韻は「どのボールも手の近くに無い間」だけ減る
+  if (armSaveTimer > 0) {
+    let nearArm = false;
+    for (const b of balls) {
+      if (Math.hypot(b.x - body.hand.x, b.y - body.hand.y) < 46) nearArm = true;
+    }
+    if (!nearArm) armSaveTimer--;
+  }
+  // ボール同士の衝突
+  for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) {
+    const a = balls[i], c = balls[j];
+    const dx = c.x - a.x, dy = c.y - a.y;
+    const rr = a.r + c.r, d = Math.hypot(dx, dy);
+    if (d < rr && d > 0.01) {
+      const nx = dx / d, ny = dy / d, ov = (rr - d) / 2;
+      a.x -= nx * ov; a.y -= ny * ov; c.x += nx * ov; c.y += ny * ov;
+      const vn = (c.vx - a.vx) * nx + (c.vy - a.vy) * ny;
+      if (vn < 0) {
+        const imp = -(1 + 0.9) * vn / 2;
+        a.vx -= imp * nx; a.vy -= imp * ny; c.vx += imp * nx; c.vy += imp * ny;
+      }
+    }
+  }
+  // アイテム取得（どれかのボールが触れたら、そのアイテムだけ取得）
+  if (state === 'play') {
+    for (const it of [...items]) {
+      let got = false;
+      for (const b of balls) if (Math.hypot(b.x - it.x, b.y - it.y) < b.r + 24) { got = true; break; }
+      if (got) { items = items.filter(x => x !== it); collectItem(it); }
+    }
+  }
+}
+function spawnItem() {
+  const pool = ['god', 'cat'];
+  if (bigTimer <= 0) pool.push('big');
+  pool.push('ball'); // 増殖は上限なし（v20・本人の指定）
+  // 散らして配置：既存アイテムから一番遠い候補を選ぶ（130px以上離れたら即採用）
+  let best = null, bestScore = -1;
+  for (let k = 0; k < 8; k++) {
+    const cx = W * (0.14 + Math.random() * 0.72), cy = H * (0.22 + Math.random() * 0.30);
+    let dmin = 1e9;
+    for (const it of items) dmin = Math.min(dmin, Math.hypot(cx - it.x, cy - it.baseY));
+    if (dmin > bestScore) { bestScore = dmin; best = { x: cx, baseY: cy }; }
+    if (dmin >= 130) break;
+  }
+  items.push({ type: pool[Math.floor(Math.random() * pool.length)],
+               x: best.x, baseY: best.baseY, y: best.baseY, t: 0, life: ITEM_LIFE });
+}
+function collectItem(item) {
+  const ix = item.x, iy = item.y;
+  if (item.type === 'god') {
+    if (godStock < 2) { godStock++; popups.push({ x:ix, y:iy - 30, text:'✋ 神の手ゲット！', life:1 }); }
+    else popups.push({ x:ix, y:iy - 30, text:'✋ ストックいっぱい', life:1 });
+  } else if (item.type === 'cat') {
+    if (catStock < 2) { catStock++; popups.push({ x:ix, y:iy - 30, text:'🐱 猫ゲット！', life:1 }); }
+    else popups.push({ x:ix, y:iy - 30, text:'🐱 ストックいっぱい', life:1 });
+  } else if (item.type === 'big') { // 大玉：10秒間 全部のボールが1.5倍（v20）
+    bigTimer = 60 * 10;
+    setBig(true);
+    popups.push({ x:ix, y:iy - 30, text:'🔍 ボールが大きくなった！', life:1 });
+  } else { // ball: 取ったぶん +2（上限なし・v20 本人の指定）
+    const add = 2;
+    for (let k = 0; k < add; k++) balls.push(makeBall(ix + (k === 0 ? -16 : 16), iy - 34 - k * 44, k === 0 ? -2.5 : 2.5, -3));
+    popups.push({ x:ix, y:iy - 30, text:'⚽ ボール+' + add + '！', life:1 });
+  }
+  pop(660); renderStocks();
+}
+function stepOneBall(ball, now) {
+  ball.vy += BALL_GRAV;
+  if (!ball.noCollide && ball.vy > BALL_MAX) ball.vy = BALL_MAX; // 猫リバウンド中だけ最高速の上限を超える
+  if (ball.vx > BALL_MAX) ball.vx = BALL_MAX;
+  if (ball.vx < -BALL_MAX) ball.vx = -BALL_MAX;
+  ball.x += ball.vx; ball.y += ball.vy;
+  ball.rot += ball.vx / ball.r;
+  if (ball.x < ball.r) { ball.x = ball.r; ball.vx = Math.abs(ball.vx) * 0.85; }
+  if (ball.x > W - ball.r) { ball.x = W - ball.r; ball.vx = -Math.abs(ball.vx) * 0.85; }
+  if (ball.y < ball.r) { ball.y = ball.r; ball.vy = Math.abs(ball.vy) * 0.8; }
+
+  let hit = null;
+  let foulPending = false;
+  ball.impact = 0;
+  if (ball.noCollide) {
+    if (ball.y < ball.rescueApexY) ball.passedHigh = true;
+    if (ball.passedHigh && ball.vy > 0) ball.noCollide = false;
+  }
+  if (!ball.noCollide) {
+  // 頭（円）
+  {
+    const dx = ball.x - body.head.x, dy = ball.y - body.head.y;
+    const rr = ball.r + 23, d = Math.hypot(dx, dy);
+    if (d < rr && d > 0.01) {
+      const nx = dx / d, ny = dy / d;
+      ball.x = body.head.x + nx * rr; ball.y = body.head.y + ny * rr;
+      hit = collide(ball, nx, ny, body.head.vx, body.head.vy, 0.78, '頭');
+    }
+  }
+  // 体の各部位（カプセル＝線分）
+  for (const s of segments()) {
+    const abx = s.b.x - s.a.x, aby = s.b.y - s.a.y;
+    const len2 = abx * abx + aby * aby || 1;
+    let t = ((ball.x - s.a.x) * abx + (ball.y - s.a.y) * aby) / len2;
+    t = Math.max(0, Math.min(1, t));
+    const qx = s.a.x + abx * t, qy = s.a.y + aby * t;
+    const dx = ball.x - qx, dy = ball.y - qy;
+    const rr = ball.r + s.r, d = Math.hypot(dx, dy);
+    if (d < rr && d > 0.01) {
+      const nx = dx / d, ny = dy / d;
+      ball.x = qx + nx * rr; ball.y = qy + ny * rr;
+      const qvx = s.a.vx + (s.b.vx - s.a.vx) * t, qvy = s.a.vy + (s.b.vy - s.a.vy) * t;
+      const h = collide(ball, nx, ny, qvx, qvy, s.e, s.name);
+      if (h) {
+        // 手のひら（v11）: 前腕の手側の先端部分に当たった時だけハンド扱い。肩・腕はセーフ
+        const isPalm = s.a === body.elb && s.b === body.hand && t > 0.75;
+        if (isPalm && state === 'play' && mode === 'honban' && optHand) {
+          if (armSaveTimer > 0) hit = '神の手';
+          else if (godStock > 0) {
+            godStock--; armSaveTimer = 45; hit = '神の手';
+            // 神の手はセーフした上で必ず+1カウント（v12・本人の発案）。通常カウントとの二重取りは防ぐ
+            score++;
+            partCounts['神の手'] = (partCounts['神の手'] || 0) + 1;
+            document.getElementById('score').textContent = score;
+            ball.inContact = true;
+            renderParts(); renderStocks();
+            popups.push({ x:ball.x, y:ball.y - 34, text:'✋ 神の手！セーフ +1', life:1 });
+            pop(660);
+          }
+          else foulPending = true;
+        } else if (isPalm) hit = '手';
+        else hit = h;
+      }
+    }
+  }
+  }
+  if (foulPending && state === 'play') { gameOver('hand'); return; }
+  if (hit) {
+    contactFrames++;
+    if (!ball.inContact && ball.vy < -2.6 && ball.impact > 3.5 && now - ball.lastCountAt > 180) {
+      ball.inContact = true; ball.lastCountAt = now;
+      score++;
+      if (ball.grace > 0) { // 地面3秒ルール：間に合った
+        ball.grace = 0;
+        popups.push({ x:ball.x, y:ball.y - 56, text:'⏱ セーフ！', life:1 });
+        pop(880);
+      }
+      partCounts[hit] = (partCounts[hit] || 0) + 1;
+      document.getElementById('score').textContent = score;
+      renderParts();
+      popups.push({ x:ball.x, y:ball.y - 30, text:hit + '！ ' + score, life:1 });
+      pop(420 + Math.min(score, 20) * 18);
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
+  } else {
+    ball.inContact = false;
+  }
+  // 地面3秒ルールの残り時間（v19）：プレー中だけ減り、切れたら終了
+  if (ball.grace > 0 && state === 'play') {
+    ball.grace--;
+    if (ball.grace <= 0) { gameOver('drop'); return; }
+  }
+  // 地面: 本番 = 終了 ／ 練習 = 何もしない（ただの床。跳ねて、転がって、止まるだけ）
+  if (state === 'play' && ball.y + ball.r >= groundY - 1) {
+    ball.y = groundY - ball.r;
+    if (mode === 'renshu' || ball.grace > 0) {
+      if (ball.vy > 0) ball.vy = -ball.vy * 0.45;
+      if (Math.abs(ball.vy) < 1.4) ball.vy = 0;
+      ball.vx *= (ball.vy === 0 ? 0.9 : 0.85);
+    } else if (balls.length > 1) {
+      balls = balls.filter(x => x !== ball);
+      effects.push({ x:ball.x, y:groundY - 24, life:1, emoji:'💨' });
+      popups.push({ x:ball.x, y:groundY - 58, text:'ボール消えた（残り' + balls.length + '個）', life:1 });
+      pop(300);
+    } else if (catStock > 0) {
+      catStock--;
+      ball.y = groundY - ball.r - 2;
+      // 猫リバウンド（v14・本人の指定）：開始時の頭位置より高く上がる強さで打ち上げる。
+      // 頭より高く上がるまではプレイヤーとの当たり判定なし、下がり始めたら元に戻す
+      ball.rescueApexY = body.head.y - 23; // 「頭より高く」＝頭のてっぺん（頭中心だと最高速でも届かないため）
+      ball.passedHigh = false;
+      ball.noCollide = true;
+      const rise = Math.max(60, ball.y - ball.rescueApexY);
+      // 離散積分で実際に届く強さを探す（通常の最高速14では頭まで届かないため、猫リバウンドだけ上限を超える）
+      let launch = 10;
+      while (launch < 22) {
+        let y = 0, vv = launch;
+        while (vv > 0) { vv -= BALL_GRAV; if (vv > 0) y += vv; }
+        if (y >= rise * 1.1) break;
+        launch += 0.25;
+      }
+      ball.vy = -launch;
+      ball.vx = Math.max(-4, Math.min(4, (W * 0.5 - ball.x) * 0.02));
+      ball.inContact = false;
+      effects.push({ x:ball.x, y:groundY - 26, life:1, emoji:'🐱' });
+      popups.push({ x:ball.x, y:ball.y - 44, text:'🐱 猫がリフティング！', life:1 });
+      pop(760); renderStocks();
+      if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
+    } else if (optGround) {
+      // 地面3秒ルール開始（v19）。この回は練習と同じバウンドで地面に置く
+      ball.grace = 60 * 3;
+      if (ball.vy > 0) ball.vy = -ball.vy * 0.45;
+      if (Math.abs(ball.vy) < 1.4) ball.vy = 0;
+      ball.vx *= (ball.vy === 0 ? 0.9 : 0.85);
+      popups.push({ x:ball.x, y:groundY - 64, text:'⏱ 3秒以内に浮かせ！', life:1 });
+      pop(520);
+      if (navigator.vibrate) navigator.vibrate(40);
+    } else gameOver('drop');
+  }
+  if (state === 'over') { // 終わったあとは地面で小さく跳ねて止まる
+    if (ball.y + ball.r >= groundY) {
+      ball.y = groundY - ball.r;
+      ball.vy = -Math.abs(ball.vy) * 0.45; ball.vx *= 0.8;
+      if (Math.abs(ball.vy) < 1.2) ball.vy = 0;
+    }
+  }
+}
+function collide(ball, nx, ny, svx, svy, e, name) {
+  const rvx = ball.vx - svx, rvy = ball.vy - svy;
+  const vn = rvx * nx + rvy * ny;
+  if (vn >= 0) return null; // 離れていく方向なら打ち返さない（でも接触はある）
+  if (-vn > ball.impact) ball.impact = -vn; // その瞬間の最強の当たりで判定（部位の擦れで上書きしない）
+  ball.vx -= (1 + e) * vn * nx;
+  ball.vy -= (1 + e) * vn * ny;
+  // 部位の動きを少し足す（足を振り上げた勢いがボールに乗る）
+  ball.vx += svx * 0.1; ball.vy += svy * 0.1;
+  // 蹴った勢いも含めてボールの速さに上限（v3）
+  const spd = Math.hypot(ball.vx, ball.vy);
+  if (spd > BALL_MAX) { ball.vx = ball.vx / spd * BALL_MAX; ball.vy = ball.vy / spd * BALL_MAX; }
+  // 横方向の摩擦で少し削る
+  ball.vx *= 0.995;
+  return name;
+}
+
+// ---------- 進行 ----------
+function startPlay() {
+  if (state === 'play') return;
+  state = 'play';
+  if (balls[0]) { balls[0].vx = 0; balls[0].vy = -1; }
+}
+// ---------- VAR判定（v27・本番のみ） ----------
+let varUsed = false, varTimer = 0, varReason = 'drop', varSafe = false, varOut = false;
+function gameOver(reason) {
+  // ゲームオーバーの瞬間、たまにVAR判定チャンス（発生30%・セーフ50%・1プレイ1回まで：解釈値）
+  if (mode === 'honban' && state === 'play' && !varUsed && Math.random() < 0.30) {
+    varUsed = true; varSafe = Math.random() < 0.5; varReason = reason;
+    varTimer = 110; state = 'var';
+    const vl = document.getElementById('varLabel');
+    vl.textContent = '📺 VAR判定中…\n主審が映像を確認しています';
+    vl.style.display = 'block';
+    pop(392);
+    if (navigator.vibrate) navigator.vibrate(60);
+    return;
+  }
+  finishGameOver(reason);
+}
+function resolveVar() {
+  document.getElementById('varLabel').style.display = 'none';
+  if (varSafe) {
+    state = 'play';
+    let b = balls[0];
+    for (const bb of balls) if (bb.y > b.y) b = bb; // 一番下のボールを足元へ戻して再開
+    b.grace = 0; b.noCollide = false;
+    b.x = body.fA.x; b.y = body.fA.y - 130; b.vx = 0; b.vy = -8.5; b.inContact = true;
+    popups.push({ x:b.x, y:b.y - 40, text:'📺 VAR判定：セーフ！プレー続行', life:1 });
+    pop(880);
+    if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
+  } else {
+    varOut = true;
+    finishGameOver(varReason);
+  }
+}
+function finishGameOver(reason) {
+  state = 'over';
+  document.getElementById('finalReason').textContent =
+    (reason === 'hand' ? '🖐 ハンドで終了' : '⚽ ボールを落とした') + (varOut ? '（📺 VAR判定：アウト）' : '');
+  const isBest = score > best;
+  if (isBest) { best = score; localStorage.setItem('lifting-best-v1', best); }
+  document.getElementById('finalScore').textContent = score + '回';
+  document.getElementById('newBest').textContent = isBest && score > 0 ? '🎉 ベスト更新！' : '';
+  document.getElementById('finalParts').innerHTML =
+    PARTS.map(p => p + ' ' + (partCounts[p]||0) + '回').join(' ・ ') +
+    '<br>ベスト ' + best + '回';
+  document.getElementById('endBtn').style.display = 'none';
+  document.getElementById('stocks').style.display = 'none';
+  document.getElementById('overCard').style.display = 'flex';
+  renderParts();
+  if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+}
+function reset() {
+  dragging = false;
+  score = 0; inContact = false; popups = [];
+  godStock = 0; catStock = 0; items = []; itemTimer = 60 * 3; effects = []; armSaveTimer = 0;
+  balls = [makeBall()];
+  renderStocks();
+  document.getElementById('score').textContent = '0';
+  resetPartCounts();
+  state = 'ready';
+  layout(true);
+  document.getElementById('overCard').style.display = 'none';
+  document.getElementById('practiceCard').style.display = 'none';
+  document.getElementById('startCard').style.display = 'none';
+  varUsed = false; varOut = false; varTimer = 0;
+  document.getElementById('varLabel').style.display = 'none';
+  updateModeUI();
+}
+function updateModeUI() {
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = mode === 'renshu' ? '🏃 練習モード' : '⚽ 本番モード';
+  badge.style.display = 'block';
+  badge.style.background = mode === 'renshu' ? 'rgba(46,125,50,.8)' : 'rgba(21,101,192,.8)';
+  document.getElementById('endBtn').style.display = mode === 'renshu' ? 'block' : 'none';
+  renderParts(); renderStocks();
+}
+function startMode(m) {
+  ensureAudio();
+  mode = m;
+  reset();
+}
+function showSelect() {
+  dragging = false;
+  state = 'pause';
+  document.getElementById('overCard').style.display = 'none';
+  document.getElementById('practiceCard').style.display = 'none';
+  document.getElementById('endBtn').style.display = 'none';
+  document.getElementById('stocks').style.display = 'none';
+  document.getElementById('modeBadge').style.display = 'none';
+  document.getElementById('startCard').style.display = 'flex';
+}
+function endPractice() {
+  if (mode !== 'renshu') return;
+  state = 'pause';
+  dragging = false;
+  document.getElementById('practiceSummary').innerHTML =
+    'リフティング <b>' + score + '回</b><br>' +
+    PARTS.map(p => p + ' ' + (partCounts[p]||0) + '回').join(' ・ ');
+  document.getElementById('endBtn').style.display = 'none';
+  document.getElementById('practiceCard').style.display = 'flex';
+}
+// ---------- キャラクター（お試し・見た目だけ。判定は全員同じ） ----------
+let charType = localStorage.getItem('lifting-char-v1') || 'boy';
+const CHAR_BTNS = { boy:'charBoy', salary:'charSalary', grandpa:'charGrandpa', ol:'charOl', sailor:'charSailor', straw:'charStraw', ninja:'charNinja', anpan:'charAnpan', dora:'charDora', mickey:'charMickey' };
+function renderCharBtns() {
+  for (const k in CHAR_BTNS) {
+    document.getElementById(CHAR_BTNS[k]).className = 'charBtn' + (charType === k ? ' sel' : '');
+  }
+}
+function setChar(k) { charType = k; localStorage.setItem('lifting-char-v1', k); renderCharBtns(); }
+for (const k in CHAR_BTNS) document.getElementById(CHAR_BTNS[k]).addEventListener('click', () => setChar(k));
+renderCharBtns();
+// ---------- 本番オプション（v19） ----------
+let optHand = true, optGround = false;
+try { const o = JSON.parse(localStorage.getItem('lifting-opt-v1') || '{}'); if (typeof o.hand === 'boolean') optHand = o.hand; if (typeof o.ground === 'boolean') optGround = o.ground; } catch(e) {}
+function renderOpts() {
+  const h = document.getElementById('optHand'), g = document.getElementById('optGround');
+  h.textContent = '🖐 ハンド判定：' + (optHand ? 'あり' : 'なし');
+  h.className = 'charBtn' + (optHand ? ' sel' : '');
+  g.textContent = '⏱ 地面3秒ルール：' + (optGround ? 'あり' : 'なし');
+  g.className = 'charBtn' + (optGround ? ' sel' : '');
+}
+function saveOpts() { localStorage.setItem('lifting-opt-v1', JSON.stringify({ hand: optHand, ground: optGround })); renderOpts(); }
+document.getElementById('optHand').addEventListener('click', () => { optHand = !optHand; saveOpts(); });
+document.getElementById('optGround').addEventListener('click', () => { optGround = !optGround; saveOpts(); });
+renderOpts();
+document.getElementById('modePractice').addEventListener('click', () => startMode('renshu'));
+document.getElementById('modeHonban').addEventListener('click', () => startMode('honban'));
+document.getElementById('retryBtn').addEventListener('click', () => startMode('honban'));
+document.getElementById('toPracticeBtn').addEventListener('click', () => startMode('renshu'));
+document.getElementById('toSelectBtn').addEventListener('click', showSelect);
+document.getElementById('endBtn').addEventListener('click', endPractice);
+document.getElementById('toHonbanBtn').addEventListener('click', () => startMode('honban'));
+document.getElementById('resumeBtn').addEventListener('click', () => {
+  document.getElementById('practiceCard').style.display = 'none';
+  document.getElementById('endBtn').style.display = 'block';
+  state = 'ready';
+  placeBallOnFoot();
+});
+document.getElementById('toSelectBtn2').addEventListener('click', showSelect);
+
+// ---------- 描画 ----------
+function line(a, b, w, color) {
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+}
+function draw() {
+  // ===== 背景: 河原（v10） =====
+  const pal = bgPal(), t = bgPhase(), dark = pal.dark;
+  const sky = ctx.createLinearGradient(0, 0, 0, groundY);
+  sky.addColorStop(0, pal.top); sky.addColorStop(1, pal.hor);
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, groundY);
+  // 星（夜）
+  if (dark > 0.05) {
+    for (const st of STARS) {
+      ctx.globalAlpha = dark * (0.55 + 0.45 * Math.sin(bgSec * 2 + st.tw));
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(st.x * W, st.y * groundY, st.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // 太陽（朝〜夕）／月（夜）
+  if (t < 0.82) {
+    const sp = Math.min(1, t / 0.78);
+    const sx = W * (0.08 + 0.84 * sp), sy = groundY - 60 - Math.sin(Math.PI * sp) * H * 0.34;
+    ctx.globalAlpha = Math.max(0, 1 - dark * 1.6);
+    ctx.fillStyle = '#ffd94d';
+    ctx.beginPath(); ctx.arc(sx, sy, 21, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = Math.max(0, 0.35 * (1 - dark * 1.6));
+    ctx.beginPath(); ctx.arc(sx, sy, 33, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  if (dark > 0.25) {
+    const mp = ((t - 0.78 + 1) % 1) / 0.44;
+    const mx = W * (0.12 + 0.7 * Math.min(1, mp)), my = groundY - 120 - Math.sin(Math.PI * Math.min(1, mp)) * H * 0.22;
+    ctx.globalAlpha = Math.min(1, (dark - 0.25) * 2);
+    ctx.fillStyle = '#f4f1d8';
+    ctx.beginPath(); ctx.arc(mx, my, 15, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = pal.top;
+    ctx.beginPath(); ctx.arc(mx + 6, my - 4, 13, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  // 雲
+  {
+    const duskAmt = (t > 0.47 && t < 0.75) ? Math.sin((t - 0.47) / 0.28 * Math.PI) : 0;
+    ctx.fillStyle = lerpCol(lerpCol('#ffffff', '#ffb490', duskAmt * 0.55), '#202a45', dark);
+    ctx.globalAlpha = 0.88 - dark * 0.3;
+    for (const c of CLOUDS) {
+      const cx = c.x * W, cy = c.y * groundY, cs = c.s;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 34 * cs, 13 * cs, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx - 24 * cs, cy + 3 * cs, 22 * cs, 9 * cs, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx + 24 * cs, cy + 3 * cs, 24 * cs, 10 * cs, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx + 2 * cs, cy - 8 * cs, 20 * cs, 11 * cs, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // 鳥
+  ctx.strokeStyle = dark > 0.5 ? 'rgba(20,24,40,.8)' : 'rgba(38,50,56,.75)';
+  ctx.lineWidth = 2; ctx.lineCap = 'round';
+  for (const bd of birds) {
+    const f = Math.sin(bd.ph) * 4 * bd.s;
+    ctx.beginPath();
+    ctx.moveTo(bd.x - 7 * bd.s, bd.y + f);
+    ctx.quadraticCurveTo(bd.x - 2 * bd.s, bd.y - 3 * bd.s, bd.x, bd.y);
+    ctx.quadraticCurveTo(bd.x + 2 * bd.s, bd.y - 3 * bd.s, bd.x + 7 * bd.s, bd.y + f);
+    ctx.stroke();
+  }
+  // 渡り鳥のV字飛行（先頭＋左右に開く8羽）
+  if (vflock) {
+    ctx.strokeStyle = dark > 0.5 ? 'rgba(20,24,40,.85)' : 'rgba(38,50,56,.8)';
+    for (let idx = 8; idx >= 0; idx--) {
+      const bp = vfBirdPos(vflock, idx);
+      ctx.globalAlpha = bp.a;
+      const f = Math.sin(vflock.ph - idx * 0.55) * 4.5 * bp.s;
+      ctx.beginPath();
+      ctx.moveTo(bp.x - 7 * bp.s, bp.y + f);
+      ctx.quadraticCurveTo(bp.x - 2 * bp.s, bp.y - 3 * bp.s, bp.x, bp.y);
+      ctx.quadraticCurveTo(bp.x + 2 * bp.s, bp.y - 3 * bp.s, bp.x + 7 * bp.s, bp.y + f);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // 飛行機
+  if (plane) {
+    const dir = plane.vx > 0 ? 1 : -1;
+    ctx.save(); ctx.translate(plane.x, plane.y); ctx.scale(dir, 1);
+    ctx.globalAlpha = 0.28; ctx.strokeStyle = '#fff'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(-14, 2); ctx.lineTo(-52, 5); ctx.stroke();
+    ctx.globalAlpha = 1; ctx.fillStyle = dark > 0.5 ? '#39415e' : '#eceff1';
+    ctx.beginPath(); ctx.ellipse(0, 0, 17, 5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-10, 9); ctx.lineTo(3, 9); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-15, -1); ctx.lineTo(-21, -8); ctx.lineTo(-12, -8); ctx.closePath(); ctx.fill();
+    if (dark > 0.3 && Math.sin(bgSec * 6) > 0) { ctx.fillStyle = '#ff5252'; ctx.beginPath(); ctx.arc(0, -4, 2.4, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
+  }
+  // UFO
+  if (ufo) {
+    ctx.save(); ctx.translate(ufo.x, ufo.y);
+    if (dark > 0.2) { // 夜はサーチライトの帯
+      ctx.fillStyle = 'rgba(255,255,180,' + (0.05 + dark * 0.13) + ')';
+      ctx.beginPath(); ctx.moveTo(-6, 8); ctx.lineTo(6, 8); ctx.lineTo(22, 58); ctx.lineTo(-22, 58); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(176,224,255,.9)';
+    ctx.beginPath(); ctx.arc(0, 0, 11, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = dark > 0.5 ? '#5a6a86' : '#b0bec5';
+    ctx.beginPath(); ctx.ellipse(0, 3, 25, 8, 0, 0, Math.PI * 2); ctx.fill();
+    const cols = ['#ff5252', '#ffd54f', '#40c4ff', '#69f0ae'];
+    for (let i = 0; i < 4; i++) {
+      ctx.fillStyle = Math.sin(bgSec * 5 + i * 1.7) > -0.2 ? cols[i] : 'rgba(120,120,120,.6)';
+      ctx.beginPath(); ctx.arc(-15 + i * 10, 6, 2.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  // 遠くの街
+  for (const bd2 of BUILDINGS) {
+    const bx = bd2.x * W, bw = bd2.w * W, by = groundY - 30;
+    ctx.fillStyle = pal.town;
+    ctx.fillRect(bx, by - bd2.h, bw, bd2.h);
+    if (dark > 0.05) {
+      ctx.fillStyle = 'rgba(255,217,122,' + (dark * 0.95) + ')';
+      for (const wn of bd2.win) ctx.fillRect(bx + 3 + wn.cx * (bw - 7), by - bd2.h + 4 + wn.ry * (bd2.h - 9), 3.4, 4.4);
+    }
+  }
+  // 土手と線路
+  ctx.fillStyle = pal.town;
+  ctx.fillRect(0, groundY - 30, W, 30);
+  ctx.fillStyle = 'rgba(255,255,255,.35)';
+  ctx.fillRect(0, groundY - 31, W, 2);
+  // 電車
+  if (train) {
+    const ty = groundY - 31, th = 19, cw = 62;
+    for (let ci = 0; ci < train.cars; ci++) {
+      const cx3 = train.vx > 0 ? train.x + ci * (cw + 3) : train.x - ci * (cw + 3);
+      ctx.fillStyle = dark > 0.5 ? '#2c3550' : '#90a4ae';
+      ctx.beginPath(); ctx.roundRect(cx3, ty - th, cw, th - 3, 4); ctx.fill();
+      ctx.fillStyle = dark > 0.5 ? '#37405e' : '#b0bec5';
+      ctx.fillRect(cx3, ty - 7, cw, 3);
+      for (let wi = 0; wi < 5; wi++) {
+        ctx.fillStyle = dark > 0.05 ? 'rgba(255,217,122,' + Math.max(0.25, dark) + ')' : 'rgba(224,242,241,.9)';
+        ctx.fillRect(cx3 + 6 + wi * 11, ty - th + 4, 7, 6);
+      }
+    }
+  }
+  // 手前: 草の縁→砂の河原→川
+  ctx.fillStyle = lerpCol('#69b455', '#2e5d33', dark);
+  ctx.fillRect(0, groundY - 3, W, 7);
+  ctx.fillStyle = pal.bank;
+  ctx.fillRect(0, groundY + 4, W, 13);
+  ctx.fillStyle = 'rgba(120,100,70,.5)';
+  for (const st2 of STONES) ctx.beginPath(), ctx.ellipse(st2.x * W, groundY + 6 + st2.y * 9, st2.r, st2.r * 0.6, 0, 0, Math.PI * 2), ctx.fill();
+  ctx.fillStyle = pal.water;
+  ctx.fillRect(0, groundY + 17, W, H - groundY - 17);
+  ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2;
+  for (let li = 0; li < 4; li++) {
+    const ly = groundY + 26 + li * 9, off = (bgSec * (14 + li * 5) + li * 47) % 90;
+    for (let lx = -90 + off; lx < W; lx += 90) {
+      ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 26, ly); ctx.stroke();
+    }
+  }
+  if (dark > 0.3) { // 夜は街明かりの反射
+    ctx.fillStyle = 'rgba(255,217,122,' + (dark * 0.13) + ')';
+    ctx.fillRect(0, groundY + 17, W, 7);
+  }
+
+  const b = body;
+  // キャラクター見た目（v16・お試し）：パレットと小物だけ切替。骨格・当たり判定は全員共通
+  const SKIN = '#f2b183';
+  const PAL = {
+    boy:    { arm:SKIN, leg:SKIN, torso:'#1565c0', pants:'#0d47a1', hair:'#4e342e', shoeS:'#37474f', shoeF:'#e53935', skirt:null },
+    salary: { arm:'#37474f', leg:'#37474f', torso:'#263238', pants:'#263238', hair:'#212121', shoeS:'#212121', shoeF:'#212121', skirt:null },
+    grandpa:{ arm:'#795548', leg:'#546e7a', torso:'#795548', pants:'#546e7a', hair:'#bdbdbd', shoeS:'#4e342e', shoeF:'#4e342e', skirt:null },
+    ol:     { arm:SKIN, leg:SKIN, torso:'#eceff1', pants:null, hair:'#3e2723', shoeS:'#212121', shoeF:'#212121', skirt:'#37474f' },
+    sailor: { arm:'#1a237e', leg:SKIN, torso:'#1a237e', pants:null, hair:'#263238', shoeS:'#5d4037', shoeF:'#5d4037', skirt:'#1a237e' },
+    straw:  { arm:'#e53935', arm2:SKIN, leg:SKIN, torso:'#e53935', pants:'#3d5a99', hair:'#4e342e', shoeS:'#8d6e63', shoeF:'#8d6e63', skirt:null },
+    ninja:  { arm:'#263238', leg:'#263238', torso:'#263238', pants:'#263238', hair:'#263238', shoeS:'#212121', shoeF:'#212121', skirt:null },
+    anpan:  { arm:'#e53935', leg:'#e53935', torso:'#e53935', pants:'#e53935', hair:'#eda96b', shoeS:'#fdd835', shoeF:'#fdd835', skirt:null },
+    dora:   { arm:'#2196f3', leg:'#2196f3', torso:'#2196f3', pants:'#2196f3', hair:'#2196f3', shoeS:'#ffffff', shoeF:'#ffffff', skirt:null },
+    mickey: { arm:'#212121', leg:'#212121', torso:'#212121', pants:'#e53935', hair:'#212121', shoeS:'#fdd835', shoeF:'#fdd835', skirt:null },
+  }[charType];
+  const tdx = b.hip.x - b.chest.x, tdy = b.hip.y - b.chest.y, tdl = Math.hypot(tdx, tdy) || 1;
+  const torsoDir = { x:tdx / tdl, y:tdy / tdl }, torsoPerp = { x:-torsoDir.y, y:torsoDir.x };
+  function skirtDraw(color) {
+    const top = b.hip, btm = { x:b.hip.x + torsoDir.x * 48, y:b.hip.y + torsoDir.y * 48 };
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(top.x - torsoPerp.x * 15, top.y - torsoPerp.y * 15);
+    ctx.lineTo(top.x + torsoPerp.x * 15, top.y + torsoPerp.y * 15);
+    ctx.lineTo(btm.x + torsoPerp.x * 30, btm.y + torsoPerp.y * 30);
+    ctx.lineTo(btm.x - torsoPerp.x * 30, btm.y - torsoPerp.y * 30);
+    ctx.closePath(); ctx.fill();
+    if (charType === 'sailor') {
+      ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 2;
+      for (const f of [-0.5, 0, 0.5]) {
+        ctx.beginPath();
+        ctx.moveTo(top.x + torsoPerp.x * 15 * f + torsoDir.x * 6, top.y + torsoPerp.y * 15 * f + torsoDir.y * 6);
+        ctx.lineTo(btm.x + torsoPerp.x * 30 * f, btm.y + torsoPerp.y * 30 * f);
+        ctx.stroke();
+      }
+    }
+  }
+  // OLの長い髪（体の後ろ・判定なし）
+  if (charType === 'ol') {
+    ctx.fillStyle = PAL.hair;
+    ctx.beginPath(); ctx.roundRect(b.head.x - 27, b.head.y - 16, 46, 88, 20); ctx.fill();
+  }
+  if (charType === 'mickey') { // しっぽ（見た目だけ）
+    const swayT = Math.sin(performance.now() / 280) * 5;
+    ctx.strokeStyle = '#212121'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(b.hip.x, b.hip.y);
+    ctx.quadraticCurveTo(b.hip.x - 30, b.hip.y + 18, b.hip.x - 42 + swayT, b.hip.y + 44);
+    ctx.stroke();
+  }
+  if (charType === 'anpan') { // マント（見た目だけ）
+    const sway = Math.sin(performance.now() / 300) * 4;
+    ctx.fillStyle = '#8d5a2b';
+    ctx.beginPath();
+    ctx.moveTo(b.chest.x - torsoPerp.x * 13, b.chest.y - torsoPerp.y * 13);
+    ctx.lineTo(b.chest.x + torsoPerp.x * 13, b.chest.y + torsoPerp.y * 13);
+    ctx.lineTo(b.hip.x + torsoPerp.x * 30 + sway, b.hip.y + torsoDir.y * 64);
+    ctx.lineTo(b.hip.x - torsoPerp.x * 30 + sway, b.hip.y + torsoDir.y * 64);
+    ctx.closePath(); ctx.fill();
+  }
+  // 操作足首の目印
+  if (state !== 'over') {
+    const pulse = 14 + Math.sin(performance.now() / 280) * 3;
+    ctx.strokeStyle = dragging ? 'rgba(255,112,67,.95)' : 'rgba(255,255,255,.9)';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(b.fA.x, b.fA.y, pulse + 8, 0, Math.PI * 2); ctx.stroke();
+  }
+  // 腕（奥）
+  line(b.chest, b.elb, 13, PAL.arm); line(b.elb, b.hand, 12, PAL.arm2 || PAL.arm);
+  // 支え脚
+  line(b.sA, b.sK, 17, PAL.leg); line(b.sK, b.hip, 19, PAL.leg);
+  // 操作脚
+  line(b.hip, b.fK, 20, PAL.leg); line(b.fK, b.fA, 17, PAL.leg);
+  // 靴
+  line(b.sA, { x:b.sA.x + 22, y:b.sA.y - 2 }, 11, PAL.shoeS);
+  line(b.fA, b.toe, 12, PAL.shoeF);
+  // 体
+  line(b.hip, b.chest, 30, PAL.torso);
+  if (PAL.pants) line(b.hip, { x:(b.hip.x + b.fK.x)/2, y:(b.hip.y + b.fK.y)/2 }, 24, PAL.pants);
+  if (PAL.skirt) skirtDraw(PAL.skirt); // スカート（判定なし）
+  if (charType === 'straw') { // 膝までGパン＋サンダルの鼻緒（見た目だけ）
+    line(b.hip, b.fK, 22, PAL.pants);
+    line(b.fK, { x:(b.fK.x + b.fA.x) / 2, y:(b.fK.y + b.fA.y) / 2 }, 18, PAL.pants);
+    line(b.sK, b.hip, 21, PAL.pants);
+    line(b.sK, { x:(b.sK.x + b.sA.x) / 2, y:(b.sK.y + b.sA.y) / 2 }, 18, PAL.pants);
+    ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(b.fA.x + 3, b.fA.y - 7); ctx.lineTo(b.toe.x - 5, b.toe.y - 1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(b.sA.x + 3, b.sA.y - 7); ctx.lineTo(b.sA.x + 19, b.sA.y - 3); ctx.stroke();
+  }
+  if (charType === 'mickey') { // 短パンのボタン・白手袋・大きな靴（見た目だけ）
+    line(b.hip, { x:(b.hip.x + b.sK.x) / 2, y:(b.hip.y + b.sK.y) / 2 }, 21, PAL.pants);
+    ctx.fillStyle = '#ffffff';
+    for (const sd of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(b.hip.x + torsoPerp.x * 7 * sd + torsoDir.x * 5, b.hip.y + torsoPerp.y * 7 * sd + torsoDir.y * 5, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(b.hand.x, b.hand.y, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fdd835';
+    const fa = Math.atan2(b.toe.y - b.fA.y, b.toe.x - b.fA.x);
+    ctx.beginPath(); ctx.ellipse((b.fA.x + b.toe.x) / 2 + 3, (b.fA.y + b.toe.y) / 2, 13, 6.5, fa, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(b.sA.x + 11, b.sA.y - 2, 13, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  if (charType === 'anpan') { // 黄色いベルト（見た目だけ）
+    ctx.strokeStyle = '#fdd835'; ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.moveTo(b.hip.x - torsoPerp.x * 15, b.hip.y - torsoPerp.y * 15);
+    ctx.lineTo(b.hip.x + torsoPerp.x * 15, b.hip.y + torsoPerp.y * 15);
+    ctx.stroke();
+  }
+  if (charType === 'dora') { // 白いお腹＋ポケット、首輪と鈴、白い手（見た目だけ）
+    const mid = { x:(b.chest.x + b.hip.x) / 2, y:(b.chest.y + b.hip.y) / 2 };
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(mid.x, mid.y, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#90a4ae'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(mid.x, mid.y + 2, 9, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    ctx.strokeStyle = '#e53935'; ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(b.chest.x - torsoPerp.x * 14, b.chest.y - torsoPerp.y * 14);
+    ctx.lineTo(b.chest.x + torsoPerp.x * 14, b.chest.y + torsoPerp.y * 14);
+    ctx.stroke();
+    ctx.fillStyle = '#ffd54f';
+    ctx.beginPath(); ctx.arc(b.chest.x + torsoDir.x * 9, b.chest.y + torsoDir.y * 9, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(b.hand.x, b.hand.y, 8, 0, Math.PI * 2); ctx.fill();
+  }
+  if (charType === 'ninja') { // 赤い帯（見た目だけ）
+    ctx.strokeStyle = '#c62828'; ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.moveTo(b.hip.x - torsoPerp.x * 15, b.hip.y - torsoPerp.y * 15);
+    ctx.lineTo(b.hip.x + torsoPerp.x * 15, b.hip.y + torsoPerp.y * 15);
+    ctx.stroke();
+  }
+  if (charType === 'sailor') { // セーラー襟
+    const c = b.chest;
+    ctx.fillStyle = '#eceff1';
+    ctx.beginPath();
+    ctx.moveTo(c.x - torsoPerp.x * 17, c.y - torsoPerp.y * 17);
+    ctx.lineTo(c.x + torsoPerp.x * 17, c.y + torsoPerp.y * 17);
+    ctx.lineTo(c.x + torsoPerp.x * 10 + torsoDir.x * 20, c.y + torsoPerp.y * 10 + torsoDir.y * 20);
+    ctx.lineTo(c.x - torsoPerp.x * 10 + torsoDir.x * 20, c.y - torsoPerp.y * 10 + torsoDir.y * 20);
+    ctx.closePath(); ctx.fill();
+  }
+  // 頭
+  if (charType === 'ninja') { // 頭巾の結びはし（頭の後ろ・見た目だけ）
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    const wob = Math.sin(performance.now() / 160) * 3;
+    ctx.beginPath(); ctx.moveTo(b.head.x - 20, b.head.y - 8); ctx.quadraticCurveTo(b.head.x - 34, b.head.y - 2 + wob, b.head.x - 40, b.head.y + 8 + wob); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(b.head.x - 18, b.head.y - 12); ctx.quadraticCurveTo(b.head.x - 30, b.head.y - 12 - wob, b.head.x - 38, b.head.y - 6 - wob); ctx.stroke();
+  }
+  if (charType === 'mickey') { // 丸い耳（頭の後ろ）
+    ctx.fillStyle = '#212121';
+    ctx.beginPath(); ctx.arc(b.head.x - 16, b.head.y - 18, 10.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x + 16, b.head.y - 18, 10.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.fillStyle = charType === 'ninja' ? '#263238' : (charType === 'anpan' ? '#eda96b' : (charType === 'dora' ? '#2196f3' : (charType === 'mickey' ? '#212121' : '#f2b183')));
+  ctx.beginPath(); ctx.arc(b.head.x, b.head.y, 23, 0, Math.PI * 2); ctx.fill();
+  if (charType === 'ninja') { // 目出しバンド
+    ctx.fillStyle = '#f2b183';
+    ctx.beginPath(); ctx.roundRect(b.head.x - 17, b.head.y - 5, 34, 11, 5); ctx.fill();
+  } else if (charType === 'anpan') { // 顔：鼻とほっぺ（見た目だけ）
+    ctx.fillStyle = '#ef5350';
+    ctx.beginPath(); ctx.arc(b.head.x - 13, b.head.y + 7, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x + 13, b.head.y + 7, 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fb8c00';
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 3, 8, 0, Math.PI * 2); ctx.fill();
+  } else if (charType === 'dora') { // 顔：白い顔面、目、赤い鼻、ひげ、口（見た目だけ）
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.ellipse(b.head.x, b.head.y + 5, 17, 15, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#263238'; ctx.lineWidth = 1.2;
+    for (const sx of [-1, 1]) {
+      ctx.beginPath(); ctx.ellipse(b.head.x + sx * 5.5, b.head.y - 10, 5, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#263238';
+      ctx.beginPath(); ctx.arc(b.head.x + sx * 4.2, b.head.y - 9, 2.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+    }
+    ctx.fillStyle = '#e53935';
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y - 1, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 1.4;
+    for (const sx of [-1, 1]) for (let wI = 0; wI < 3; wI++) {
+      ctx.beginPath();
+      ctx.moveTo(b.head.x + sx * 8, b.head.y + 2 + wI * 4);
+      ctx.lineTo(b.head.x + sx * 19, b.head.y + (wI - 1) * 5 + 3);
+      ctx.stroke();
+    }
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 4, 11, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  } else if (charType === 'mickey') { // 顔：肌色エリア、縦長の目、黒い鼻、笑口（見た目だけ）
+    ctx.fillStyle = '#f7cfa5';
+    ctx.beginPath(); ctx.ellipse(b.head.x, b.head.y + 6, 15, 13, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(b.head.x, b.head.y - 3, 12, 9, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 1.1;
+    for (const sx of [-1, 1]) {
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.ellipse(b.head.x + sx * 4.5, b.head.y - 6, 3.6, 6, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#263238';
+      ctx.beginPath(); ctx.arc(b.head.x + sx * 4, b.head.y - 4, 1.8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillStyle = '#212121';
+    ctx.beginPath(); ctx.ellipse(b.head.x, b.head.y + 3, 5, 3.6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 5, 10, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  } else if (charType === 'grandpa') { // 横髪と白ひげ
+    ctx.fillStyle = '#bdbdbd';
+    ctx.beginPath(); ctx.arc(b.head.x - 19, b.head.y + 4, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x + 19, b.head.y + 4, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#eeeeee';
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 9, 13, 0.05 * Math.PI, 0.95 * Math.PI); ctx.fill();
+  } else {
+    ctx.fillStyle = PAL.hair;
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y - 6, 23, Math.PI, Math.PI * 1.95); ctx.fill();
+    if (charType === 'sailor') { ctx.fillRect(b.head.x - 25, b.head.y - 8, 8, 26); ctx.fillRect(b.head.x + 17, b.head.y - 8, 8, 26); }
+  }
+  if (charType === 'straw') { // 麦わら帽子（見た目だけ）
+    ctx.fillStyle = '#e8cf7e';
+    ctx.beginPath(); ctx.ellipse(b.head.x, b.head.y - 9, 31, 8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y - 9, 16, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#d32f2f';
+    ctx.fillRect(b.head.x - 16, b.head.y - 13, 32, 4);
+  }
+  if (charType !== 'anpan' && charType !== 'dora' && charType !== 'mickey') {
+    ctx.fillStyle = '#263238';
+    ctx.beginPath(); ctx.arc(b.head.x + 7, b.head.y + 1, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x - 8, b.head.y + 1, 2.6, 0, Math.PI * 2); ctx.fill();
+  } else if (charType === 'anpan') { // アンパンマンの目（鼻の上）
+    ctx.fillStyle = '#263238';
+    ctx.beginPath(); ctx.arc(b.head.x - 8, b.head.y - 6, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(b.head.x + 8, b.head.y - 6, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 6, 7, 0.2 * Math.PI, 0.8 * Math.PI); ctx.stroke();
+  }
+  if (charType !== 'ninja' && charType !== 'anpan' && charType !== 'dora' && charType !== 'mickey') {
+    ctx.strokeStyle = '#263238'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(b.head.x, b.head.y + 7, 7, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+  }
+  if (charType === 'grandpa') { // メガネ
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(b.head.x - 7.5, b.head.y + 1, 5.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(b.head.x + 7.5, b.head.y + 1, 5.5, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(b.head.x - 2, b.head.y + 1); ctx.lineTo(b.head.x + 2, b.head.y + 1); ctx.stroke();
+  }
+  const neckPt = { x:b.chest.x - torsoDir.x * 8, y:b.chest.y - torsoDir.y * 8 };
+  if (charType === 'salary') { // ネクタイ
+    line(neckPt, { x:neckPt.x + torsoDir.x * 30, y:neckPt.y + torsoDir.y * 30 }, 7, '#c62828');
+  }
+  if (charType === 'sailor') { // 赤リボン
+    ctx.fillStyle = '#d32f2f';
+    ctx.beginPath(); ctx.moveTo(neckPt.x, neckPt.y + 6); ctx.lineTo(neckPt.x - 9, neckPt.y - 1); ctx.lineTo(neckPt.x - 9, neckPt.y + 13); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(neckPt.x, neckPt.y + 6); ctx.lineTo(neckPt.x + 9, neckPt.y - 1); ctx.lineTo(neckPt.x + 9, neckPt.y + 13); ctx.closePath(); ctx.fill();
+  }
+  if (charType === 'salary') { // カバン（判定なし）：手の先にぶら下げる
+    const dx = b.hand.x - b.elb.x, dy = b.hand.y - b.elb.y, dd = Math.hypot(dx, dy) || 1;
+    ctx.save();
+    ctx.translate(b.hand.x + dx / dd * 14, b.hand.y + dy / dd * 14 + 4);
+    ctx.rotate(Math.atan2(dy, dx) + Math.PI / 2);
+    ctx.fillStyle = '#795548';
+    ctx.beginPath(); ctx.roundRect(-18, -2, 36, 25, 3); ctx.fill();
+    ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, -3, 6, Math.PI, 0); ctx.stroke();
+    ctx.fillStyle = '#ffd54f'; ctx.fillRect(-3, 8, 6, 5);
+    ctx.restore();
+  }
+  if (charType === 'grandpa') { // 杖（判定なし）
+    line(b.hand, { x:b.hand.x + 12, y:b.hand.y + 58 }, 5, '#8d6e63');
+    ctx.strokeStyle = '#8d6e63'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.arc(b.hand.x + 4, b.hand.y - 4, 7, Math.PI, Math.PI * 1.9); ctx.stroke();
+  }
+
+  // ボール（複数）
+  for (const bl of balls) {
+    ctx.save();
+    ctx.translate(bl.x, bl.y); ctx.rotate(bl.rot);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(0, 0, bl.r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#37474f'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#37474f';
+    for (let i = 0; i < 5; i++) {
+      const a = i / 5 * Math.PI * 2;
+      ctx.beginPath(); ctx.arc(Math.cos(a) * bl.r * 0.62, Math.sin(a) * bl.r * 0.62, 4.2, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // 空中アイテム
+  for (const item of items) {
+    const blink = item.life < 120 && Math.floor(item.life / 8) % 2 === 0;
+    ctx.globalAlpha = blink ? 0.35 : 0.95;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(item.x, item.y, 24, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = item.type === 'god' ? '#f9a825' : (item.type === 'cat' ? '#43a047' : (item.type === 'big' ? '#8e24aa' : '#42a5f5')); ctx.lineWidth = 3; ctx.stroke();
+    ctx.font = '24px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(item.type === 'god' ? '✋' : (item.type === 'cat' ? '🐱' : (item.type === 'big' ? '🔍' : '⚽')), item.x, item.y + 1);
+    ctx.globalAlpha = 1; ctx.textBaseline = 'alphabetic';
+  }
+  // 猫救済の演出
+  for (const e of effects) {
+    ctx.globalAlpha = Math.max(0, e.life);
+    ctx.font = '36px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(e.emoji, e.x, e.y);
+    ctx.globalAlpha = 1;
+  }
+
+  // ポップアップ
+  for (const p of popups) {
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = '#e65100'; ctx.font = '900 20px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(p.text, p.x, p.y);
+    ctx.globalAlpha = 1;
+  }
+  if (state === 'ready' && document.getElementById('startCard').style.display === 'none') {
+    ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.font = '700 16px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('右足首をドラッグして開始！', W / 2, groundY + 42);
+  }
+}
+
+// ---------- メインループ ----------
+let last = performance.now(), acc = 0;
+function frame(now) {
+  requestAnimationFrame(frame);
+  // ホールド式一時停止（v9）: プレイ中に画面に触れていない間は全て凍結
+  const holdPaused = state === 'play' && !isTouching();
+  document.getElementById('pauseLabel').style.display = holdPaused ? 'block' : 'none';
+  if (state === 'var') {
+    varTimer--;
+    const vl = document.getElementById('varLabel');
+    vl.textContent = '📺 VAR判定中' + '.'.repeat(1 + Math.floor((110 - varTimer) / 18) % 3) + '\n' +
+      (varReason === 'hand' ? 'ハンドがあったか確認しています' : 'ボールの落下を確認しています');
+    if (varTimer <= 0) resolveVar();
+  }
+  const gb = balls.find(b => b.grace > 0);
+  const gl = document.getElementById('graceLabel');
+  if (gb && state === 'play') { gl.style.display = 'block'; gl.textContent = '⏱ あと ' + (gb.grace / 60).toFixed(1) + ' 秒以内にリフティング！'; }
+  else gl.style.display = 'none';
+  let dt = now - last; last = now;
+  if (holdPaused) { draw(); return; }
+  if (dt > 80) dt = 80;
+  bgUpdate(dt / 1000);
+  acc += dt;
+  const STEP = 1000 / 60;
+  while (acc >= STEP) {
+    stepBody();
+    stepBall(now);
+    acc -= STEP;
+  }
+  for (const p of popups) { p.y -= 0.9; p.life -= 0.022; }
+  popups = popups.filter(p => p.life > 0);
+  for (const e of effects) { e.y -= 1.1; e.life -= 0.025; }
+  effects = effects.filter(e => e.life > 0);
+  draw();
+}
+resize();
+resetPartCounts();
+layout(true);
+document.getElementById('score').textContent = '0';
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

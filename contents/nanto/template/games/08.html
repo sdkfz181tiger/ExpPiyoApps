@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>ミサイル逃げ切り！ 〜弾いても戻ってくる〜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#0b1026;
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
+    touch-action:none; user-select:none; -webkit-user-select:none; }
+  #wrap { position:fixed; inset:0; }
+  canvas { display:block; width:100%; height:100%; }
+  .shake { animation:shake .45s ease; }
+  @keyframes shake {
+    0%,100%{transform:translate(0,0)} 20%{transform:translate(-9px,3px)}
+    40%{transform:translate(8px,-3px)} 60%{transform:translate(-6px,2px)} 80%{transform:translate(4px,0)}
+  }
+
+  /* HUD */
+  #hud { position:absolute; top:0; left:0; right:0; padding:10px 12px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    pointer-events:none; z-index:5; }
+  #missileBox { font-size:15px; font-weight:900; color:#fff; line-height:1.25;
+    background:rgba(0,0,0,.4); border-radius:14px; padding:7px 12px; }
+  #missileBox .count { font-size:26px; color:#ff8a80; }
+  #missileBox .next { display:block; font-size:11px; color:#ffe082; font-weight:700; }
+  #scoreBox { text-align:right; background:rgba(0,0,0,.4); border-radius:14px; padding:6px 12px; color:#fff; }
+  #time { font-size:26px; font-weight:800; line-height:1; }
+  #time small { font-size:13px; color:#b3e5fc; }
+  #sub { font-size:11px; color:#cfeaff; margin-top:3px; }
+  #scoreLine { font-size:17px; font-weight:900; color:#ffe082; margin-top:3px; }
+
+  /* 危険の枠（ミサイル増援の合図：画面の縁に黄黒ストライプが流れ、フェードで出入り。中央に何も出さない） */
+  #hazard { position:absolute; inset:0; z-index:7; pointer-events:none; opacity:0; transition:opacity .35s ease; }
+  #hazard.show { opacity:1; }
+  #hazard .edge { position:absolute; background:repeating-linear-gradient(45deg,#ffd600 0 14px,#151515 14px 28px); }
+  #hazard .top { top:0; left:0; right:0; height:16px; }
+  #hazard .bottom { bottom:0; left:0; right:0; height:16px; }
+  #hazard .left { left:0; top:0; bottom:0; width:16px; }
+  #hazard .right { right:0; top:0; bottom:0; width:16px; }
+  /* 表示中は模様が枠を時計回りに流れる（1周期=39.6pxで継ぎ目なし） */
+  #hazard.show .top { animation:hzFlowX .8s linear infinite; }
+  #hazard.show .right { animation:hzFlowY .8s linear infinite; }
+  #hazard.show .bottom { animation:hzFlowXRev .8s linear infinite; }
+  #hazard.show .left { animation:hzFlowYRev .8s linear infinite; }
+  @keyframes hzFlowX { from { background-position:0 0; } to { background-position:39.6px 0; } }
+  @keyframes hzFlowXRev { from { background-position:39.6px 0; } to { background-position:0 0; } }
+  @keyframes hzFlowY { from { background-position:0 0; } to { background-position:0 39.6px; } }
+  @keyframes hzFlowYRev { from { background-position:0 39.6px; } to { background-position:0 0; } }
+
+  /* 一時停止の表示（お試し：指を離している間だけ出る小さい札） */
+  #pauseTag { position:absolute; left:50%; top:38%; transform:translateX(-50%);
+    z-index:6; background:rgba(0,0,0,.55); color:#fff; font-size:17px; font-weight:900;
+    border-radius:999px; padding:8px 18px; pointer-events:none; text-align:center; white-space:nowrap; }
+  #pauseTag small { display:block; font-size:11px; font-weight:700; color:#ffe082; margin-top:2px; }
+
+  /* 版表示 */
+  .ver { font-size:12px; font-weight:700; color:#fff; opacity:.65; margin-top:2px; }
+  #verTag { position:absolute; top:12px; left:50%; transform:translateX(-50%);
+    z-index:5; font-size:10px; font-weight:700; color:rgba(255,255,255,.5); pointer-events:none; }
+
+  /* ポップ表示 */
+  #pop { position:absolute; left:50%; top:52%; transform:translateX(-50%);
+    z-index:6; color:#ffe082; font-size:27px; font-weight:900; pointer-events:none;
+    opacity:0; text-shadow:0 2px 6px rgba(0,0,0,.7); white-space:nowrap; }
+  #pop.show { animation:pop .55s ease; }
+  @keyframes pop { 0%{opacity:0; transform:translateX(-50%) translateY(10px) scale(.8)}
+    30%{opacity:1} 100%{opacity:0; transform:translateX(-50%) translateY(-26px) scale(1.1)} }
+
+  /* オーバーレイ (ready / result) */
+  .overlay { position:absolute; inset:0; z-index:10; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:24px;
+    background:rgba(6,8,24,.6); color:#fff; }
+  .hidden { display:none !important; }
+  .title { font-size:38px; font-weight:900; line-height:1.2; text-shadow:0 3px 0 #b71c1c; }
+  .title small { display:block; font-size:16px; color:#ffccbc; text-shadow:none; margin-top:8px; font-weight:700; }
+  .howto { margin-top:18px; font-size:15px; line-height:1.95; font-weight:700;
+    background:rgba(0,0,0,.4); border-radius:16px; padding:14px 18px; text-align:left; }
+  .startHint { margin-top:22px; font-size:19px; font-weight:900; color:#ffe082;
+    animation:blink 1.1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+  .resultTitle { font-size:34px; font-weight:900; line-height:1.3; }
+  .resultStats { margin-top:16px; font-size:17px; line-height:2; font-weight:700;
+    background:rgba(0,0,0,.4); border-radius:16px; padding:14px 22px; }
+  .resultStats b { color:#ffe082; font-size:22px; }
+  #retryBtn { margin-top:22px; pointer-events:auto; cursor:pointer;
+    background:#ef5350; color:#fff; border:none; border-radius:999px;
+    font-size:19px; font-weight:900; padding:14px 34px; box-shadow:0 5px 0 #b71c1c;
+    font-family:inherit; }
+  #retryBtn:active { transform:translateY(3px); box-shadow:0 2px 0 #b71c1c; }
+  .settingsBtn { margin-top:18px; pointer-events:auto; cursor:pointer;
+    background:rgba(255,255,255,.14); color:#fff; border:2px solid rgba(255,255,255,.5); border-radius:999px;
+    font-size:15px; font-weight:900; padding:10px 26px; font-family:inherit; }
+  .settingsBtn:active { transform:translateY(2px); }
+  #settings { z-index:20; background:rgba(6,8,24,.82); }
+  #settings .panel { background:rgba(0,0,0,.45); border-radius:18px; padding:20px 22px; width:min(88vw, 340px); }
+  #sensVal { color:#ffe082; font-size:22px; font-weight:900; }
+  #sensSlider { width:100%; margin:16px 0 6px; height:36px; accent-color:#ffb300; cursor:pointer; }
+  .sensScale { display:flex; justify-content:space-between; font-size:11px; color:#b0bec5; font-weight:700; }
+  .presetRow { display:flex; gap:8px; justify-content:center; margin-top:14px; }
+  .presetBtn { pointer-events:auto; cursor:pointer; background:rgba(255,255,255,.12); color:#fff;
+    border:2px solid rgba(255,255,255,.35); border-radius:999px; font-size:14px; font-weight:900;
+    padding:8px 14px; font-family:inherit; }
+  .presetBtn.on { background:#ffb300; color:#3e2723; border-color:#ffb300; }
+  #settingsClose { margin-top:20px; pointer-events:auto; cursor:pointer;
+    background:#42a5f5; color:#fff; border:none; border-radius:999px;
+    font-size:17px; font-weight:900; padding:12px 32px; box-shadow:0 4px 0 #1565c0; font-family:inherit; }
+  #settingsClose:active { transform:translateY(2px); box-shadow:0 2px 0 #1565c0; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div id="missileBox">🚀 <span class="count" id="mCount">1</span> 本 追尾中
+      <span class="next" id="nextIn">次のミサイルまで 20秒</span>
+      <span class="next" id="gunInfo">🔫 Lv1 ・ 1方向</span>
+    </div>
+    <div id="scoreBox">
+      <div id="time">0.0<small> 秒</small></div>
+      <div id="scoreLine">スコア 0</div>
+      <div id="sub">ギリギリ 0回 ・ 迎撃 0回</div>
+    </div>
+  </div>
+
+  <div id="hazard"><div class="edge top"></div><div class="edge bottom"></div><div class="edge left"></div><div class="edge right"></div></div>
+  <div id="verTag">v33</div>
+
+  <div id="pop">弾いた！</div>
+  <div id="pauseTag" class="hidden">⏸ 一時停止中<small>指を置くと再開</small></div>
+
+  <div class="overlay" id="ready">
+    <div class="title">🚀 ミサイル逃げ切り！<small>弾いても、壊れずに戻ってくる</small></div>
+    <div class="ver">v33</div>
+    <div class="howto">
+      ✈️ <b>ドラッグ</b>で自機を動かして逃げ切ろう<br>
+      ⏸ <b>お試し仕様</b>：ゲームが進むのは<b>指を置いている間だけ</b>。指を離すと<b>一時停止</b>するので、指の置き直しや休憩ができる<br>
+      👆 画面の<b>どこを触ってもOK</b>。指を動かした分だけ自機が動く（タップでワープしない）<br>
+      🚀 ミサイルは<b>遅い</b>けど、<b>20秒ごとに1本増える</b><br>
+      ⚠ 増える瞬間は、<b>画面の縁に黄黒の帯が流れて</b>知らせる（真ん中には何も出ない）<br>
+      🎲 1本ずつ速さも狙いもバラバラで、<b>色んな方向から</b>来る<br>
+      🟣 <b>紫のミサイルは予測型</b>：今の位置ではなく<b>1秒後の位置</b>を狙って先回りしてくる。止まるか切り返すと予測が外れる<br>
+      🟢 <b>緑のミサイルは過去型</b>（バカ）：<b>0.5秒前のあなたの位置</b>を本気で狙ってくる。今のあなたは見ていないので、動き続けていれば当たらない<br>
+      🔵 <b>青のミサイルは回り込み型</b>（実験）：あなたの<b>正面に回り込んで</b>から、正面へ突っ込んでくる。向きを変え続けると回り込み直す<br>
+      🔁 3本目からは <b>予測→過去→回り込み→通常</b> の順に増えていく<br>
+      🌀 ミサイルごとに<b>回り方のクセ</b>がある：右回りが好きな弾・左回りが好きな弾・素直な弾。大回りして襲ってくる弾もいる<br>
+      ▲ <b>画面外のミサイル</b>は、入ってくる場所の端に<b>色つきの三角</b>が出る。色で種類、三角の向き（上下左右）で<b>敵がいる方向</b>が分かる<br>
+      🌀 ミサイルは急には曲がれない。<b>直前で切り返せ！</b><br>
+      ⭐ <b>迎撃アイテム</b>を取ると全ミサイルを<b>弾き飛ばす</b>（1本<b>+100点</b>）<br>
+      ⚠ でも壊れはしない。クルクルしたあと、また追ってくる…<br>
+      🔫 自機は<b>後ろにずっと小さい弾</b>を撃ち続ける<br>
+      💥 弾が当たると <b>+10点</b>。でもミサイルは<b>無傷</b>（スコアだけ）<br>
+      🔥 <b>ギリギリ距離</b>で当てると <b>+30点</b>！ 近いほど熱い<br>
+      🟠 <b>強化アイテム</b>で弾が <b>2方向→3方向→連射→4方向</b> に育つ<br>
+      🛡️ <b>シールド（水色）</b>は取るたびに<b>1層</b>たまり、<b>最大2層</b>まで。1層で被弾1回を防げる。防いだ瞬間、その場で<b>爆発</b>が起きて、ぶつかったミサイルは<b>画面外へ移る</b>（壊れはしないので、また戻ってくる）。専用の周期で出現し、満タン（2層）の間は出てこない<br>
+      🔥 <b>火の玉</b>を取ると<b>8秒間</b>、弾が火の玉になる。当たったミサイルは<b>弾かれて軌道が大きく変わり</b>、しばらく誘導が利かずに飛んでいく（速度は変わらない／吹っ飛ばしはしない）。命中スコアは<b>通常の2倍</b>。残り時間は自機の周りの<b>オレンジの円</b>で表示<br>
+      👥 <b>分身</b>は自機の動きを<b>遅れて再生</b>する（位置も角度もその時のコピー）。間隔は<b>移動距離で一定</b>なので、スワイプの速さに影響されない（<b>最大4つ</b>、<b>30秒間隔</b>で出現）。小さい弾も撃つ（スコアは<b>半分</b>）。分身に当たり判定はない<br>
+      ⏱ アイテムは <b>5秒で消える</b>。周りのゲージが残り時間
+    </div>
+    <div class="startHint">指を置くと開始！ 離すと一時停止（お試し）</div>
+    <button class="settingsBtn" id="settingsBtn" data-ui>⚙️ 設定（ドラッグの移動量）</button>
+  </div>
+
+  <div class="overlay hidden" id="result">
+    <div class="resultTitle">💥 撃墜された…<br>ゲームオーバー</div>
+    <div class="resultStats" id="resultStats"></div>
+    <button id="retryBtn">もう一度</button>
+    <button class="settingsBtn" id="settingsBtn2" data-ui>⚙️ 設定（ドラッグの移動量）</button>
+    <div class="startHint" style="font-size:14px; margin-top:14px;">押したら待機画面に戻ります（タップで開始）</div>
+  </div>
+
+  <div class="overlay hidden" id="settings" data-ui>
+    <div class="resultTitle">⚙️ 設定</div>
+    <div class="panel">
+      <div style="font-size:15px; font-weight:900;">ドラッグの移動量　<span id="sensVal">1.0倍</span></div>
+      <input type="range" id="sensSlider" min="0.5" max="2.0" step="0.1" value="1.0" data-ui>
+      <div class="sensScale"><span>0.5倍（細かい）</span><span>2.0倍（大きく動く）</span></div>
+      <div class="presetRow">
+        <button class="presetBtn" data-sens="0.7" data-ui>0.7倍</button>
+        <button class="presetBtn" data-sens="1.0" data-ui>1.0倍</button>
+        <button class="presetBtn" data-sens="1.3" data-ui>1.3倍</button>
+        <button class="presetBtn" data-sens="1.6" data-ui>1.6倍</button>
+      </div>
+      <div style="font-size:12px; color:#cfeaff; margin-top:14px; line-height:1.7; font-weight:700;">
+        指を動かした量 × この倍率だけ自機が動きます。<br>設定は自動で保存されます。
+      </div>
+    </div>
+    <button id="settingsClose" data-ui>閉じる</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const wrap = document.getElementById('wrap');
+  const timeEl = document.getElementById('time');
+  const subEl = document.getElementById('sub');
+  const mCountEl = document.getElementById('mCount');
+  const nextEl = document.getElementById('nextIn');
+  const gunInfoEl = document.getElementById('gunInfo');
+  const scoreLineEl = document.getElementById('scoreLine');
+  const settingsEl = document.getElementById('settings');
+  const sensSliderEl = document.getElementById('sensSlider');
+  const sensValEl = document.getElementById('sensVal');
+  const hazardEl = document.getElementById('hazard');
+  const pauseEl = document.getElementById('pauseTag');
+  const popEl = document.getElementById('pop');
+  const readyEl = document.getElementById('ready');
+  const resultEl = document.getElementById('result');
+  const resultStatsEl = document.getElementById('resultStats');
+
+  // ===== 定数（核の手触り）=====
+  // ※ v2: 密集対策。ミサイル全員が同じ速度・同じ狙いで動くと軌道が重なって1箇所に集まるため、
+  //    1本ごとに速度・旋回・狙い位置をばらけさせ、同士討ちしないよう互いに避けさせる
+  const MISSILE_SPEED_MIN = 115, MISSILE_SPEED_MAX = 145; // px/秒。遅い。数で死ぬ（個体差つき）
+  const MISSILE_TURN_MIN  = 1.8, MISSILE_TURN_MAX  = 2.4; // rad/秒。急には曲がれない（個体差つき）
+  const SEP_DIST = 64;            // この距離内のミサイル同士は避け合う
+  const SEP_PUSH = 30;            // ここまで近づいたら位置を押し離す
+  const SPAWN_EVERY   = 20;       // 秒ごとに+1本
+  const ITEM_EVERY    = 7;        // 秒ごとに迎撃アイテム出現（場に1個まで）
+  const HIT_DIST      = 24;       // 当たり判定
+  const NEAR_DIST     = 52;       // ギリギリ判定
+  // （旧：指先70px上への絶対追従 → 相対ドラッグに変更済み）
+  // 後方ショット（v3）：当たってもミサイルは無傷。スコア加算のみ
+  const BULLET_SPEED  = 540;      // px/秒
+  const BULLET_HIT_DIST = 16;     // 弾とミサイルの命中判定
+  const HIT_SCORE     = 10;       // 弾1発当てるごとに+10
+  const CLOSE_SCORE   = 30;       // ギリギリ距離（自機からNEAR_DIST以内）のミサイルに当てたら+30
+  const INTERCEPT_SCORE = 100;    // 迎撃で弾いたミサイル1本ごとに+100（＝ミサイル数×100点）
+  const POWER_EVERY   = 12;       // 強化アイテムの出現間隔（秒）
+  const ITEM_LIFE     = 5;        // アイテムは5秒で消える（両種共通）
+  const ITEM_RESPAWN  = 3;        // 迎撃アイテムが消えたあと次が出るまで
+  const POWER_RESPAWN = 5;        // 強化アイテムが消えたあと次が出るまで
+  const SHIELD_EVERY   = 18;      // シールドアイテムの出現間隔（専用周期・秒）
+  const SHIELD_FIRST   = 14;      // 最初のシールドが出るまで（秒）
+  const SHIELD_RESPAWN = 6;       // シールドが消えたあと次が出るまで
+  const INV_TIME       = 1.5;     // シールドで助かった後の無敵時間（秒）
+  const SHIELD_MAX     = 2;       // シールドは最大2層まで（1層ずつ取得・1層で被弾1回を防ぐ）
+  const FIRE_EVERY     = 16;      // 火の玉アイテムの出現間隔（専用周期・秒）
+  const FIRE_FIRST     = 10;      // 最初の火の玉が出るまで（秒）
+  const FIRE_RESPAWN   = 6;       // 火の玉が消えたあと次が出るまで
+  const FIRE_DURATION  = 8;       // 火の玉の効果時間（秒）
+  const FIRE_NUDGE     = 1.0;     // 火の玉が命中したときにミサイルの機首がズレる角度(rad)。食らった感が出る強さ
+  const FIRE_GUIDE_LOSS = 0.8;    // 命中後、誘導が利かずそれたまま飛ぶ時間（秒）。速度は変わらない。吹っ飛ばしのスタンとは別
+  const CLONE_EVERY    = 30;      // 分身アイテムの出現間隔（専用周期・秒）
+  const CLONE_FIRST    = 30;      // 最初の分身が出るまで（秒）
+  const CLONE_MAX      = 4;       // 分身は最大4つまで（装備が4つになったら出ない）
+  const CLONE_SPACING  = 60;      // 分身の間隔（軌跡上の移動距離・px）。時間遅延だとスワイプ速度で間隔が変わるため、距離で固定する（60px＝180px/sで約0.33秒ぶん）
+  const GUN_MAX       = 5;
+  const GUN_LEVELS = [null,
+    { ways: 1, interval: 0.22, label: '1方向' },
+    { ways: 2, interval: 0.22, label: '2方向' },
+    { ways: 3, interval: 0.22, label: '3方向' },
+    { ways: 3, interval: 0.15, label: '3方向・連射' },
+    { ways: 4, interval: 0.12, label: '4方向・連射' },
+  ];
+  const GUN_SPREADS = { 1: [0], 2: [-0.14, 0.14], 3: [-0.30, 0, 0.30], 4: [-0.33, -0.11, 0.11, 0.33] };
+  const GUN_POPUPS  = { 2: '2方向ショット！', 3: '3方向ショット！', 4: '連射アップ！', 5: '4方向＋連射！ MAX' };
+
+  let W = 0, H = 0, DPR = 1;
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  function angWrap(a) { while (a > Math.PI) a -= Math.PI * 2; while (a < -Math.PI) a += Math.PI * 2; return a; }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  // ===== 状態 =====
+  let state = 'ready'; // ready | playing | over
+  let time = 0;
+  let nextSpawnAt = SPAWN_EVERY;
+  let itemTimer = 0;
+  let nearMiss = 0;
+  let interceptHits = 0;   // 弾いた回数（ミサイル本数分カウント）
+  let itemPickups = 0;
+  let maxMissiles = 1;
+  let score = 0;
+  let interceptScore = 0;
+  let bulletScore = 0;
+  let bulletHits = 0;
+  let closeHits = 0;
+  let shotsFired = 0;
+  let gunLevel = 1;
+  let fireTimer = 0;
+  let powerTimer = 8;
+
+  const player = { x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, angle: -Math.PI / 2, alive: true };
+  let missiles = [];
+  let interceptors = [];
+  let bullets = [];
+  let particles = [];
+  let item = null;
+  let powerItem = null;
+  let shieldItem = null;
+  let shieldTimer = SHIELD_FIRST;
+  let shieldLayers = 0;    // シールドの層数（0〜SHIELD_MAX）
+  let invT = 0;            // 被弾直後の無敵時間の残り
+  let shieldSaves = 0;     // シールドに助けられた回数
+  let fireItem = null;
+  let fireItemTimer = FIRE_FIRST;
+  let fireT = 0;           // 火の玉の効果時間の残り
+  let fireHits = 0;        // 火の玉で軌道をズラした回数
+  let clones = [];         // 分身（小さい自機）たち {x, y, a}
+  let cloneItem = null;
+  let cloneTimer = CLONE_FIRST;
+  let cloneHistory = [];   // 分身用：自機が動いたフレームの位置と角度の記録（遅延再生用）
+  let dragging = false;
+  let stars = [];
+
+  function makeStars() {
+    stars = [];
+    for (let i = 0; i < 70; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, r: rand(0.6, 1.8), tw: rand(0, 6) });
+  }
+
+  let lastSpawnEdge = -1;
+  let spawnCount = 0; // 何本目か（予測型の出現判定に使う）
+  const PREDICT_LEAD = 1.0;  // 予測型が何秒先を読むか
+  const PREDICT_MAX = 260;   // 予測の先回り距離の上限(px)
+  const PAST_LAG = 0.5;      // 過去型が何秒前の位置を狙うか
+  let posHistory = [];       // 自機の位置履歴（過去型用）
+  // 回り込み型（実験）：自機の正面の点へ回り込み、着いたら正面から突っ込む
+  const FLANK_DIST = 120;    // 正面ポイントまでの距離(px)
+  const FLANK_REACH = 48;    // この距離まで近づいたら突撃開始(px)
+  const CHARGE_TIME = 2.2;   // 突撃の制限時間(秒)。過ぎたら仕切り直し
+  function spawnMissile() {
+    // 自機から遠い画面端から出現。前回と違う端を優先し、出現方向もばらける
+    const edges = [
+      { x: rand(40, W - 40), y: -24 },
+      { x: rand(40, W - 40), y: H + 24 },
+      { x: -24, y: rand(40, H - 40) },
+      { x: W + 24, y: rand(40, H - 40) },
+    ];
+    let best = edges[0], bd = -1, bestIdx = 0;
+    edges.forEach((e, i) => {
+      let d = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
+      if (i === lastSpawnEdge) d *= 0.45; // 前回と同じ端は選ばれにくくする
+      if (d > bd) { bd = d; best = e; bestIdx = i; }
+    });
+    lastSpawnEdge = bestIdx;
+    spawnCount++;
+    // 性格：3本目からは 予測型→過去型→回り込み型→通常型 の繰り返し
+    let kind = 'normal';
+    if (spawnCount >= 3) {
+      const cyc = (spawnCount - 3) % 4;
+      kind = cyc === 0 ? 'predict' : cyc === 1 ? 'past' : cyc === 2 ? 'front' : 'normal';
+    }
+    const speed = rand(MISSILE_SPEED_MIN, MISSILE_SPEED_MAX);
+    const ang = Math.atan2(player.y - best.y, player.x - best.x) + rand(-0.25, 0.25);
+    const m = {
+      x: best.x, y: best.y, angle: ang, kind,
+      vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed,
+      speed, turn: rand(MISSILE_TURN_MIN, MISSILE_TURN_MAX),
+      aimA: rand(0, Math.PI * 2),                 // 狙い位置オフセットの角度
+      aimR: rand(20, 44),                          // 自機の少し横を狙う（本ごとに違う）
+      aimRot: rand(0.35, 0.7) * (Math.random() < 0.5 ? -1 : 1), // オフセットがゆっくり回る
+      stun: 0, spin: 0, nearCool: 0, smokeT: 0,
+      // 旋回のクセ（本ごとにランダム）：+1=右回り好き / -1=左回り好き / 0=素直に最短で回る
+      turnSide: (() => { const r = Math.random(); return r < 0.4 ? 1 : r < 0.8 ? -1 : 0; })(),
+      guideLoss: 0,
+      flash: 0,
+      phase: 'flank', phaseT: 0, // 回り込み型の状態（他種では未使用）
+    };
+    missiles.push(m);
+    maxMissiles = Math.max(maxMissiles, missiles.length);
+    return m;
+  }
+
+  function spawnItem() {
+    // 自機から近すぎず遠すぎない場所
+    for (let i = 0; i < 20; i++) {
+      const x = rand(50, W - 50), y = rand(110, H - 60);
+      const d = Math.hypot(x - player.x, y - player.y);
+      if (d > 120 && d < 460) { item = { x, y, t: 0 }; return; }
+    }
+    item = { x: rand(50, W - 50), y: rand(110, H - 60), t: 0 };
+  }
+
+  function spawnPowerItem() {
+    for (let i = 0; i < 20; i++) {
+      const x = rand(50, W - 50), y = rand(110, H - 60);
+      const d = Math.hypot(x - player.x, y - player.y);
+      const dItem = item ? Math.hypot(x - item.x, y - item.y) : 999;
+      if (d > 120 && d < 460 && dItem > 80) { powerItem = { x, y, t: 0 }; return; }
+    }
+    powerItem = { x: rand(50, W - 50), y: rand(110, H - 60), t: 0 };
+  }
+
+  function spawnShieldItem() {
+    // 他アイテムと重ならない場所に（専用周期で呼ばれる）
+    for (let i = 0; i < 20; i++) {
+      const x = rand(50, W - 50), y = rand(110, H - 60);
+      const d = Math.hypot(x - player.x, y - player.y);
+      const dI = item ? Math.hypot(x - item.x, y - item.y) : 999;
+      const dP = powerItem ? Math.hypot(x - powerItem.x, y - powerItem.y) : 999;
+      if (d > 120 && d < 460 && dI > 80 && dP > 80) { shieldItem = { x, y, t: 0 }; return; }
+    }
+    shieldItem = { x: rand(50, W - 50), y: rand(110, H - 60), t: 0 };
+  }
+
+  function spawnFireItem() {
+    // 他アイテムと重ならない場所に（専用周期で呼ばれる）
+    for (let i = 0; i < 20; i++) {
+      const x = rand(50, W - 50), y = rand(110, H - 60);
+      const d = Math.hypot(x - player.x, y - player.y);
+      const dI = item ? Math.hypot(x - item.x, y - item.y) : 999;
+      const dP = powerItem ? Math.hypot(x - powerItem.x, y - powerItem.y) : 999;
+      const dS = shieldItem ? Math.hypot(x - shieldItem.x, y - shieldItem.y) : 999;
+      if (d > 120 && d < 460 && dI > 80 && dP > 80 && dS > 80) { fireItem = { x, y, t: 0 }; return; }
+    }
+    fireItem = { x: rand(50, W - 50), y: rand(110, H - 60), t: 0 };
+  }
+
+  function spawnCloneItem() {
+    // 他アイテムと重ならない場所に（専用周期で呼ばれる）
+    for (let i = 0; i < 20; i++) {
+      const x = rand(50, W - 50), y = rand(110, H - 60);
+      const d = Math.hypot(x - player.x, y - player.y);
+      const dI = item ? Math.hypot(x - item.x, y - item.y) : 999;
+      const dP = powerItem ? Math.hypot(x - powerItem.x, y - powerItem.y) : 999;
+      const dS = shieldItem ? Math.hypot(x - shieldItem.x, y - shieldItem.y) : 999;
+      const dF = fireItem ? Math.hypot(x - fireItem.x, y - fireItem.y) : 999;
+      if (d > 120 && d < 460 && dI > 80 && dP > 80 && dS > 80 && dF > 80) { cloneItem = { x, y, t: 0 }; return; }
+    }
+    cloneItem = { x: rand(50, W - 50), y: rand(110, H - 60), t: 0 };
+  }
+
+  function fireGun() {
+    // 自機の真後ろへ発射。向きは自機の進行方向の反対
+    const g = GUN_LEVELS[gunLevel];
+    const spreads = GUN_SPREADS[g.ways];
+    const rear = player.angle + Math.PI;
+    const rx = Math.cos(rear), ry = Math.sin(rear);
+    const pxn = -ry, pyn = rx; // 横方向（streamsの並び）
+    spreads.forEach((s, i) => {
+      const dir = rear + s;
+      const off = (i - (spreads.length - 1) / 2) * 7;
+      bullets.push({
+        x: player.x + rx * 16 + pxn * off,
+        y: player.y + ry * 16 + pyn * off,
+        vx: Math.cos(dir) * BULLET_SPEED,
+        vy: Math.sin(dir) * BULLET_SPEED,
+        fire: fireT > 0, // 火の玉の効果中に撃った弾は火の玉になる
+      });
+      shotsFired++;
+    });
+    // 分身も撃つ：小さい弾を、分身自身の向きの真後ろへ（スコアは半分）
+    for (const c of clones) {
+      const crx = Math.cos(c.a + Math.PI), cry = Math.sin(c.a + Math.PI);
+      bullets.push({
+        x: c.x + crx * 12, y: c.y + cry * 12,
+        vx: crx * BULLET_SPEED, vy: cry * BULLET_SPEED,
+        fire: false, half: true, small: true,
+      });
+      shotsFired++;
+    }
+  }
+
+  function showPop(text) {
+    popEl.textContent = text;
+    popEl.classList.remove('show'); void popEl.offsetWidth; popEl.classList.add('show');
+  }
+  let hazardTimer = null;
+  function showHazard() {
+    hazardEl.classList.add('show');
+    clearTimeout(hazardTimer);
+    hazardTimer = setTimeout(() => hazardEl.classList.remove('show'), 1150);
+  }
+
+  function deflect(m, scored = true) {
+    // 自機から外向きに弾き飛ばす。壊れない。しばらくクルクルして無力
+    // ※ 方向・強さ・無力時間を1本ずつばらす（揃うと弾かれた先でもまた集まるため）
+    // ※ 迎撃専用。シールドで防いだ時は shieldBlast（爆発＋画面外へ移動）を使う
+    const ang = Math.atan2(m.y - player.y, m.x - player.x) + rand(-0.45, 0.45);
+    const power = rand(400, 540);
+    m.vx = Math.cos(ang) * power;
+    m.vy = Math.sin(ang) * power;
+    m.stun = rand(1.3, 2.1);
+    m.spin = rand(9, 14) * (Math.random() < 0.5 ? -1 : 1);
+    if (m.kind === 'front') { m.phase = 'flank'; m.phaseT = 0; } // 弾かれたら回り込みから仕切り直し
+    if (scored) {
+      interceptHits++;
+      score += INTERCEPT_SCORE;
+      interceptScore += INTERCEPT_SCORE;
+      particles.push({ x: m.x, y: m.y - 12, vx: 0, vy: -52, life: 0.8, t: 0, kind: 'text', text: '+' + INTERCEPT_SCORE });
+    }
+    for (let i = 0; i < 10; i++) {
+      const a = rand(0, Math.PI * 2), s = rand(40, 190);
+      particles.push({ x: m.x, y: m.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.25, 0.5), t: 0, kind: 'spark' });
+    }
+    // 白い爆発（見た目だけ。ミサイルの挙動は一切変えない）※ v33で目立つように拡大
+    particles.push({ x: m.x, y: m.y, vx: 0, vy: 0, life: 0.32, t: 0, kind: 'boomW' });
+    for (let i = 0; i < 12; i++) {
+      const a = rand(0, Math.PI * 2), s = rand(80, 320);
+      particles.push({ x: m.x, y: m.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.25, 0.5), t: 0, kind: 'sparkW' });
+    }
+  }
+
+  // バリア（シールド）にぶつかった時だけ：その場で爆発を出し、その隙にミサイルを画面外へ移す。
+  // ミサイルは壊れていないので、画面外からまた追ってくる
+  function shieldBlast(m) {
+    explosionAt(m.x, m.y);
+    const edge = Math.floor(rand(0, 4));
+    if (edge === 0) { m.x = -60; m.y = rand(80, H - 40); }
+    else if (edge === 1) { m.x = W + 60; m.y = rand(80, H - 40); }
+    else if (edge === 2) { m.y = -60; m.x = rand(40, W - 40); }
+    else { m.y = H + 60; m.x = rand(40, W - 40); }
+    m.stun = 0; m.guideLoss = 0; m.flash = 0;
+    m.angle = Math.atan2(player.y - m.y, player.x - m.x);
+    m.vx = Math.cos(m.angle) * m.speed;
+    m.vy = Math.sin(m.angle) * m.speed;
+    if (m.kind === 'front') { m.phase = 'flank'; m.phaseT = 0; } // 回り込みは仕切り直し
+  }
+
+  // ぶつかった位置の爆発エフェクト：閃光＋衝撃波の輪＋火花＋炎＋煙（ミサイル自体は壊れず弾かれる）
+  // ※ 火の玉命中エフェクトより少し強めに（v32で拡大：本数が気づけないほど小さかったため）
+  function explosionAt(x, y) {
+    particles.push({ x, y, vx: 0, vy: 0, life: 0.45, t: 0, kind: 'boom' });
+    for (let i = 0; i < 26; i++) {
+      const a = rand(0, Math.PI * 2), s = rand(110, 470);
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.35, 0.7), t: 0, kind: 'spark' });
+    }
+    for (let i = 0; i < 10; i++) {
+      const a = rand(0, Math.PI * 2), s = rand(40, 170);
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.4, 0.7), t: 0, kind: 'fire' });
+    }
+    for (let i = 0; i < 6; i++) {
+      particles.push({ x: x + rand(-8, 8), y: y + rand(-8, 8), vx: rand(-26, 26), vy: rand(-34, -6), life: rand(0.45, 0.75), t: 0, kind: 'smoke' });
+    }
+  }
+
+  function puff(x, y) {
+    for (let i = 0; i < 7; i++) {
+      particles.push({ x: x + rand(-6, 6), y: y + rand(-6, 6), vx: rand(-22, 22), vy: rand(-30, -4), life: rand(0.3, 0.55), t: 0, kind: 'smoke' });
+    }
+  }
+
+  function fireInterceptors() {
+    itemPickups++;
+    for (const m of missiles) {
+      interceptors.push({ x: player.x, y: player.y, target: m, speed: 720, angle: Math.atan2(m.y - player.y, m.x - player.x) });
+    }
+    showPop('迎撃！');
+    if (navigator.vibrate) navigator.vibrate(30);
+  }
+
+  function explode(x, y) {
+    for (let i = 0; i < 42; i++) {
+      const a = rand(0, Math.PI * 2), s = rand(30, 320);
+      particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.3, 0.9), t: 0, kind: Math.random() < 0.5 ? 'fire' : 'spark' });
+    }
+  }
+
+  function resetGame() {
+    time = 0; nextSpawnAt = SPAWN_EVERY; itemTimer = 3.5;
+    nearMiss = 0; interceptHits = 0; itemPickups = 0; maxMissiles = 1;
+    score = 0; interceptScore = 0; bulletScore = 0; bulletHits = 0; closeHits = 0; shotsFired = 0; gunLevel = 1; fireTimer = 0.25; powerTimer = 8;
+    shieldItem = null; shieldTimer = SHIELD_FIRST; shieldLayers = 0; invT = 0; shieldSaves = 0;
+    fireItem = null; fireItemTimer = FIRE_FIRST; fireT = 0; fireHits = 0;
+    clones = []; cloneItem = null; cloneTimer = CLONE_FIRST;
+    cloneHistory = [{ x: player.x, y: player.y, a: player.angle, d: 0 }];
+    player.x = W / 2; player.y = H / 2; player.px = player.x; player.py = player.y;
+    player.vx = 0; player.vy = 0; player.angle = -Math.PI / 2; player.alive = true;
+    missiles = []; interceptors = []; bullets = []; particles = []; item = null; powerItem = null;
+    lastSpawnEdge = -1; spawnCount = 0; posHistory = [];
+    makeStars();
+  }
+
+  function startGame() {
+    resetGame();
+    state = 'playing';
+    readyEl.classList.add('hidden');
+    resultEl.classList.add('hidden');
+    spawnMissile();
+  }
+
+  function gameOver() {
+    state = 'over';
+    player.alive = false;
+    explode(player.x, player.y);
+    wrap.classList.remove('shake'); void wrap.offsetWidth; wrap.classList.add('shake');
+    if (navigator.vibrate) navigator.vibrate([60, 40, 90]);
+    const mins = Math.floor(time / 60), secs = (time % 60).toFixed(1);
+    resultStatsEl.innerHTML =
+      `逃げ切った時間 <b>${mins > 0 ? mins + '分' : ''}${secs}秒</b><br>` +
+      `スコア <b>${score}</b><br>` +
+      `　弾 <b>${bulletScore}点</b>（${bulletHits}発・うちギリギリ<b>${closeHits}発×30</b>）＋ 迎撃 <b>${interceptScore}点</b>（${interceptHits}本×100）<br>` +
+      `最大ミサイル <b>${maxMissiles}本</b> 同時追尾<br>` +
+      `ギリギリ回避 <b>${nearMiss}回</b> ・ 弾いた <b>${interceptHits}回</b><br>` +
+      (shieldSaves > 0 ? `🛡️ シールドに <b>${shieldSaves}回</b> 助けられた<br>` : '') +
+      (fireHits > 0 ? `🔥 火の玉で軌道を <b>${fireHits}回</b> ズラした<br>` : '') +
+      `銃の最終レベル <b>Lv${gunLevel}</b>（${GUN_LEVELS[gunLevel].label}）`;
+    setTimeout(() => resultEl.classList.remove('hidden'), 650);
+  }
+
+  // ===== 設定：ドラッグ感度（移動量の倍率）。保存される =====
+  const SENS_KEY = 'missileEscapeDragSens';
+  let dragSens = 1.0;
+  try {
+    const saved = parseFloat(window.localStorage.getItem(SENS_KEY));
+    if (saved >= 0.5 && saved <= 2.0) dragSens = saved;
+  } catch (e) { /* 保存できない環境では1.0のまま */ }
+  function applySensUI() {
+    sensSliderEl.value = String(dragSens);
+    sensValEl.textContent = dragSens.toFixed(1) + '倍';
+    document.querySelectorAll('.presetBtn').forEach(b => {
+      b.classList.toggle('on', Math.abs(parseFloat(b.dataset.sens) - dragSens) < 0.001);
+    });
+  }
+  function setSens(v) {
+    dragSens = clamp(Math.round(v * 10) / 10, 0.5, 2.0);
+    try { window.localStorage.setItem(SENS_KEY, String(dragSens)); } catch (e) { /* 保存できなくても動作はする */ }
+    applySensUI();
+  }
+  sensSliderEl.addEventListener('input', () => setSens(parseFloat(sensSliderEl.value)));
+  document.querySelectorAll('.presetBtn').forEach(b => {
+    b.addEventListener('click', (e) => { e.stopPropagation(); setSens(parseFloat(b.dataset.sens)); });
+  });
+  function openSettings() { settingsEl.classList.remove('hidden'); applySensUI(); }
+  function closeSettings() { settingsEl.classList.add('hidden'); }
+  document.getElementById('settingsBtn').addEventListener('click', (e) => { e.stopPropagation(); openSettings(); });
+  document.getElementById('settingsBtn2').addEventListener('click', (e) => { e.stopPropagation(); openSettings(); });
+  document.getElementById('settingsClose').addEventListener('click', (e) => { e.stopPropagation(); closeSettings(); });
+  applySensUI();
+
+  // ===== 入力：相対ドラッグ。タップした位置への瞬間移動はなし =====
+  // 触れた瞬間の指の位置と自機の位置を覚え、そこからの「移動量」だけを1:1で反映する。
+  // 指を離して別の場所を触り直しても、自機は今の場所から続きで動く。
+  let dragAnchor = null; // {x, y, px, py}
+  window.addEventListener('pointerdown', (e) => {
+    // 設定ボタンや設定画面の上でのタップではゲームを始めない・ドラッグしない
+    if (e.target && e.target.closest && e.target.closest('[data-ui]')) return;
+    if (state === 'ready') { startGame(); }
+    if (state !== 'playing') return;
+    dragging = true;
+    dragAnchor = { x: e.clientX, y: e.clientY, px: player.x, py: player.y };
+    // ここでは自機を動かさない（瞬間移動なし）
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!dragging || state !== 'playing' || !dragAnchor) return;
+    // 指の移動量 × 感度（設定で変更可、初期値1.0）
+    player.x = clamp(dragAnchor.px + (e.clientX - dragAnchor.x) * dragSens, 16, W - 16);
+    player.y = clamp(dragAnchor.py + (e.clientY - dragAnchor.y) * dragSens, 90, H - 16);
+  });
+  window.addEventListener('pointerup', () => { dragging = false; dragAnchor = null; });
+  window.addEventListener('pointercancel', () => { dragging = false; dragAnchor = null; });
+  document.getElementById('retryBtn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    resetGame();
+    state = 'ready';
+    resultEl.classList.add('hidden');
+    readyEl.classList.remove('hidden');
+  });
+
+  // ===== 更新 =====
+  // 分身の再生：記録した軌跡から「移動距離で distBack ぶん後ろ」の点の、自機の位置と角度をそのまま返す。
+  // 時間ではなく距離で数えるので、スワイプが速くても遅くても間隔は一定
+  function cloneReplay(distBack) {
+    if (!cloneHistory.length) return { x: player.x, y: player.y, a: player.angle };
+    const td = cloneHistory[cloneHistory.length - 1].d - distBack;
+    let i0 = 0;
+    for (let i = 0; i < cloneHistory.length; i++) { if (cloneHistory[i].d <= td) i0 = i; else break; }
+    const e0 = cloneHistory[i0], e1 = cloneHistory[i0 + 1];
+    if (!e1) return e0;
+    const f = clamp((td - e0.d) / ((e1.d - e0.d) || 1), 0, 1);
+    return {
+      x: e0.x + (e1.x - e0.x) * f,
+      y: e0.y + (e1.y - e0.y) * f,
+      a: e0.a + angWrap(e1.a - e0.a) * f,
+    };
+  }
+
+  function update(dt) {
+    // パーティクルは常時進める（ゲームオーバーの爆発を見せるため）
+    for (const p of particles) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.96; p.vy *= 0.96; }
+    particles = particles.filter(p => p.t < p.life);
+    if (state !== 'playing') return;
+
+    time += dt;
+
+    // 自機の速度（向き表示用に実測）
+    if (dt > 0) {
+      player.vx = (player.x - player.px) / dt;
+      player.vy = (player.y - player.py) / dt;
+      const sp = Math.hypot(player.vx, player.vy);
+      if (sp > 30) player.angle = Math.atan2(player.vy, player.vx);
+    }
+    player.px = player.x; player.py = player.y;
+
+    // 自機の位置履歴（過去型ミサイルが参照する。直近1秒分だけ保持）
+    posHistory.push({ t: time, x: player.x, y: player.y });
+    while (posHistory.length && posHistory[0].t < time - 1.0) posHistory.shift();
+
+    // ミサイル増加（合図は画面の縁の黄黒ストライプ点滅。中央には何も出さない）
+    if (time >= nextSpawnAt) {
+      nextSpawnAt += SPAWN_EVERY;
+      spawnMissile();
+      showHazard();
+      if (navigator.vibrate) navigator.vibrate(25);
+    }
+
+    // アイテム出現（5秒で消える）
+    if (!item) {
+      itemTimer -= dt;
+      if (itemTimer <= 0) { spawnItem(); itemTimer = ITEM_EVERY; }
+    } else {
+      item.t += dt;
+      if (Math.hypot(item.x - player.x, item.y - player.y) < 32) {
+        item = null;
+        fireInterceptors();
+      } else if (item.t >= ITEM_LIFE) {
+        puff(item.x, item.y);
+        item = null;
+        itemTimer = ITEM_RESPAWN;
+      }
+    }
+
+    // 後方ショット：撃ち続ける
+    fireTimer -= dt;
+    if (fireTimer <= 0) {
+      fireGun();
+      fireTimer += GUN_LEVELS[gunLevel].interval;
+    }
+
+    // 強化アイテム出現・取得
+    if (!powerItem && gunLevel < GUN_MAX) {
+      powerTimer -= dt;
+      if (powerTimer <= 0) { spawnPowerItem(); powerTimer = POWER_EVERY; }
+    } else if (powerItem) {
+      powerItem.t += dt;
+      if (Math.hypot(powerItem.x - player.x, powerItem.y - player.y) < 32) {
+        powerItem = null;
+        gunLevel = Math.min(GUN_MAX, gunLevel + 1);
+        fireTimer = 0;
+        showPop(GUN_POPUPS[gunLevel] || 'パワーアップ！');
+        if (navigator.vibrate) navigator.vibrate(35);
+      } else if (powerItem.t >= ITEM_LIFE) {
+        puff(powerItem.x, powerItem.y);
+        powerItem = null;
+        powerTimer = POWER_RESPAWN;
+      }
+    }
+
+    // シールドアイテム出現・取得（専用周期。満タン＝2層の間は出ない。1層ずつ増える）
+    if (!shieldItem && shieldLayers < SHIELD_MAX) {
+      shieldTimer -= dt;
+      if (shieldTimer <= 0) { spawnShieldItem(); shieldTimer = SHIELD_EVERY; }
+    } else if (shieldItem) {
+      shieldItem.t += dt;
+      if (Math.hypot(shieldItem.x - player.x, shieldItem.y - player.y) < 32) {
+        shieldItem = null;
+        shieldLayers = Math.min(SHIELD_MAX, shieldLayers + 1);
+        showPop(shieldLayers >= SHIELD_MAX ? 'シールド2層に強化！' : 'シールド装備！');
+        if (navigator.vibrate) navigator.vibrate(30);
+      } else if (shieldItem.t >= ITEM_LIFE) {
+        puff(shieldItem.x, shieldItem.y);
+        shieldItem = null;
+        shieldTimer = SHIELD_RESPAWN;
+      }
+    }
+    if (invT > 0) invT -= dt;
+
+    // 火の玉アイテム出現・取得（専用周期。効果中は出ない）
+    if (!fireItem && fireT <= 0) {
+      fireItemTimer -= dt;
+      if (fireItemTimer <= 0) { spawnFireItem(); fireItemTimer = FIRE_EVERY; }
+    } else if (fireItem) {
+      fireItem.t += dt;
+      if (Math.hypot(fireItem.x - player.x, fireItem.y - player.y) < 32) {
+        fireItem = null;
+        fireT = FIRE_DURATION;
+        showPop('火の玉！');
+        if (navigator.vibrate) navigator.vibrate(30);
+      } else if (fireItem.t >= ITEM_LIFE) {
+        puff(fireItem.x, fireItem.y);
+        fireItem = null;
+        fireItemTimer = FIRE_RESPAWN;
+      }
+    }
+    if (fireT > 0) fireT -= dt;
+
+    // 分身アイテム出現・取得（専用周期。最大2つまで）
+    if (!cloneItem && clones.length < CLONE_MAX) {
+      cloneTimer -= dt;
+      if (cloneTimer <= 0) { spawnCloneItem(); cloneTimer = CLONE_EVERY; }
+    } else if (cloneItem) {
+      cloneItem.t += dt;
+      if (Math.hypot(cloneItem.x - player.x, cloneItem.y - player.y) < 32) {
+        cloneItem = null;
+        clones.push({ x: player.x, y: player.y, a: player.angle });
+        showPop('分身が増えた！');
+        if (navigator.vibrate) navigator.vibrate(30);
+      } else if (cloneItem.t >= ITEM_LIFE) {
+        puff(cloneItem.x, cloneItem.y);
+        cloneItem = null;
+        cloneTimer = CLONE_EVERY;
+      }
+    }
+
+    // 分身用の記録：自機が2px動くごとに、位置と角度と累積距離を記録する。
+    // 止まっている間は記録が増えないので、分身は間隔を保ったまま止まる（重なってこない）
+    {
+      const last = cloneHistory[cloneHistory.length - 1];
+      const moved = last ? Math.hypot(player.x - last.x, player.y - last.y) : 999;
+      if (moved >= 2) {
+        cloneHistory.push({ x: player.x, y: player.y, a: player.angle, d: (last ? last.d : 0) + moved });
+        const lastD = cloneHistory[cloneHistory.length - 1].d;
+        while (cloneHistory.length > 2 && cloneHistory[1].d < lastD - 280) cloneHistory.shift();
+      }
+    }
+
+    // 分身：記録を「移動距離ぶん遅れて」再生する（1つ目=60px後ろ、2つ目=120px後ろ…）。
+    // 位置も角度も、その地点での自機のコピーそのまま（イージングなし）。分身自体に当たり判定はない
+    clones.forEach((c, i) => {
+      const rp = cloneReplay(CLONE_SPACING * (i + 1));
+      c.x = rp.x; c.y = rp.y; c.a = rp.a;
+    });
+
+    // 跳ね返りの壁：画面を中心にした正方形（長い辺＋余白60px）。
+    // 縦長画面では左右の壁が遠く、横長画面では上下の壁が遠くなる
+    const wallSide = Math.max(W, H) + 60;
+    const wx0 = W / 2 - wallSide / 2, wx1 = W / 2 + wallSide / 2;
+    const wy0 = H / 2 - wallSide / 2, wy1 = H / 2 + wallSide / 2;
+
+    // ミサイル
+    for (const m of missiles) {
+      m.nearCool = Math.max(0, m.nearCool - dt);
+      if (m.stun > 0) {
+        // 弾かれた：慣性で飛び、クルクル回る。追尾も当たり判定もなし
+        m.stun -= dt;
+        m.x += m.vx * dt; m.y += m.vy * dt;
+        m.vx *= (1 - 0.9 * dt); m.vy *= (1 - 0.9 * dt);
+        m.angle += m.spin * dt;
+        if (m.stun <= 0) {
+          // 復帰：今の進行方向から追尾再開
+          m.angle = Math.atan2(player.y - m.y, player.x - m.x);
+        }
+      } else {
+        // 追尾：目標方向へ旋回上限つきで曲がる（ミサイルっぽい軌道）
+        let tx, ty;
+        if (m.kind === 'predict') {
+          // 予測型の性格：自機の今の位置ではなく、速度から読んだ1秒後の位置を狙う（先回り）
+          let lx = player.vx * PREDICT_LEAD, ly = player.vy * PREDICT_LEAD;
+          const ll = Math.hypot(lx, ly);
+          if (ll > PREDICT_MAX) { lx = lx / ll * PREDICT_MAX; ly = ly / ll * PREDICT_MAX; }
+          tx = player.x + lx; ty = player.y + ly;
+        } else if (m.kind === 'past') {
+          // 過去型の性格：0.5秒前の自機の位置を本気で狙う（今の自機は見ていない）
+          const tt = time - PAST_LAG;
+          let hp = posHistory.length ? posHistory[0] : player;
+          for (const h of posHistory) { if (h.t <= tt) hp = h; else break; }
+          tx = hp.x; ty = hp.y;
+        } else if (m.kind === 'front') {
+          // 回り込み型の性格：まず自機の「正面の点」へ回り込み、着いたら正面から突っ込む
+          const fx = Math.cos(player.angle), fy = Math.sin(player.angle);
+          if (m.phase === 'flank') {
+            tx = player.x + fx * FLANK_DIST; ty = player.y + fy * FLANK_DIST;
+            if (Math.hypot(m.x - tx, m.y - ty) < FLANK_REACH) { m.phase = 'charge'; m.phaseT = 0; }
+          } else {
+            // 突撃：自機そのものを狙う（正面からの衝突コース）
+            m.phaseT += dt;
+            tx = player.x; ty = player.y;
+            const along = (m.x - player.x) * fx + (m.y - player.y) * fy;
+            if (along < -36 || m.phaseT > CHARGE_TIME) m.phase = 'flank'; // 通り過ぎたら仕切り直し
+          }
+        } else {
+          // 通常型：狙いは自機ピタリではなく本ごとのオフセット位置（接近したらピタリに戻す）
+          m.aimA += m.aimRot * dt;
+          const distP = Math.hypot(player.x - m.x, player.y - m.y);
+          const offScale = clamp((distP - 70) / 90, 0, 1);
+          tx = player.x + Math.cos(m.aimA) * m.aimR * offScale;
+          ty = player.y + Math.sin(m.aimA) * m.aimR * offScale;
+        }
+        let dx = tx - m.x, dy = ty - m.y;
+        const dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+        // ミサイル同士の反発：近い仲間からは離れる方向を混ぜる
+        let sx = 0, sy = 0;
+        for (const o of missiles) {
+          if (o === m || o.stun > 0) continue;
+          const ox = m.x - o.x, oy = m.y - o.y;
+          const od = Math.hypot(ox, oy);
+          if (od > 0.01 && od < SEP_DIST) {
+            const w = (SEP_DIST - od) / SEP_DIST;
+            sx += (ox / od) * w; sy += (oy / od) * w;
+          }
+        }
+        const want = Math.atan2(dy + sy * 1.15, dx + sx * 1.15);
+        const diff = angWrap(want - m.angle);
+        const mt = m.turn * dt;
+        let turn;
+        if (m.guideLoss > 0) {
+          // 火の玉で誘導が乱れている間は曲がれない：それたまま直進する
+          m.guideLoss -= dt;
+          turn = 0;
+        } else if (m.turnSide !== 0 && Math.sign(diff) !== m.turnSide && Math.abs(diff) > 0.6) {
+          // クセ：目標が苦手な側に大きく外れているときは、最短ではなく好きな方向へ大回りする
+          turn = m.turnSide * mt;
+        } else {
+          // 素直な場合と、目標が近い場合（細かい修正）は最短で回る
+          turn = clamp(diff, -mt, mt);
+        }
+        m.angle += turn;
+        if (m.flash > 0) m.flash -= dt;
+        m.vx = Math.cos(m.angle) * m.speed; // 速度は常に一定（火の玉で減速もしない）
+        m.vy = Math.sin(m.angle) * m.speed;
+        m.x += m.vx * dt; m.y += m.vy * dt;
+
+        const d = Math.hypot(player.x - m.x, player.y - m.y);
+        if (d < HIT_DIST) {
+          if (invT > 0) {
+            // 無敵中は素通り（判定なし）
+          } else if (shieldLayers > 0) {
+            // シールドが1層身代わり：当たったミサイルは爆発に紛れて画面外へ移る（スコアなし）、少し無敵になる
+            shieldLayers--;
+            shieldSaves++;
+            invT = INV_TIME;
+            shieldTimer = SHIELD_EVERY;
+            shieldBlast(m);
+            showPop(shieldLayers > 0 ? `シールドが守った！ あと${shieldLayers}層` : 'シールドが守った！');
+            if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
+          } else { gameOver(); return; }
+        }
+        if (d < NEAR_DIST && m.nearCool <= 0 && invT <= 0) {
+          nearMiss++;
+          m.nearCool = 2.5;
+          showPop('ギリギリ！');
+        }
+      }
+      // 煙
+      m.smokeT -= dt;
+      if (m.smokeT <= 0) {
+        m.smokeT = 0.03;
+        particles.push({ x: m.x - Math.cos(m.angle) * 14, y: m.y - Math.sin(m.angle) * 14,
+          vx: rand(-8, 8), vy: rand(-8, 8), life: rand(0.35, 0.65), t: 0, kind: 'smoke' });
+      }
+      // 画面外に弾かれたミサイルは、正方形の壁で跳ね返して戻す（消えない）
+      if (m.x < wx0) { m.x = wx0; m.vx = Math.abs(m.vx); }
+      if (m.x > wx1) { m.x = wx1; m.vx = -Math.abs(m.vx); }
+      if (m.y < wy0) { m.y = wy0; m.vy = Math.abs(m.vy); }
+      if (m.y > wy1) { m.y = wy1; m.vy = -Math.abs(m.vy); }
+    }
+
+    // 最終ガード：重なっているミサイル同士を位置レベルで押し離す（見た目の団子防止）
+    for (let i = 0; i < missiles.length; i++) {
+      for (let j = i + 1; j < missiles.length; j++) {
+        const a = missiles[i], b = missiles[j];
+        let ox = b.x - a.x, oy = b.y - a.y;
+        let od = Math.hypot(ox, oy);
+        if (od < SEP_PUSH) {
+          if (od < 0.01) { ox = rand(-1, 1); oy = rand(-1, 1); od = Math.hypot(ox, oy) || 1; }
+          const push = (SEP_PUSH - od) / 2;
+          const ux = ox / od, uy = oy / od;
+          a.x -= ux * push; a.y -= uy * push;
+          b.x += ux * push; b.y += uy * push;
+        }
+      }
+    }
+
+    // 迎撃弾：対象ミサイルへまっすぐ速く飛び、当たると弾く
+    for (const ic of interceptors) {
+      const m = ic.target;
+      ic.angle = Math.atan2(m.y - ic.y, m.x - ic.x);
+      ic.x += Math.cos(ic.angle) * ic.speed * dt;
+      ic.y += Math.sin(ic.angle) * ic.speed * dt;
+      ic.hit = Math.hypot(m.x - ic.x, m.y - ic.y) < 20;
+      if (ic.hit && m.stun <= 0) deflect(m);
+    }
+    interceptors = interceptors.filter(ic => !ic.hit);
+
+    // 小さい弾：まっすぐ飛ぶ。当たった箇所にエフェクト＋スコア（ミサイルは無傷・無影響。
+    // ただし火の玉だけは例外で、機首が少しだけズレる）
+    for (const b of bullets) { b.x += b.vx * dt; b.y += b.vy * dt; }
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      const b = bullets[i];
+      let consumed = false;
+      for (const m of missiles) {
+        if (Math.hypot(m.x - b.x, m.y - b.y) < BULLET_HIT_DIST) {
+          consumed = true;
+          // ギリギリ判定：命中した瞬間、ミサイルが自機から近いほど高得点。火の玉は2倍、分身の弾は半分
+          const close = Math.hypot(m.x - player.x, m.y - player.y) < NEAR_DIST;
+          let pts = (close ? CLOSE_SCORE : HIT_SCORE) * (b.fire ? 2 : 1);
+          if (b.half) pts = pts / 2;
+          score += pts;
+          bulletScore += pts;
+          bulletHits++;
+          if (close) closeHits++;
+          const sparks = close ? 11 : 6;
+          for (let k = 0; k < sparks; k++) {
+            const a = rand(0, Math.PI * 2), s = rand(35, 170);
+            particles.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.18, 0.38), t: 0, kind: 'spark' });
+          }
+          particles.push({ x: b.x, y: b.y - 6, vx: 0, vy: -48, life: 0.7, t: 0, kind: 'text',
+            text: '+' + pts, size: close ? 18 : 14, rgb: close ? '255,170,60' : '255,224,130' });
+          if (b.fire && m.stun <= 0) {
+            // 火の玉の効果：吹っ飛ばしはしない。弾かれて機首の角度が大きく変わり、しばらく誘導が利かない。速度は変わらない
+            const side = (b.y > m.y) ? -1 : 1;
+            m.angle += side * FIRE_NUDGE;
+            m.guideLoss = FIRE_GUIDE_LOSS;
+            m.flash = 0.18;
+            fireHits++;
+            for (let k = 0; k < 9; k++) {
+              const a = rand(0, Math.PI * 2), s = rand(40, 220);
+              particles.push({ x: b.x, y: b.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(0.2, 0.45), t: 0, kind: 'fire' });
+            }
+            particles.push({ x: m.x, y: m.y - 16, vx: 0, vy: -40, life: 0.6, t: 0, kind: 'text',
+              text: 'それた！', size: 13, rgb: '255,150,60' });
+          }
+          break;
+        }
+      }
+      if (consumed) bullets.splice(i, 1);
+    }
+    bullets = bullets.filter(b => b.x > -30 && b.x < W + 30 && b.y > -30 && b.y < H + 30);
+
+    // HUD
+    timeEl.innerHTML = time.toFixed(1) + '<small> 秒</small>';
+    scoreLineEl.textContent = `スコア ${score}`;
+    gunInfoEl.textContent = `🔫 Lv${gunLevel} ・ ${GUN_LEVELS[gunLevel].label}` + (fireT > 0 ? ` ・ 🔥あと${Math.ceil(fireT)}秒` : '');
+    subEl.textContent = `ギリギリ ${nearMiss}回 ・ 迎撃 ${itemPickups}回（弾いた ${interceptHits}本）`;
+    mCountEl.textContent = missiles.length;
+    nextEl.textContent = state === 'playing' ? `次のミサイルまで ${Math.max(0, Math.ceil(nextSpawnAt - time))}秒` : '';
+  }
+
+  // ===== 描画 =====
+  // アイテムの残り時間ゲージ：上から時計回りに減る円弧。残り少ないと赤く点滅
+  function drawLifeGauge(x, y, t, color) {
+    const frac = clamp(1 - t / ITEM_LIFE, 0, 1);
+    ctx.save();
+    if (frac < 0.3) ctx.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 14));
+    ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(x, y, 27, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = frac > 0.3 ? color : '#ef5350';
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(x, y, 27, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawJet(x, y, angle) {
+    ctx.save();
+    ctx.translate(x, y); ctx.rotate(angle);
+    // 尾翼
+    ctx.fillStyle = '#78909c';
+    ctx.beginPath(); ctx.moveTo(-10, 0); ctx.lineTo(-18, -10); ctx.lineTo(-15, 0); ctx.lineTo(-18, 10); ctx.closePath(); ctx.fill();
+    // 主翼
+    ctx.fillStyle = '#4fc3f7';
+    ctx.beginPath(); ctx.moveTo(2, 0); ctx.lineTo(-8, -15); ctx.lineTo(-12, -13); ctx.lineTo(-6, 0); ctx.lineTo(-12, 13); ctx.lineTo(-8, 15); ctx.closePath(); ctx.fill();
+    // 胴体
+    ctx.fillStyle = '#e1f5fe';
+    ctx.beginPath(); ctx.ellipse(0, 0, 17, 6.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#0288d1'; ctx.lineWidth = 1.6; ctx.stroke();
+    // コックピット
+    ctx.fillStyle = '#0288d1';
+    ctx.beginPath(); ctx.ellipse(5, 0, 6, 3.6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    // 引きリング（当たり判定の目安）
+    ctx.strokeStyle = 'rgba(79,195,247,.35)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x, y, 15, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  // 画面外にいるミサイルの出現予想マーカー（画面端に張り付く▲）
+  const MARKER_COLORS = { normal: '#ef5350', predict: '#ba68c8', past: '#66bb6a', front: '#42a5f5' };
+  function offscreenMarkers() {
+    const out = [];
+    for (const m of missiles) {
+      if (m.x >= 0 && m.x <= W && m.y >= 0 && m.y <= H) continue; // 画面内は不要
+      // 向きは回転させない：自機から見た敵の方向を上下左右の4方向に寄せ、
+      // 敵のいる方を指す（上なら▲、右なら▶…）
+      const dx = m.x - player.x, dy = m.y - player.y;
+      const dir = Math.abs(dx) > Math.abs(dy)
+        ? (dx > 0 ? 0 : Math.PI)          // ▶ / ◀
+        : (dy > 0 ? Math.PI / 2 : -Math.PI / 2); // ▼ / ▲
+      out.push({
+        x: clamp(m.x, 16, W - 16),
+        y: clamp(m.y, 64, H - 16),
+        dir, kind: m.kind, color: MARKER_COLORS[m.kind] || '#fff',
+      });
+    }
+    return out;
+  }
+
+  function drawMissile(m) {
+    ctx.save();
+    ctx.translate(m.x, m.y); ctx.rotate(m.angle);
+    if (m.stun > 0) {
+      // 無力中は×目風に点滅
+      if (Math.floor(m.stun * 10) % 2 === 0) ctx.globalAlpha = 0.55;
+    } else {
+      // 炎
+      const fl = 8 + Math.random() * 7;
+      ctx.fillStyle = '#ff9800';
+      ctx.beginPath(); ctx.moveTo(-13, -3.5); ctx.lineTo(-13 - fl, 0); ctx.lineTo(-13, 3.5); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#ffe082';
+      ctx.beginPath(); ctx.moveTo(-13, -2); ctx.lineTo(-13 - fl * 0.55, 0); ctx.lineTo(-13, 2); ctx.closePath(); ctx.fill();
+    }
+    // 色：通常型は赤系、予測型は紫系、過去型は緑系、回り込み型は青系
+    const finC = m.kind === 'predict' ? '#8e24aa' : m.kind === 'past' ? '#43a047' : m.kind === 'front' ? '#1976d2' : '#c62828';
+    const bodyC = m.kind === 'predict' ? '#e1bee7' : m.kind === 'past' ? '#c8e6c9' : m.kind === 'front' ? '#bbdefb' : '#eceff1';
+    const noseC = m.kind === 'predict' ? '#6a1b9a' : m.kind === 'past' ? '#2e7d32' : m.kind === 'front' ? '#0d47a1' : '#e53935';
+    // フィン
+    ctx.fillStyle = finC;
+    ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(-14, -8); ctx.lineTo(-11, 0); ctx.lineTo(-14, 8); ctx.closePath(); ctx.fill();
+    // 本体
+    ctx.fillStyle = bodyC;
+    ctx.beginPath(); ctx.ellipse(0, 0, 14, 5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#90a4ae'; ctx.lineWidth = 1.2; ctx.stroke();
+    // 鼻
+    ctx.fillStyle = noseC;
+    ctx.beginPath(); ctx.moveTo(6, -4.2); ctx.quadraticCurveTo(16, 0, 6, 4.2); ctx.closePath(); ctx.fill();
+    if (m.flash > 0) {
+      // 火の玉を食らった直後は本体が橙色にフラッシュする
+      ctx.globalAlpha = Math.min(1, m.flash / 0.18) * 0.8;
+      ctx.fillStyle = '#ffb74d';
+      ctx.beginPath(); ctx.ellipse(0, 0, 17, 9, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    ctx.restore();
+    if (m.stun > 0) {
+      ctx.font = '13px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('💫', m.x, m.y - 14);
+    }
+  }
+
+  function draw() {
+    // 空
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#0b1026'); g.addColorStop(0.6, '#16224d'); g.addColorStop(1, '#1d3263');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // 星
+    ctx.fillStyle = '#fff';
+    for (const s of stars) {
+      ctx.globalAlpha = 0.35 + 0.3 * Math.sin(time * 2 + s.tw);
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // パーティクル
+    for (const p of particles) {
+      const k = 1 - p.t / p.life;
+      if (p.kind === 'boomW') {
+        // 白い爆発（迎撃用）：閃光＋芯＋輪。シールドの橙色爆発よりは一回り小さく
+        const pr = 1 - k;
+        ctx.fillStyle = `rgba(255,255,255,${0.7 * k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 5 + pr * 31, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = `rgba(255,255,255,${0.95 * k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2 + pr * 11, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = `rgba(255,255,255,${0.8 * k})`;
+        ctx.lineWidth = 1.2 + 2.4 * k;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 6 + pr * 44, 0, Math.PI * 2); ctx.stroke();
+      } else if (p.kind === 'sparkW') {
+        ctx.fillStyle = `rgba(255,255,255,${k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2 * k + 0.5, 0, Math.PI * 2); ctx.fill();
+      } else if (p.kind === 'boom') {
+        // 閃光（広がって消える丸）＋衝撃波（輪が拡大）
+        const pr = 1 - k; // 0→1 の進行
+        ctx.fillStyle = `rgba(255,214,120,${0.8 * k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 8 + pr * 48, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = `rgba(255,255,235,${0.95 * k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4 + pr * 24, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = `rgba(255,180,80,${0.85 * k})`;
+        ctx.lineWidth = 1.5 + 4 * k;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 10 + pr * 68, 0, Math.PI * 2); ctx.stroke();
+      } else if (p.kind === 'smoke') {
+        ctx.fillStyle = `rgba(200,205,215,${0.32 * k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3 + (1 - k) * 8, 0, Math.PI * 2); ctx.fill();
+      } else if (p.kind === 'fire') {
+        ctx.fillStyle = `rgba(255,${120 + Math.floor(100 * k)},40,${k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4.5 * k + 1, 0, Math.PI * 2); ctx.fill();
+      } else if (p.kind === 'text') {
+        ctx.font = `900 ${p.size || 14}px sans-serif`; ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(${p.rgb || '255,224,130'},${k})`;
+        ctx.fillText(p.text, p.x, p.y);
+      } else {
+        ctx.fillStyle = `rgba(255,224,130,${k})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2.4 * k + 0.6, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // アイテム
+    if (item && state === 'playing') {
+      const pulse = 1 + 0.14 * Math.sin(item.t * 6);
+      ctx.save();
+      ctx.translate(item.x, item.y); ctx.scale(pulse, pulse);
+      ctx.font = '30px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('⭐', 0, 1);
+      ctx.restore();
+      drawLifeGauge(item.x, item.y, item.t, '#ffd54f');
+      ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffe082';
+      ctx.fillText('迎撃', item.x, item.y + 40);
+    }
+
+    // 強化アイテム
+    if (powerItem && state === 'playing') {
+      const pulse = 1 + 0.14 * Math.sin(powerItem.t * 6);
+      ctx.save();
+      ctx.translate(powerItem.x, powerItem.y); ctx.scale(pulse, pulse);
+      ctx.fillStyle = '#fb8c00';
+      ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '900 17px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('P', 0, 1);
+      ctx.restore();
+      drawLifeGauge(powerItem.x, powerItem.y, powerItem.t, '#ffa726');
+      ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffcc80';
+      ctx.fillText('強化', powerItem.x, powerItem.y + 40);
+    }
+
+    // シールドアイテム
+    if (shieldItem && state === 'playing') {
+      const pulse = 1 + 0.14 * Math.sin(shieldItem.t * 6);
+      ctx.save();
+      ctx.translate(shieldItem.x, shieldItem.y); ctx.scale(pulse, pulse);
+      ctx.fillStyle = '#29b6f6';
+      ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.font = '15px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('🛡️', 0, 1);
+      ctx.restore();
+      drawLifeGauge(shieldItem.x, shieldItem.y, shieldItem.t, '#4fc3f7');
+      ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#81d4fa';
+      ctx.fillText('シールド', shieldItem.x, shieldItem.y + 40);
+    }
+
+    // 火の玉アイテム
+    if (fireItem && state === 'playing') {
+      const pulse = 1 + 0.14 * Math.sin(fireItem.t * 6);
+      ctx.save();
+      ctx.translate(fireItem.x, fireItem.y); ctx.scale(pulse, pulse);
+      ctx.fillStyle = '#e64a19';
+      ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.font = '15px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('🔥', 0, 1);
+      ctx.restore();
+      drawLifeGauge(fireItem.x, fireItem.y, fireItem.t, '#ff7043');
+      ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#ffab91';
+      ctx.fillText('火の玉', fireItem.x, fireItem.y + 40);
+    }
+
+    // 分身アイテム
+    if (cloneItem && state === 'playing') {
+      const pulse = 1 + 0.14 * Math.sin(cloneItem.t * 6);
+      ctx.save();
+      ctx.translate(cloneItem.x, cloneItem.y); ctx.scale(pulse, pulse);
+      ctx.fillStyle = '#8e24aa';
+      ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fill();
+      ctx.font = '700 13px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
+      ctx.fillText('分', 0, 1);
+      ctx.restore();
+      drawLifeGauge(cloneItem.x, cloneItem.y, cloneItem.t, '#ba68c8');
+      ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = '#ce93d8';
+      ctx.fillText('分身', cloneItem.x, cloneItem.y + 40);
+    }
+
+    // 小さい弾（火の玉の弾は大きく橙色に、分身の弾はさらに小さい）
+    for (const b of bullets) {
+      if (b.small) {
+        ctx.fillStyle = '#fff59d';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 2.0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,245,157,.3)';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 4, 0, Math.PI * 2); ctx.fill();
+      } else if (b.fire) {
+        ctx.fillStyle = 'rgba(255,112,67,.35)';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 9.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ff7043';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 5.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffe082';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 2.3, 0, Math.PI * 2); ctx.fill();
+      } else {
+        ctx.fillStyle = '#fff59d';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 3.2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(255,245,157,.35)';
+        ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    // 迎撃弾
+    for (const ic of interceptors) {
+      ctx.save();
+      ctx.translate(ic.x, ic.y); ctx.rotate(ic.angle);
+      ctx.fillStyle = '#ffe082';
+      ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(-5, -3.4); ctx.lineTo(-5, 3.4); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    // ミサイル
+    for (const m of missiles) drawMissile(m);
+
+    // 画面外マーカー：入ってくる場所の端に、そのミサイルの色の▲（向き＝自機から見た敵の方向・上下左右固定）
+    {
+      const pulse = 1 + 0.13 * Math.sin(Date.now() / 240);
+      for (const mk of offscreenMarkers()) {
+        ctx.save();
+        ctx.translate(mk.x, mk.y); ctx.rotate(mk.dir); ctx.scale(pulse, pulse);
+        ctx.globalAlpha = 0.92;
+        ctx.fillStyle = mk.color;
+        ctx.beginPath(); ctx.moveTo(11, 0); ctx.lineTo(-8, -8); ctx.lineTo(-8, 8); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // 自機（無敵中は点滅、シールド所持中はリング）
+    if (player.alive) {
+      if (invT > 0) ctx.globalAlpha = (Math.floor(invT * 10) % 2 === 0) ? 0.4 : 0.85;
+      drawJet(player.x, player.y, player.angle);
+      ctx.globalAlpha = 1;
+      if (shieldLayers > 0) {
+        // リングは層数ぶん（1層=1重、2層=2重）
+        const p = 1 + 0.06 * Math.sin(Date.now() / 200);
+        for (let i = 0; i < shieldLayers; i++) {
+          ctx.strokeStyle = i === 0 ? 'rgba(79,195,247,.8)' : 'rgba(79,195,247,.5)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.arc(player.x, player.y, (25 + i * 7) * p, 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.strokeStyle = 'rgba(79,195,247,.22)';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(player.x, player.y, (25 + shieldLayers * 7) * p, 0, Math.PI * 2); ctx.stroke();
+      }
+      if (fireT > 0) {
+        // 火の玉の残り時間：自機の周りの円プログレス（上から時計回りに減る）
+        const frac = clamp(fireT / FIRE_DURATION, 0, 1);
+        ctx.strokeStyle = 'rgba(255,255,255,.16)'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(player.x, player.y, 44, 0, Math.PI * 2); ctx.stroke();
+        ctx.strokeStyle = '#ff7043'; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.arc(player.x, player.y, 44, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // 分身（一回り小さい自機）
+    if (state === 'playing') {
+      for (const c of clones) {
+        ctx.save();
+        ctx.translate(c.x, c.y); ctx.scale(0.72, 0.72); ctx.translate(-c.x, -c.y);
+        drawJet(c.x, c.y, c.a);
+        ctx.restore();
+      }
+    }
+
+    // ready時は自機を中央にうっすら見せる
+    if (state === 'ready') { ctx.globalAlpha = 0.0; ctx.globalAlpha = 1; }
+  }
+
+  let lastT = 0;
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min(0.05, (t - lastT) / 1000);
+    lastT = t;
+    // お試し仕様：プレイ中に指（マウス左ボタン）を離している間は一時停止。時間を進めない
+    const paused = state === 'playing' && !dragging;
+    if (!paused) update(dt);
+    pauseEl.classList.toggle('hidden', !paused);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  resetGame();
+  requestAnimationFrame(loop);
+
+  // テスト用フック（画面には出ない）
+  window.__missile = {
+    get state() { return state; },
+    get time() { return time; },
+    get missiles() { return missiles; },
+    get markers() { return offscreenMarkers(); },
+    get player() { return player; },
+    get item() { return item; },
+    get interceptors() { return interceptors; },
+    get nearMiss() { return nearMiss; },
+    get interceptHits() { return interceptHits; },
+    get itemPickups() { return itemPickups; },
+    get score() { return score; },
+    get bulletHits() { return bulletHits; },
+    get shotsFired() { return shotsFired; },
+    get bullets() { return bullets; },
+    get particles() { return particles; },
+    get gunLevel() { return gunLevel; },
+    get gunWays() { return GUN_LEVELS[gunLevel].ways; },
+    get gunInterval() { return GUN_LEVELS[gunLevel].interval; },
+    get powerItem() { return powerItem; },
+    get shieldItem() { return shieldItem; },
+    get fireItem() { return fireItem; },
+    get clones() { return clones; },
+    get cloneItem() { return cloneItem; },
+    get fireT() { return fireT; },
+    get fireHits() { return fireHits; },
+    get shield() { return shieldLayers; },
+    get shieldSaves() { return shieldSaves; },
+    get invT() { return invT; },
+    get itemLife() { return ITEM_LIFE; },
+    get interceptScore() { return interceptScore; },
+    get sens() { return dragSens; },
+    setSens,
+    get bulletScore() { return bulletScore; },
+    get closeHits() { return closeHits; },
+    start: startGame,
+    setPlayer(x, y) { player.x = x; player.y = y; },
+    setPlayerAngle(a) { player.angle = a; },
+    spawnMissile,
+    spawnItem,
+    spawnPowerItem,
+    spawnShieldItem,
+    spawnFireItem,
+    spawnCloneItem,
+    deflect,
+    step(dt) { update(dt); },
+  };
+})();
+</script>
+</body>
+</html>
