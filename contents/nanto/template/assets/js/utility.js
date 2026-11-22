@@ -48,3 +48,12 @@ function loadImobile(path){
 		showToast("Error", "0 min ago", "通信エラーです");
 	});
 }
+
+//==========
+// Iframe
+const urlParams = new URLSearchParams(window.location.search);
+const gameId = urlParams.get("id") || "01";
+const iframe = document.getElementById("game-frame");
+if (iframe) {
+    iframe.src = `./games/${gameId}.html`;
+}
