@@ -29,37 +29,39 @@
 
 </head>
 <body>
-	<!-- Header(Start) -->
-	<header v-if="mode!=0">
-		<!-- Navigation(Start) -->
-		<nav class="navbar navbar-dark bg-primary">
-			<div class="container-fluid">
-				<a class="btn btn-primary btn-sm" href="../../../">
-					<i class="bi-caret-left-fill" role="img"></i>
-				</a>
-				<div>
-					<i class="bi-github text-white m-1"></i><a class="navbar-brand">西可児ゲームセンター</a>
+	<div class="game-container">
+		<!-- Header(Start) -->
+		<header v-if="mode!=0">
+			<!-- Navigation(Start) -->
+			<nav class="navbar navbar-dark bg-primary">
+				<div class="container-fluid">
+					<a class="btn btn-primary btn-sm" href="../../../">
+						<i class="bi-caret-left-fill" role="img"></i>
+					</a>
+					<div>
+						<i class="bi-github text-white m-1"></i><a class="navbar-brand">西可児ゲームセンター</a>
+					</div>
+					<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
+						<i class="bi-arrow-counterclockwise" role="img"></i>
+					</a>
 				</div>
-				<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
-					<i class="bi-arrow-counterclockwise" role="img"></i>
-				</a>
-			</div>
-		</nav>
-		<!-- Navigation(End) -->
-	</header>
-	<!-- Header(End) -->
+			</nav>
+			<!-- Navigation(End) -->
+		</header>
+		<!-- Header(End) -->
 
-	<!-- Game(Start) -->
-	<div class="game-wrapper">
-		<iframe id="game-frame" src="./games/00.html"></iframe>
+		<!-- Game(Start) -->
+		<div class="game-wrapper">
+			<iframe id="game-frame" src="./games/00.html"></iframe>
+		</div>
+		<!-- Game(End) -->
+
+		<!-- Footer(Start) -->
+		<footer class="text-center">
+			<div id="ad_banner"></div>
+		</footer>
+		<!-- Footer(End) -->
 	</div>
-	<!-- Game(End) -->
-
-	<!-- Footer(Start) -->
-	<footer class="text-center">
-		<div id="ad_banner"></div>
-	</footer>
-	<!-- Footer(End) -->
 
 	<!-- Modal(Start) -->
 	<div class="container mt-5 text-center">
