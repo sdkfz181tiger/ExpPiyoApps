@@ -8,7 +8,7 @@
 	<!-- PWA for iOS -->
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<meta name="apple-mobile-web-app-title" content="NantoApps">
+	<meta name="apple-mobile-web-app-title" content="西可児ゲームセンター">
 	<link rel="apple-touch-icon" href="./pwa/icon152x152.png">
 	<!-- PWA for Android -->
 	<link rel="manifest" href="./pwa/manifest.json">
@@ -16,18 +16,38 @@
 	<link rel="shortcut icon" href="./pwa/favicon.ico">
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary"/>
-	<meta name="twitter:site" content="@NantoApps"/>
-	<meta name="twitter:title" content="NantoApps"/>
-	<meta name="twitter:description" content="NantoAppsのゲーム集"/>
+	<meta name="twitter:site" content="@NishiKaniGames"/>
+	<meta name="twitter:title" content="NishiKaniGames"/>
+	<meta name="twitter:description" content="西可児ゲームセンターのゲーム集"/>
 	<meta name="twitter:app:country" content="JP"/>
 	<meta property="og:image" content="http://sdkfz181tiger.github.io/ExpPiyoApps/contents/assets/images/logo.png"/>
-	<title>NantoApps</title>
+	<title>西可児ゲームセンター</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="../../assets/libs/bootstrap-5.2.3/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./assets/css/custom.css">
 
 </head>
 <body>
+
+	<!-- Header(Start) -->
+	<header class="fixed-top" v-if="mode!=0">
+		<!-- Navigation(Start) -->
+		<nav class="navbar navbar-dark bg-primary">
+			<div class="container-fluid">
+				<a class="btn btn-primary btn-sm" href="../../../">
+					<i class="bi-caret-left-fill" role="img"></i>
+				</a>
+				<div>
+					<i class="bi-github text-white m-1"></i><a class="navbar-brand">西可児ゲームセンター</a>
+				</div>
+				<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
+					<i class="bi-arrow-counterclockwise" role="img"></i>
+				</a>
+			</div>
+		</nav>
+		<!-- Navigation(End) -->
+	</header>
+	<!-- Header(End) -->
 
 	<!-- Game(Start) -->
 	<div class="game-wrapper">
