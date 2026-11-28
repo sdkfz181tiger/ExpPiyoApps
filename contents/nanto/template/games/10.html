@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>蚊！ 〜叩かれるな〜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#f7e8d0; }
+  body { font-family:"Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif; touch-action:none; -webkit-user-select:none; user-select:none; }
+  #wrap { position:fixed; inset:0; }
+  canvas { display:block; width:100%; height:100%; touch-action:none; }
+  #hud {
+    position:absolute; top:0; left:0; right:0; height:52px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 14px; pointer-events:none;
+    background:linear-gradient(rgba(255,250,240,.92), rgba(255,250,240,0));
+  }
+  #time { font-size:30px; font-weight:900; color:#5b3a1e; font-variant-numeric:tabular-nums; }
+  #time small { font-size:15px; }
+  #sub { font-size:14px; font-weight:700; color:#8a6a45; text-align:right; line-height:1.35; }
+  #overlay {
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; text-align:center;
+    background:rgba(60,35,10,.45); padding:24px;
+  }
+  #overlay.hidden { display:none; }
+  #overlay .card {
+    background:#fffaf0; border-radius:20px; padding:26px 30px; max-width:340px; width:100%;
+    box-shadow:0 10px 30px rgba(0,0,0,.3);
+  }
+  #overlay h1 { font-size:34px; color:#5b3a1e; margin-bottom:6px; }
+  #overlay .big-emoji { font-size:64px; line-height:1.1; }
+  #overlay p { font-size:15px; color:#6b4e2e; line-height:1.6; }
+  #overlay .result { font-size:20px; font-weight:900; color:#c0392b; }
+  #overlay .best { font-size:13px; color:#8a6a45; }
+  #startBtn {
+    pointer-events:auto; border:none; cursor:pointer;
+    background:#e74c3c; color:#fff; font-size:20px; font-weight:900;
+    padding:14px 38px; border-radius:999px; box-shadow:0 5px 0 #a93226;
+    font-family:inherit;
+  }
+  #startBtn:active { transform:translateY(3px); box-shadow:0 2px 0 #a93226; }
+  #flash {
+    position:absolute; inset:0; pointer-events:none; opacity:0;
+    box-shadow:inset 0 0 90px 30px rgba(231,76,60,.55);
+  }
+  #meterWrap {
+    position:absolute; top:52px; left:0; right:0; padding:2px 14px 0;
+    display:flex; align-items:center; gap:8px; pointer-events:none;
+  }
+  #meterLabel { font-size:13px; font-weight:900; color:#a93226; white-space:nowrap; }
+  #meterBar { flex:1; height:12px; background:rgba(255,255,255,.65); border:2px solid #a93226; border-radius:99px; overflow:hidden; }
+  #meterFill { height:100%; width:0%; background:linear-gradient(90deg,#e74c3c,#c0392b); transition:width .1s linear; }
+  #famLabel { font-size:13px; font-weight:900; color:#5b3a1e; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+  <div id="flash"></div>
+  <div id="hud">
+    <div id="time">0.0<small>秒</small></div>
+    <div id="sub">スコア 0<br>ギリギリ 0回</div>
+  </div>
+  <div id="meterWrap">
+    <div id="meterLabel">🩸血メーター</div>
+    <div id="meterBar"><div id="meterFill"></div></div>
+    <div id="famLabel">仲間 0匹</div>
+  </div>
+  <div id="overlay">
+    <div class="card">
+      <div class="big-emoji">🦟</div>
+      <h1>蚊！</h1>
+      <p id="overText">ドラッグで蚊を運ぼう。<br>スタートしても、まだ手は来ない。<strong>好きな場所で指を離すと、そこで血を吸い始めてゲーム開始！</strong><br>吸ってる間にピンチになったら、また掴んで逃げればOK。<br>手が狙ってくる——<span style="color:#c0392b;font-weight:900">赤い印が止まったら、そこが叩かれる！</span><br>吸うほどお腹と血メーターが溜まり、満タンで<strong>仲間が1匹増える</strong>。吸った場所は<strong>赤く腫れて</strong>残り、腫れた場所は速く吸えるけど気づかれやすい。でも吸ってると人間に<strong>気づかれる</strong>——オレンジの輪が一周する前に掴んで逃げて！<br>自分が叩かれたら仲間も全滅だよ。</p>
+      <p class="result" id="resultText" style="display:none"></p>
+      <p class="best" id="bestText"></p>
+      <br>
+      <button id="startBtn">スタート</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv = document.getElementById('cv');
+var ctx = cv.getContext('2d');
+var timeEl = document.getElementById('time');
+var subEl = document.getElementById('sub');
+var overlay = document.getElementById('overlay');
+var overText = document.getElementById('overText');
+var resultText = document.getElementById('resultText');
+var bestText = document.getElementById('bestText');
+var startBtn = document.getElementById('startBtn');
+var flashEl = document.getElementById('flash');
+var meterFillEl = document.getElementById('meterFill');
+var famLabelEl = document.getElementById('famLabel');
+
+var W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W * DPR; cv.height = H * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- Audio (simple synthesized) ----------
+var AC = null;
+function audio(){
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ AC = null; } }
+  if (AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function slapSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  var buf = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate);
+  var d = buf.getChannelData(0);
+  for (var i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+  var src = ac.createBufferSource(); src.buffer = buf;
+  var f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 900;
+  var g = ac.createGain(); g.gain.setValueAtTime(0.7, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
+  src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t);
+  var o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(160, t);
+  o.frequency.exponentialRampToValueAtTime(50, t + 0.1);
+  var g2 = ac.createGain(); g2.gain.setValueAtTime(0.5, t); g2.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+  o.connect(g2); g2.connect(ac.destination); o.start(t); o.stop(t + 0.12);
+}
+function nearSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  var o = ac.createOscillator(); o.type = 'triangle';
+  o.frequency.setValueAtTime(700, t); o.frequency.exponentialRampToValueAtTime(1400, t + 0.09);
+  var g = ac.createGain(); g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.1);
+}
+function lockSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  var o = ac.createOscillator(); o.type = 'square'; o.frequency.value = 1180;
+  var g = ac.createGain(); g.gain.setValueAtTime(0.05, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.06);
+}
+function suckSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  var o = ac.createOscillator(); o.type = 'sine';
+  o.frequency.setValueAtTime(280, t); o.frequency.exponentialRampToValueAtTime(190, t + 0.09);
+  var g = ac.createGain(); g.gain.setValueAtTime(0.06, t); g.gain.exponentialRampToValueAtTime(0.01, t + 0.09);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.1);
+}
+function alertSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  [0, 0.11].forEach(function(off){
+    var o = ac.createOscillator(); o.type = 'square'; o.frequency.value = 1560;
+    var g = ac.createGain(); g.gain.setValueAtTime(0.07, t + off); g.gain.exponentialRampToValueAtTime(0.01, t + off + 0.08);
+    o.connect(g); g.connect(ac.destination); o.start(t + off); o.stop(t + off + 0.09);
+  });
+}
+function fanfareSound(){
+  var ac = audio(); if (!ac) return;
+  var t = ac.currentTime;
+  [523, 659, 784].forEach(function(fr, i){
+    var o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = fr;
+    var g = ac.createGain(); g.gain.setValueAtTime(0.12, t + i * 0.09); g.gain.exponentialRampToValueAtTime(0.01, t + i * 0.09 + 0.16);
+    o.connect(g); g.connect(ac.destination); o.start(t + i * 0.09); o.stop(t + i * 0.09 + 0.17);
+  });
+}
+
+// ---------- Game state ----------
+var STATE = 'ready'; // ready | play | dead
+var moz = { x: 0, y: 0, vx: 0, tilt: 0, wing: 0 };
+var pointer = null; // {x, y} raw pointer position
+var FINGER_OFFSET_Y = 64; // mosquito is drawn this far above the fingertip so the finger never hides it
+var elapsed = 0;
+var nearMiss = 0;
+var best = 0;
+try { best = parseFloat(localStorage.getItem('moz_best') || '0') || 0; } catch(e){}
+var hands = [];
+var spawnTimer = 0;
+var handprints = []; // fading marks where a slap landed
+var floaters = [];   // "ギリギリ！" texts
+var splat = null;
+var shake = 0;
+var lastTs = 0;
+
+// ---------- v3: sucking blood, notice gauge, companions, score ----------
+var score = 0;
+var bestScore = 0;
+try { bestScore = parseFloat(localStorage.getItem('moz_best_score') || '0') || 0; } catch(e){}
+var meter = 0;            // 0..100 blood meter; full -> a companion joins
+var companions = 0;       // follower mosquitoes (max 6)
+var MAX_COMPANIONS = 6;
+var compPos = [];         // current companion positions (for drawing + death splats)
+var trail = [];           // timestamped mosquito positions for companions to follow
+var controlState = 'idle'; // idle (never grabbed) | held (finger on, dragging) | released (finger off: parked & sucking)
+var hasGrabbed = false;    // the mosquito has been grabbed at least once in this run
+var releaseTimer = 0;      // time since the finger was released (sucking starts at 0.15s)
+var sucking = false;
+var contSuck = 0;         // continuous sucking time (drives fill acceleration)
+var sessionSuck = 0;      // amount filled in this continuous session (one-gulp bonus)
+var notice = 0;           // 0..100 notice gauge while sucking
+var suckBlipTimer = 0;
+var combo = 0;            // consecutive near misses within the window
+var comboTimer = 0;
+var startBanner = 0;      // seconds left to show the big "ゲーム開始！" banner
+var bites = [];           // red swellings left where blood was sucked: {x, y, amount}
+var deathBites = 0;       // bite count captured at death for the result screen
+function biteAt(x, y){
+  var found = null, bestD = 46;
+  for (var i = 0; i < bites.length; i++) {
+    var dx = x - bites[i].x, dy = y - bites[i].y;
+    var d = Math.sqrt(dx*dx + dy*dy);
+    if (d < bestD) { bestD = d; found = bites[i]; }
+  }
+  return found;
+}
+function biteStage(b){
+  if (!b) return 0;
+  return b.amount >= 60 ? 2 : (b.amount >= 25 ? 1 : 0);
+}
+var deathCompanions = 0;  // companion count captured at death for the result screen
+var mozExtraRadius = 0;   // extra hit radius from a full belly: meter * 0.10 (max +10)
+
+function reset(){
+  moz.x = W/2; moz.y = H/2; moz.vx = 0; moz.tilt = 0;
+  pointer = null;
+  elapsed = 0; nearMiss = 0;
+  hands = []; handprints = []; floaters = [];
+  splat = null; shake = 0;
+  spawnTimer = 0.9; // first hand comes a little after start
+  score = 0; meter = 0; companions = 0; compPos = []; trail = [];
+  controlState = 'idle'; hasGrabbed = false; releaseTimer = 0; sucking = false;
+  contSuck = 0; sessionSuck = 0; notice = 0; suckBlipTimer = 0;
+  combo = 0; comboTimer = 0; deathCompanions = 0; mozExtraRadius = 0;
+  startBanner = 0;
+  bites = []; deathBites = 0;
+}
+
+// ---------- Difficulty ----------
+function maxHands(t){
+  // v3.1 gentler ramp: simultaneous attacks grow much more slowly
+  if (t < 20) return 1;
+  if (t < 45) return 2;
+  if (t < 75) return 3;
+  if (t < 110) return 4;
+  return 5;
+}
+function spawnInterval(t){
+  var v = 1.8 - (t / 120) * 0.75;
+  return Math.max(1.0, v);
+}
+function pickHandType(t){
+  var r = Math.random();
+  if (t > 35 && r < 0.22) return { name:'big',  radius: 80, aimBonus: 0.28, emoji:'🖐️' };
+  if (t > 60 && r < 0.45) return { name:'fast', radius: 44, aimBonus: -0.16, emoji:'✋' };
+  return { name:'normal', radius: 58, aimBonus: 0, emoji:'✋' };
+}
+var CLAP_HALF_W = 122, CLAP_HALF_H = 48; // clap danger zone: horizontal band around the locked point
+function spawnHand(){
+  var r = Math.random();
+  var hasClap = hands.some(function(h){ return h.kind === 'clap'; });
+  // special attacks (gentler in v3.1): swatter from 30s, two-hand clap from 45s (never two claps at once)
+  if (elapsed >= 45 && r < 0.16 && !hasClap) {
+    hands.push({
+      kind: 'clap',
+      radius: 58,
+      phase: 'track', t: 0,
+      trackDur: Math.max(0.5, 0.8 - elapsed * 0.002),
+      lockDur: Math.max(0.34, 0.48 - elapsed * 0.0015),
+      x: moz.x, y: moz.y, lockX: 0, lockY: 0,
+      hitDone: false, nearDone: false
+    });
+    return;
+  }
+  if (elapsed >= 30 && r >= 0.16 && r < 0.36) {
+    hands.push({
+      kind: 'swatter',
+      radius: 92,
+      phase: 'track', t: 0,
+      trackDur: Math.max(0.65, 1.05 - elapsed * 0.002), // slow, but huge
+      lockDur: Math.max(0.34, 0.5 - elapsed * 0.0015),
+      x: moz.x, y: moz.y, lockX: 0, lockY: 0,
+      hitDone: false, nearDone: false
+    });
+    return;
+  }
+  var type = pickHandType(elapsed);
+  var trackDur = Math.max(0.42, 0.62 - elapsed * 0.002) + type.aimBonus;
+  var lockDur  = Math.max(0.30, 0.40 - elapsed * 0.001) + type.aimBonus * 0.5;
+  hands.push({
+    kind: 'slap',
+    type: type,
+    radius: type.radius,
+    phase: 'track', // track -> lock -> slap -> stay -> lift
+    t: 0,
+    trackDur: Math.max(0.22, trackDur),
+    lockDur: Math.max(0.18, lockDur),
+    x: moz.x, y: moz.y,
+    lockX: 0, lockY: 0,
+    hitDone: false, nearDone: false
+  });
+}
+
+function spawnNoticeHand(){
+  // the human noticed the mosquito: a faster, pinpoint hand aimed at the sucking spot
+  hands.push({
+    kind: 'notice',
+    type: { name:'notice', radius: 62, emoji:'✋' },
+    radius: 62,
+    phase: 'track', t: 0,
+    trackDur: 0.38,
+    lockDur: 0.30,
+    x: moz.x, y: moz.y, lockX: 0, lockY: 0,
+    hitDone: false, nearDone: false
+  });
+}
+function triggerNotice(sudden){
+  if (hands.some(function(h){ return h.kind === 'notice'; })) { notice = 0; return; }
+  notice = 0;
+  spawnNoticeHand();
+  alertSound();
+  if (navigator.vibrate) navigator.vibrate([25, 30, 25]);
+  floaters.push({ x: moz.x, y: moz.y - 58, t: 0, text: sudden ? '急に気づかれた！' : '気づかれた！', color: '#c0392b' });
+}
+
+// ---------- Input: drag to carry, release to suck ----------
+// While the finger is down, the mosquito follows the pointer 1:1 (+ fixed fingertip offset), no smoothing, no limits.
+// Releasing the finger parks the mosquito at that spot and sucking starts there. Grabbing it again stops the sucking.
+var activePointerId = null;
+function engagePointer(e){
+  activePointerId = (e.pointerId != null) ? e.pointerId : null;
+  pointer = { x: e.clientX, y: e.clientY };
+  controlState = 'held';
+  hasGrabbed = true;
+}
+function releasePointer(){
+  if (controlState !== 'held') return;
+  controlState = 'released';
+  releaseTimer = 0;
+  activePointerId = null;
+}
+cv.addEventListener('pointerdown', function(e){ e.preventDefault(); engagePointer(e); }, { passive:false });
+cv.addEventListener('pointermove', function(e){
+  e.preventDefault();
+  if (e.pointerType === 'mouse' && e.buttons === 0) { releasePointer(); return; } // mouse button went up off-canvas
+  if (controlState === 'held') pointer = { x: e.clientX, y: e.clientY };
+}, { passive:false });
+cv.addEventListener('pointerup', function(e){ if (activePointerId === null || e.pointerId === activePointerId) releasePointer(); });
+cv.addEventListener('pointercancel', function(){ releasePointer(); });
+window.addEventListener('pointerup', function(){ releasePointer(); });
+cv.addEventListener('touchstart', function(e){ e.preventDefault(); }, { passive:false });
+cv.addEventListener('touchmove',  function(e){ e.preventDefault(); }, { passive:false });
+
+startBtn.addEventListener('click', function(){
+  audio();
+  reset();
+  STATE = 'wait'; // no attacks yet: the game starts the moment sucking starts, every time
+  overlay.classList.add('hidden');
+});
+
+// ---------- Update ----------
+function update(dt){
+  if (STATE === 'wait') {
+    // Pre-game: carry the mosquito freely, NO hand ever attacks.
+    // Releasing the finger starts sucking, and that starts the game — the same way every run.
+    if (controlState === 'held' && pointer) {
+      moz.x = pointer.x;
+      moz.y = pointer.y - FINGER_OFFSET_Y;
+    }
+    moz.wing += dt * 40;
+    if (controlState === 'released') {
+      releaseTimer += dt;
+      if (hasGrabbed && releaseTimer >= 0.15) {
+        STATE = 'play';
+        spawnTimer = 1.2; // first hand comes a little after the start
+        startBanner = 1.4;
+        floaters.push({ x: moz.x, y: moz.y - 58, t: 0, text: 'ゲーム開始！', color: '#27ae60' });
+      }
+    }
+    return;
+  }
+  if (STATE !== 'play') return;
+  elapsed += dt;
+  if (startBanner > 0) startBanner -= dt;
+
+  // While held, the mosquito follows the pointer 1:1 (plus the constant fingertip offset). No smoothing, no speed cap.
+  // While released, it stays parked at the release spot.
+  if (controlState === 'held' && pointer) {
+    var nx = pointer.x;
+    var ny = pointer.y - FINGER_OFFSET_Y;
+    moz.vx = nx - moz.x;
+    moz.x = nx; moz.y = ny;
+  } else {
+    moz.vx = 0;
+  }
+  moz.tilt = Math.max(-0.5, Math.min(0.5, moz.vx * 0.02));
+  moz.wing += dt * 40;
+
+  // Survival score
+  score += dt * 10;
+
+  // Trail for companions (they replay the mosquito's path with a delay)
+  trail.push({ x: moz.x, y: moz.y, t: elapsed });
+  while (trail.length && trail[0].t < elapsed - (MAX_COMPANIONS * 0.16 + 0.4)) trail.shift();
+  compPos = [];
+  for (var ci = 0; ci < companions; ci++) {
+    var targetT = elapsed - (ci + 1) * 0.16;
+    var cp = trail[0] || { x: moz.x, y: moz.y };
+    for (var ti = 0; ti < trail.length; ti++) { if (trail[ti].t <= targetT) cp = trail[ti]; else break; }
+    compPos.push({ x: cp.x, y: cp.y });
+  }
+
+  // Combo window
+  if (comboTimer > 0) { comboTimer -= dt; if (comboTimer <= 0) combo = 0; }
+
+  // ----- Sucking: release the finger and the mosquito sucks blood at that spot -----
+  if (controlState === 'released') releaseTimer += dt;
+  sucking = (controlState === 'released' && releaseTimer >= 0.15);
+  if (!sucking) { contSuck = 0; sessionSuck = 0; }
+  if (sucking) {
+    contSuck += dt;
+    // Swollen spots: sucking there is faster, but the notice gauge also fills faster
+    var biteHere = biteAt(moz.x, moz.y);
+    var stageHere = biteStage(biteHere);
+    // One-gulp acceleration: the longer you keep sucking, the faster the meter fills
+    var mult = contSuck < 0.8 ? 1 : (contSuck < 1.6 ? 1.6 : 2.2);
+    var fill = 22 * mult * (1 + 0.25 * stageHere) * dt;
+    meter += fill;
+    sessionSuck += fill;
+    score += fill * 2;
+    // The sucked spot swells red and stays for the whole run
+    if (biteHere) biteHere.amount += fill;
+    else bites.push({ x: moz.x, y: moz.y, amount: fill });
+    suckBlipTimer -= dt;
+    if (suckBlipTimer <= 0) { suckSound(); suckBlipTimer = 0.24; }
+    // Notice gauge fills while sucking (with the same one-gulp acceleration, so camping one spot always gets noticed);
+    // a sudden notice can also strike at random
+    notice += 30 * mult * (1 + 0.35 * stageHere) * dt;
+    if (Math.random() < dt * 0.07) triggerNotice(true);
+    else if (notice >= 100) triggerNotice(false);
+    if (meter >= 100) {
+      meter -= 100;
+      if (sessionSuck >= 50) { score += 150; floaters.push({ x: moz.x, y: moz.y - 84, t: 0, text: '一気吸いボーナス +150', color: '#8e44ad' }); }
+      sessionSuck = 0;
+      if (companions < MAX_COMPANIONS) {
+        companions++;
+        fanfareSound();
+        floaters.push({ x: moz.x, y: moz.y - 58, t: 0, text: '仲間が増えた！（' + companions + '匹目）', color: '#27ae60' });
+      } else {
+        score += 500;
+        floaters.push({ x: moz.x, y: moz.y - 58, t: 0, text: '満タン得点 +500', color: '#27ae60' });
+      }
+      score += 300;
+      notice = 0;
+    }
+  } else if (notice > 0) {
+    notice = Math.max(0, notice - 25 * dt); // notice fades while you keep moving
+  }
+  mozExtraRadius = meter * 0.10;
+
+  // Spawn hands
+  spawnTimer -= dt;
+  var active = hands.filter(function(h){ return h.phase !== 'lift' || h.t < 0.3; }).length;
+  if (spawnTimer <= 0 && hands.length < maxHands(elapsed)) {
+    spawnHand();
+    spawnTimer = spawnInterval(elapsed) * (0.8 + Math.random() * 0.45);
+  }
+
+  // Update hands
+  var anyLock = false;
+  for (var i = hands.length - 1; i >= 0; i--) {
+    var h = hands[i];
+    h.t += dt;
+    if (h.phase === 'track') {
+      h.x = moz.x; h.y = moz.y; // hand tracks the mosquito during the telegraph
+      if (h.t >= h.trackDur) {
+        h.phase = 'lock'; h.t = 0;
+        h.lockX = h.x; h.lockY = h.y; // aim LOCKS here. The locked spot never moves again.
+        lockSound();
+        if (navigator.vibrate) navigator.vibrate(15);
+      }
+    } else if (h.phase === 'lock') {
+      anyLock = true;
+      if (h.t >= h.lockDur) {
+        h.phase = 'slap'; h.t = 0;
+        slapSound();
+        shake = h.kind === 'swatter' ? 13 : (h.kind === 'clap' ? 10 : 7);
+        if (navigator.vibrate) navigator.vibrate(30);
+      }
+    } else if (h.phase === 'slap') {
+      if (!h.hitDone && h.t >= 0.05) {
+        h.hitDone = true;
+        var dx = moz.x - h.lockX, dy = moz.y - h.lockY;
+        var hit = false, near = false;
+        if (h.kind === 'clap') {
+          hit  = Math.abs(dx) < CLAP_HALF_W + mozExtraRadius && Math.abs(dy) < CLAP_HALF_H + mozExtraRadius;
+          near = Math.abs(dx) < CLAP_HALF_W + 42 && Math.abs(dy) < CLAP_HALF_H + 42;
+        } else {
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          hit  = dist < h.radius + mozExtraRadius;
+          near = dist < h.radius + 46;
+        }
+        if (hit) {
+          die(h.kind === 'clap' ? '両手に挟まれた…' : (h.kind === 'swatter' ? 'ハエたたきに叩かれた…' : (h.kind === 'notice' ? '気づかれて叩かれた…' : '叩かれた…')));
+          return;
+        } else if (near && !h.nearDone) {
+          h.nearDone = true;
+          nearMiss++;
+          combo = (comboTimer > 0) ? combo + 1 : 1;
+          comboTimer = 3;
+          var nearPts = 20 * combo;
+          score += nearPts;
+          nearSound();
+          floaters.push({ x: moz.x, y: moz.y - 40, t: 0, text: combo > 1 ? ('ギリギリ ×' + combo + '！ +' + nearPts) : 'ギリギリ！ +20', color: '#e67e22' });
+        }
+        if (h.kind === 'clap') {
+          handprints.push({ x: h.lockX, y: h.lockY, r: CLAP_HALF_W, t: 0, shape: 'band' });
+        } else if (h.kind === 'swatter') {
+          handprints.push({ x: h.lockX, y: h.lockY, r: h.radius, t: 0, shape: 'swatter' });
+        } else {
+          handprints.push({ x: h.lockX, y: h.lockY, r: h.radius, t: 0, shape: 'circle' });
+        }
+      }
+      if (h.t >= 0.16) { h.phase = 'stay'; h.t = 0; }
+    } else if (h.phase === 'stay') {
+      if (h.t >= 0.22) { h.phase = 'lift'; h.t = 0; }
+    } else if (h.phase === 'lift') {
+      if (h.t >= 0.3) hands.splice(i, 1);
+    }
+  }
+  flashEl.style.opacity = anyLock ? (0.55 + Math.sin(performance.now()/40) * 0.3) : 0;
+
+  // Handprints fade
+  for (var j = handprints.length - 1; j >= 0; j--) {
+    handprints[j].t += dt;
+    if (handprints[j].t > 1.6) handprints.splice(j, 1);
+  }
+  // Floaters rise
+  for (var k = floaters.length - 1; k >= 0; k--) {
+    floaters[k].t += dt; floaters[k].y -= dt * 42;
+    if (floaters[k].t > 0.8) floaters.splice(k, 1);
+  }
+  if (shake > 0) shake = Math.max(0, shake - dt * 30);
+
+  // HUD
+  timeEl.innerHTML = elapsed.toFixed(1) + '<small>秒</small>';
+  subEl.innerHTML = 'スコア ' + Math.floor(score) + '<br>ギリギリ ' + nearMiss + '回' + (combo > 1 && comboTimer > 0 ? '（×' + combo + 'コンボ中）' : '');
+  meterFillEl.style.width = meter.toFixed(0) + '%';
+  famLabelEl.textContent = '仲間 ' + companions + '匹';
+}
+
+function die(cause){
+  STATE = 'dead';
+  deathCompanions = companions;
+  deathBites = bites.length;
+  splat = { x: moz.x, y: moz.y };
+  if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+  if (elapsed > best) {
+    best = elapsed;
+    try { localStorage.setItem('moz_best', String(best)); } catch(e){}
+  }
+  if (score > bestScore) {
+    bestScore = Math.floor(score);
+    try { localStorage.setItem('moz_best_score', String(bestScore)); } catch(e){}
+  }
+  setTimeout(function(){
+    resultText.style.display = 'block';
+    resultText.textContent = (cause || '叩かれた…') + ' ' + elapsed.toFixed(1) + '秒／スコア ' + Math.floor(score) +
+      (deathCompanions > 0 ? '（仲間' + deathCompanions + '匹も全滅…）' : '（ギリギリ ' + nearMiss + '回）') +
+      (deathBites > 0 ? '／' + deathBites + '箇所腫らした' : '');
+    bestText.textContent = 'ベスト: ' + best.toFixed(1) + '秒／スコア ' + bestScore;
+    overText.innerHTML = 'もう一回いく？毎回同じで、指を離して吸い始めるとゲーム開始だよ。';
+    startBtn.textContent = 'もう一度';
+    overlay.classList.remove('hidden');
+  }, 650);
+}
+
+// ---------- Draw ----------
+function drawSwatterShape(cx, cy, radius, alpha){
+  // fly swatter: mesh head (rounded square with grid) + handle going up-right
+  var w = radius * 1.72, hh = radius * 1.5;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.32);
+  // handle
+  ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(w * 0.28, -hh * 0.28); ctx.lineTo(w * 0.95, -hh * 1.05); ctx.stroke();
+  // mesh
+  ctx.fillStyle = 'rgba(231,76,60,.30)';
+  ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 5;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(-w/2, -hh/2, w, hh, 12); else ctx.rect(-w/2, -hh/2, w, hh);
+  ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = 'rgba(192,57,43,.55)'; ctx.lineWidth = 2;
+  for (var gx = -w/2 + w/6; gx < w/2 - 2; gx += w/6) {
+    ctx.beginPath(); ctx.moveTo(gx, -hh/2 + 3); ctx.lineTo(gx, hh/2 - 3); ctx.stroke();
+  }
+  for (var gy = -hh/2 + hh/5; gy < hh/2 - 2; gy += hh/5) {
+    ctx.beginPath(); ctx.moveTo(-w/2 + 3, gy); ctx.lineTo(w/2 - 3, gy); ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawSwatterForPhase(h){
+  var now = performance.now();
+  if (h.phase === 'track') {
+    drawSwatterShape(h.x + Math.sin(now/30) * 3, h.y - 66 + Math.cos(now/36) * 3, h.radius, 0.95);
+  } else if (h.phase === 'lock') {
+    drawSwatterShape(h.lockX + Math.sin(now/18) * 4, h.lockY - 80 - Math.min(14, h.t * 40), h.radius, 1);
+  } else if (h.phase === 'slap' || h.phase === 'stay') {
+    var s = h.phase === 'slap' ? (0.8 + Math.min(1, h.t/0.06) * 0.25) : 1.05;
+    drawSwatterShape(h.lockX, h.lockY, h.radius * s, 1);
+  } else if (h.phase === 'lift') {
+    drawSwatterShape(h.lockX, h.lockY - h.t * 170, h.radius, Math.max(0, 1 - h.t / 0.3));
+  }
+}
+function drawClapHands(h){
+  var now = performance.now();
+  var size = 120;
+  function palm(x, y, flip, alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    if (flip) ctx.scale(-1, 1);
+    ctx.rotate(flip ? 1.35 : -1.35); // palms face sideways, toward the center
+    ctx.font = size + 'px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('✋', 0, 0);
+    ctx.restore();
+  }
+  if (h.phase === 'track') {
+    var tr = Math.sin(now/30) * 3;
+    palm(h.x - CLAP_HALF_W - 52, h.y + tr, false, 0.95);
+    palm(h.x + CLAP_HALF_W + 52, h.y - tr, true, 0.95);
+  } else if (h.phase === 'lock') {
+    var out = 10 + Math.min(16, h.t * 42), sh = Math.sin(now/18) * 4;
+    palm(h.lockX - CLAP_HALF_W - 52 - out, h.lockY + sh, false, 1);
+    palm(h.lockX + CLAP_HALF_W + 52 + out, h.lockY - sh, true, 1);
+  } else if (h.phase === 'slap' || h.phase === 'stay') {
+    var prog = h.phase === 'stay' ? 1 : Math.min(1, h.t / 0.06);
+    var gap = (1 - prog) * (CLAP_HALF_W + 46) + 26;
+    palm(h.lockX - gap, h.lockY, false, 1);
+    palm(h.lockX + gap, h.lockY, true, 1);
+    if (h.phase === 'stay') {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(230,126,34,.8)'; ctx.lineWidth = 3;
+      for (var a = 0; a < 6; a++) {
+        var ang = a / 6 * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(h.lockX + Math.cos(ang) * 34, h.lockY + Math.sin(ang) * 30);
+        ctx.lineTo(h.lockX + Math.cos(ang) * 52, h.lockY + Math.sin(ang) * 48);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  } else if (h.phase === 'lift') {
+    var al = Math.max(0, 1 - h.t / 0.3), spread = h.t * 190;
+    palm(h.lockX - 40 - spread, h.lockY - h.t * 60, false, al);
+    palm(h.lockX + 40 + spread, h.lockY - h.t * 60, true, al);
+  }
+}
+function drawHandShape(h){
+  if (h.kind === 'swatter') { drawSwatterForPhase(h); return; }
+  if (h.kind === 'clap') { drawClapHands(h); return; }
+  var ex = h.x, ey = h.y, size = h.type.radius * 2, alpha = 1, lift = 0;
+  if (h.phase === 'track') {
+    // hovering hand, offset above the target, trembling
+    ex = h.x + Math.sin(performance.now()/28) * 3;
+    ey = h.y - 74 + Math.cos(performance.now()/34) * 3;
+    size = h.type.radius * 1.55; alpha = 0.92;
+  } else if (h.phase === 'lock') {
+    // wind-up: hand pulls up a little and shakes harder
+    ex = h.lockX + Math.sin(performance.now()/18) * 4;
+    ey = h.lockY - 88 - Math.min(14, h.t * 40);
+    size = h.type.radius * 1.6; alpha = 1;
+  } else if (h.phase === 'slap' || h.phase === 'stay') {
+    ex = h.lockX; ey = h.lockY;
+    var s = h.phase === 'slap' ? (0.75 + Math.min(1, h.t/0.06) * 0.45) : 1.2;
+    size = h.type.radius * 2 * s; alpha = 1;
+  } else if (h.phase === 'lift') {
+    ex = h.lockX; ey = h.lockY - h.t * 160;
+    size = h.type.radius * 2 * 1.1; alpha = 1 - h.t / 0.3;
+  }
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, alpha);
+  ctx.font = size + 'px serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(h.type.emoji, ex, ey + size * 0.04);
+  ctx.restore();
+}
+
+function draw(){
+  ctx.clearRect(0, 0, W, H);
+  // background: warm table / skin-like field with faint dots
+  ctx.fillStyle = '#f7e8d0';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(190,150,100,.14)';
+  var gap = 56;
+  for (var gx = gap/2; gx < W; gx += gap)
+    for (var gy = gap/2; gy < H; gy += gap) {
+      ctx.beginPath(); ctx.arc(gx, gy, 3, 0, Math.PI*2); ctx.fill();
+    }
+
+  ctx.save();
+  if (shake > 0) ctx.translate((Math.random()*2-1)*shake, (Math.random()*2-1)*shake);
+
+  // red swellings where blood was sucked (the player's own marks, stay all run)
+  for (var bi = 0; bi < bites.length; bi++) {
+    var bt = bites[bi];
+    var br = 10 + Math.min(26, bt.amount * 0.35);
+    var bst = biteStage(bt);
+    ctx.save();
+    var grad = ctx.createRadialGradient(bt.x, bt.y, br * 0.15, bt.x, bt.y, br);
+    grad.addColorStop(0, 'rgba(214,48,49,' + (0.55 + bst * 0.18) + ')');
+    grad.addColorStop(0.65, 'rgba(231,76,60,' + (0.38 + bst * 0.14) + ')');
+    grad.addColorStop(1, 'rgba(231,76,60,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(bt.x, bt.y, br, 0, Math.PI*2); ctx.fill();
+    // raised shiny center + the bite point
+    ctx.fillStyle = 'rgba(255,190,170,.5)';
+    ctx.beginPath(); ctx.arc(bt.x - br * 0.22, bt.y - br * 0.24, br * 0.26, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(160,20,20,.85)';
+    ctx.beginPath(); ctx.arc(bt.x, bt.y, 2.4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // handprints (where slaps landed)
+  for (var i = 0; i < handprints.length; i++) {
+    var p = handprints[i];
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 0.16 * (1 - p.t/1.6));
+    ctx.fillStyle = '#d98c5f';
+    ctx.beginPath();
+    if (p.shape === 'band') ctx.rect(p.x - p.r, p.y - CLAP_HALF_H, p.r * 2, CLAP_HALF_H * 2);
+    else if (p.shape === 'swatter') ctx.rect(p.x - p.r * 0.86, p.y - p.r * 0.75, p.r * 1.72, p.r * 1.5);
+    else ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // targets + hands
+  for (var j = 0; j < hands.length; j++) {
+    var h = hands[j];
+    if (h.phase === 'track') {
+      var prog = h.t / h.trackDur;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(231,76,60,.75)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      if (h.kind === 'clap') ctx.rect(h.x - CLAP_HALF_W, h.y - CLAP_HALF_H, CLAP_HALF_W * 2, CLAP_HALF_H * 2);
+      else ctx.arc(h.x, h.y, h.radius, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // telegraph timer: closing ring (circles) or closing top bar (clap band)
+      ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 5;
+      ctx.beginPath();
+      if (h.kind === 'clap') {
+        ctx.moveTo(h.x - CLAP_HALF_W, h.y - CLAP_HALF_H - 9);
+        ctx.lineTo(h.x - CLAP_HALF_W + CLAP_HALF_W * 2 * prog, h.y - CLAP_HALF_H - 9);
+      } else {
+        ctx.arc(h.x, h.y, h.radius + 10, -Math.PI/2, -Math.PI/2 + Math.PI*2*prog);
+      }
+      ctx.stroke();
+      ctx.restore();
+    } else if (h.phase === 'lock') {
+      ctx.save();
+      ctx.fillStyle = 'rgba(231,76,60,.28)';
+      ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 5;
+      ctx.beginPath();
+      if (h.kind === 'clap') ctx.rect(h.lockX - CLAP_HALF_W, h.lockY - CLAP_HALF_H, CLAP_HALF_W * 2, CLAP_HALF_H * 2);
+      else ctx.arc(h.lockX, h.lockY, h.radius, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#e74c3c';
+      ctx.font = '900 30px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('！', h.lockX, h.lockY - (h.kind === 'clap' ? CLAP_HALF_H : h.radius) - 18);
+      ctx.restore();
+    }
+    drawHandShape(h);
+    if (h.kind === 'notice' && (h.phase === 'track' || h.phase === 'lock')) {
+      ctx.save();
+      ctx.font = '30px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('💢', h.phase === 'track' ? h.x : h.lockX, (h.phase === 'track' ? h.y : h.lockY) - 128);
+      ctx.restore();
+    }
+  }
+
+  // companions follow behind (half size, not targets)
+  if (STATE !== 'dead') {
+    for (var cp2 = 0; cp2 < compPos.length; cp2++) {
+      ctx.save();
+      ctx.translate(compPos[cp2].x, compPos[cp2].y);
+      var cf = 1 + Math.sin(moz.wing * 1.3 + cp2 * 1.7) * 0.08;
+      ctx.scale(cf, cf);
+      ctx.font = '24px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('🦟', 0, 0);
+      ctx.restore();
+    }
+  }
+
+  // mosquito
+  if (STATE !== 'dead') {
+    // sucking ring (pale red) + notice arc (orange -> red) around the mosquito
+    if (sucking) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(231,76,60,.35)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(moz.x, moz.y, 34, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle = 'rgba(192,30,30,.85)';
+      ctx.font = '900 13px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('吸血中…', moz.x, moz.y + 46);
+      if (biteStage(biteAt(moz.x, moz.y)) > 0) {
+        ctx.fillStyle = '#8e44ad';
+        ctx.fillText('腫れてる場所：速いけど気づかれやすい！', moz.x, moz.y + 64);
+      }
+      ctx.restore();
+    }
+    if (notice > 1) {
+      ctx.save();
+      ctx.strokeStyle = notice > 70 ? '#e74c3c' : '#e67e22';
+      ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.arc(moz.x, moz.y, 40, -Math.PI/2, -Math.PI/2 + Math.PI*2*(notice/100)); ctx.stroke();
+      ctx.fillStyle = notice > 70 ? '#e74c3c' : '#e67e22';
+      ctx.font = '16px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('👀', moz.x + 40, moz.y - 30);
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.translate(moz.x, moz.y);
+    ctx.rotate(moz.tilt);
+    var flap = 1 + Math.sin(moz.wing) * 0.07;
+    ctx.scale(flap, flap);
+    // red belly grows with the meter (= how much blood you carry)
+    if (meter > 3) {
+      ctx.fillStyle = 'rgba(192,30,30,.8)';
+      ctx.beginPath(); ctx.arc(2, 7, 5 + meter * 0.13, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.font = (46 + meter * 0.22) + 'px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🦟', 0, 0);
+    ctx.restore();
+  } else if (splat) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(192,30,30,.75)';
+    ctx.beginPath();
+    ctx.ellipse(splat.x, splat.y, 26, 10, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(splat.x - 22, splat.y - 8, 6, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(splat.x + 24, splat.y + 6, 5, 0, Math.PI*2); ctx.fill();
+    ctx.translate(splat.x, splat.y);
+    ctx.scale(1.25, 0.45);
+    ctx.font = '44px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🦟', 0, 0);
+    ctx.restore();
+    // companions are wiped out together
+    for (var cs = 0; cs < compPos.length; cs++) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(192,30,30,.6)';
+      ctx.beginPath(); ctx.ellipse(compPos[cs].x, compPos[cs].y, 13, 5, 0, 0, Math.PI*2); ctx.fill();
+      ctx.translate(compPos[cs].x, compPos[cs].y);
+      ctx.scale(1.25, 0.45);
+      ctx.font = '24px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('🦟', 0, 0);
+      ctx.restore();
+    }
+  }
+
+  // floaters
+  for (var k = 0; k < floaters.length; k++) {
+    var f = floaters[k];
+    ctx.save();
+    ctx.globalAlpha = 1 - f.t / 0.8;
+    ctx.fillStyle = f.color || '#e67e22';
+    ctx.font = '900 24px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(f.text, f.x, f.y);
+    ctx.restore();
+  }
+
+  ctx.restore();
+
+  // ready-state hint mosquito sits in the center
+  if (STATE === 'ready') {
+    ctx.save();
+    ctx.translate(W/2, H/2);
+    ctx.font = '46px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🦟', 0, 0);
+    ctx.restore();
+  }
+
+  // pre-game hint: move freely, stay still to start
+  if (STATE === 'wait') {
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#5b3a1e';
+    ctx.font = '900 24px sans-serif';
+    ctx.fillText('好きな場所まで運んで 指を離して！', W/2, H * 0.30);
+    ctx.font = '700 17px sans-serif';
+    ctx.fillStyle = '#8a6a45';
+    ctx.fillText('離した場所で血を吸い始めてゲーム開始', W/2, H * 0.30 + 32);
+    ctx.fillText('（それまで手は来ないよ）', W/2, H * 0.30 + 58);
+    ctx.restore();
+  }
+
+  // "ゲーム開始！" banner
+  if (startBanner > 0 && STATE === 'play') {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, startBanner / 0.5);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#c0392b';
+    ctx.font = '900 44px sans-serif';
+    ctx.fillText('ゲーム開始！', W/2, H * 0.38);
+    ctx.restore();
+  }
+}
+
+function loop(ts){
+  var dt = Math.min(0.05, (ts - lastTs) / 1000 || 0);
+  lastTs = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+reset();
+bestText.textContent = (best > 0 || bestScore > 0) ? ('ベスト: ' + best.toFixed(1) + '秒／スコア ' + bestScore) : '';
+subEl.innerHTML = 'スコア 0<br>ギリギリ 0回';
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
