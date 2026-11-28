@@ -30,66 +30,69 @@
 </head>
 <body>
 
-	<!-- Header(Start) -->
-	<header v-if="mode!=0">
-		<!-- Navigation(Start) -->
-		<nav class="navbar navbar-dark bg-primary">
-			<div class="container-fluid">
-				<a class="btn btn-primary btn-sm" href="../../../">
-					<i class="bi-caret-left-fill" role="img"></i>
-				</a>
-				<div>
-					<i class="bi-github text-white m-1"></i><a class="navbar-brand">西可児ゲームセンター</a>
+	<div>
+
+		<!-- Header(Start) -->
+		<header v-if="mode!=0">
+			<!-- Navigation(Start) -->
+			<nav class="navbar navbar-dark bg-primary">
+				<div class="container-fluid">
+					<a class="btn btn-primary btn-sm" href="../../../">
+						<i class="bi-caret-left-fill" role="img"></i>
+					</a>
+					<div>
+						<i class="bi-github text-white m-1"></i><a class="navbar-brand">西可児ゲームセンター</a>
+					</div>
+					<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
+						<i class="bi-arrow-counterclockwise" role="img"></i>
+					</a>
 				</div>
-				<a class="btn btn-primary btn-sm" id="btn_modal" href="#">
-					<i class="bi-arrow-counterclockwise" role="img"></i>
-				</a>
-			</div>
-		</nav>
-		<!-- Navigation(End) -->
-	</header>
-	<!-- Header(End) -->
+			</nav>
+			<!-- Navigation(End) -->
+		</header>
+		<!-- Header(End) -->
 
-	<!-- Game(Start) -->
-	<div class="game-wrapper">
-		<iframe id="game-frame" src="./games/00.html"></iframe>
-	</div>
-	<!-- Game(End) -->
+		<!-- Game(Start) -->
+		<div class="game-wrapper">
+			<iframe id="game-frame" src="./games/00.html"></iframe>
+		</div>
+		<!-- Game(End) -->
 
-	<!-- Footer(Start) -->
-	<footer class="text-center">
-		<div id="ad_banner"></div>
-	</footer>
-	<!-- Footer(End) -->
+		<!-- Footer(Start) -->
+		<footer class="text-center">
+			<div id="ad_banner"></div>
+		</footer>
+		<!-- Footer(End) -->
 
-	<!-- Modal(Start) -->
-	<div class="container mt-5 text-center">
-		<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
-			aria-labelledby="modalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="modalLabel">RETRY?</h5>
-						<button type="button" class="btn-close"
-							data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						リトライしますか?
-						<div id="ad_rectangle"></div>
-					</div>
-					<div class="modal-footer">
-						<div class="container-fluid">
-							<button type="button" class="btn btn-primary float-end" id="btn_retry"
-								data-bs-dismiss="modal">RETRY</button>
-							<button type="button" class="btn btn-secondary me-2 float-end" 
-								data-bs-dismiss="modal">CANCEL</button>
+		<!-- Modal(Start) -->
+		<div class="container mt-5 text-center">
+			<div class="modal fade" id="myModal" role="dialog" data-bs-backdrop="static"
+				aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">RETRY?</h5>
+							<button type="button" class="btn-close"
+								data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							リトライしますか?
+							<div id="ad_rectangle"></div>
+						</div>
+						<div class="modal-footer">
+							<div class="container-fluid">
+								<button type="button" class="btn btn-primary float-end" id="btn_retry"
+									data-bs-dismiss="modal">RETRY</button>
+								<button type="button" class="btn btn-secondary me-2 float-end" 
+									data-bs-dismiss="modal">CANCEL</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<!-- Modal(End) -->
 	</div>
-	<!-- Modal(End) -->
 
 	<!-- JavaScript -->
 	<script src="../../assets/libs/bootstrap-5.2.3/js/bootstrap.min.js"></script>
