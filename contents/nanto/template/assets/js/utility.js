@@ -57,3 +57,18 @@ const iframe = document.getElementById("game-frame");
 if (iframe) {
     iframe.src = `./games/${gameId}.html`;
 }
+
+//==========
+// Modal
+const btnModal = document.getElementById("btn_modal");
+btnModal.addEventListener("click", ()=>{
+	const elem = document.getElementById("myModal");
+	if(elem.classList.contains("show")) return;
+	const modal = new bootstrap.Modal(elem);
+	bootstrap.Modal.getInstance(elem).show();
+});
+
+const btnRetry = document.getElementById("btn_retry");
+btnRetry.addEventListener("click", ()=>{
+	location.reload();// Reload
+});
