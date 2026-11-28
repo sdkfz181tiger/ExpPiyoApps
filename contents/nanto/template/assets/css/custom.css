@@ -26,7 +26,7 @@ header i{
 }
 
 .game-container{
-	width: 100%; height: 100%;
+	width: 100%; height: 100dvh;
 	margin: 0px; padding: 0px;
 	display: flex;
 	flex-direction: column;
